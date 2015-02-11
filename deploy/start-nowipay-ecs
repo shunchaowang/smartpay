@@ -1,0 +1,11 @@
+#!/bin/bash
+service=nowipay-ecs
+
+if (( $(ps -ef | grep -v grep | grep $service | wc -l) > 0 ))
+then
+    echo "$service is running! Restarting it now!"
+    /etc/init.d/$service restart
+else
+    /etc/init.d/$service start
+fi
+

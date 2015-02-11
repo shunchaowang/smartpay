@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <java.version>1.7</java.version>
+        <com.lambo.smartpay.version>1.0.0</com.lambo.smartpay.version>
+        <com.lambo.smartpay.core.version>1.0.0</com.lambo.smartpay.core.version>
+        <com.lambo.smartpay.pay.version>1.0.0</com.lambo.smartpay.pay.version>
+        <com.lambo.smartpay.manage.version>1.0.0</com.lambo.smartpay.manage.version>
+        <com.lambo.smartpay.ecs.version>1.0.0</com.lambo.smartpay.ecs.version>
+
+         <!-- Generic properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Spring -->
+        <spring-framework.version>4.1.4.RELEASE</spring-framework.version>
+
+        <!-- Hibernate / JPA -->
+		<!-- <hibernate.version>4.3.5.Final</hibernate.version> -->
+        <hibernate.version>4.3.8.Final</hibernate.version>
+        <javax.persistence.version>1.0.2</javax.persistence.version>
+
+        <jstl.version>1.2</jstl.version>
+        <ojdbc6.version>11.2.0</ojdbc6.version>
+        <javax.servlet.version>3.1.0</javax.servlet.version>
+        <commons-logging.version>1.1.3</commons-logging.version>
+        <log4j.version>1.2.17</log4j.version>
+        <commons-codec.version>1.10</commons-codec.version>
+        <commons-lang.version>3.3.2</commons-lang.version>
+        <commons-dhcp.version>1.4</commons-dhcp.version>
+
+        <junit.version>4.11</junit.version>
+    </properties>
+    <groupId>com.lambo.smartpay</groupId>
+    <artifactId>smartpay</artifactId>
+    <packaging>pom</packaging>
+    <version>${com.lambo.smartpay.version}</version>
+    <name>Smartpay Platform for Online Shopping</name>
+
+    <modules>
+        <module>core</module>
+        <module>pay</module>
+        <module>manage</module>
+        <module>ecs</module>
+  </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
