@@ -1,52 +1,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.lambo.smartpay</groupId>
         <artifactId>smartpay</artifactId>
         <version>${com.lambo.smartpay.version}</version>
     </parent>
-	<groupId>com.lambo.smartpay</groupId>
-	<artifactId>core</artifactId>
-	<packaging>jar</packaging>
-	<version>${com.lambo.smartpay.core.version}</version>
-	<name>core</name>
-	<url>http://maven.apache.org</url>
-	<properties>
-		<!-- Generic properties -->
-		<java.version>1.7</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<!-- Spring -->
-		<spring-framework.version>4.1.4.RELEASE</spring-framework.version>
+    <groupId>com.lambo.smartpay</groupId>
+    <artifactId>core</artifactId>
+    <packaging>jar</packaging>
+    <version>${com.lambo.smartpay.core.version}</version>
+    <name>core</name>
+    <url>http://maven.apache.org</url>
 
-		<!-- Hibernate / JPA -->
-		<!-- <hibernate.version>4.3.5.Final</hibernate.version> -->
-		<hibernate.version>4.3.8.Final</hibernate.version>
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
 
-		<commons-logging.version>1.1.3</commons-logging.version>
-        <log4j.version>1.2.17</log4j.version>
-        <commons-codec.version>1.10</commons-codec.version>
-        <commons-lang.version>3.3.2</commons-lang.version>
-        <commons-dhcp.version>1.4</commons-dhcp.version>
+    <!-- properties including java and versions inherit from parent module -->
 
-		<javax.persistence.version>1.0.2</javax.persistence.version>
-        <junit.version>4.11</junit.version>
-	</properties>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
         <!-- logging dependency -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+
         <!-- codec and string util dependencies -->
         <dependency>
             <groupId>commons-codec</groupId>
@@ -59,59 +51,60 @@
             <version>${commons-lang.version}</version>
         </dependency>
 
+        <!-- use psring context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring-framework.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aop</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
+        <!-- spring aspect orient programming -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring-framework.version}</version>
+        </dependency>
 
-		<!-- Spring ORM support -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-		<!-- Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
+        <!-- Spring ORM support, for the spring org.springframework.orm.hibernate4.LocalSessionFactory -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring-framework.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>${commons-dhcp.version}</version>
-		</dependency>
+        <!-- use spring to manage the transaction -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring-framework.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons-logging.version}</version>
-		</dependency>
+        <!-- Hibernate entity and core-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>${javax.persistence.version}</version>
-			<scope>provided</scope>
-		</dependency>
+        <!-- apache dhcp connection pooling -->
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dhcp.version}</version>
+        </dependency>
 
-	</dependencies>
+        <!-- jpa support -->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>${javax.persistence.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 </project>
