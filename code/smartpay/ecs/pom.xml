@@ -80,7 +80,7 @@
             <version>${spring-framework.version}</version>
         </dependency>
 
-        <!-- spring web support -->
+        <!-- spring webmvc and ecs support -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -112,13 +112,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring-security.version}</version>
-        </dependency>
-
-        <!-- Spring Data JPA dependencies -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>${spring-data-jpa.version}</version>
         </dependency>
 
         <!-- oracle 11g jdbc -->

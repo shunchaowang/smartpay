@@ -39,6 +39,7 @@
         <commons-dhcp.version>1.4</commons-dhcp.version>
 
         <junit.version>4.11</junit.version>
+        <hsqldb.version>2.3.2</hsqldb.version>
     </properties>
     <groupId>com.lambo.smartpay</groupId>
     <artifactId>smartpay</artifactId>
