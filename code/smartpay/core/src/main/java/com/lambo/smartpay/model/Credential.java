@@ -36,7 +36,7 @@ public class Credential implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
 
-    @Column(name = "REMARK", length = 256)
+    @Column(name = "REMARK", length = 255)
     private String remark;
 
     @Column(name = "CRETED_TIME", nullable = false)

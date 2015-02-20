@@ -29,9 +29,6 @@ public class Account implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NUMBER", length = 32, nullable = false)
-    private String number;
-
     @Column(name = "CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
@@ -62,14 +59,6 @@ public class Account implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public Date getCreatedTime() {

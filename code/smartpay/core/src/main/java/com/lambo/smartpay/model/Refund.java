@@ -29,9 +29,6 @@ public class Refund implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NUMBER", length = 32, nullable = false)
-    private String number;
-
     @Column(name = "AMOUNT", nullable = false)
     private Float amount;
 
@@ -47,22 +44,23 @@ public class Refund implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date successTime;
 
-    @Column(name = "REMARK")
+    @Column(name = "REMARK", length = 255)
     private String remark;
 
-    @Column(name = "BANK_NAME", length = 256, nullable = true)
+    @Column(name = "BANK_NAME", length = 128, nullable = true)
     private String bankName;
 
-    @Column(name = "BANK_ACCOUNT_NUMBER", length = 256, nullable = false)
+    @Column(name = "BANK_ACCOUNT_NUMBER", length = 128, nullable = false)
     private String bankAccountNumber;
 
-    @Column(name = "BANK_ACCOUNT_EXP_DATE", length = 256, nullable = false)
-    private String bankAccountExpDate;
+    @Column(name = "BANK_ACCOUNT_EXP_DATE", nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date bankAccountExpDate;
 
-    @Column(name = "BANK_TRANSACTION_NUMBER", length = 256, nullable = false)
+    @Column(name = "BANK_TRANSACTION_NUMBER", length = 128, nullable = false)
     private String bankTransactionNumber;
 
-    @Column(name = "BANK_RETURN_CODE", length = 256, nullable = false)
+    @Column(name = "BANK_RETURN_CODE", length = 128, nullable = false)
     private String bankReturnCode;
 
     @Column(name = "BILL_FIRST_NAME", length = 32, nullable = false)
@@ -107,14 +105,6 @@ public class Refund implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public Float getAmount() {
@@ -173,11 +163,11 @@ public class Refund implements Serializable {
         this.bankAccountNumber = bankAccountNumber;
     }
 
-    public String getBankAccountExpDate() {
+    public Date getBankAccountExpDate() {
         return bankAccountExpDate;
     }
 
-    public void setBankAccountExpDate(String bankAccountExpDate) {
+    public void setBankAccountExpDate(Date bankAccountExpDate) {
         this.bankAccountExpDate = bankAccountExpDate;
     }
 

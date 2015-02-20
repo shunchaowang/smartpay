@@ -27,10 +27,17 @@
             <artifactId>commons-logging</artifactId>
             <version>${commons-logging.version}</version>
         </dependency>
+        <!-- apache common logging is using log4j -->
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+        <!-- spring is depending on slf4j to integrate with log4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- codec and string util dependencies -->
@@ -63,6 +70,13 @@
             <artifactId>spring-aop</artifactId>
             <version>${spring-framework.version}</version>
         </dependency>
+        <!-- spring aop needs aspectjweaver -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectjweaver.version}</version>
+        </dependency>
+
 
         <!-- Spring ORM support, for the spring org.springframework.orm.hibernate4.LocalSessionFactory -->
         <dependency>
@@ -97,12 +111,26 @@
             <version>${hibernate.version}</version>
         </dependency>
 
+        <!-- db dependency -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
         <!-- connection pooling -->
         <!-- apache dhcp connection pooling -->
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>${commons-dhcp.version}</version>
+        </dependency>
+
+        <!-- javax mail support -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
         </dependency>
 
         <!-- testing -->
@@ -120,14 +148,17 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- let's use mysql instead of in memory db -->
+        <!--
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
+        -->
 
-        <!-- jpa support -->
+        <!-- jpa support provider by container -->
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>

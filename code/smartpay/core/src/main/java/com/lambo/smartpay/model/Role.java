@@ -31,7 +31,7 @@ public class Role implements Serializable {
     @Column(name = "NAME", length = 64, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 256)
+    @Column(name = "DESCRIPTION", length = 255)
     private String description;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

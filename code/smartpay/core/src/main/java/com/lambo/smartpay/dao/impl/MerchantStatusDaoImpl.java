@@ -27,4 +27,17 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
 
         return null;
     }
+
+    @Override
+    public List<MerchantStatus> getAll() {
+
+        Query query = this.entityManager.createQuery("SELECT m FROM MerchantStatus m");
+        List<MerchantStatus> merchantStatuses = query.getResultList();
+
+        if (merchantStatuses != null) {
+            return merchantStatuses;
+        }
+
+        return null;
+    }
 }

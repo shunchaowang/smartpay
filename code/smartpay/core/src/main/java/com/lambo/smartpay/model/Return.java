@@ -29,16 +29,16 @@ public class Return implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NUMBER", length = 32, nullable = false)
-    private String number;
+    @Column(name = "MERCHANT_NUMBER", length = 32, nullable = false)
+    private String merchantNumber;
 
     @Column(name = "AMOUNT", nullable = false)
     private Float amount;
 
-    @Column(name = "GOODS_NAME", length = 256, nullable = false)
+    @Column(name = "GOODS_NAME", length = 128, nullable = false)
     private String goodsName;
 
-    @Column(name = "GOODS_AMOUNT", length = 256, nullable = false)
+    @Column(name = "GOODS_AMOUNT", length = 128, nullable = false)
     private String goodsAmount;
 
     @Column(name = "CREATED_TIME", nullable = false)
@@ -68,12 +68,12 @@ public class Return implements Serializable {
         this.id = id;
     }
 
-    public String getNumber() {
-        return number;
+    public String getMerchantNumber() {
+        return merchantNumber;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setMerchantNumber(String merchantNumber) {
+        this.merchantNumber = merchantNumber;
     }
 
     public Float getAmount() {

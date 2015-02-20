@@ -30,10 +30,10 @@ public class Encryption implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "KEY", length = 256, nullable = false)
+    @Column(name = "KEY", length = 128, nullable = false)
     private String key;
 
-    @Column(name = "REMARK", length = 256)
+    @Column(name = "REMARK", length = 255)
     private String remark;
 
     @Column(name = "CREATED_TIME", nullable = false)

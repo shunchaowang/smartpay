@@ -32,9 +32,6 @@ public class Customer implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NUMBER", length = 32, nullable = false)
-    private String number;
-
     @Column(name = "FIRST_NAME", length = 32, nullable = false)
     private String firstName;
 
@@ -73,7 +70,7 @@ public class Customer implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK", length = 256)
+    @Column(name = "REMARK", length = 255)
     private String remark;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
@@ -93,14 +90,6 @@ public class Customer implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public String getFirstName() {

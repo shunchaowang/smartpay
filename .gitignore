@@ -38,3 +38,6 @@
 # .DS_Store mac file
 **/.DS_Store
 
+# bak files
+**/*.bak
+

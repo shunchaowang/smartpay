@@ -84,9 +84,6 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         List<String> whereClause = new ArrayList<String>();
 
         // iterate all basic attributes of merchant to put the content in the clause if present
-        if (StringUtils.isNotBlank(merchant.getNumber())) {
-            whereClause.add("m.number LIKE :number");
-        }
         if (StringUtils.isNotBlank(merchant.getName())) {
             whereClause.add("m.name LIKE :name");
         }
@@ -130,7 +127,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         if (fieldNameList.contains(order)) {
             result += order;
         } else {
-            result += "number";
+            result += "id";
         }
 
         // default order direction would be DESC
@@ -154,9 +151,6 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         Map<String, Object> params = new HashMap<String, Object>();
 
         // iterate all attributes of merchant to put the content into the params map if present
-        if (StringUtils.isNotBlank(merchant.getNumber())) {
-            params.put("number", merchant.getNumber());
-        }
         if (StringUtils.isNotBlank(merchant.getName())) {
             params.put("name", merchant.getName());
         }

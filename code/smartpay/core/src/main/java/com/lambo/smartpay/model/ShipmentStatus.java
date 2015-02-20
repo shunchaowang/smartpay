@@ -25,7 +25,7 @@ public class ShipmentStatus implements Serializable {
     @Column(name = "NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 256)
+    @Column(name = "DESCRIPTION", length = 255)
     private String description;
 
     public String getDescription() {

@@ -35,7 +35,7 @@ public class Site implements Serializable {
     @Column(name = "NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "URL", length = 256, nullable = false)
+    @Column(name = "URL", length = 128, nullable = false)
     private String url;
 
     @Column(name = "LOGO_IMAGE", nullable = true)

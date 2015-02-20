@@ -29,7 +29,7 @@ public class Fee implements Serializable {
     @Column(name = "VALUE", nullable = false)
     private Float value;
 
-    @Column(name = "REMARK", length = 256)
+    @Column(name = "REMARK", length = 255)
     private String remark;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)

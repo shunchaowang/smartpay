@@ -1,5 +1,7 @@
 package com.lambo.smartpay.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -8,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -27,11 +28,31 @@ import java.util.Properties;
  * Created by swang on 2/12/2015.
  */
 @Configuration
-@ComponentScan(basePackages = {"com.lambo.smartpay"}/*,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = {"com.lambo.smartpay.ecs.*"})*/)
-@EnableScheduling
-@EnableAspectJAutoProxy
-@EnableCaching
-public class AppConfig {
+@Profile("prod")
+@PropertySource(value = {"classpath:application.properties"}, ignoreResourceNotFound = true)
+public class MailConfigProd {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MailConfigProd.class);
+
+    @Autowired
+    private Environment env;
+
+    @Bean
+    public JavaMailSenderImpl javaMailSender() {
+        LOG.debug("Creating instance of singleton bean '" + JavaMailSenderImpl.class.getName() + "'");
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(env.getProperty("smtp.host"));
+        mailSender.setPort(env.getProperty("smtp.port", Integer.class));
+        mailSender.setProtocol(env.getProperty("smtp.protocol"));
+        mailSender.setUsername(env.getProperty("smtp.username"));
+        mailSender.setPassword(env.getProperty("smtp.password"));
+
+        Properties javaMailProps = new Properties();
+        javaMailProps.put("mail.smtp.auth", true);
+        javaMailProps.put("mail.smtp.starttls.enable", true);
+
+        mailSender.setJavaMailProperties(javaMailProps);
+
+        return mailSender;
+    }
 }

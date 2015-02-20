@@ -1,10 +1,15 @@
 package com.lambo.smartpay.config;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
@@ -32,8 +37,12 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
+@Profile("prod")
+@PropertySource(value = {"classpath:application.properties"}, ignoreResourceNotFound = true)
 //@EnableJpaRepositories(basePackages = {"com.lambo.smartpay.repositories"}) // not used right now
-public class PersistenceConfig {
+public class PersistenceConfigProd {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PersistenceConfigProd.class);
 
     @Autowired
     private Environment env;
@@ -43,6 +52,8 @@ public class PersistenceConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LOG.debug("Creating instance of singleton bean '" +
+                LocalContainerEntityManagerFactoryBean.class.getName() + "'");
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -69,6 +80,7 @@ public class PersistenceConfig {
 
     @Bean
     public DataSource dataSource() {
+        LOG.debug("Creating instance of singleton bean '" + BasicDataSource.class.getName() + "'");
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
         dataSource.setUrl(env.getProperty("jdbc.url"));
@@ -79,6 +91,7 @@ public class PersistenceConfig {
 
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
+        LOG.debug("Creating instance of singleton bean '" + DataSourceInitializer.class.getName() + "'");
         DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
         dataSourceInitializer.setDataSource(dataSource);
         ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
@@ -90,6 +103,7 @@ public class PersistenceConfig {
 
     @Bean
     public PlatformTransactionManager transactionManager() {
+        LOG.debug("Creating instance of singleton bean '" + JpaTransactionManager.class.getName() + "'");
         EntityManagerFactory factory = entityManagerFactory().getObject();
         return new JpaTransactionManager(factory);
     }

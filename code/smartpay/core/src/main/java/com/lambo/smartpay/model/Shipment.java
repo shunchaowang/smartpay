@@ -27,9 +27,6 @@ public class Shipment implements Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "NUMBER", length = 32, nullable = false)
-    private String number;
-
     @Column(name = "TRACKING_NUMBER", length = 64, nullable = false)
     private String trackingNumber;
 
@@ -82,14 +79,6 @@ public class Shipment implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public String getTrackingNumber() {
