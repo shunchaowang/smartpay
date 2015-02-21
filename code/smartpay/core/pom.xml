@@ -111,7 +111,7 @@
             <version>${hibernate.version}</version>
         </dependency>
 
-        <!-- db dependency -->
+        <!-- mysql dependency for production -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -148,7 +148,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- let's use mysql instead of in memory db -->
+        <!-- in memory hsqldb for dev, not used right now -->
         <!--
         <dependency>
             <groupId>org.hsqldb</groupId>

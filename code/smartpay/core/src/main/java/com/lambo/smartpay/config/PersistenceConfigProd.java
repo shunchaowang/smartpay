@@ -65,6 +65,9 @@ public class PersistenceConfigProd {
         factory.setPackagesToScan("com.lambo.smartpay.model");
 
         Properties jpaProperties = new Properties();
+        jpaProperties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        jpaProperties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+        jpaProperties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
         factory.setJpaProperties(jpaProperties);
 
