@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -200,15 +199,25 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     }
 
     /**
+     * Count record number using JPA criteria builder.
+     * @param typedQuery the criteria with query root, where clause
+     * @retrun count of the result
+     */
+    @Override
+    public Long countAllByCriteria(TypedQuery<Long> typedQuery) {
+
+        return typedQuery.getSingleResult();
+    }
+
+    /**
      * Find all records using JPA criteria builder.
      *
-     * @param criteriaQuery the criteria with query root, where clause and order by
+     * @param typedQuery the criteria with query root, where clause and order by
      * @retrun List of the result objects
      */
     @Override
-    public List<T> findAllByCriteria(CriteriaQuery<T> criteriaQuery) {
+    public List<T> findAllByCriteria(TypedQuery<T> typedQuery) {
 
-        TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
-        return query.getResultList();
+        return typedQuery.getResultList();
     }
 }

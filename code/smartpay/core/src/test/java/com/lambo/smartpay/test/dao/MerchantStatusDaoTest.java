@@ -41,7 +41,9 @@ public class MerchantStatusDaoTest {
         // create new merchant status
         MerchantStatus merchantStatus = new MerchantStatus();
         merchantStatus.setName("name");
+        merchantStatus.setCode("001");
         merchantStatus.setDescription("Description");
+        merchantStatus.setActive(true);
         merchantStatus = merchantStatusDao.create(merchantStatus);
 
         assertNotNull(merchantStatus);
@@ -68,4 +70,12 @@ public class MerchantStatusDaoTest {
         List<MerchantStatus> merchantStatuses = merchantStatusDao.getAll();
         assertNotNull(merchantStatuses);
     }
+
+    @Test
+    public void testCountByAdHocSearch() {
+        Long countOfNameLikeNormal = merchantStatusDao.countByAdHocSearch("%");
+
+        assertEquals(new Long(2), countOfNameLikeNormal);
+    }
+
 }

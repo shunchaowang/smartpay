@@ -16,7 +16,7 @@ import java.util.Set;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "MERCHANTS_TATUSES")
+@Table(name = "MERCHANT_STATUSES")
 public class MerchantStatus implements Serializable {
 
     static final long serialVersionUID = 1L;
