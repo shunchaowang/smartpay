@@ -5,28 +5,39 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "SHIPMENT_STATUS")
+@Table(name = "SHIPMENT_STATUSES")
 public class ShipmentStatus implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "SHST_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 32, nullable = false)
+    @Column(name = "SHST_NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "SHST_DESCRIPTION", length = 255)
     private String description;
+
+    @Column(name = "SHST_ACTIVE", nullable = false)
+    private Boolean active;
+
+    @Column(name = "SHST_CODE", nullable = false)
+    private String code;
+
+    @OneToMany(mappedBy = "shipmentStatus")
+    private Set<Shipment> shipments;
 
     public String getDescription() {
         return description;
@@ -50,5 +61,29 @@ public class ShipmentStatus implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Set<Shipment> getShipments() {
+        return shipments;
+    }
+
+    public void setShipments(Set<Shipment> shipments) {
+        this.shipments = shipments;
     }
 }

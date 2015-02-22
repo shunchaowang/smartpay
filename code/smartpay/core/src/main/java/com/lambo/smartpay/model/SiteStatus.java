@@ -5,28 +5,39 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "SITE_STATUS")
+@Table(name = "SITE_STATUSES")
 public class SiteStatus implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "SIST_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 32, nullable = false)
+    @Column(name = "SIST_NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "SIST_DESCRIPTION", length = 255)
     private String description;
+
+    @Column(name = "SIST_ACTIVE", nullable = false)
+    private Boolean active;
+
+    @Column(name = "SIST_CODE", nullable = false)
+    private String code;
+
+    @OneToMany(mappedBy = "siteStatus")
+    private Set<Site> sites;
 
     public String getDescription() {
         return description;
@@ -50,5 +61,29 @@ public class SiteStatus implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Set<Site> getSites() {
+        return sites;
+    }
+
+    public void setSites(Set<Site> sites) {
+        this.sites = sites;
     }
 }

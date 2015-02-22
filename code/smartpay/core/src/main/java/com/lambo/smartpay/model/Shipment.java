@@ -19,58 +19,64 @@ import java.util.Date;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "SHIPMENT")
+@Table(name = "SHIPMENTS")
 public class Shipment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "SHMT_ID")
     private Long id;
 
-    @Column(name = "TRACKING_NUMBER", length = 64, nullable = false)
+    @Column(name = "SHMT_CARRIER", nullable = false, length = 32)
+    private String carrier;
+
+    @Column(name = "SHMT_TRACKING_NUMBER", length = 64, nullable = false)
     private String trackingNumber;
 
-    @Column(name = "FIRST_NAME", length = 32, nullable = false)
+    @Column(name = "SHMT_FIRST_NAME", length = 32, nullable = false)
     private String firstName;
 
-    @Column(name = "LAST_NAME", length = 32, nullable = false)
+    @Column(name = "SHMT_LAST_NAME", length = 32, nullable = false)
     private String lastName;
 
-    @Column(name = "ADDRESS_1", length = 128, nullable = false)
+    @Column(name = "SHMT_ADDRESS_1", length = 128, nullable = false)
     private String address1;
 
-    @Column(name = "ADDRESS_2", length = 128, nullable = false)
+    @Column(name = "SHMT_ADDRESS_2", length = 128, nullable = false)
     private String address2;
 
-    @Column(name = "CITY", length = 32, nullable = false)
+    @Column(name = "SHMT_CITY", length = 32, nullable = false)
     private String city;
 
-    @Column(name = "STATE", length = 32, nullable = false)
+    @Column(name = "SHMT_STATE", length = 32, nullable = false)
     private String state;
 
-    @Column(name = "ZIP_CODE", length = 16, nullable = false)
+    @Column(name = "SHMT_ZIP_CODE", length = 16, nullable = false)
     private String zipCode;
 
-    @Column(name = "COUNTRY", length = 32, nullable = false)
+    @Column(name = "SHMT_COUNTRY", length = 32, nullable = false)
     private String country;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "SHMT_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "SHMT_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK")
+    @Column(name = "SHMT_REMARK")
     private String remark;
 
+    @Column(name = "SHMT_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "SHIPMENT_STATUS_ID")
+    @JoinColumn(name = "SHMT_SHST_ID")
     private ShipmentStatus shipmentStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "ORDER_ID")
+    @JoinColumn(name = "SHMT_ORDR_ID")
     private Order order;
 
     public Long getId() {
@@ -191,5 +197,21 @@ public class Shipment implements Serializable {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public String getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

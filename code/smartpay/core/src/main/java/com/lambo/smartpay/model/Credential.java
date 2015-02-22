@@ -19,40 +19,43 @@ import java.util.Date;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "CREDENTIAL")
+@Table(name = "CREDENTIALS")
 public class Credential implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "CRDT_ID")
     private Long id;
 
-    @Column(name = "CONTENT", length = 32, nullable = false)
+    @Column(name = "CRDT_CONTENT", length = 32, nullable = false)
     private String content;
 
-    @Column(name = "EXPIRATION_TIME")
+    @Column(name = "CRDT_EXPIRATION_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
 
-    @Column(name = "REMARK", length = 255)
+    @Column(name = "CRDT_REMARK", length = 255)
     private String remark;
 
-    @Column(name = "CRETED_TIME", nullable = false)
+    @Column(name = "CRDT_CRETED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "CRDT_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
+    @Column(name = "CRDT_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CREDENTIAL_STATUS_ID", nullable = false)
+    @JoinColumn(name = "CRDT_CRST_ID", nullable = false)
     private CredentialStatus credentialStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CREDENTIAL_TYPE_ID", nullable = false)
+    @JoinColumn(name = "CRDT_CRTP_ID", nullable = false)
     private CredentialType credentialType;
 
     public Long getId() {
@@ -117,5 +120,13 @@ public class Credential implements Serializable {
 
     public void setCredentialType(CredentialType credentialType) {
         this.credentialType = credentialType;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

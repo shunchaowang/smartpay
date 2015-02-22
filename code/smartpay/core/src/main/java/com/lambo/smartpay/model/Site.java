@@ -8,13 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,42 +22,46 @@ import java.util.Set;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "SITE")
+@Table(name = "SITES")
 public class Site implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "SITE_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 32, nullable = false)
+    @Column(name = "SITE_NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "URL", length = 128, nullable = false)
+    @Column(name = "SITE_URL", length = 128, nullable = false)
     private String url;
 
-    @Column(name = "LOGO_IMAGE", nullable = true)
-    private Blob logoImage;
+    @Column(name = "SITE_LOGO_IMAGE", nullable = true)
+    @Lob
+    private byte[] logoImage;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "SITE_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "SITE_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK")
+    @Column(name = "SITE_REMARK")
     private String remark;
 
+    @Column(name = "SITE_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "SITE_STATUS_ID", nullable = false)
+    @JoinColumn(name = "SITE_SIST_ID", nullable = false)
     private SiteStatus siteStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "MERCHANT_ID", nullable = false)
+    @JoinColumn(name = "SITE_MCHT_ID", nullable = false)
     private Merchant merchant;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true, mappedBy = "site")
@@ -87,11 +91,11 @@ public class Site implements Serializable {
         this.url = url;
     }
 
-    public Blob getLogoImage() {
+    public byte[] getLogoImage() {
         return logoImage;
     }
 
-    public void setLogoImage(Blob logoImage) {
+    public void setLogoImage(byte[] logoImage) {
         this.logoImage = logoImage;
     }
 
@@ -141,5 +145,13 @@ public class Site implements Serializable {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

@@ -8,59 +8,63 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 /**
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "ADMINISTRATOR")
+@Table(name = "ADMINISTRATORS")
 public class Administrator implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "ADMN_ID")
     private Long id;
 
-    @Column(name = "USERNAME", length = 32, nullable = false)
+    @Column(name = "ADMN_USERNAME", length = 32, nullable = false)
     private String username;
 
-    @Column(name = "PASSWORD", length = 32, nullable = false)
+    @Column(name = "ADMN_PASSWORD", length = 32, nullable = false)
     private String password;
 
-    @Column(name = "FIRS_TNAME", length = 32, nullable = false)
+    @Column(name = "ADMN_FIRS_TNAME", length = 32, nullable = false)
     private String firstName;
 
-    @Column(name = "LAST_NAME", length = 32, nullable = false)
+    @Column(name = "ADMN_LAST_NAME", length = 32, nullable = false)
     private String lastName;
 
-    @Column(name = "EMAIL", length = 32, nullable = false)
+    @Column(name = "ADMN_EMAIL", length = 32, nullable = false)
     private String email;
 
-    @Column(name = "PROFILE_IMAGE")
-    private Blob profileImage;
+    @Column(name = "ADMN_PROFILE_IMAGE")
+    @Lob
+    private byte[] profileImage;
 
-    @Column(name = "REMARK")
+    @Column(name = "ADMN_REMARK")
     private String remark;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "ADMN_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "ADMN_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
+    @Column(name = "ADMN_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "ROLE_ID", nullable = false)
+    @JoinColumn(name = "ADMN_ROLE_ID", nullable = false)
     private Role role;
 
     public Long getId() {
@@ -111,11 +115,11 @@ public class Administrator implements Serializable {
         this.email = email;
     }
 
-    public Blob getProfileImage() {
+    public byte[] getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(Blob profileImage) {
+    public void setProfileImage(byte[] profileImage) {
         this.profileImage = profileImage;
     }
 
@@ -141,6 +145,14 @@ public class Administrator implements Serializable {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Role getRole() {

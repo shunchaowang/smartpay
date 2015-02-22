@@ -19,38 +19,41 @@ import java.util.Date;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "aCCOUNT")
+@Table(name = "ACCOUNTS")
 public class Account implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "ACNT_ID")
     private Long id;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "ACNT_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "ACNT_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK", nullable = true)
+    @Column(name = "ACNT_REMARK", nullable = true)
     private String remark;
+
+    @Column(name = "ACNT_ACTIVE", nullable = false)
+    private Boolean active;
 
     // association
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "MERCHANT_ID", nullable = false)
+    @JoinColumn(name = "ACNT_MCHT_ID", nullable = false)
     private Merchant merchant;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "ACCOUNT_TYPE_ID", nullable = false)
+    @JoinColumn(name = "ACNT_ACTP_ID", nullable = false)
     private AccountType accountType;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "ACCOUNT_STATUS_ID", nullable = false)
+    @JoinColumn(name = "ACNT_ACST_ID", nullable = false)
     private AccountStatus accountStatus;
 
     public Long getId() {
@@ -107,5 +110,13 @@ public class Account implements Serializable {
 
     public void setAccountStatus(AccountStatus accountStatus) {
         this.accountStatus = accountStatus;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

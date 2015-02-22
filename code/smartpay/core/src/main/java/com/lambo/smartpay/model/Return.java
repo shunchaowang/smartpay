@@ -19,45 +19,48 @@ import java.util.Date;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "RETURN")
+@Table(name = "RETURNS")
 public class Return implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "RTRN_ID")
     private Long id;
 
-    @Column(name = "MERCHANT_NUMBER", length = 32, nullable = false)
+    @Column(name = "RTRN_MERCHANT_NUMBER", length = 32, nullable = false)
     private String merchantNumber;
 
-    @Column(name = "AMOUNT", nullable = false)
+    @Column(name = "RTRN_AMOUNT", nullable = false)
     private Float amount;
 
-    @Column(name = "GOODS_NAME", length = 128, nullable = false)
+    @Column(name = "RTRN_GOODS_NAME", length = 128, nullable = false)
     private String goodsName;
 
-    @Column(name = "GOODS_AMOUNT", length = 128, nullable = false)
+    @Column(name = "RTRN_GOODS_AMOUNT", length = 128, nullable = false)
     private String goodsAmount;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "RTRN_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "RTRN_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK")
+    @Column(name = "RTRN_REMARK")
     private String remark;
 
+    @Column(name = "RTRN_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "RETURN_STATUS_ID", nullable = false)
+    @JoinColumn(name = "RTRN_RTST_ID", nullable = false)
     private ReturnStatus returnStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "ORDER_ID", nullable = false)
+    @JoinColumn(name = "RTRN_ORDR_ID", nullable = false)
     private Order order;
 
     public Long getId() {
@@ -138,5 +141,13 @@ public class Return implements Serializable {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

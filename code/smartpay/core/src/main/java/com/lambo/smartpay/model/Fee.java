@@ -16,24 +16,27 @@ import java.io.Serializable;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "FEE")
+@Table(name = "FEES")
 public class Fee implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "FEE_ID")
     private Long id;
 
-    @Column(name = "VALUE", nullable = false)
+    @Column(name = "FEE_VALUE", nullable = false)
     private Float value;
 
-    @Column(name = "REMARK", length = 255)
+    @Column(name = "FEE_REMARK", length = 255)
     private String remark;
 
+    @Column(name = "FEE_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "FEE_TYPE_ID", nullable = false)
+    @JoinColumn(name = "FEE_FETP_ID", nullable = false)
     private FeeType feeType;
 
     public Long getId() {
@@ -66,5 +69,13 @@ public class Fee implements Serializable {
 
     public void setFeeType(FeeType feeType) {
         this.feeType = feeType;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

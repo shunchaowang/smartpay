@@ -8,33 +8,33 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 /**
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "CUSTOMER_LOGIN")
+@Table(name = "CUSTOMER_LOGINS")
 public class CustomerLogin implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "CSLG_ID")
     private Long id;
 
-    @Column(name = "LOGIN_EMAIL", length = 32, nullable = false)
+    @Column(name = "CSLG_LOGIN_EMAIL", length = 32, nullable = false)
     private String loginEmail;
 
-    @Column(name = "LOGIN_PASSWORD", length = 32, nullable = false)
+    @Column(name = "CSLG_LOGIN_PASSWORD", length = 32, nullable = false)
     private String loginPassword;
 
     @Column(name = "FIRST_NAME", length = 32, nullable = false)
@@ -43,22 +43,26 @@ public class CustomerLogin implements Serializable {
     @Column(name = "LAST_NAME", length = 32, nullable = false)
     private String lastName;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "CSLG_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "CSLG_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK", length = 255)
+    @Column(name = "CSLG_REMARK", length = 255)
     private String remark;
 
-    @Column(name = "PROFILE_IMAGE")
-    private Blob profileImage;
+    @Column(name = "CSLG_ACTIVE", nullable = false)
+    private Boolean active;
+
+    @Column(name = "CSLG_PROFILE_IMAGE")
+    @Lob
+    private byte[] profileImage;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CUSTOMER_LOGIN_STATUS_ID", nullable = false)
+    @JoinColumn(name = "CSLG_CSLS_ID", nullable = false)
     private CustomerLoginStatus customerLoginStatus;
 
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "customerLogin", optional = false)
@@ -128,11 +132,11 @@ public class CustomerLogin implements Serializable {
         this.remark = remark;
     }
 
-    public Blob getProfileImage() {
+    public byte[] getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(Blob profileImage) {
+    public void setProfileImage(byte[] profileImage) {
         this.profileImage = profileImage;
     }
 
@@ -150,5 +154,13 @@ public class CustomerLogin implements Serializable {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

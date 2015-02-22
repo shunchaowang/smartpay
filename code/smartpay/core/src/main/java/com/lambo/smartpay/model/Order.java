@@ -22,53 +22,56 @@ import java.util.Set;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "ORDER")
+@Table(name = "ORDERS")
 public class Order implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "ORDR_ID")
     private Long id;
 
-    @Column(name = "MERCHANT_NUMBER", length = 32, nullable = false)
+    @Column(name = "ORDR_MERCHANT_NUMBER", length = 32, nullable = false)
     private String merchantNumber;
 
-    @Column(name = "AMOUNT", nullable = false)
+    @Column(name = "ORDR_AMOUNT", nullable = false)
     private Float amount;
 
-    @Column(name = "GOODS_NAME", length = 128, nullable = false)
+    @Column(name = "ORDR_GOODS_NAME", length = 128, nullable = false)
     private String goodsName;
 
-    @Column(name = "GOODS_AMOUNT", length = 128, nullable = false)
+    @Column(name = "ORDR_GOODS_AMOUNT", length = 128, nullable = false)
     private String goodsAmount;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "ORDR_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "ORDR_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK")
+    @Column(name = "ORDR_REMARK")
     private String remark;
 
+    @Column(name = "ORDR_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "SITE_ID", nullable = false)
+    @JoinColumn(name = "ORDR_SITE_ID", nullable = false)
     private Site site;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "ORDER_STATUS_ID", nullable = false)
+    @JoinColumn(name = "ORDR_ORST_ID", nullable = false)
     private OrderStatus orderStatus;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CURRENCY_ID", nullable = false)
+    @JoinColumn(name = "ORDR_CRCY_ID", nullable = false)
     private Currency currency;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    @JoinColumn(name = "ORDR_CSTM_ID", nullable = false)
     private Customer customer;
 
     // set of order
@@ -211,5 +214,13 @@ public class Order implements Serializable {
 
     public void setRefunds(Set<Refund> refunds) {
         this.refunds = refunds;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

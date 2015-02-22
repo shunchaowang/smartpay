@@ -5,28 +5,39 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "REFUND_STATUS")
+@Table(name = "REFUND_STATUSES")
 public class RefundStatus implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "RFST_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 32, nullable = false)
+    @Column(name = "RFST_NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "RFST_DESCRIPTION", length = 255)
     private String description;
+
+    @Column(name = "RFST_ACTIVE", nullable = false)
+    private Boolean active;
+
+    @Column(name = "RFST_CODE", nullable = false)
+    private String code;
+
+    @OneToMany(mappedBy = "refundStatus")
+    private Set<Refund> refunds;
 
     public String getDescription() {
         return description;
@@ -50,5 +61,29 @@ public class RefundStatus implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Set<Refund> getRefunds() {
+        return refunds;
+    }
+
+    public void setRefunds(Set<Refund> refunds) {
+        this.refunds = refunds;
     }
 }

@@ -18,26 +18,32 @@ import java.util.Set;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "ROLE")
+@Table(name = "ROLES")
 public class Role implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "ROLE_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 64, nullable = false)
+    @Column(name = "ROLE_NAME", length = 64, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "ROLE_DESCRIPTION", length = 255)
     private String description;
 
+    @Column(name = "ROLE_ACTIVE", nullable = false)
+    private Boolean active;
+
+    @Column(name = "ROLE_CODE", nullable = false)
+    private String code;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "ROLE_PERMISSION_MAP",
-            joinColumns = {@JoinColumn(name = "ROLE_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "PERMISSION_ID", nullable = false, updatable = false)}
+    @JoinTable(name = "ROLE_PERMISSION_MAPPINGS",
+            joinColumns = {@JoinColumn(name = "RPMP_ROLE_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "RPMP_PRMS_ID", nullable = false, updatable = false)}
     )
     private Set<Permission> permissions;
 
@@ -82,5 +88,21 @@ public class Role implements Serializable {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

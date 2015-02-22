@@ -6,6 +6,8 @@ import com.lambo.smartpay.util.ResourceUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -194,6 +196,19 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
         Query query = createPaginatedQuery(criteria, pageNumber, pageSize);
 
+        return query.getResultList();
+    }
+
+    /**
+     * Find all records using JPA criteria builder.
+     *
+     * @param criteriaQuery the criteria with query root, where clause and order by
+     * @retrun List of the result objects
+     */
+    @Override
+    public List<T> findAllByCriteria(CriteriaQuery<T> criteriaQuery) {
+
+        TypedQuery<T> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
     }
 }

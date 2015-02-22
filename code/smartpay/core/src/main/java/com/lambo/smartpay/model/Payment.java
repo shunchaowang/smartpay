@@ -19,88 +19,91 @@ import java.util.Date;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "PAYMENT")
+@Table(name = "PAYMENTS")
 public class Payment implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "PYMT_ID")
     private Long id;
 
-    @Column(name = "AMOUNT", nullable = false)
+    @Column(name = "PYMT_AMOUNT", nullable = false)
     private Float amount;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "PYMT_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "PYMT_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "SUCCESS_TIME", nullable = false)
+    @Column(name = "PYMT_SUCCESS_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date successTime;
 
-    @Column(name = "REMARK", length = 255)
+    @Column(name = "PYMT_REMARK", length = 255)
     private String remark;
 
-    @Column(name = "BANK_NAME", length = 128, nullable = true)
+    @Column(name = "PYMT_ACTIVE", nullable = false)
+    private Boolean active;
+
+    @Column(name = "PYMT_BANK_NAME", length = 128, nullable = true)
     private String bankName;
 
-    @Column(name = "BANK_ACCOUNT_NUMBER", length = 128, nullable = false)
+    @Column(name = "PYMT_BANK_ACCOUNT_NUMBER", length = 128, nullable = false)
     private String bankAccountNumber;
 
-    @Column(name = "BANK_ACCOUNT_EXP_DATE", nullable = false)
+    @Column(name = "PYMT_BANK_ACCOUNT_EXP_DATE", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date bankAccountExpDate;
 
-    @Column(name = "BANK_TRANSACTION_NUMBER", length = 128, nullable = false)
+    @Column(name = "PYMT_BANK_TRANSACTION_NUMBER", length = 128, nullable = false)
     private String bankTransactionNumber;
 
-    @Column(name = "BANK_RETURN_CODE", length = 128, nullable = false)
+    @Column(name = "PYMT_BANK_RETURN_CODE", length = 128, nullable = false)
     private String bankReturnCode;
 
-    @Column(name = "BILL_FIRST_NAME", length = 32, nullable = false)
+    @Column(name = "PYMT_BILL_FIRST_NAME", length = 32, nullable = false)
     private String billFirstName;
 
-    @Column(name = "BILL_LAST_NAME", length = 32, nullable = false)
+    @Column(name = "PYMT_BILL_LAST_NAME", length = 32, nullable = false)
     private String billLastName;
 
-    @Column(name = "BILL_ADDRESS_1", length = 128, nullable = false)
+    @Column(name = "PYMT_BILL_ADDRESS_1", length = 128, nullable = false)
     private String billAddress1;
 
-    @Column(name = "BILL_ADDRESS_2", length = 128, nullable = true)
+    @Column(name = "PYMT_BILL_ADDRESS_2", length = 128, nullable = true)
     private String billAddress2;
 
-    @Column(name = "BILL_CITY", length = 128, nullable = false)
+    @Column(name = "PYMT_BILL_CITY", length = 128, nullable = false)
     private String billCity;
 
-    @Column(name = "BILL_STATE", length = 128, nullable = false)
+    @Column(name = "PYMT_BILL_STATE", length = 128, nullable = false)
     private String billState;
 
-    @Column(name = "BILL_ZIP_CODE", length = 128, nullable = false)
+    @Column(name = "PYMT_BILL_ZIP_CODE", length = 128, nullable = false)
     private String billZipCode;
 
-    @Column(name = "BILL_COUNTRY", length = 128, nullable = false)
+    @Column(name = "PYMT_BILL_COUNTRY", length = 128, nullable = false)
     private String billCountry;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "PAYMENT_STATUS_ID", nullable = false)
+    @JoinColumn(name = "PYMT_PYST_ID", nullable = false)
     private PaymentStatus paymentStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "PAYMENT_TYPE_ID", nullable = false)
+    @JoinColumn(name = "PYMT_PYTP_ID", nullable = false)
     private PaymentType paymentType;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "ORDER_ID", nullable = false)
+    @JoinColumn(name = "PYMT_ORDR_ID", nullable = false)
     private Order order;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CURRENCY_ID", nullable = false)
+    @JoinColumn(name = "PYMT_CRCY_ID", nullable = false)
     private Currency currency;
 
     public Long getId() {
@@ -285,5 +288,13 @@ public class Payment implements Serializable {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

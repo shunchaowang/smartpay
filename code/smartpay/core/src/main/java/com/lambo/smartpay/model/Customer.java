@@ -22,63 +22,66 @@ import java.util.Set;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "CUSTOMER")
+@Table(name = "CUSTOMERS")
 public class Customer implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "CSTM_ID")
     private Long id;
 
-    @Column(name = "FIRST_NAME", length = 32, nullable = false)
+    @Column(name = "CSTM_FIRST_NAME", length = 32, nullable = false)
     private String firstName;
 
-    @Column(name = "LAST_NAME", length = 32, nullable = false)
+    @Column(name = "CSTM_LAST_NAME", length = 32, nullable = false)
     private String lastName;
 
     @Column(name = "EMAIL", length = 32, nullable = false)
     private String email;
 
-    @Column(name = "ADDRESS_1", length = 128, nullable = false)
+    @Column(name = "CSTM_ADDRESS_1", length = 128, nullable = false)
     private String address1;
 
-    @Column(name = "ADDRESS_2", length = 128, nullable = false)
+    @Column(name = "CSTM_ADDRESS_2", length = 128, nullable = false)
     private String address2;
 
-    @Column(name = "CITY", length = 32, nullable = false)
+    @Column(name = "CSTM_CITY", length = 32, nullable = false)
     private String city;
 
     @Column(name = "STATE", length = 32, nullable = false)
     private String state;
 
-    @Column(name = "ZIP_CODE", length = 32, nullable = false)
+    @Column(name = "CSTM_ZIP_CODE", length = 32, nullable = false)
     private String zipCode;
 
-    @Column(name = "COUNTRY", length = 32, nullable = false)
+    @Column(name = "CSTM_COUNTRY", length = 32, nullable = false)
     private String country;
 
     @Column(name = "TEL", length = 32, nullable = false)
     private String tel;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "CSTM_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "CSTM_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK", length = 255)
+    @Column(name = "CSTM_REMARK", length = 255)
     private String remark;
 
+    @Column(name = "CSTM_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "CUSTOMER_STATUS_ID", nullable = false)
+    @JoinColumn(name = "CSTM_CSST_ID", nullable = false)
     private CustomerStatus customerStatus;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = true)
-    @JoinColumn(name = "CUSTOMER_LOGIN_ID", nullable = true)
+    @JoinColumn(name = "CSTM_CSLG_ID", nullable = true)
     private CustomerLogin customerLogin;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "customer", orphanRemoval = true)
@@ -220,5 +223,13 @@ public class Customer implements Serializable {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

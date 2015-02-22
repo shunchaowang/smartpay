@@ -1,5 +1,6 @@
 package com.lambo.smartpay.dao;
 
+import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -50,5 +51,12 @@ public interface GenericDao<T, PK extends Serializable> {
      * Find all records with pagination without parameters.
      * */
     List<T> findAll(String criteria, Integer pageNumber, Integer pageSize);
+
+    /**
+     * Find all records using JPA criteria builder.
+     * @param criteriaQuery the criteria with query root, where clause and order by
+     * @retrun List of the result objects
+     */
+    List<T> findAllByCriteria(CriteriaQuery<T> criteriaQuery);
 
 }

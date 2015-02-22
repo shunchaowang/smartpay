@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -23,63 +24,67 @@ import java.util.Set;
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "MERCHANT")
+@Table(name = "MERCHANTS")
 public class Merchant implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @Column(name = "MCHT_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 128, nullable = false)
+    @Column(name = "MCHT_NAME", length = 128, nullable = false)
     private String name;
 
-    @Column(name = "ADDRESS", length = 128)
+    @Column(name = "MCHT_ADDRESS", length = 128)
     private String address;
 
-    @Column(name = "CONTACT", length = 32)
+    @Column(name = "MCHT_CONTACT", length = 32)
     private String contact;
 
-    @Column(name = "TEL", length = 32)
+    @Column(name = "MCHT_TEL", length = 32)
     private String tel;
 
-    @Column(name = "EMAIL", length = 32)
+    @Column(name = "MCHT_EMAIL", length = 32)
     private String email;
 
-    @Column(name = "LOGO_IMAGE")
-    private Blob logoImage;
+    @Column(name = "MCHT_LOGO_IMAGE")
+    @Lob
+    private byte[] logoImage;
 
-    @Column(name = "CREATED_TIME", nullable = false)
+    @Column(name = "MCHT_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "UPDATED_TIME", nullable = false)
+    @Column(name = "MCHT_UPDATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "REMARK", length = 255)
+    @Column(name = "MCHT_REMARK", length = 255)
     private String remark;
 
+    @Column(name = "MCHT_ACTIVE", nullable = false)
+    private Boolean active;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "MERCHANT_STATUS_ID", nullable = false)
+    @JoinColumn(name = "MCHT_MCST_ID", nullable = false)
     private MerchantStatus merchantStatus;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "CREDENTIAL_ID", nullable = false)
+    @JoinColumn(name = "MCHT_CRDT_ID", nullable = false)
     private Credential credential;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "COMMISSION_FEE_ID", nullable = false)
+    @JoinColumn(name = "MCHT_FEE_COMMISSION_ID", nullable = false)
     private Fee commissionFee;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "RETURN_FEE_ID", nullable = false)
+    @JoinColumn(name = "MCHT_FEE_RETURN_ID", nullable = false)
     private Fee returnFee;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "ENCRYPTION_ID", nullable = false)
+    @JoinColumn(name = "MCHT_ENCR_ID", nullable = false)
     private Encryption encryption;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant", orphanRemoval = true)
@@ -139,11 +144,11 @@ public class Merchant implements Serializable {
         this.email = email;
     }
 
-    public Blob getLogoImage() {
+    public byte[] getLogoImage() {
         return logoImage;
     }
 
-    public void setLogoImage(Blob logoImage) {
+    public void setLogoImage(byte[] logoImage) {
         this.logoImage = logoImage;
     }
 
@@ -233,5 +238,13 @@ public class Merchant implements Serializable {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
