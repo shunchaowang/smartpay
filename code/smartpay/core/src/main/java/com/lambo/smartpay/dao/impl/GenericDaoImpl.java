@@ -2,6 +2,8 @@ package com.lambo.smartpay.dao.impl;
 
 import com.lambo.smartpay.dao.GenericDao;
 import com.lambo.smartpay.util.ResourceUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +17,8 @@ import java.util.Map;
 
 public abstract class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T, PK> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenericDaoImpl.class);
+
     @PersistenceContext
     protected EntityManager entityManager;
     private Class<T> type;
@@ -24,6 +28,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         Type t = getClass().getGenericSuperclass();
         ParameterizedType pt = (ParameterizedType) t;
         type = (Class<T>) pt.getActualTypeArguments()[0];
+        LOG.debug("Getting parameterized type " + type.getName());
     }
 
     @Override
@@ -68,6 +73,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             query.setParameter(i, args.get(i));
         }
 
+        LOG.debug("Returning positional parameter query string of count " + query.toString());
         return (Long) query.getSingleResult();
     }
 
@@ -85,6 +91,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             query.setParameter(key, args.get(key));
         }
 
+        LOG.debug("Returning named parameter query string of count " + query.toString());
         return (Long) query.getSingleResult();
     }
 
@@ -103,6 +110,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             query.setParameter(i, args.get(i));
         }
 
+        LOG.debug("Returning positional parameter query string of count " + query.toString());
         return query.getResultList();
     }
 
@@ -121,6 +129,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             query.setParameter(key, args.get(key));
         }
 
+        LOG.debug("Returning named parameter query string of count " + query.toString());
         return query.getResultList();
     }
 
@@ -133,6 +142,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             pageNumber = 1;
         }
 
+        LOG.debug("Offset of the query is " + (pageNumber - 1) * pageSize + " with pageNumber " + pageNumber +
+            " and pageSze " + pageSize);
         return (pageNumber - 1) * pageSize;
     }
 
@@ -146,6 +157,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         int firstResult = calculateFirstResult(pageNumber, pageSize);
 
         Query query = entityManager.createQuery(criteria).setFirstResult(firstResult).setMaxResults(pageSize);
+        LOG.debug("Returning paginated query " + query.toString());
         return query;
     }
 
@@ -163,6 +175,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             query.setParameter(i, args.get(i));
         }
 
+        LOG.debug("Returning paginated positional parameter query for all " + query.toString());
         return query.getResultList();
     }
 
@@ -180,6 +193,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         for (String key : args.keySet()) {
             query.setParameter(key, args.get(key));
         }
+
+        LOG.debug("Returning paginated named parameter query for all " + query.toString());
         return query.getResultList();
     }
 
@@ -194,6 +209,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     public List<T> findAll(String criteria, Integer pageNumber, Integer pageSize) {
 
         Query query = createPaginatedQuery(criteria, pageNumber, pageSize);
+
+        LOG.debug("Returning paginated string query for all " + query.toString());
 
         return query.getResultList();
     }

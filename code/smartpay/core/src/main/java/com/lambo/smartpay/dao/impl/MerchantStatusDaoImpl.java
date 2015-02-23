@@ -4,13 +4,14 @@ import com.lambo.smartpay.dao.MerchantStatusDao;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -23,6 +24,8 @@ import java.util.List;
 @Repository("merchantStatusDao")
 public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         implements MerchantStatusDao {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MerchantStatusDaoImpl.class);
 
     @Override
     public MerchantStatus findByName(String name) {
@@ -129,8 +132,7 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         String likeSearch = "%" + search + "%";
 
         // literal true expression
-        Expression<Boolean> trueExpression = builder.literal(true);
-        Predicate activePredicate = builder.equal(activePath, trueExpression);
+        Predicate activePredicate = builder.equal(activePath, true);
         Predicate namePredicate = builder.like(namePath, likeSearch);
         Predicate codePredicate = builder.like(codePath, likeSearch);
         Predicate descriptionPredicate = builder.like(descriptionPath, likeSearch);
@@ -140,7 +142,8 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         // if search is numeric, search against id
         if (StringUtils.isNumeric(search)) {
             Path<Long> idPath = root.get("id");
-            Predicate idPredicate = builder.equal(idPath, Long.valueOf(search));
+            // use jpa literal to create Expression
+            Predicate idPredicate = builder.equal(idPath, builder.literal(Long.valueOf(search)));
             orPredicate = builder.or(idPredicate, namePredicate, codePredicate, descriptionPredicate);
         }
 
