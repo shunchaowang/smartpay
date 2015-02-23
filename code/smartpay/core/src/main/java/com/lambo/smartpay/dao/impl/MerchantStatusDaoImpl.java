@@ -27,11 +27,18 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
 
     private static final Logger LOG = LoggerFactory.getLogger(MerchantStatusDaoImpl.class);
 
+    /**
+     * Find MerchantStatus by name.
+     * @param name the unique name of the MerchantStatus
+     * @return MerchantStatus with the name or null not found
+     * */
     @Override
     public MerchantStatus findByName(String name) {
 
         Query query = this.entityManager.createQuery("SELECT m FROM MerchantStatus m WHERE m.name = :name");
         query.setParameter("name", name);
+
+        LOG.debug("findByName is " + query.toString());
 
         List<MerchantStatus> merchantStatuses = query.getResultList();
         if (merchantStatuses != null && merchantStatuses.size() == 1) {
@@ -41,28 +48,32 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         return null;
     }
 
-    @Override
-    public List<MerchantStatus> getAll() {
-
-        Query query = this.entityManager.createQuery("SELECT m FROM MerchantStatus m");
-        List<MerchantStatus> merchantStatuses = query.getResultList();
-
-        if (merchantStatuses != null) {
-            return merchantStatuses;
-        }
-
-        return null;
-    }
+    /**
+     * Find all MerchantStatus.
+     * @return all MerchantStatus existing in the database
+     * */
+    //@Override
+//    public List<MerchantStatus> getAll() {
+//
+//        Query query = this.entityManager.createQuery("SELECT m FROM MerchantStatus m");
+//        List<MerchantStatus> merchantStatuses = query.getResultList();
+//
+//        if (merchantStatuses != null) {
+//            return merchantStatuses;
+//        }
+//
+//        return null;
+//    }
 
     /**
-     * Count the number of the record using search keyword against all attributes of MerchantStatus,
-     * including direct many to one relationships..
-     *
-     * @param search the keyword to search, eg. m.name LIKE *lambo*, the space needs to be trimmed before passing
+     * Count the number of all MerchantStatus.
+     * @param search the keyword to search, eg. m.name LIKE *lambo*
+     * @param activeFlag indicates all, active or archived,
+     *                   null means all, true means active and false means archived.
      * @return count of the result
-     */
+     * */
     @Override
-    public Long countByAdHocSearch(String search) {
+    public Long countByAdHocSearch(String search, Boolean activeFlag) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
@@ -71,26 +82,37 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
 
         Predicate predicate = formulatePredicate(builder, root, search);
 
+        if (activeFlag != null) {
+            // set active Predicate
+            // literal true expression
+            Path<Boolean> activePath = root.get("active");
+            Predicate activePredicate = builder.equal(activePath, activeFlag);
+
+            predicate = builder.and(predicate, activePredicate);
+        }
+
         query.where(predicate);
 
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
+        LOG.debug("countByadHocSearch query is " + query.toString());
         return super.countAllByCriteria(typedQuery);
     }
 
     /**
-     * Find all records using search keyword against all attributes of MerchantStatus,
-     * including direct many to one relationships.
-     *
-     * @param search   keyword to search eg. m.name LIKE *lambo*
-     * @param start    the offset of the result list
-     * @param length   total count of the result list
-     * @param order    which column to order the result, including the direct relationship
+     * Find all MerchantStatus.
+     * @param search keyword to search eg. m.name LIKE *lambo*
+     * @param start the offset of the result list
+     * @param length total count of the result list
+     * @param order which column to order the result, including the direct relationship
      * @param orderDir direction of the order, ASC or DESC
+     * @param activeFlag indicates all, active or archived,
+     *                   null means all, true means active and false means archived.
      * @return List of MerchantStatus matching search, starting from start offest and max of length
-     */
+     * */
     @Override
     public List<MerchantStatus> findByAdHocSearch(String search, Integer start, Integer length,
-                                                  String order, ResourceUtil.JpaOrderDir orderDir) {
+                                                  String order, ResourceUtil.JpaOrderDir orderDir,
+                                                  Boolean activeFlag) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<MerchantStatus> query = builder.createQuery(MerchantStatus.class);
@@ -98,6 +120,16 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         query.select(root);
 
         Predicate predicate = formulatePredicate(builder, root, search);
+
+        if (activeFlag != null) {
+            // set active Predicate
+            // literal true expression
+            Path<Boolean> activePath = root.get("active");
+            Predicate activePredicate = builder.equal(activePath, activeFlag);
+
+            predicate = builder.and(predicate, activePredicate);
+        }
+
         query.where(predicate);
 
         // formulate order by
@@ -111,7 +143,20 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         typedQuery.setFirstResult(start);
         typedQuery.setMaxResults(length);
 
+        LOG.debug("findByAdHocSearch query is " + query.toString());
         return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
+     * Active toggle of the MerchantStatus, active from true to false and vice versa.
+     *
+     * @param id         identifier of the MerchantStatus
+     * @param activeFlag true to active and false to deactivate
+     * @ the archived MerchantStatus
+     */
+    @Override
+    public MerchantStatus switchMerchantStatus(Long id, boolean activeFlag) {
+        return null;
     }
 
     /**
@@ -121,18 +166,16 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
      * */
     private Predicate formulatePredicate(CriteriaBuilder builder, Root<MerchantStatus> root, String search) {
 
-        // get all paths for all attributes
+        // get all paths for all attributes except active
         Path<String> namePath = root.get("name");
         Path<String> codePath = root.get("code");
         Path<String> descriptionPath = root.get("description");
-        Path<Boolean> activePath = root.get("active");
 
         // formulate all predicates
         // String pattern matching with wildcards
         String likeSearch = "%" + search + "%";
 
-        // literal true expression
-        Predicate activePredicate = builder.equal(activePath, true);
+
         Predicate namePredicate = builder.like(namePath, likeSearch);
         Predicate codePredicate = builder.like(codePath, likeSearch);
         Predicate descriptionPredicate = builder.like(descriptionPath, likeSearch);
@@ -147,9 +190,8 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
             orPredicate = builder.or(idPredicate, namePredicate, codePredicate, descriptionPredicate);
         }
 
-        Predicate andPredicate = builder.and(activePredicate, orPredicate);
-
-        return andPredicate;
+        LOG.debug("Formulated jpa predicate is " + orPredicate.toString());
+        return orPredicate;
     }
 
     /**
@@ -166,7 +208,6 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         Path<String> namePath = root.get("name");
         Path<String> codePath = root.get("code");
         Path<String> descriptionPath = root.get("description");
-        Path<Boolean> activePath = root.get("active");
 
         // default is ORDER BY id DESC
         Order orderBy = builder.desc(idPath);
@@ -180,8 +221,6 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
                     orderBy = builder.asc(descriptionPath);
                 } else if (order.equals("code")) {
                     orderBy = builder.asc(codePath);
-                } else if (order.equals("active")) {
-                    orderBy = builder.asc(activePath);
                 }
                 break;
 
@@ -193,8 +232,6 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
                     orderBy = builder.desc(descriptionPath);
                 } else if (order.equals("code")) {
                     orderBy = builder.desc(codePath);
-                } else if (order.equals("active")) {
-                    orderBy = builder.desc(activePath);
                 }
                 break;
 
@@ -206,12 +243,11 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
                     orderBy = builder.desc(descriptionPath);
                 } else if (order.equals("code")) {
                     orderBy = builder.desc(codePath);
-                } else if (order.equals("active")) {
-                    orderBy = builder.desc(activePath);
                 }
                 break;
         }
 
+        LOG.debug("Formulated order by clause is " + orderBy.toString());
         return orderBy;
     }
 }

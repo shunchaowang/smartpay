@@ -12,10 +12,20 @@ import org.springframework.stereotype.Service;
  * Created by swang on 2/19/2015.
  */
 @Service("merchantStatusService")
-public class MerchantStatusServiceImpl extends GenericDaoImpl<MerchantStatus, Long> implements MerchantStatusService {
+public class MerchantStatusServiceImpl implements MerchantStatusService {
 
     @Autowired
     private MerchantStatusDao merchantStatusDao;
+
+    @Override
+    public MerchantStatus create(MerchantStatus merchantStatus) {
+        return null;
+    }
+
+    @Override
+    public MerchantStatus update(MerchantStatus merchantStatus) {
+        return null;
+    }
 
     @Override
     public MerchantStatus get(String name) {
@@ -37,7 +47,7 @@ public class MerchantStatusServiceImpl extends GenericDaoImpl<MerchantStatus, Lo
             return false;
         }
 
-        super.delete(merchantStatus.getId());
+        merchantStatusDao.delete(merchantStatus.getId());
 
         return true;
     }

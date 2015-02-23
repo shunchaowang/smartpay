@@ -16,23 +16,35 @@ public interface MerchantStatusDao extends GenericDao<MerchantStatus, Long> {
     MerchantStatus findByName(String name);
 
     /**
-     * Count the number of the record using search keyword against all attributes of MerchantStatus,
-     * including direct many to one relationships..
+     * Count the number of all MerchantStatus.
      * @param search the keyword to search, eg. m.name LIKE *lambo*
+     * @param activeFlag indicates all, active or archived,
+     *                   null means all, true means active and false means archived.
      * @return count of the result
      * */
-    Long countByAdHocSearch(String search);
+    public Long countByAdHocSearch(String search, Boolean activeFlag);
 
     /**
-     * Find all records using search keyword against all attributes of MerchantStatus,
-     * including direct many to one relationships.
+     * Find all MerchantStatus.
      * @param search keyword to search eg. m.name LIKE *lambo*
      * @param start the offset of the result list
      * @param length total count of the result list
      * @param order which column to order the result, including the direct relationship
      * @param orderDir direction of the order, ASC or DESC
+     * @param activeFlag indicates all, active or archived,
+     *                   null means all, true means active and false means archived.
      * @return List of MerchantStatus matching search, starting from start offest and max of length
      * */
-    List<MerchantStatus> findByAdHocSearch(String search, Integer start, Integer length,
-                                           String order, ResourceUtil.JpaOrderDir orderDir);
+    public List<MerchantStatus> findByAdHocSearch(String search, Integer start, Integer length,
+                                                  String order, ResourceUtil.JpaOrderDir orderDir,
+                                                  Boolean activeFlag);
+
+    /**
+     * Active toggle of the MerchantStatus, active from true to false and vice versa.
+     * @param id identifier of the MerchantStatus
+     * @param activeFlag true to active and false to deactivate
+     * @ the archived MerchantStatus
+     * */
+    public MerchantStatus switchMerchantStatus(Long id, boolean activeFlag);
+
 }

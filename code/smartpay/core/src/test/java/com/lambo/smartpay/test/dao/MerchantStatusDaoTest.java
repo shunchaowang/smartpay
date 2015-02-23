@@ -92,13 +92,26 @@ public class MerchantStatusDaoTest {
             merchantStatusDao.create(merchantStatus);
         }
 
-        Long countByAdHoc = merchantStatusDao.countByAdHocSearch("ad hoc");
-        assertEquals(new Long(3), countByAdHoc);
+        // create one with active is false
+        MerchantStatus merchantStatus = new MerchantStatus();
+        merchantStatus.setName("ad hoc " + 3);
+        merchantStatus.setCode("00" + 3);
+        merchantStatus.setActive(false);
+        merchantStatusDao.create(merchantStatus);
 
-        Long countByX = merchantStatusDao.countByAdHocSearch("X");
+        Long countByAdHoc = merchantStatusDao.countByAdHocSearch("ad hoc", null);
+        assertEquals(new Long(4), countByAdHoc);
+
+        Long countActiveByAdHoc = merchantStatusDao.countByAdHocSearch("ad hoc", true);
+        assertEquals(new Long(3), countActiveByAdHoc);
+
+        Long countArchiveByAdHoc = merchantStatusDao.countByAdHocSearch("ad hoc", false);
+        assertEquals(new Long(1), countArchiveByAdHoc);
+
+        Long countByX = merchantStatusDao.countByAdHocSearch("X", null);
         assertEquals(new Long(0), countByX);
 
-        Long countById = merchantStatusDao.countByAdHocSearch("1");
+        Long countById = merchantStatusDao.countByAdHocSearch("1", null);
         assertNotNull(countById);
     }
 
@@ -116,30 +129,50 @@ public class MerchantStatusDaoTest {
             merchantStatusDao.create(merchantStatus);
         }
 
+        // create one with active is false
+        MerchantStatus merchantStatus = new MerchantStatus();
+        merchantStatus.setName("ad hoc " + 3);
+        merchantStatus.setCode("00" + 3);
+        merchantStatus.setActive(false);
+        merchantStatusDao.create(merchantStatus);
+
         // testing order asc
         List<MerchantStatus> statuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC);
-        assertEquals(3, statuses.size());
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                        null);
+        assertEquals(4, statuses.size());
 
         MerchantStatus status = statuses.get(0);
         assertNotNull(status);
         assertEquals("000", status.getCode());
 
+        List<MerchantStatus> activeStatuses =
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                        true);
+        assertEquals(3, activeStatuses.size());
+
+        List<MerchantStatus> archivedStatuses =
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                        false);
+        assertEquals(1, archivedStatuses.size());
+
+
         // testing order desc
-        statuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.DESC);
-        assertEquals(3, statuses.size());
+        statuses = merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id",
+                        ResourceUtil.JpaOrderDir.DESC, null);
+        assertEquals(4, statuses.size());
 
         status = statuses.get(0);
         assertNotNull(status);
-        assertEquals("002", status.getCode());
+        assertEquals("003", status.getCode());
 
-        statuses = merchantStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC);
+        statuses = merchantStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                null);
         assertNotNull(statuses);
         assertEquals(0, statuses.size());
 
         List<MerchantStatus> findById =
-                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC);
+                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC, null);
         assertNotNull(findById);
     }
 }

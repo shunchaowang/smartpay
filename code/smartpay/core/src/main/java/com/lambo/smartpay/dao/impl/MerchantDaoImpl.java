@@ -17,6 +17,10 @@ import java.util.Map;
 @Repository("merchantDao")
 public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements MerchantDao {
 
+    @Override
+    public List<Merchant> getAll() {
+        return null;
+    }
 
     /**
      * Count all record.
