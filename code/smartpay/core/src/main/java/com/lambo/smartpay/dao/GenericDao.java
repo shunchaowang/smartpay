@@ -19,37 +19,37 @@ public interface GenericDao<T, PK extends Serializable> {
 
     /**
      * Counts the record using positional parameters.
-     * */
+     */
     Long count(String criteria, List<Object> args);
 
     /**
      * Counts the record using name-value-pair parameters.
-     * */
+     */
     Long count(String criteria, Map<String, Object> args);
 
     /**
      * Find all records using positional parameters.
-     * */
+     */
     List<T> findAll(String criteria, List<Object> args);
 
     /**
      * Find all records using name-value-pair.
-     * */
+     */
     List<T> findAll(String criteria, Map<String, Object> args);
 
     /**
      * Find all records using positional parameters with pagination.
-     * */
+     */
     List<T> findAll(String criteria, List<Object> args, Integer pageNumber, Integer pageSize);
 
     /**
      * Find all records using name-value-pair with pagination.
-     * */
+     */
     List<T> findAll(String criteria, Map<String, Object> args, Integer pageNumber, Integer pageSize);
 
     /**
      * Find all records with pagination without parameters.
-     * */
+     */
     List<T> findAll(String criteria, Integer pageNumber, Integer pageSize);
 
     /**

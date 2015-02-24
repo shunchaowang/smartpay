@@ -2,6 +2,7 @@ package com.lambo.smartpay.test.dao;
 
 import com.lambo.smartpay.config.AppConfig;
 import com.lambo.smartpay.dao.MerchantStatusDao;
+import com.lambo.smartpay.exception.EntityNotFoundException;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.junit.Test;
@@ -174,5 +175,40 @@ public class MerchantStatusDaoTest {
         List<MerchantStatus> findById =
                 merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC, null);
         assertNotNull(findById);
+    }
+
+    @Test
+    @Transactional
+    public void testSwitchMerchantStatus() {
+
+        LOG.info("Testing switchMerchantStatus.");
+        MerchantStatus merchantStatus = new MerchantStatus();
+        merchantStatus.setName("switch");
+        merchantStatus.setCode("switch");
+        merchantStatus.setActive(true);
+        merchantStatus = merchantStatusDao.create(merchantStatus);
+        assertEquals(true, merchantStatus.getActive());
+
+        try {
+            merchantStatus = merchantStatusDao.switchMerchantStatus(merchantStatus.getId(), false);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assertEquals(false, merchantStatus.getActive());
+
+        try {
+            merchantStatus = merchantStatusDao.switchMerchantStatus(merchantStatus.getId(), false);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
+        assertEquals(false, merchantStatus.getActive());
+
+        try {
+            merchantStatus = merchantStatusDao.switchMerchantStatus(merchantStatus.getId(), true);
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+        }
+        assertEquals(true, merchantStatus.getActive());
     }
 }

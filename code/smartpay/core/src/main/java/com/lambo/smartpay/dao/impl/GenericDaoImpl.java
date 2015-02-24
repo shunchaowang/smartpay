@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,7 +30,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         Type t = getClass().getGenericSuperclass();
         ParameterizedType pt = (ParameterizedType) t;
         type = (Class<T>) pt.getActualTypeArguments()[0];
-        LOG.debug("Getting parameterized type " + type.getName());
+        LOG.debug("Getting generic type parameter " + type.getName());
     }
 
     @Override
@@ -76,7 +75,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
      */
     @Override
     public Long count(String criteria, List<Object> args) {
-        Query query = entityManager.createQuery(criteria);
+        TypedQuery<T> query = entityManager.createQuery(criteria, type);
 
         // set positional params
         for (int i = 0; i < args.size(); i++) {
@@ -96,7 +95,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public Long count(String criteria, Map<String, Object> args) {
 
-        Query query = entityManager.createQuery(criteria);
+        TypedQuery<T> query = entityManager.createQuery(criteria, type);
         for (String key : args.keySet()) {
             query.setParameter(key, args.get(key));
         }
@@ -114,13 +113,14 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public List<T> findAll(String criteria, List<Object> args) {
 
-        Query query = entityManager.createQuery(criteria);
+        TypedQuery<T> query = entityManager.createQuery(criteria, type);
 
         for (int i = 0; i < args.size(); i++) {
             query.setParameter(i, args.get(i));
         }
 
         LOG.debug("Returning positional parameter query string of count " + query.toString());
+
         return query.getResultList();
     }
 
@@ -133,7 +133,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public List<T> findAll(String criteria, Map<String, Object> args) {
 
-        Query query = entityManager.createQuery(criteria);
+        TypedQuery<T> query = entityManager.createQuery(criteria, type);
 
         for (String key : args.keySet()) {
             query.setParameter(key, args.get(key));
@@ -157,7 +157,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         return (pageNumber - 1) * pageSize;
     }
 
-    private Query createPaginatedQuery(String criteria, Integer pageNumber, Integer pageSize) {
+    private TypedQuery<T> createPaginatedQuery(String criteria, Integer pageNumber, Integer pageSize) {
 
         // if pageSize is null, set it to default value
         if (pageSize == null) {
@@ -166,7 +166,9 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
         int firstResult = calculateFirstResult(pageNumber, pageSize);
 
-        Query query = entityManager.createQuery(criteria).setFirstResult(firstResult).setMaxResults(pageSize);
+        TypedQuery<T> query = entityManager.createQuery(criteria, type).
+                setFirstResult(firstResult).
+                setMaxResults(pageSize);
         LOG.debug("Returning paginated query " + query.toString());
         return query;
     }
@@ -180,7 +182,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public List<T> findAll(String criteria, List<Object> args, Integer pageNumber, Integer pageSize) {
 
-        Query query = createPaginatedQuery(criteria, pageNumber, pageSize);
+        TypedQuery<T> query = createPaginatedQuery(criteria, pageNumber, pageSize);
         for (int i = 0; i < args.size(); i++) {
             query.setParameter(i, args.get(i));
         }
@@ -198,7 +200,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public List<T> findAll(String criteria, Map<String, Object> args, Integer pageNumber, Integer pageSize) {
 
-        Query query = createPaginatedQuery(criteria, pageNumber, pageSize);
+        TypedQuery<T> query = createPaginatedQuery(criteria, pageNumber, pageSize);
 
         for (String key : args.keySet()) {
             query.setParameter(key, args.get(key));
@@ -218,7 +220,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public List<T> findAll(String criteria, Integer pageNumber, Integer pageSize) {
 
-        Query query = createPaginatedQuery(criteria, pageNumber, pageSize);
+        TypedQuery<T> query = createPaginatedQuery(criteria, pageNumber, pageSize);
 
         LOG.debug("Returning paginated string query for all " + query.toString());
 
