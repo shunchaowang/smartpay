@@ -177,6 +177,7 @@ public class MerchantStatusDaoTest {
         assertNotNull(findById);
     }
 
+    /*
     @Test
     @Transactional
     public void testSwitchMerchantStatus() {
@@ -211,4 +212,5 @@ public class MerchantStatusDaoTest {
         }
         assertEquals(true, merchantStatus.getActive());
     }
+    */
 }

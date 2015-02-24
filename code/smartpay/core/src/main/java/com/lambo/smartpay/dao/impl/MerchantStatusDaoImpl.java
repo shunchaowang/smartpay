@@ -1,7 +1,6 @@
 package com.lambo.smartpay.dao.impl;
 
 import com.lambo.smartpay.dao.MerchantStatusDao;
-import com.lambo.smartpay.exception.EntityNotFoundException;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -129,31 +128,6 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
 
         LOG.debug("findByAdHocSearch query is " + query.toString());
         return super.findAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Active toggle of the MerchantStatus, active from true to false and vice versa.
-     *
-     * @param id         identifier of the MerchantStatus
-     * @param activeFlag true to active and false to deactivate
-     * @ the archived MerchantStatus
-     */
-    @Override
-    public MerchantStatus switchMerchantStatus(Long id, boolean activeFlag) throws EntityNotFoundException {
-
-        // get MerchantStatus by id
-        MerchantStatus merchantStatus = this.get(id);
-
-        if (merchantStatus == null) {
-            throw new EntityNotFoundException("Cannot find MerchantStatus " + id);
-        }
-        // check if MerchantStatus.active is activeFlag, return if so
-        if (merchantStatus.getActive() == activeFlag)  {
-            return merchantStatus;
-        }
-        // set MerchantStatus to be activeFlag and merge
-        merchantStatus.setActive(activeFlag);
-        return this.update(merchantStatus);
     }
 
     /**

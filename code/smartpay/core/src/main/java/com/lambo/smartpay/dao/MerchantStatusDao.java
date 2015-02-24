@@ -1,6 +1,5 @@
 package com.lambo.smartpay.dao;
 
-import com.lambo.smartpay.exception.EntityNotFoundException;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
 
@@ -39,13 +38,5 @@ public interface MerchantStatusDao extends GenericDao<MerchantStatus, Long> {
     public List<MerchantStatus> findByAdHocSearch(String search, Integer start, Integer length,
                                                   String order, ResourceUtil.JpaOrderDir orderDir,
                                                   Boolean activeFlag);
-
-    /**
-     * Active toggle of the MerchantStatus, active from true to false and vice versa.
-     * @param id identifier of the MerchantStatus
-     * @param activeFlag true to active and false to deactivate
-     * @ the archived MerchantStatus
-     */
-    public MerchantStatus switchMerchantStatus(Long id, boolean activeFlag) throws EntityNotFoundException;
 
 }
