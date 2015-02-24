@@ -12,66 +12,50 @@ import java.util.List;
 public interface MerchantDao extends GenericDao<Merchant, Long> {
 
     /**
-     * Count number of Merchant matching the search.
-     * @param search    search keyword.
-     * @param activeFlag    specify active or not.
-     * @return  count of the result.
+     * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel, email and name
+     * of MerchantStatus.
+     *
+     * @param search     search keyword.
+     * @param activeFlag specify active or not.
+     * @return count of the result.
      */
     public Long countByAdHocSearch(String search, Boolean activeFlag);
 
     /**
-     * Find all Merchant matching the search.
-     * @param search    search keyword.
-     * @param start     start position for pagination.
-     * @param length    result size fo pagination.
-     * @param order     ordered field.
-     * @param orderDir  ordered direction.
-     * @param activeFlag    active or not.
-     * @return  ordered list of the Merchant.
+     * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email and name
+     * of MerchantStatus.
+     *
+     * @param search     search keyword.
+     * @param start      start position for pagination.
+     * @param length     result size fo pagination.
+     * @param order      ordered field.
+     * @param orderDir   ordered direction.
+     * @param activeFlag active or not.
+     * @return ordered list of the Merchant.
      */
     public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length,
                                             String order, ResourceUtil.JpaOrderDir orderDir,
                                             Boolean activeFlag);
 
     /**
-     * Count Merchant by criteria, created time range and updated time range.
-     * @param merchant  contains criteria if the field is not null or empty.
+     * Count Merchant by criteria, created time range.
+     * Support id, name, MerchantStatus code and createdTime range.
+     *
+     * @param merchant         contains criteria if the field is not null or empty.
      * @param createdTimeBegin is the beginning of the created time range if not null.
-     * @param createdTimeEnd is the ending of the created time range if not null.
+     * @param createdTimeEnd   is the ending of the created time range if not null.
      * @return number of the Merchant matching search.
      */
     public Long countByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd);
 
     /**
-     * Find Merchant by criteria, created time range and updated time range.
-     * @param merchant  contains criteria if the field is not null or empty.
+     * Find Merchant by criteria, created time range.
+     * Support id, name, active, MerchantStatus code and createdTime range.
+     *
+     * @param merchant         contains criteria if the field is not null or empty.
      * @param createdTimeBegin is the beginning of the created time range if not null.
-     * @param createdTimeEnd is the ending of the created time range if not null.
+     * @param createdTimeEnd   is the ending of the created time range if not null.
      * @return List of the Merchant matching search ordered by id without pagination.
      */
     public List<Merchant> findByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd);
-
-    //TODO tbd
-    /**
-     * Count all record.
-     *
-     * @param merchant object with criteria for basic attributes.
-     */
-    public Long countByMerchant(Merchant merchant);
-
-    /**
-     * Find all records with pagination in order.
-     *
-     * @param merchant object with criteria for basic attributes.
-     */
-    public List<Merchant> findAllByMerchant(Merchant merchant, Integer pageNumber, Integer pageSize,
-                                            String order, String orderDir);
-
-    /**
-     * Find all records with pagination without order.
-     *
-     * @param merchant object with criteria for basic attributes.
-     */
-    public List<Merchant> findAllByMerchant(Merchant merchant, Integer pageNumber, Integer pageSize);
-
 }

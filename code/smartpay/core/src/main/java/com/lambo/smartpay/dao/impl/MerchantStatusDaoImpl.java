@@ -76,7 +76,7 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         query.where(predicate);
 
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        LOG.debug("countByAdHocSearch query is " + query.toString());
+        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
         return super.countAllByCriteria(typedQuery);
     }
 
@@ -125,7 +125,7 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         typedQuery.setFirstResult(start);
         typedQuery.setMaxResults(length);
 
-        LOG.debug("findByAdHocSearch query is " + query.toString());
+        LOG.debug("findByAdHocSearch query is " + typedQuery.toString());
         return super.findAllByCriteria(typedQuery);
     }
 

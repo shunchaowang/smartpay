@@ -8,17 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by swang on 2/19/2015.
@@ -38,7 +36,27 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      */
     @Override
     public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        return null;
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(builder.count(root));
+
+        Predicate predicate = formulatePredicate(builder, root, search);
+
+        if (activeFlag != null) {
+            // set active Predicate
+            // literal true expression
+            Path<Boolean> activePath = root.get("active");
+            Predicate activePredicate = builder.equal(activePath, activeFlag);
+
+            predicate = builder.and(predicate, activePredicate);
+        }
+
+        query.where(predicate);
+        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
+        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.countAllByCriteria(typedQuery);
     }
 
     /**
@@ -57,7 +75,36 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length,
                                             String order, ResourceUtil.JpaOrderDir orderDir,
                                             Boolean activeFlag) {
-        return null;
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, search);
+
+        if (activeFlag != null) {
+            // set active Predicate
+            // literal true expression
+            Path<Boolean> activePath = root.get("active");
+            Predicate activePredicate = builder.equal(activePath, activeFlag);
+
+            predicate = builder.and(predicate, activePredicate);
+        }
+
+        query.where(predicate);
+
+        // formulate order by
+        Order orderBy = formulateOrderBy(builder, root, order, orderDir);
+        query.orderBy(orderBy);
+
+        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
+
+        LOG.debug("findByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
     }
 
     /**
@@ -71,12 +118,23 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      */
     @Override
     public Long countByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd) {
-        return null;
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(builder.count(root));
+
+        Predicate predicate = formulatePredicate(builder, root, merchant, createdTimeBegin, createdTimeEnd);
+
+        query.where(predicate);
+        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
+        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.countAllByCriteria(typedQuery);
     }
 
     /**
      * Find Merchant by criteria, created time range.
-     * Support id, name, MerchantStatus code and createdTime range.
+     * Support id, name, active, MerchantStatus code and createdTime range.
      *
      * @param merchant         contains criteria if the field is not null or empty.
      * @param createdTimeBegin is the beginning of the created time range if not null.
@@ -85,15 +143,31 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      */
     @Override
     public List<Merchant> findByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd) {
-        return null;
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, merchant, createdTimeBegin, createdTimeEnd);
+
+        query.where(predicate);
+
+        // default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
     }
 
     /**
      * Formulate JPA or Predicate for CriteriaQuery.
      * Supports name, contact, tel, email and name of MerchantStatus.
+     *
      * @param builder is the JPA CriteriaBuilder.
-     * @param root is the root of the CriteriaQuery.
-     * @param search is the search keyword.
+     * @param root    is the root of the CriteriaQuery.
+     * @param search  is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
     private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, String search) {
@@ -115,7 +189,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         Predicate emailPredicate = builder.like(emailPath, likeSearch);
         Predicate merchantStatusPredicate = builder.like(merchantStatusPath, likeSearch);
 
-        Predicate predicate = builder.or(namePredicate, contactPredicate, telPredicate, emailPredicate, merchantStatusPredicate);
+        Predicate predicate = builder.or(namePredicate, contactPredicate, telPredicate,
+                emailPredicate, merchantStatusPredicate);
 
         // we don't want to have wildcard search on id actually
         // create id predicate expression of search is numeric
@@ -132,12 +207,13 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA and Predicate for CriteriaQuery.
-     * Supports order by id, name, code of MerchantStatus and range of createdTime.
-     * @param builder is the JPA CriteriaBuilder.
-     * @param root is the root of the CriteriaQuery.
-     * @param merchant is the search keyword.
+     * Support id, name, active, MerchantStatus code and createdTime range.
+     *
+     * @param builder          is the JPA CriteriaBuilder.
+     * @param root             is the root of the CriteriaQuery.
+     * @param merchant         is the search keyword.
      * @param createdTimeBegin not null, beginning of time range.
-     * @param createdTimeEnd not null, ending of time range.
+     * @param createdTimeEnd   not null, ending of time range.
      * @return JPA Predicate used by CriteriaQuery.
      */
     private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, Merchant merchant,
@@ -163,6 +239,11 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
                     builder.literal("%" + merchant.getName() + "%")));
         }
 
+        if (merchant.getActive() != null) {
+            predicate = builder.and(predicate,
+                    builder.equal(root.get("active"), builder.literal(merchant.getActive())));
+        }
+
         // check Merchant Status code
         if (merchant.getMerchantStatus() != null &&
                 StringUtils.isNotBlank(merchant.getMerchantStatus().getCode())) {
@@ -178,9 +259,10 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA Order for CriteriaQuery.
-     * @param builder is the JPA CriteriaBuilder.
-     * @param root is the root of the CriteriaQuery.
-     * @param order is the field name for the order.
+     *
+     * @param builder  is the JPA CriteriaBuilder.
+     * @param root     is the root of the CriteriaQuery.
+     * @param order    is the field name for the order.
      * @param orderDir is the order direction.
      * @return JPA Order for the CriteriaQuery.
      */
@@ -260,163 +342,5 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
         LOG.debug("Formulated order by clause is " + orderBy.toString());
         return orderBy;
-    }
-
-    //TODO tbd
-
-    /**
-     * Count all record.
-     *
-     * @param merchant object with criteria.
-     */
-    @Override
-    public Long countByMerchant(Merchant merchant) {
-
-        String jpql = "SELECT COUNT(m.id) FROM Merchant m";
-
-        String formulateJPQL = formulateWhere(jpql, merchant);
-        Map<String, Object> formulateParams = foumulateParams(merchant);
-
-        return super.count(formulateJPQL, formulateParams);
-    }
-
-    /**
-     * Find all records with pagination in order.
-     *
-     * @param merchant   object with criteria for basic attributes.
-     * @param pageNumber
-     * @param pageSize
-     */
-    @Override
-    public List<Merchant>
-    findAllByMerchant(Merchant merchant, Integer pageNumber, Integer pageSize, String order, String orderDir) {
-
-        String jpql = "SELECT m FROM Merchant m";
-        String jpqlWithWhere = formulateWhere(jpql, merchant);
-        Map<String, Object> formulateParams = foumulateParams(merchant);
-        String jpqlWithOrder = formulateOrderBy(jpqlWithWhere, order, orderDir);
-
-        return super.findAll(jpqlWithOrder, formulateParams, pageNumber, pageSize);
-    }
-
-    /**
-     * Find all records with pagination in order.
-     *
-     * @param merchant   object with criteria for basic attributes.
-     * @param pageNumber
-     * @param pageSize
-     */
-    @Override
-    public List<Merchant>
-    findAllByMerchant(Merchant merchant, Integer pageNumber, Integer pageSize) {
-
-        String jpql = "SELECT m FROM Merchant m";
-        String jpqlWithWhere = formulateWhere(jpql, merchant);
-        Map<String, Object> formulateParams = foumulateParams(merchant);
-
-        return super.findAll(jpqlWithWhere, formulateParams, pageNumber, pageSize);
-    }
-
-    /**
-     * Formulate jpql with named parameters.
-     *
-     * @param jpql     initial query language
-     * @param merchant all query criteria
-     * @return a jqpl string like SELECT m FROM Merchant m WHERE m.name = :name AND m.description = :description
-     * ORDER BY :order :direction
-     */
-    private String formulateWhere(String jpql, Merchant merchant) {
-
-        List<String> whereClause = new ArrayList<String>();
-
-        // iterate all basic attributes of merchant to put the content in the clause if present
-        if (StringUtils.isNotBlank(merchant.getName())) {
-            whereClause.add("m.name LIKE :name");
-        }
-        if (StringUtils.isNotBlank(merchant.getAddress())) {
-            whereClause.add("m.address LIKE :address");
-        }
-        if (StringUtils.isNotBlank(merchant.getContact())) {
-            whereClause.add("m.contact LIKE :contact");
-        }
-        if (StringUtils.isNotBlank(merchant.getTel())) {
-            whereClause.add("m.tel LIKE :tel");
-        }
-        if (StringUtils.isNotBlank(merchant.getEmail())) {
-            whereClause.add("m.email LIKE :email");
-        }
-
-        if (StringUtils.isNotBlank(merchant.getRemark())) {
-            whereClause.add("m.remark LIKE :remark");
-        }
-
-        if (whereClause.size() > 0) {
-            jpql += " WHERE " + StringUtils.join(whereClause, " and ");
-        }
-
-        jpql += " ORDER BY m.number DESC";
-        return jpql;
-    }
-
-    private String formulateOrderBy(String jpql, String order, String orderDir) {
-
-        String result = jpql + " ORDER BY m.";
-        // check if order is the attribute of Merchant
-        Field[] fields = Merchant.class.getFields();
-        //List<Field> fieldList = Arrays.asList(fields);
-        List<String> fieldNameList = new ArrayList<String>();
-        for (int i = 0; i < fields.length; i++) {
-            fieldNameList.add(fields[i].getName());
-        }
-
-        // use number as default if order is not any name of the attributes
-        if (fieldNameList.contains(order)) {
-            result += order;
-        } else {
-            result += "id";
-        }
-
-        // default order direction would be DESC
-        if (("ASC".equals(orderDir)) || ("DESC".equals(orderDir))) {
-            result += " " + orderDir;
-        } else {
-            result += " " + "DESC";
-        }
-
-        return result;
-    }
-
-    /**
-     * Formulate jqpl named parameters map.
-     *
-     * @param merchant all query criteria
-     * @return a HashMap with parameters like name: 'Jack'
-     */
-    private Map<String, Object> foumulateParams(Merchant merchant) {
-
-        Map<String, Object> params = new HashMap<String, Object>();
-
-        // iterate all attributes of merchant to put the content into the params map if present
-        if (StringUtils.isNotBlank(merchant.getName())) {
-            params.put("name", merchant.getName());
-        }
-        if (StringUtils.isNotBlank(merchant.getAddress())) {
-            params.put("address", merchant.getAddress());
-        }
-        if (StringUtils.isNotBlank(merchant.getContact())) {
-            params.put("contact", merchant.getContact());
-        }
-        if (StringUtils.isNotBlank(merchant.getTel())) {
-            params.put("tel", merchant.getTel());
-        }
-        if (StringUtils.isNotBlank(merchant.getEmail())) {
-            params.put("email", merchant.getEmail());
-        }
-
-        if (StringUtils.isNotBlank(merchant.getRemark())) {
-            params.put("remark", merchant.getRemark());
-        }
-
-        return params;
     }
 }
