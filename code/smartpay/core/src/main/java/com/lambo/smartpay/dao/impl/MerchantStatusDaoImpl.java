@@ -3,7 +3,6 @@ package com.lambo.smartpay.dao.impl;
 import com.lambo.smartpay.dao.MerchantStatusDao;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -151,18 +150,19 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
         Predicate codePredicate = builder.like(codePath, likeSearch);
         Predicate descriptionPredicate = builder.like(descriptionPath, likeSearch);
 
-        Predicate orPredicate = builder.or(namePredicate, codePredicate, descriptionPredicate);
+        Predicate predicate = builder.or(namePredicate, codePredicate, descriptionPredicate);
 
+        // we don't want to have wildcard search on id actually
         // if search is numeric, search against id
-        if (StringUtils.isNumeric(search)) {
-            Path<Long> idPath = root.get("id");
-            // use jpa literal to create Expression
-            Predicate idPredicate = builder.equal(idPath, builder.literal(Long.valueOf(search)));
-            orPredicate = builder.or(idPredicate, namePredicate, codePredicate, descriptionPredicate);
-        }
+//        if (StringUtils.isNumeric(search)) {
+//            Path<Long> idPath = root.get("id");
+//            // use jpa literal to create Expression
+//            Predicate idPredicate = builder.equal(idPath, builder.literal(Long.valueOf(search)));
+//            predicate = builder.or(idPredicate, namePredicate, codePredicate, descriptionPredicate);
+//        }
 
-        LOG.debug("Formulated jpa predicate is " + orPredicate.toString());
-        return orPredicate;
+        LOG.debug("Formulated jpa predicate is " + predicate.toString());
+        return predicate;
     }
 
     /**
@@ -225,23 +225,7 @@ public class MerchantStatusDaoImpl extends GenericDaoImpl<MerchantStatus, Long>
                 break;
 
             default:
-                switch (order) {
-                    case "id":
-                        orderBy = builder.desc(idPath);
-                        break;
-                    case "name":
-                        orderBy = builder.desc(namePath);
-                        break;
-                    case "code":
-                        orderBy = builder.desc(codePath);
-                        break;
-                    case "description":
-                        orderBy = builder.desc(descriptionPath);
-                        break;
-                    default:
-                        orderBy = builder.desc(idPath);
-                        break;
-                }
+                orderBy = builder.desc(idPath);
                 break;
         }
 

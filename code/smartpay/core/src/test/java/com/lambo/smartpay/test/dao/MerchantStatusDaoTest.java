@@ -172,9 +172,10 @@ public class MerchantStatusDaoTest {
         assertNotNull(statuses);
         assertEquals(0, statuses.size());
 
-        List<MerchantStatus> findById =
-                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC, null);
-        assertNotNull(findById);
+        // we don't want to have wildcard search on id actually
+//        List<MerchantStatus> findById =
+//                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC, null);
+//        assertNotNull(findById);
     }
 
     /*
