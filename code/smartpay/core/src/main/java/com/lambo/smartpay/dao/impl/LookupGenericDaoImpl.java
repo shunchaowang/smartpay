@@ -135,9 +135,9 @@ public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends G
      * @return List of MerchantStatus matching search, starting from start offest and max of length
      */
     @Override
-    public List<T> findByAddHocSearch(String search, Integer start, Integer length,
-                                      String order, ResourceUtil.JpaOrderDir orderDir,
-                                      Boolean activeFlag) {
+    public List<T> findByAdHocSearch(String search, Integer start, Integer length,
+                                     String order, ResourceUtil.JpaOrderDir orderDir,
+                                     Boolean activeFlag) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(type);

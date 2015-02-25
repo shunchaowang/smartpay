@@ -2,7 +2,6 @@ package com.lambo.smartpay.test.dao;
 
 import com.lambo.smartpay.config.AppConfig;
 import com.lambo.smartpay.dao.MerchantStatusDao;
-import com.lambo.smartpay.exception.EntityNotFoundException;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.junit.Test;
@@ -29,9 +28,9 @@ import static org.junit.Assert.assertNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfig.class})
 @ActiveProfiles("dev")
-public class MerchantStatusDaoTest {
+public class MerchantStatusDaoImplTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MerchantStatusDaoTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MerchantStatusDaoImplTest.class);
 
     @Autowired
     private MerchantStatusDao merchantStatusDao;
@@ -160,7 +159,7 @@ public class MerchantStatusDaoTest {
 
         // testing order desc
         statuses = merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                        ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceUtil.JpaOrderDir.DESC, null);
         assertEquals(4, statuses.size());
 
         status = statuses.get(0);

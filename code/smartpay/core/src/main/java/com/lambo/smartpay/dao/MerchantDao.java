@@ -3,7 +3,6 @@ package com.lambo.smartpay.dao;
 import com.lambo.smartpay.model.Merchant;
 import com.lambo.smartpay.util.ResourceUtil;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,7 +49,7 @@ public interface MerchantDao extends GenericDao<Merchant, Long> {
      * Find Merchant by criteria.
      * Support id, name, active, MerchantStatus code.
      *
-     * @param merchant         contains criteria if the field is not null or empty.
+     * @param merchant contains criteria if the field is not null or empty.
      * @return List of the Merchant matching search ordered by id without pagination.
      */
     public List<Merchant> findByAdvanceSearch(Merchant merchant);

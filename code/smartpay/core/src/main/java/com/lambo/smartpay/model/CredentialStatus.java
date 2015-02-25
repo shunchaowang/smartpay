@@ -39,7 +39,7 @@ public class CredentialStatus implements Serializable {
     private String code;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-        mappedBy = "credentialStatus")
+            mappedBy = "credentialStatus")
     private Set<Credential> credentials;
 
     public String getDescription() {

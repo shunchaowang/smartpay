@@ -38,7 +38,7 @@ public class OrderStatus implements Serializable {
     private String code;
 
     @OneToMany(mappedBy = "orderStatus", fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Order> orders;
 
     public String getDescription() {

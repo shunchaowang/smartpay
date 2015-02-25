@@ -1,42 +1,11 @@
 package com.lambo.smartpay.dao;
 
 import com.lambo.smartpay.model.MerchantStatus;
-import com.lambo.smartpay.util.ResourceUtil;
-
-import java.util.List;
 
 /**
+ * A wrapper of LookupGeneric interface for AccountStatus.
  * Created by swang on 2/17/2015.
  */
-public interface MerchantStatusDao extends GenericDao<MerchantStatus, Long> {
-
-    /**
-     * Find the named MerchantStatus.
-     */
-    MerchantStatus findByName(String name);
-
-    /**
-     * Count the number of all MerchantStatus.
-     * @param search the keyword to search, eg. m.name LIKE *lambo*
-     * @param activeFlag indicates all, active or archived,
-     *                   null means all, true means active and false means archived.
-     * @return count of the result
-     */
-    public Long countByAdHocSearch(String search, Boolean activeFlag);
-
-    /**
-     * Find all MerchantStatus.
-     * @param search keyword to search eg. m.name LIKE *lambo*
-     * @param start the offset of the result list
-     * @param length total count of the result list
-     * @param order which column to order the result, including the direct relationship
-     * @param orderDir direction of the order, ASC or DESC
-     * @param activeFlag indicates all, active or archived,
-     *                   null means all, true means active and false means archived.
-     * @return List of MerchantStatus matching search, starting from start offest and max of length
-     */
-    public List<MerchantStatus> findByAdHocSearch(String search, Integer start, Integer length,
-                                                  String order, ResourceUtil.JpaOrderDir orderDir,
-                                                  Boolean activeFlag);
+public interface MerchantStatusDao extends LookupGenericDao<MerchantStatus, Long> {
 
 }

@@ -39,7 +39,7 @@ public class MerchantStatus implements Serializable {
     private String code;
 
     @OneToMany(mappedBy = "merchantStatus", fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Merchant> merchants;
 
     public Long getId() {

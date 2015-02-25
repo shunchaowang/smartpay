@@ -153,7 +153,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         }
 
         LOG.debug("Offset of the query is " + (pageNumber - 1) * pageSize + " with pageNumber " + pageNumber +
-            " and pageSze " + pageSize);
+                " and pageSze " + pageSize);
         return (pageNumber - 1) * pageSize;
     }
 
@@ -229,6 +229,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
     /**
      * Count record number using JPA criteria builder.
+     *
      * @param typedQuery the criteria with query root, where clause
      * @retrun count of the result
      */

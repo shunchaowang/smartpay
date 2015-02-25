@@ -29,8 +29,9 @@ import java.util.Properties;
  * Here we have configured DataSource and JPA EntityManagerFactory bean using Hibernate implementation.
  * Also we have configured DataSourceInitializer bean to initialize and populate our tables with seed data.
  * We can enable/disable executing this db.sql script by changing init-db property value in application.properties.
- *
+ * <p/>
  * And finally optionally we have enabled Spring Data JPA repositories scanning using
+ *
  * @EnableJpaRepositories to scan "com.lambo.smartpay.repositories" package for JPA repository interfaces.
  * Created by swang on 2/12/2015.
  */

@@ -38,7 +38,7 @@ public class EncryptionType implements Serializable {
     private String code;
 
     @OneToMany(mappedBy = "encryptionType", fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Encryption> encryptions;
 
     public String getDescription() {

@@ -10,8 +10,8 @@ public interface ResourceUtil {
     public static final Integer PAGE_SIZE = 10;
 
     public enum JpaOrderDir {
-        ASC ("ASC"),
-        DESC ("DESC");
+        ASC("ASC"),
+        DESC("DESC");
 
         private final String dir;
 

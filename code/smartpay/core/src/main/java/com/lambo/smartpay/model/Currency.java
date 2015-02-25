@@ -39,7 +39,7 @@ public class Currency implements Serializable {
     private String code;
 
     @OneToMany(mappedBy = "currency", fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Order> orders;
 
     @OneToMany(mappedBy = "currency", fetch = FetchType.LAZY,

@@ -39,7 +39,7 @@ public class CustomerStatus implements Serializable {
     private String code;
 
     @OneToMany(mappedBy = "customerStatus", fetch = FetchType.LAZY,
-        cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Customer> customers;
 
     public String getDescription() {

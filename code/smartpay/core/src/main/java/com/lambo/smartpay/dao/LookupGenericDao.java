@@ -51,7 +51,7 @@ public interface LookupGenericDao<T, PK extends Serializable> extends GenericDao
      *                   null means all, true means active and false means archived.
      * @return List of MerchantStatus matching search, starting from start offest and max of length
      */
-    public List<T> findByAddHocSearch(String search, Integer start, Integer length,
-                                      String order, ResourceUtil.JpaOrderDir orderDir,
-                                      Boolean activeFlag);
+    public List<T> findByAdHocSearch(String search, Integer start, Integer length,
+                                     String order, ResourceUtil.JpaOrderDir orderDir,
+                                     Boolean activeFlag);
 }

@@ -1,7 +1,6 @@
 package com.lambo.smartpay.service.impl;
 
 import com.lambo.smartpay.dao.MerchantStatusDao;
-import com.lambo.smartpay.dao.impl.GenericDaoImpl;
 import com.lambo.smartpay.model.MerchantStatus;
 import com.lambo.smartpay.service.MerchantStatusService;
 import org.apache.commons.lang3.StringUtils;

@@ -7,15 +7,15 @@ import java.util.Map;
 
 public interface GenericDao<T, PK extends Serializable> {
 
-	T create(T persistentObject);
+    T create(T persistentObject);
 
-	List<T> getAll();
-	
-	T get(PK id);
+    List<T> getAll();
 
-	T update(T persistentObject);
+    T get(PK id);
 
-	void delete(PK id);
+    T update(T persistentObject);
+
+    void delete(PK id);
 
     /**
      * Counts the record using positional parameters.
@@ -54,6 +54,7 @@ public interface GenericDao<T, PK extends Serializable> {
 
     /**
      * Count record number using JPA criteria builder.
+     *
      * @param typedQuery the criteria with query root, where clause
      * @retrun count of the result
      */
@@ -61,6 +62,7 @@ public interface GenericDao<T, PK extends Serializable> {
 
     /**
      * Find all records using JPA criteria builder.
+     *
      * @param typedQuery the criteria with query root, where clause and order by
      * @retrun List of the result objects
      */
