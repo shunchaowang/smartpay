@@ -108,23 +108,21 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Count Merchant by criteria, created time range.
-     * Support id, name, MerchantStatus code and createdTime range.
+     * Count Merchant by criteria.
+     * Support id, name, active, MerchantStatus code.
      *
-     * @param merchant         contains criteria if the field is not null or empty.
-     * @param createdTimeBegin is the beginning of the created time range if not null.
-     * @param createdTimeEnd   is the ending of the created time range if not null.
+     * @param merchant contains criteria if the field is not null or empty.
      * @return number of the Merchant matching search.
      */
     @Override
-    public Long countByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd) {
+    public Long countByAdvanceSearch(Merchant merchant) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Merchant> root = query.from(Merchant.class);
         query.select(builder.count(root));
 
-        Predicate predicate = formulatePredicate(builder, root, merchant, createdTimeBegin, createdTimeEnd);
+        Predicate predicate = formulatePredicate(builder, root, merchant);
 
         query.where(predicate);
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
@@ -133,23 +131,21 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Find Merchant by criteria, created time range.
-     * Support id, name, active, MerchantStatus code and createdTime range.
+     * Find Merchant by criteria.
+     * Support id, name, active, MerchantStatus code.
      *
-     * @param merchant         contains criteria if the field is not null or empty.
-     * @param createdTimeBegin is the beginning of the created time range if not null.
-     * @param createdTimeEnd   is the ending of the created time range if not null.
+     * @param merchant contains criteria if the field is not null or empty.
      * @return List of the Merchant matching search ordered by id without pagination.
      */
     @Override
-    public List<Merchant> findByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd) {
+    public List<Merchant> findByAdvanceSearch(Merchant merchant) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
         Root<Merchant> root = query.from(Merchant.class);
         query.select(root);
 
-        Predicate predicate = formulatePredicate(builder, root, merchant, createdTimeBegin, createdTimeEnd);
+        Predicate predicate = formulatePredicate(builder, root, merchant);
 
         query.where(predicate);
 
@@ -207,58 +203,72 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA and Predicate for CriteriaQuery.
-     * Support id, name, active, MerchantStatus code and createdTime range.
+     * Support id, name, active, MerchantStatus code.
      *
-     * @param builder          is the JPA CriteriaBuilder.
-     * @param root             is the root of the CriteriaQuery.
-     * @param merchant         is the search keyword.
-     * @param createdTimeBegin not null, beginning of time range.
-     * @param createdTimeEnd   not null, ending of time range.
+     * @param builder  is the JPA CriteriaBuilder.
+     * @param root     is the root of the CriteriaQuery.
+     * @param merchant is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, Merchant merchant,
-                                         Date createdTimeBegin, Date createdTimeEnd) {
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, Merchant merchant) {
 
         // neither of createdTime cannot be null
         if (merchant.getId() == null && StringUtils.isBlank(merchant.getName()) &&
-                merchant.getMerchantStatus() == null || createdTimeBegin == null || createdTimeEnd == null) {
+                merchant.getActive() == null && merchant.getMerchantStatus() == null) {
             return null;
         }
 
-        Predicate predicate = builder.between(root.<Date>get("createdTime"),
-                builder.literal(createdTimeBegin), builder.literal(createdTimeEnd));
+//        Predicate predicate = builder.between(root.<Date>get("createdTime"),
+//                builder.literal(createdTimeBegin), builder.literal(createdTimeEnd));
 
+        Predicate predicate = null;
         // check id
         if (merchant.getId() != null) {
-            predicate = builder.and(predicate, builder.equal(root.<Long>get("id"), builder.literal(merchant.getId())));
+            predicate = builder.equal(root.<Long>get("id"), builder.literal(merchant.getId()));
         }
 
         // check name
         if (StringUtils.isNotBlank(merchant.getName())) {
-            predicate = builder.and(predicate, builder.like(root.<String>get("name"),
-                    builder.literal("%" + merchant.getName() + "%")));
+            Predicate namePredicate = builder.like(root.<String>get("name"),
+                    builder.literal("%" + merchant.getName() + "%"));
+            if (predicate == null) {
+                predicate = namePredicate;
+            } else {
+                predicate = builder.and(predicate, namePredicate);
+            }
         }
 
         if (merchant.getActive() != null) {
-            predicate = builder.and(predicate,
-                    builder.equal(root.get("active"), builder.literal(merchant.getActive())));
+            Predicate activePredicate = builder.equal(root.<Boolean>get("active"),
+                    builder.literal(merchant.getActive()));
+            if (predicate == null) {
+                predicate = activePredicate;
+            } else {
+                predicate = builder.and(predicate, activePredicate);
+            }
         }
 
         // check Merchant Status code
         if (merchant.getMerchantStatus() != null &&
                 StringUtils.isNotBlank(merchant.getMerchantStatus().getCode())) {
-            predicate = builder.and(predicate, builder.like(root.join("merchantStatus").<String>get("code"),
-                    builder.literal("%" + merchant.getMerchantStatus().getCode() + "%")));
+            Predicate merchantStatusPredicate = builder.like(root.join("merchantStatus").<String>get("code"),
+                    builder.literal("%" + merchant.getMerchantStatus().getCode() + "%"));
+            if (predicate == null) {
+                predicate = merchantStatusPredicate;
+            } else {
+                predicate = builder.and(predicate, merchantStatusPredicate);
+            }
         }
 
         // check createdTime range
 
         LOG.debug("Formulated predicate is " + predicate.toString());
-        return null;
+        return predicate;
     }
 
     /**
      * Formulate JPA Order for CriteriaQuery.
+     * Supports id, name, contact, tel, email, name of MerchantStatus, createdTime.
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.

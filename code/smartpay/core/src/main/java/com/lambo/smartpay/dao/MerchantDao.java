@@ -39,23 +39,19 @@ public interface MerchantDao extends GenericDao<Merchant, Long> {
 
     /**
      * Count Merchant by criteria, created time range.
-     * Support id, name, MerchantStatus code and createdTime range.
+     * Support id, name, active, MerchantStatus code.
      *
-     * @param merchant         contains criteria if the field is not null or empty.
-     * @param createdTimeBegin is the beginning of the created time range if not null.
-     * @param createdTimeEnd   is the ending of the created time range if not null.
+     * @param merchant contains criteria if the field is not null or empty.
      * @return number of the Merchant matching search.
      */
-    public Long countByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd);
+    public Long countByAdvanceSearch(Merchant merchant);
 
     /**
-     * Find Merchant by criteria, created time range.
-     * Support id, name, active, MerchantStatus code and createdTime range.
+     * Find Merchant by criteria.
+     * Support id, name, active, MerchantStatus code.
      *
      * @param merchant         contains criteria if the field is not null or empty.
-     * @param createdTimeBegin is the beginning of the created time range if not null.
-     * @param createdTimeEnd   is the ending of the created time range if not null.
      * @return List of the Merchant matching search ordered by id without pagination.
      */
-    public List<Merchant> findByAdvanceSearch(Merchant merchant, Date createdTimeBegin, Date createdTimeEnd);
+    public List<Merchant> findByAdvanceSearch(Merchant merchant);
 }
