@@ -23,7 +23,7 @@ import java.util.List;
  * <p/>
  * Created by swang on 2/24/2015.
  */
-public class LookupGenericDaoImpl<T, PK extends Serializable> extends GenericDaoImpl<T, PK>
+public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends GenericDaoImpl<T, PK>
         implements LookupGenericDao<T, PK> {
 
     private final static Logger LOG = LoggerFactory.getLogger(LookupGenericDaoImpl.class);
@@ -174,6 +174,7 @@ public class LookupGenericDaoImpl<T, PK extends Serializable> extends GenericDao
 
     /**
      * Iterate all attributes to set predicates of the query.
+     * For lookup entity, the wildcard search supports name, code and description.
      *
      * @param search ad hoc query string
      * @return jpa predicate with all criteria set up
@@ -211,6 +212,7 @@ public class LookupGenericDaoImpl<T, PK extends Serializable> extends GenericDao
 
     /**
      * Formulate ORDER BY clause of the jpa query.
+     * For lookup entity order supports id, name, code and description asc/desc.
      *
      * @param order    order attribute.
      * @param orderDir order direction, ASC or DESC.
