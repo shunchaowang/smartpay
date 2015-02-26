@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
+ * Integration test for MerchantStatusDaoImpl.
  * Created by swang on 2/19/2015.
  */
 @TransactionConfiguration(defaultRollback = true)
