@@ -35,7 +35,8 @@ public class Fee implements Serializable {
     @Column(name = "FEE_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "FEE_FETP_ID", nullable = false)
     private FeeType feeType;
 

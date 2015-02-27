@@ -66,18 +66,21 @@ public class User implements Serializable {
     @Lob
     private byte[] profileImage;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "USER_MCHT_ID", nullable = false)
     private Merchant merchant;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "USER_USST_ID", nullable = false)
     private UserStatus userStatus;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_ROLE_MAPPINGS",
             joinColumns = {@JoinColumn(name = "URMP_USER_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "URMP_ROLE_ID", nullable = false, updatable = false)}
+            inverseJoinColumns = {@JoinColumn(name = "URMP_ROLE_ID", nullable = false, updatable
+                    = false)}
     )
     private Set<Role> roles;
 

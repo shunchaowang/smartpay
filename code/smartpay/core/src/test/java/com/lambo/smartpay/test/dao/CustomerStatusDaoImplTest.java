@@ -128,7 +128,8 @@ public class CustomerStatusDaoImplTest {
 
         // testing order asc
         List<CustomerStatus> statuses =
-                customerStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                customerStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, statuses.size());
 
@@ -137,12 +138,14 @@ public class CustomerStatusDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<CustomerStatus> activeStatuses =
-                customerStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                customerStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<CustomerStatus> archivedStatuses =
-                customerStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                customerStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
 
@@ -156,7 +159,8 @@ public class CustomerStatusDaoImplTest {
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        statuses = customerStatusDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        statuses = customerStatusDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil
+                        .JpaOrderDir.ASC,
                 null);
         assertNotNull(statuses);
         assertEquals(0, statuses.size());

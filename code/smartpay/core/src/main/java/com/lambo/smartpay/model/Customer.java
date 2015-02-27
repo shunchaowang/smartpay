@@ -76,7 +76,8 @@ public class Customer implements Serializable {
     @Column(name = "CSTM_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "CSTM_CSST_ID", nullable = false)
     private CustomerStatus customerStatus;
 
@@ -84,7 +85,8 @@ public class Customer implements Serializable {
     @JoinColumn(name = "CSTM_CSLG_ID", nullable = true)
     private CustomerLogin customerLogin;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "customer", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "customer",
+            orphanRemoval = true)
     private Set<Order> orders;
 
     public Long getId() {

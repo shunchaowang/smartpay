@@ -128,7 +128,8 @@ public class AccountStatusDaoImplTest {
 
         // testing order asc
         List<AccountStatus> statuses =
-                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, statuses.size());
 
@@ -137,12 +138,14 @@ public class AccountStatusDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<AccountStatus> activeStatuses =
-                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<AccountStatus> archivedStatuses =
-                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
 
@@ -156,7 +159,8 @@ public class AccountStatusDaoImplTest {
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        statuses = accountStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        statuses = accountStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir
+                        .ASC,
                 null);
         assertNotNull(statuses);
         assertEquals(0, statuses.size());

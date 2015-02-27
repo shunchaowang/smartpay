@@ -63,7 +63,8 @@ public class Administrator implements Serializable {
     @Column(name = "ADMN_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER,
+            optional = false)
     @JoinColumn(name = "ADMN_ROLE_ID", nullable = false)
     private Role role;
 

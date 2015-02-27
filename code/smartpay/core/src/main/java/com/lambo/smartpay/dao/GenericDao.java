@@ -45,7 +45,8 @@ public interface GenericDao<T, PK extends Serializable> {
     /**
      * Find all records using name-value-pair with pagination.
      */
-    List<T> findAll(String criteria, Map<String, Object> args, Integer pageNumber, Integer pageSize);
+    List<T> findAll(String criteria, Map<String, Object> args, Integer pageNumber, Integer
+            pageSize);
 
     /**
      * Find all records with pagination without parameters.

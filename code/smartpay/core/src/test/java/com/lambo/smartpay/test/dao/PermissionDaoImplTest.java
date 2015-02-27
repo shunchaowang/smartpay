@@ -155,7 +155,8 @@ public class PermissionDaoImplTest {
         assertNotNull(permission);
         assertEquals("003", permission.getCode());
 
-        permissions = permissionDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        permissions = permissionDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir
+                        .ASC,
                 null);
         assertNotNull(permissions);
         assertEquals(0, permissions.size());

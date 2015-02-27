@@ -44,15 +44,18 @@ public class Account implements Serializable {
     private Boolean active;
 
     // association
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER,
+            optional = false)
     @JoinColumn(name = "ACNT_MCHT_ID", nullable = false)
     private Merchant merchant;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER,
+            optional = false)
     @JoinColumn(name = "ACNT_ACTP_ID", nullable = false)
     private AccountType accountType;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER,
+            optional = false)
     @JoinColumn(name = "ACNT_ACST_ID", nullable = false)
     private AccountStatus accountStatus;
 

@@ -20,7 +20,8 @@ public class CacheConfigProd {
     // use concurrent cache manager for now
     @Bean
     public CacheManager cacheManager() {
-        LOG.debug("Creating instance of singleton bean '" + ConcurrentMapCacheManager.class.getName() + "'");
+        LOG.debug("Creating instance of singleton bean '" + ConcurrentMapCacheManager.class
+                .getName() + "'");
         return new ConcurrentMapCacheManager();
     }
 

@@ -23,7 +23,8 @@ import static org.junit.Assert.assertNotNull;
  * Created by swang on 2/20/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class}) // profile related config will be loaded by ActiveProfiles
+@ContextConfiguration(classes = {AppConfig.class})
+// profile related config will be loaded by ActiveProfiles
 @ActiveProfiles(profiles = {"dev"})
 public class ApplicationContextTest {
 

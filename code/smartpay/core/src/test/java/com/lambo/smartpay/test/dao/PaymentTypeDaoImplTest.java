@@ -127,7 +127,8 @@ public class PaymentTypeDaoImplTest {
 
         // testing order asc
         List<PaymentType> types =
-                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                                .ASC,
                         null);
         assertEquals(4, types.size());
 
@@ -136,12 +137,14 @@ public class PaymentTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<PaymentType> activeTypes =
-                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                                .ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<PaymentType> archivedTypes =
-                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                                .ASC,
                         false);
         assertEquals(1, archivedTypes.size());
 

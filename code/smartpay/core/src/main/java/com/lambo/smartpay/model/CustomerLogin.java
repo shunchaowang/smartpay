@@ -61,7 +61,8 @@ public class CustomerLogin implements Serializable {
     @Lob
     private byte[] profileImage;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "CSLG_CSLS_ID", nullable = false)
     private CustomerLoginStatus customerLoginStatus;
 

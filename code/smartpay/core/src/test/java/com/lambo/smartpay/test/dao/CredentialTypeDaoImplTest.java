@@ -128,7 +128,8 @@ public class CredentialTypeDaoImplTest {
 
         // testing order asc
         List<CredentialType> types =
-                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, types.size());
 
@@ -137,12 +138,14 @@ public class CredentialTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<CredentialType> activeTypes =
-                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<CredentialType> archivedTypes =
-                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedTypes.size());
 
@@ -156,7 +159,8 @@ public class CredentialTypeDaoImplTest {
         assertNotNull(type);
         assertEquals("003", type.getCode());
 
-        types = credentialTypeDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        types = credentialTypeDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil.JpaOrderDir
+                        .ASC,
                 null);
         assertNotNull(types);
         assertEquals(0, types.size());

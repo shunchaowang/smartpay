@@ -27,7 +27,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     private static final Logger LOG = LoggerFactory.getLogger(MerchantDaoImpl.class);
 
     /**
-     * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel, email and name
+     * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel,
+     * email and name
      * of MerchantStatus.
      *
      * @param search     search keyword.
@@ -60,7 +61,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email and name
+     * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email
+     * and name
      * of MerchantStatus.
      *
      * @param search     search keyword.
@@ -166,7 +168,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      * @param search  is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, String search) {
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, String
+            search) {
 
         String likeSearch = "%" + search + "%";
 
@@ -210,7 +213,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      * @param merchant is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, Merchant merchant) {
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, Merchant
+            merchant) {
 
         // neither of createdTime cannot be null
         if (merchant.getId() == null && StringUtils.isBlank(merchant.getName()) &&
@@ -251,7 +255,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         // check Merchant Status code
         if (merchant.getMerchantStatus() != null &&
                 StringUtils.isNotBlank(merchant.getMerchantStatus().getCode())) {
-            Predicate merchantStatusPredicate = builder.like(root.join("merchantStatus").<String>get("code"),
+            Predicate merchantStatusPredicate = builder.like(root.join("merchantStatus")
+                            .<String>get("code"),
                     builder.literal("%" + merchant.getMerchantStatus().getCode() + "%"));
             if (predicate == null) {
                 predicate = merchantStatusPredicate;

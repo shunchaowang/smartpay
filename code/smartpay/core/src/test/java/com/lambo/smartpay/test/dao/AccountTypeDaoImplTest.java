@@ -128,7 +128,8 @@ public class AccountTypeDaoImplTest {
 
         // testing order asc
         List<AccountType> types =
-                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                                .ASC,
                         null);
         assertEquals(4, types.size());
 
@@ -137,12 +138,14 @@ public class AccountTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<AccountType> activeTypes =
-                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                                .ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<AccountType> archivedTypes =
-                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                                .ASC,
                         false);
         assertEquals(1, archivedTypes.size());
 

@@ -55,11 +55,13 @@ public class Return implements Serializable {
     @Column(name = "RTRN_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "RTRN_RTST_ID", nullable = false)
     private ReturnStatus returnStatus;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "RTRN_ORDR_ID", nullable = false)
     private Order order;
 

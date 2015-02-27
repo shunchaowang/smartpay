@@ -13,6 +13,10 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the type of the credential. There is one type.
+ * <p/>
+ * Certificate[100]: stands for merchant certificate.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

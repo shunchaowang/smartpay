@@ -26,13 +26,17 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * Here we have configured DataSource and JPA EntityManagerFactory bean using Hibernate implementation.
- * Also we have configured DataSourceInitializer bean to initialize and populate our tables with seed data.
- * We can enable/disable executing this db.sql script by changing init-db property value in application.properties.
+ * Here we have configured DataSource and JPA EntityManagerFactory bean using Hibernate
+ * implementation.
+ * Also we have configured DataSourceInitializer bean to initialize and populate our tables with
+ * seed data.
+ * We can enable/disable executing this db.sql script by changing init-db property value in
+ * application.properties.
  * <p/>
  * And finally optionally we have enabled Spring Data JPA repositories scanning using
  *
- * @EnableJpaRepositories to scan "com.lambo.smartpay.repositories" package for JPA repository interfaces.
+ * @EnableJpaRepositories to scan "com.lambo.smartpay.repositories" package for JPA repository
+ * interfaces.
  * Created by swang on 2/12/2015.
  */
 @Configuration
@@ -54,7 +58,8 @@ public class PersistenceConfigProd {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LOG.debug("Creating instance of singleton bean '" +
                 LocalContainerEntityManagerFactoryBean.class.getName() + "'");
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean factory = new
+                LocalContainerEntityManagerFactoryBean();
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(Boolean.TRUE);
@@ -94,7 +99,8 @@ public class PersistenceConfigProd {
 
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-        LOG.debug("Creating instance of singleton bean '" + DataSourceInitializer.class.getName() + "'");
+        LOG.debug("Creating instance of singleton bean '" + DataSourceInitializer.class.getName()
+                + "'");
         DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
         dataSourceInitializer.setDataSource(dataSource);
         ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
@@ -106,7 +112,8 @@ public class PersistenceConfigProd {
 
     @Bean
     public PlatformTransactionManager transactionManager() {
-        LOG.debug("Creating instance of singleton bean '" + JpaTransactionManager.class.getName() + "'");
+        LOG.debug("Creating instance of singleton bean '" + JpaTransactionManager.class.getName()
+                + "'");
         EntityManagerFactory factory = entityManagerFactory().getObject();
         return new JpaTransactionManager(factory);
     }

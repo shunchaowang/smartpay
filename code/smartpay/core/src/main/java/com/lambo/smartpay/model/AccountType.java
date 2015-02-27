@@ -11,6 +11,12 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * The domain class to specify the type of the account for the merchant.
+ * Account has two types with the unique code individually.
+ * AccountType has two code:
+ * Code 100 means bank account;
+ * Code 200 means card account.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

@@ -13,9 +13,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 /**
- * Configure common service layer beans such as PropertySourcesPlaceholderConfigurer, JavaMailSender and CacheManager.
+ * Configure common service layer beans such as PropertySourcesPlaceholderConfigurer,
+ * JavaMailSender and CacheManager.
  * We need to exclude scanning of ecs.* package otherwise the
- * java.lang.IllegalArgumentException: A ServletContext is required to configure default servlet handling will be
+ * java.lang.IllegalArgumentException: A ServletContext is required to configure default servlet
+ * handling will be
  * thrown when running junit test.
  * <p/>
  * Created by swang on 2/12/2015.
@@ -32,7 +34,8 @@ public class MailConfigDev {
 
     @Bean
     public JavaMailSenderImpl javaMailSender() {
-        LOG.debug("Creating instance of singleton bean '" + JavaMailSenderImpl.class.getName() + "'");
+        LOG.debug("Creating instance of singleton bean '" + JavaMailSenderImpl.class.getName() +
+                "'");
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(env.getProperty("smtp.host"));
         mailSender.setPort(env.getProperty("smtp.port", Integer.class));

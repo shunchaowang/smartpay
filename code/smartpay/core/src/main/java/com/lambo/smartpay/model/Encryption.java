@@ -47,7 +47,8 @@ public class Encryption implements Serializable {
     @Column(name = "ENCR_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "ENCR_ENTP_ID", nullable = false)
     private EncryptionType encryptionType;
 

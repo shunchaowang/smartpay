@@ -128,7 +128,8 @@ public class EncryptionTypeDaoImplTest {
 
         // testing order asc
         List<EncryptionType> types =
-                encryptionTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                encryptionTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, types.size());
 
@@ -137,12 +138,14 @@ public class EncryptionTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<EncryptionType> activeTypes =
-                encryptionTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                encryptionTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<EncryptionType> archivedTypes =
-                encryptionTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                encryptionTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedTypes.size());
 

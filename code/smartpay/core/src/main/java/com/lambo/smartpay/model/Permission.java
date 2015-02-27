@@ -43,7 +43,8 @@ public class Permission implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "ROLE_PERMISSION_MAPPINGS",
             joinColumns = {@JoinColumn(name = "RPMP_PRMS_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "RPMP_ROLE_ID", nullable = false, updatable = false)}
+            inverseJoinColumns = {@JoinColumn(name = "RPMP_ROLE_ID", nullable = false, updatable
+                    = false)}
     )
     private Set<Role> roles;
 

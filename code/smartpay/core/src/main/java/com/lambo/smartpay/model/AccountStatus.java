@@ -13,6 +13,13 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the status of the account for the merchant, like bank account for payment or
+ * fee.
+ * Account has two statuses, normal means good to use, and frozen means cannot use now.
+ * AccountStatus has a unique code individually:
+ * Code 200 means normal;
+ * Code 400 means frozen.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

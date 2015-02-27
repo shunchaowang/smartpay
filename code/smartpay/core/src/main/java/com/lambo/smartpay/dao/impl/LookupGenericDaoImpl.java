@@ -203,7 +203,8 @@ public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends G
 //            Path<Long> idPath = root.get("id");
 //            // use jpa literal to create Expression
 //            Predicate idPredicate = builder.equal(idPath, builder.literal(Long.valueOf(search)));
-//            predicate = builder.or(idPredicate, namePredicate, codePredicate, descriptionPredicate);
+//            predicate = builder.or(idPredicate, namePredicate, codePredicate,
+// descriptionPredicate);
 //        }
 
         LOG.debug("Formulated jpa predicate is " + predicate.toString());

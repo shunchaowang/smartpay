@@ -13,6 +13,15 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the status of the credential of the merchant.
+ * <p/>
+ * There are four types of credential: Submitted, Approved, Denied and Expired.
+ * Submitted[400]: Merchant has submitted the credential and awaiting the approval of the
+ * administrator;
+ * Approved[500]: Administrator has approved the credential;
+ * Denied[502]: Administrator has denied the credential;
+ * Expired[404]: The credential has expired.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

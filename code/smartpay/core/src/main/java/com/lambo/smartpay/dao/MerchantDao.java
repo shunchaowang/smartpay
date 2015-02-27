@@ -11,7 +11,8 @@ import java.util.List;
 public interface MerchantDao extends GenericDao<Merchant, Long> {
 
     /**
-     * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel, email and name
+     * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel,
+     * email and name
      * of MerchantStatus.
      *
      * @param search     search keyword.
@@ -21,7 +22,8 @@ public interface MerchantDao extends GenericDao<Merchant, Long> {
     public Long countByAdHocSearch(String search, Boolean activeFlag);
 
     /**
-     * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email and name
+     * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email
+     * and name
      * of MerchantStatus.
      *
      * @param search     search keyword.

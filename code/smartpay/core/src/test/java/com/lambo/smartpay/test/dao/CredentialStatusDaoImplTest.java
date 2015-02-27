@@ -128,7 +128,8 @@ public class CredentialStatusDaoImplTest {
 
         // testing order asc
         List<CredentialStatus> statuses =
-                credentialStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                credentialStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, statuses.size());
 
@@ -137,12 +138,14 @@ public class CredentialStatusDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<CredentialStatus> activeStatuses =
-                credentialStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                credentialStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<CredentialStatus> archivedStatuses =
-                credentialStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                credentialStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
 
@@ -156,7 +159,8 @@ public class CredentialStatusDaoImplTest {
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        statuses = credentialStatusDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        statuses = credentialStatusDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil
+                        .JpaOrderDir.ASC,
                 null);
         assertNotNull(statuses);
         assertEquals(0, statuses.size());

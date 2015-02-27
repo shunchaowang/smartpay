@@ -66,7 +66,8 @@ public class Merchant implements Serializable {
     @Column(name = "MCHT_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
     @JoinColumn(name = "MCHT_MCST_ID", nullable = false)
     private MerchantStatus merchantStatus;
 
@@ -86,13 +87,16 @@ public class Merchant implements Serializable {
     @JoinColumn(name = "MCHT_ENCR_ID", nullable = false)
     private Encryption encryption;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant",
+            orphanRemoval = true)
     private Set<Account> accounts;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant",
+            orphanRemoval = true)
     private Set<Site> sites;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant",
+            orphanRemoval = true)
     private Set<User> users;
 
     public Long getId() {

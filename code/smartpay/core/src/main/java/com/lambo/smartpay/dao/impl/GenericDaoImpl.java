@@ -152,12 +152,14 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
             pageNumber = 1;
         }
 
-        LOG.debug("Offset of the query is " + (pageNumber - 1) * pageSize + " with pageNumber " + pageNumber +
+        LOG.debug("Offset of the query is " + (pageNumber - 1) * pageSize + " with pageNumber " +
+                pageNumber +
                 " and pageSze " + pageSize);
         return (pageNumber - 1) * pageSize;
     }
 
-    private TypedQuery<T> createPaginatedQuery(String criteria, Integer pageNumber, Integer pageSize) {
+    private TypedQuery<T> createPaginatedQuery(String criteria, Integer pageNumber, Integer
+            pageSize) {
 
         // if pageSize is null, set it to default value
         if (pageSize == null) {
@@ -180,7 +182,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
      * @param args
      */
     @Override
-    public List<T> findAll(String criteria, List<Object> args, Integer pageNumber, Integer pageSize) {
+    public List<T> findAll(String criteria, List<Object> args, Integer pageNumber, Integer
+            pageSize) {
 
         TypedQuery<T> query = createPaginatedQuery(criteria, pageNumber, pageSize);
         for (int i = 0; i < args.size(); i++) {
@@ -198,7 +201,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
      * @param args
      */
     @Override
-    public List<T> findAll(String criteria, Map<String, Object> args, Integer pageNumber, Integer pageSize) {
+    public List<T> findAll(String criteria, Map<String, Object> args, Integer pageNumber, Integer
+            pageSize) {
 
         TypedQuery<T> query = createPaginatedQuery(criteria, pageNumber, pageSize);
 

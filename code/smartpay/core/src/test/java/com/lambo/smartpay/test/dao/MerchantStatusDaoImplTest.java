@@ -139,7 +139,8 @@ public class MerchantStatusDaoImplTest {
 
         // testing order asc
         List<MerchantStatus> statuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, statuses.size());
 
@@ -148,12 +149,14 @@ public class MerchantStatusDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<MerchantStatus> activeStatuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<MerchantStatus> archivedStatuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
 
@@ -167,14 +170,16 @@ public class MerchantStatusDaoImplTest {
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        statuses = merchantStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        statuses = merchantStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir
+                        .ASC,
                 null);
         assertNotNull(statuses);
         assertEquals(0, statuses.size());
 
         // we don't want to have wildcard search on id actually
 //        List<MerchantStatus> findById =
-//                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC, null);
+//                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir
+// .ASC, null);
 //        assertNotNull(findById);
     }
 
