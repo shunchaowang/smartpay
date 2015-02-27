@@ -24,10 +24,10 @@ public class PaymentStatus implements Serializable {
     @Column(name = "PYST_ID")
     private Long id;
 
-    @Column(name = "NAME", length = 32, nullable = false)
+    @Column(name = "PYST_NAME", length = 32, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 255)
+    @Column(name = "PYST_DESCRIPTION", length = 255)
     private String description;
 
     @Column(name = "PYST_ACTIVE", nullable = false)

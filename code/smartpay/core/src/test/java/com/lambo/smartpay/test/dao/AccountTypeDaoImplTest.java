@@ -127,38 +127,38 @@ public class AccountTypeDaoImplTest {
         accountTypeDao.create(accountType);
 
         // testing order asc
-        List<AccountType> statuses =
+        List<AccountType> types =
                 accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
                         null);
-        assertEquals(4, statuses.size());
+        assertEquals(4, types.size());
 
-        AccountType status = statuses.get(0);
-        assertNotNull(status);
-        assertEquals("000", status.getCode());
+        AccountType type = types.get(0);
+        assertNotNull(type);
+        assertEquals("000", type.getCode());
 
-        List<AccountType> activeStatuses =
+        List<AccountType> activeTypes =
                 accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
                         true);
-        assertEquals(3, activeStatuses.size());
+        assertEquals(3, activeTypes.size());
 
-        List<AccountType> archivedStatuses =
+        List<AccountType> archivedTypes =
                 accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
                         false);
-        assertEquals(1, archivedStatuses.size());
+        assertEquals(1, archivedTypes.size());
 
 
         // testing order desc
-        statuses = accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id",
+        types = accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id",
                 ResourceUtil.JpaOrderDir.DESC, null);
-        assertEquals(4, statuses.size());
+        assertEquals(4, types.size());
 
-        status = statuses.get(0);
-        assertNotNull(status);
-        assertEquals("003", status.getCode());
+        type = types.get(0);
+        assertNotNull(type);
+        assertEquals("003", type.getCode());
 
-        statuses = accountTypeDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        types = accountTypeDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
                 null);
-        assertNotNull(statuses);
-        assertEquals(0, statuses.size());
+        assertNotNull(types);
+        assertEquals(0, types.size());
     }
 }

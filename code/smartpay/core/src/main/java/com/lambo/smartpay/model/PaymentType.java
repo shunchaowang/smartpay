@@ -33,7 +33,7 @@ public class PaymentType implements Serializable {
     @Column(name = "PYTP_ACTIVE", nullable = false)
     private Boolean active;
 
-    @Column(name = "PYTP__CODE", nullable = false)
+    @Column(name = "PYTP_CODE", nullable = false)
     private String code;
 
     @OneToMany(mappedBy = "paymentType")
