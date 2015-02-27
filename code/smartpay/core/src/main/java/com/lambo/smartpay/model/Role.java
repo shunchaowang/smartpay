@@ -15,6 +15,12 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for role.
+ * <p/>
+ * 100: Admin
+ * 200: Merchant Admin
+ * 201: Merchant Operator
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

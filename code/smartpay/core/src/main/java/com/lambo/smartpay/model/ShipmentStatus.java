@@ -11,6 +11,13 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the status of the shipment.
+ * <p/>
+ * 500: Shipped
+ * 501: Delivered
+ * 400: Lost
+ * 401: Damaged
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

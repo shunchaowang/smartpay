@@ -11,6 +11,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the type of the payment.
+ * <p/>
+ * 100: Credit Card
+ * 101: Debit Card
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

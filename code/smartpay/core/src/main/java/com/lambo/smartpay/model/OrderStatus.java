@@ -13,6 +13,15 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the status of the order.
+ * <p/>
+ * 500: Confirmed
+ * 401: Paid
+ * 501: Preparing for Shipment
+ * 402: Cancelled
+ * 502: Shipped
+ * 503: Delivered
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

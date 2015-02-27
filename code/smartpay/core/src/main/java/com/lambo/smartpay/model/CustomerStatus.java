@@ -13,6 +13,12 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for customer status.
+ * <p/>
+ * There are 2 statuses now:
+ * Normal[200]: Customer is normal;
+ * Frozen[500]: Customer is temporarily locked down.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

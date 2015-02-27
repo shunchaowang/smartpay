@@ -13,6 +13,10 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * There are two types of fee.
+ * Static[100]: flat rate;
+ * Percentage[101]: based on the percent of the payment.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

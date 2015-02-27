@@ -11,6 +11,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the status of the payment.
+ * <p/>
+ * 500: Approved
+ * 501: Declined
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

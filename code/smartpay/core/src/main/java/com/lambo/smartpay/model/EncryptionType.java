@@ -13,6 +13,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Encryption type for merchant.
+ * <p/>
+ * MD5[100]: MD5 Algorithm;
+ * SHA[101]: SHA Algorithm.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

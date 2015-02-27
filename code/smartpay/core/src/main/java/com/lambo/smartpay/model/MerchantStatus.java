@@ -13,6 +13,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain for the status of the merchant.
+ * <p/>
+ * Normal[200]: normal stage;
+ * Frozen[500]: Locked down.
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

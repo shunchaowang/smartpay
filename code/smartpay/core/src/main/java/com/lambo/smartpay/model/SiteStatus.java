@@ -11,6 +11,13 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for the status of the site.
+ * <p/>
+ * 400: Created by merchant admin and await the approval of the admin
+ * 500: Approved by admin
+ * 401: Frozen by admin or merchant admin
+ * 501: Declined by admin
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity

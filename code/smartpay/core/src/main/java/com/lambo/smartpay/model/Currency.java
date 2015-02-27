@@ -13,6 +13,11 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
+ * Domain class for currency.
+ * <p>
+ * USD[100]: US Dollar;
+ * RMB[101]: Chinese Yuan.
+ * </p>
  * Created by swang on 2/17/2015.
  */
 @Entity

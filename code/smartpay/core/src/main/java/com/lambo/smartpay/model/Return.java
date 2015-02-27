@@ -16,6 +16,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * Domain class for the status of the return.
+ * <p/>
+ * 400: Shipped
+ * 401: Delivered
+ * <p/>
  * Created by swang on 2/17/2015.
  */
 @Entity
