@@ -56,7 +56,7 @@ public class Merchant implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "MCHT_UPDATED_TIME", nullable = false)
+    @Column(name = "MCHT_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 

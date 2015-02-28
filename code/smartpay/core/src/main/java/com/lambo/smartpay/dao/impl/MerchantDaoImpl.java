@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Dao Impl for Merchant.
  * Created by swang on 2/19/2015.
  */
 @Repository("merchantDao")
@@ -56,7 +57,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
         query.where(predicate);
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
+        LOG.debug("countByAdHocSearch query is " + typedQuery);
         return super.countAllByCriteria(typedQuery);
     }
 
@@ -105,7 +106,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         typedQuery.setFirstResult(start);
         typedQuery.setMaxResults(length);
 
-        LOG.debug("findByAdHocSearch query is " + typedQuery.toString());
+        LOG.debug("findByAdHocSearch query is " + typedQuery);
         return super.findAllByCriteria(typedQuery);
     }
 
@@ -128,7 +129,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
         query.where(predicate);
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
+        LOG.debug("countByAdHocSearch query is " + typedQuery);
         return super.countAllByCriteria(typedQuery);
     }
 
@@ -205,7 +206,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Formulate JPA and Predicate for CriteriaQuery.
+     * Formulate JPA Predicate for CriteriaQuery.
      * Support id, name, active, MerchantStatus code.
      *
      * @param builder  is the JPA CriteriaBuilder.
@@ -226,20 +227,16 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 //                builder.literal(createdTimeBegin), builder.literal(createdTimeEnd));
 
         Predicate predicate = null;
-        // check id
+        // check id, if id != null, query by id and return
         if (merchant.getId() != null) {
             predicate = builder.equal(root.<Long>get("id"), builder.literal(merchant.getId()));
+            return predicate;
         }
 
         // check name
         if (StringUtils.isNotBlank(merchant.getName())) {
-            Predicate namePredicate = builder.like(root.<String>get("name"),
+            predicate = builder.like(root.<String>get("name"),
                     builder.literal("%" + merchant.getName() + "%"));
-            if (predicate == null) {
-                predicate = namePredicate;
-            } else {
-                predicate = builder.and(predicate, namePredicate);
-            }
         }
 
         if (merchant.getActive() != null) {
@@ -265,9 +262,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
             }
         }
 
-        // check createdTime range
-
-        LOG.debug("Formulated predicate is " + predicate.toString());
+        LOG.debug("Formulated predicate is " + predicate);
         return predicate;
     }
 

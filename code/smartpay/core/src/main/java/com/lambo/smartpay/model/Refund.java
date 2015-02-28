@@ -36,11 +36,11 @@ public class Refund implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "RFND_UPDATED_TIME", nullable = false)
+    @Column(name = "RFND_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "RFND_SUCCESS_TIME", nullable = false)
+    @Column(name = "RFND_SUCCESS_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date successTime;
 

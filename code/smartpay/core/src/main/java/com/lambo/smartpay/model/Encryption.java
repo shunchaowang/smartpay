@@ -40,7 +40,7 @@ public class Encryption implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "ENCR_UPDATED_TIME", nullable = false)
+    @Column(name = "ENCR_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 

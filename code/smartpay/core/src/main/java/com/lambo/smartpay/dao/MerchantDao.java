@@ -34,18 +34,18 @@ public interface MerchantDao extends GenericDao<Merchant, Long> {
      * @param activeFlag active or not.
      * @return ordered list of the Merchant.
      */
-    public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length,
-                                            String order, ResourceUtil.JpaOrderDir orderDir,
-                                            Boolean activeFlag);
+    List<Merchant> findByAdHocSearch(String search, Integer start, Integer length,
+                                     String order, ResourceUtil.JpaOrderDir orderDir,
+                                     Boolean activeFlag);
 
     /**
-     * Count Merchant by criteria, created time range.
+     * Count Merchant by criteria.
      * Support id, name, active, MerchantStatus code.
      *
      * @param merchant contains criteria if the field is not null or empty.
      * @return number of the Merchant matching search.
      */
-    public Long countByAdvanceSearch(Merchant merchant);
+    Long countByAdvanceSearch(Merchant merchant);
 
     /**
      * Find Merchant by criteria.
@@ -54,5 +54,5 @@ public interface MerchantDao extends GenericDao<Merchant, Long> {
      * @param merchant contains criteria if the field is not null or empty.
      * @return List of the Merchant matching search ordered by id without pagination.
      */
-    public List<Merchant> findByAdvanceSearch(Merchant merchant);
+    List<Merchant> findByAdvanceSearch(Merchant merchant);
 }

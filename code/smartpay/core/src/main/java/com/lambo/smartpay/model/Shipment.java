@@ -61,7 +61,7 @@ public class Shipment implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "SHMT_UPDATED_TIME", nullable = false)
+    @Column(name = "SHMT_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 

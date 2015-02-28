@@ -36,7 +36,7 @@ public class Administrator implements Serializable {
     @Column(name = "ADMN_PASSWORD", length = 32, nullable = false)
     private String password;
 
-    @Column(name = "ADMN_FIRS_TNAME", length = 32, nullable = false)
+    @Column(name = "ADMN_FIRST_NAME", length = 32, nullable = false)
     private String firstName;
 
     @Column(name = "ADMN_LAST_NAME", length = 32, nullable = false)
@@ -56,7 +56,7 @@ public class Administrator implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "ADMN_UPDATED_TIME", nullable = false)
+    @Column(name = "ADMN_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 

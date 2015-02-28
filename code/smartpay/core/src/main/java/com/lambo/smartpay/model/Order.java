@@ -48,7 +48,7 @@ public class Order implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "ORDR_UPDATED_TIME", nullable = false)
+    @Column(name = "ORDR_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 

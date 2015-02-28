@@ -3,7 +3,7 @@ package com.lambo.smartpay.util;
 /**
  * Created by swang on 2/11/2015.
  */
-public interface ResourceUtil {
+public abstract class ResourceUtil {
 
     public static final String SESSION_INFO = "session_info";
 

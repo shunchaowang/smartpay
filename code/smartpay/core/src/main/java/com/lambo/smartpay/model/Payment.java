@@ -36,11 +36,11 @@ public class Payment implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "PYMT_UPDATED_TIME", nullable = false)
+    @Column(name = "PYMT_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "PYMT_SUCCESS_TIME", nullable = false)
+    @Column(name = "PYMT_SUCCESS_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date successTime;
 

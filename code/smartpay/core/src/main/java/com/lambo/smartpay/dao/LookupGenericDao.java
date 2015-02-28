@@ -31,16 +31,19 @@ public interface LookupGenericDao<T, PK extends Serializable> extends GenericDao
 
     /**
      * Count the number of all object.
+     * Support query on name, code and description.
      *
      * @param search     the keyword to search, eg. m.name LIKE *lambo*
      * @param activeFlag indicates all, active or archived,
      *                   null means all, true means active and false means archived.
      * @return count of the result
      */
-    public Long countByAdHocSearch(String search, Boolean activeFlag);
+    Long countByAdHocSearch(String search, Boolean activeFlag);
 
     /**
      * Find all objects.
+     * Support query on name, code and description.
+     * Support order by id, name, code and description.
      *
      * @param search     keyword to search eg. m.name LIKE *lambo*
      * @param start      the offset of the result list
@@ -51,7 +54,7 @@ public interface LookupGenericDao<T, PK extends Serializable> extends GenericDao
      *                   null means all, true means active and false means archived.
      * @return List of MerchantStatus matching search, starting from start offest and max of length
      */
-    public List<T> findByAdHocSearch(String search, Integer start, Integer length,
-                                     String order, ResourceUtil.JpaOrderDir orderDir,
-                                     Boolean activeFlag);
+    List<T> findByAdHocSearch(String search, Integer start, Integer length,
+                              String order, ResourceUtil.JpaOrderDir orderDir,
+                              Boolean activeFlag);
 }

@@ -90,6 +90,7 @@ public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends G
 
     /**
      * Count the number of all object.
+     * Support query on name, code and description.
      *
      * @param search     the keyword to search, eg. m.name LIKE *lambo*
      * @param activeFlag indicates all, active or archived,
@@ -124,6 +125,8 @@ public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends G
 
     /**
      * Find all objects.
+     * Support query on name, code and description.
+     * Support order by id, name, code and description.
      *
      * @param search     keyword to search eg. m.name LIKE *lambo*
      * @param start      the offset of the result list

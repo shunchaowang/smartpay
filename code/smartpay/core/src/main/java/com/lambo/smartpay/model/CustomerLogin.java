@@ -47,7 +47,7 @@ public class CustomerLogin implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "CSLG_UPDATED_TIME", nullable = false)
+    @Column(name = "CSLG_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
