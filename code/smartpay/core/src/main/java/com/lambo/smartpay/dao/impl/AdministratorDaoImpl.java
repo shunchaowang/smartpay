@@ -43,7 +43,7 @@ public class AdministratorDaoImpl extends GenericDaoImpl<Administrator, Long>
         query.select(root);
 
         Path<String> path = root.get("username");
-        Predicate predicate = builder.like(path, username);
+        Predicate predicate = builder.equal(path, username);
         query.where(predicate);
 
         TypedQuery<Administrator> typedQuery = entityManager.createQuery(query);
@@ -67,7 +67,7 @@ public class AdministratorDaoImpl extends GenericDaoImpl<Administrator, Long>
         query.select(root);
 
         Path<String> path = root.get("email");
-        Predicate predicate = builder.like(path, email);
+        Predicate predicate = builder.equal(path, email);
         query.where(predicate);
 
         TypedQuery<Administrator> typedQuery = entityManager.createQuery(query);

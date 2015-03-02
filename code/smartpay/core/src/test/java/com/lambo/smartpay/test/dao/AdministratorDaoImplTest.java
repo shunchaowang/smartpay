@@ -87,6 +87,33 @@ public class AdministratorDaoImplTest {
 
     @Test
     @Transactional
+    public void testFindByUsernameOrEmail() {
+        LOG.info("Testing equally find by username or email.");
+        // create 3 object to count using name
+        Role adminRole = roleDao.findByCode(adminRoleCode);
+        Administrator administrator = new Administrator();
+        administrator.setUsername("xyzadmin");
+        administrator.setPassword("password");
+        administrator.setFirstName("first name");
+        administrator.setLastName("last name");
+        administrator.setEmail("xyzadmin@me.com");
+        administrator.setRole(adminRole);
+        administrator.setActive(true);
+        administrator.setCreatedTime(todayDate);
+        administrator = administratorDao.create(administrator);
+
+        Administrator adminByUsername = administratorDao.findByUsername("xyzadmin");
+        assertNotNull(adminByUsername);
+        assertEquals(administrator, adminByUsername);
+
+        Administrator adminByEmail = administratorDao.findByEmail("xyzadmin@me.com");
+        assertNotNull(adminByEmail);
+        assertEquals(administrator, adminByEmail);
+
+    }
+
+    @Test
+    @Transactional
     public void testCountByAdHocSearch() {
 
         LOG.info("Testing counting by ad hoc.");
@@ -167,7 +194,8 @@ public class AdministratorDaoImplTest {
 
         // testing order asc
         List<Administrator> administrators =
-                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, administrators.size());
 
@@ -176,12 +204,14 @@ public class AdministratorDaoImplTest {
         assertEquals("password 0", administrator1.getPassword());
 
         List<Administrator> activeAdministrators =
-                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeAdministrators.size());
 
         List<Administrator> archivedAdministrators =
-                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedAdministrators.size());
 
