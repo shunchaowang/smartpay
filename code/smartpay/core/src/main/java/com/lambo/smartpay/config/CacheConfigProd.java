@@ -18,7 +18,7 @@ public class CacheConfigProd {
     private static final Logger LOG = LoggerFactory.getLogger(CacheConfigDev.class);
 
     // use concurrent cache manager for now
-    @Bean
+    @Bean(name = "cacheManager")
     public CacheManager cacheManager() {
         LOG.debug("Creating instance of singleton bean '" + ConcurrentMapCacheManager.class
                 .getName() + "'");

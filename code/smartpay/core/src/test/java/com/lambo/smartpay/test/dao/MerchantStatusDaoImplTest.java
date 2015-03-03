@@ -1,8 +1,8 @@
 package com.lambo.smartpay.test.dao;
 
-import com.lambo.smartpay.config.AppConfig;
-import com.lambo.smartpay.dao.MerchantStatusDao;
-import com.lambo.smartpay.model.MerchantStatus;
+import com.lambo.smartpay.config.PersistenceConfigDev;
+import com.lambo.smartpay.persistence.dao.MerchantStatusDao;
+import com.lambo.smartpay.persistence.entity.MerchantStatus;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNull;
  */
 @TransactionConfiguration(defaultRollback = true)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@ContextConfiguration(classes = {PersistenceConfigDev.class})
 @ActiveProfiles("dev")
 public class MerchantStatusDaoImplTest {
 

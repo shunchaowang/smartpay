@@ -32,7 +32,7 @@ public class MailConfigDev {
     @Autowired
     private Environment env;
 
-    @Bean
+    @Bean(name = "javaMailSender")
     public JavaMailSenderImpl javaMailSender() {
         LOG.debug("Creating instance of singleton bean '" + JavaMailSenderImpl.class.getName() +
                 "'");

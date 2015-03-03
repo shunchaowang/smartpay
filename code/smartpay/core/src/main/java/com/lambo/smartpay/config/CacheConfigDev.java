@@ -17,7 +17,7 @@ public class CacheConfigDev {
 
     private static final Logger LOG = LoggerFactory.getLogger(CacheConfigDev.class);
 
-    @Bean
+    @Bean(name = "cacheManager")
     public CacheManager cacheManager() {
         LOG.debug("Creating instance of singleton bean '" + ConcurrentMapCacheManager.class
                 .getName() + "'");

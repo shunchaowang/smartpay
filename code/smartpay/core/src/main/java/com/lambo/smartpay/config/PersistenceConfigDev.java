@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
@@ -42,6 +43,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @Profile("dev")
+@ComponentScan({"com.lambo.smartpay.persistence"})
 @PropertySources(@PropertySource(value = {"classpath:application-dev.properties"})/*,
 ignoreResourceNotFound = true*/)
 //@EnableJpaRepositories(basePackages = {"com.lambo.smartpay.repositories"}) // not used right now
@@ -60,7 +62,7 @@ public class PersistenceConfigDev {
     @Value("${init-db: false}")
     private String initDatabase;
 
-    @Bean
+    @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LOG.debug("Creating instance of singleton bean '" +
                 LocalContainerEntityManagerFactoryBean.class.getName() + "'");
@@ -73,7 +75,7 @@ public class PersistenceConfigDev {
 
         factory.setDataSource(dataSource());
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.lambo.smartpay.model");
+        factory.setPackagesToScan("com.lambo.smartpay.persistence.entity");
 
         Properties jpaProperties = new Properties();
         jpaProperties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
@@ -87,12 +89,12 @@ public class PersistenceConfigDev {
         return factory;
     }
 
-    @Bean
+    @Bean(name = "hibernateExceptionTranslator")
     public HibernateExceptionTranslator hibernateExceptionTranslator() {
         return new HibernateExceptionTranslator();
     }
 
-    @Bean
+    @Bean(name = "dataSource")
     public DataSource dataSource() {
         LOG.debug("Creating instance of singleton bean '" + BasicDataSource.class.getName() + "'");
         BasicDataSource dataSource = new BasicDataSource();
@@ -103,7 +105,7 @@ public class PersistenceConfigDev {
         return dataSource;
     }
 
-    @Bean
+    @Bean(name = "dataSourceInitializer")
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
         LOG.debug("Creating instance of singleton bean '" + DataSourceInitializer.class.getName()
                 + "'");
@@ -116,7 +118,7 @@ public class PersistenceConfigDev {
         return dataSourceInitializer;
     }
 
-    @Bean
+    @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager() {
         LOG.debug("Creating instance of singleton bean '" + JpaTransactionManager.class.getName()
                 + "'");

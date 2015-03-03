@@ -1,8 +1,8 @@
 package com.lambo.smartpay.test.dao;
 
-import com.lambo.smartpay.config.AppConfig;
-import com.lambo.smartpay.dao.AccountTypeDao;
-import com.lambo.smartpay.model.AccountType;
+import com.lambo.smartpay.config.PersistenceConfigDev;
+import com.lambo.smartpay.persistence.dao.AccountTypeDao;
+import com.lambo.smartpay.persistence.entity.AccountType;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNull;
  * Created by swang on 2/26/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@ContextConfiguration(classes = {PersistenceConfigDev.class})
 @ActiveProfiles("dev")
 public class AccountTypeDaoImplTest {
 

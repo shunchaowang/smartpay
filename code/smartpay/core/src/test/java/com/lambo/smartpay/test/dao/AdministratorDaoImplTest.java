@@ -1,10 +1,10 @@
 package com.lambo.smartpay.test.dao;
 
-import com.lambo.smartpay.config.AppConfig;
-import com.lambo.smartpay.dao.AdministratorDao;
-import com.lambo.smartpay.dao.RoleDao;
-import com.lambo.smartpay.model.Administrator;
-import com.lambo.smartpay.model.Role;
+import com.lambo.smartpay.config.PersistenceConfigDev;
+import com.lambo.smartpay.persistence.dao.AdministratorDao;
+import com.lambo.smartpay.persistence.dao.RoleDao;
+import com.lambo.smartpay.persistence.entity.Administrator;
+import com.lambo.smartpay.persistence.entity.Role;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNull;
  * Created by swang on 2/27/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@ContextConfiguration(classes = {PersistenceConfigDev.class})
 @ActiveProfiles("dev")
 public class AdministratorDaoImplTest {
 

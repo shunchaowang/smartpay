@@ -1,7 +1,7 @@
 package com.lambo.smartpay.service.impl;
 
-import com.lambo.smartpay.dao.MerchantStatusDao;
-import com.lambo.smartpay.model.MerchantStatus;
+import com.lambo.smartpay.persistence.dao.MerchantStatusDao;
+import com.lambo.smartpay.persistence.entity.MerchantStatus;
 import com.lambo.smartpay.service.MerchantStatusService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

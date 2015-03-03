@@ -1,12 +1,12 @@
 package com.lambo.smartpay.test.dao;
 
-import com.lambo.smartpay.config.AppConfig;
-import com.lambo.smartpay.dao.CredentialDao;
-import com.lambo.smartpay.dao.CredentialStatusDao;
-import com.lambo.smartpay.dao.CredentialTypeDao;
-import com.lambo.smartpay.model.Credential;
-import com.lambo.smartpay.model.CredentialStatus;
-import com.lambo.smartpay.model.CredentialType;
+import com.lambo.smartpay.config.PersistenceConfigDev;
+import com.lambo.smartpay.persistence.dao.CredentialDao;
+import com.lambo.smartpay.persistence.dao.CredentialStatusDao;
+import com.lambo.smartpay.persistence.dao.CredentialTypeDao;
+import com.lambo.smartpay.persistence.entity.Credential;
+import com.lambo.smartpay.persistence.entity.CredentialStatus;
+import com.lambo.smartpay.persistence.entity.CredentialType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNull;
  * Created by swang on 3/2/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@ContextConfiguration(classes = {PersistenceConfigDev.class})
 @ActiveProfiles("dev")
 public class CredentialDaoImplTest {
 
@@ -64,5 +64,17 @@ public class CredentialDaoImplTest {
 
         credential = credentialDao.create(credential);
         assertNotNull(credential);
+
+        credential = credentialDao.get(credential.getId());
+        assertNotNull(credential);
+
+        credential.setContent("xyz updated");
+        credential = credentialDao.update(credential);
+        assertNotNull(credential);
+        assertEquals("xyz updated", credential.getContent());
+
+        credentialDao.delete(credential.getId());
+
+        assertNull(credentialDao.get(credential.getId()));
     }
 }

@@ -1,6 +1,9 @@
 package com.lambo.smartpay.test.config;
 
 import com.lambo.smartpay.config.AppConfig;
+import com.lambo.smartpay.config.CacheConfigDev;
+import com.lambo.smartpay.config.MailConfigDev;
+import com.lambo.smartpay.config.PersistenceConfigDev;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,7 +26,8 @@ import static org.junit.Assert.assertNotNull;
  * Created by swang on 2/20/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@ContextConfiguration(classes = {AppConfig.class, CacheConfigDev.class, MailConfigDev.class,
+        PersistenceConfigDev.class})
 // profile related config will be loaded by ActiveProfiles
 @ActiveProfiles(profiles = {"dev"})
 public class ApplicationContextTest {
