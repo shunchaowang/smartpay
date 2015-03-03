@@ -32,7 +32,7 @@ public class Credential implements Serializable {
     @Column(name = "CRDT_CONTENT", length = 32, nullable = false)
     private String content;
 
-    @Column(name = "CRDT_EXPIRATION_TIME")
+    @Column(name = "CRDT_EXPIRATION_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
 
