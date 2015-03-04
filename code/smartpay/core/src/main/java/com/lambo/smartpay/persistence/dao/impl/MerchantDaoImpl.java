@@ -35,7 +35,20 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      */
     @Override
     public Merchant findByName(String name) {
-        return null;
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
+
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(root);
+
+        Path<String> path = root.get("name");
+        Predicate predicate = builder.equal(path, name);
+        query.where(predicate);
+
+        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+
+        LOG.debug("findByName query is " + typedQuery);
+        return typedQuery.getSingleResult();
     }
 
     /**
@@ -261,9 +274,9 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         // check Merchant Status code
         if (merchant.getMerchantStatus() != null &&
                 StringUtils.isNotBlank(merchant.getMerchantStatus().getCode())) {
-            Predicate merchantStatusPredicate = builder.like(root.join("merchantStatus")
-                            .<String>get("code"),
-                    builder.literal("%" + merchant.getMerchantStatus().getCode() + "%"));
+            Predicate merchantStatusPredicate = builder.equal(
+                    root.join("merchantStatus").<String>get("code"),
+                    builder.literal(merchant.getMerchantStatus().getCode()));
             if (predicate == null) {
                 predicate = merchantStatusPredicate;
             } else {
