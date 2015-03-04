@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,10 +50,6 @@ public class Encryption implements Serializable {
             optional = false)
     @JoinColumn(name = "ENCR_ENTP_ID", nullable = false)
     private EncryptionType encryptionType;
-
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "encryption",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    private Merchant merchant;
 
     public Long getId() {
         return id;
@@ -110,13 +105,5 @@ public class Encryption implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public Merchant getMerchant() {
-        return merchant;
-    }
-
-    public void setMerchant(Merchant merchant) {
-        this.merchant = merchant;
     }
 }

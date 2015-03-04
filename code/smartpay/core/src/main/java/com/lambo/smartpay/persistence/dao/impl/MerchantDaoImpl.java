@@ -28,9 +28,19 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     private static final Logger LOG = LoggerFactory.getLogger(MerchantDaoImpl.class);
 
     /**
+     * Find merchant by name.
+     *
+     * @param name name of the merchant.
+     * @return return the object if found, null if not found.
+     */
+    @Override
+    public Merchant findByName(String name) {
+        return null;
+    }
+
+    /**
      * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel,
-     * email and name
-     * of MerchantStatus.
+     * email and name of MerchantStatus.
      *
      * @param search     search keyword.
      * @param activeFlag specify active or not.
@@ -63,8 +73,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email
-     * and name
-     * of MerchantStatus.
+     * and name of MerchantStatus.
      *
      * @param search     search keyword.
      * @param start      start position for pagination.

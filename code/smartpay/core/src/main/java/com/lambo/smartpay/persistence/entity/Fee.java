@@ -10,7 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by swang on 2/17/2015.
@@ -31,6 +34,14 @@ public class Fee implements Serializable {
 
     @Column(name = "FEE_REMARK", length = 255)
     private String remark;
+
+    @Column(name = "FEE_CREATED_TIME", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdTime;
+
+    @Column(name = "FEE_UPDATED_TIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedTime;
 
     @Column(name = "FEE_ACTIVE", nullable = false)
     private Boolean active;
@@ -78,5 +89,21 @@ public class Fee implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }

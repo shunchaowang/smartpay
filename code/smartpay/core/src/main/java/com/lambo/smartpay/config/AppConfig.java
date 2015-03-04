@@ -16,7 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Created by swang on 2/12/2015.
  */
 @Configuration
-//@ComponentScan(basePackages = {"com.lambo.smartpay"})
 @EnableScheduling
 @EnableAspectJAutoProxy
 @EnableCaching

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * Dao impl for EncryptionType.
  * Created by swang on 2/26/2015.
  */
-@Repository("encryptionDao")
+@Repository("encryptionTypeDao")
 public class EncryptionTypeDaoImpl extends LookupGenericDaoImpl<EncryptionType, Long>
         implements EncryptionTypeDao {
 }
