@@ -1,7 +1,7 @@
 package com.lambo.smartpay.persistence.dao.impl;
 
-import com.lambo.smartpay.persistence.dao.MerchantDao;
-import com.lambo.smartpay.persistence.entity.Merchant;
+import com.lambo.smartpay.persistence.dao.SiteDao;
+import com.lambo.smartpay.persistence.entity.Site;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,41 +19,40 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Dao Impl for Merchant.
- * Created by swang on 2/19/2015.
+ * Created by swang on 3/6/2015.
  */
-@Repository("merchantDao")
-public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements MerchantDao {
+@Repository("siteDao")
+public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(MerchantDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SiteDaoImpl.class);
 
     /**
-     * Find merchant by name.
+     * Find site by name.
      *
-     * @param name name of the merchant.
-     * @return return the object if found, null if not found.
+     * @param name name of the site to find.
+     * @return site with the name specific of null if not found.
      */
     @Override
-    public Merchant findByName(String name) {
+    public Site findByName(String name) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
 
-        Root<Merchant> root = query.from(Merchant.class);
+        Root<Site> root = query.from(Site.class);
         query.select(root);
 
         Path<String> path = root.get("name");
         Predicate predicate = builder.equal(path, name);
         query.where(predicate);
 
-        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
 
         logger.debug("findByName query is " + typedQuery);
         return typedQuery.getSingleResult();
     }
 
     /**
-     * Count number of Merchant matching the search. Support ad hoc search on name, contact, tel,
-     * email and name of MerchantStatus.
+     * Count number of Site matching the search. Support ad hoc search on attributes of Site.
+     * Supports name, url, name of SiteStatus, name of Merchant.
      *
      * @param search     search keyword.
      * @param activeFlag specify active or not.
@@ -61,10 +60,9 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      */
     @Override
     public Long countByAdHocSearch(String search, Boolean activeFlag) {
-
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<Merchant> root = query.from(Merchant.class);
+        Root<Site> root = query.from(Site.class);
         query.select(builder.count(root));
 
         Predicate predicate = formulatePredicate(builder, root, search);
@@ -85,8 +83,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Find all Merchant matching the search. Support ad hoc search on name, contact, tel, email
-     * and name of MerchantStatus.
+     * Find all Site matching the search. Support ad hoc search on attributes of Site.
+     * Supports name, url, name of SiteStatus, name of Merchant.
      *
      * @param search     search keyword.
      * @param start      start position for pagination.
@@ -94,16 +92,14 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      * @param order      ordered field.
      * @param orderDir   ordered direction.
      * @param activeFlag active or not.
-     * @return ordered list of the Merchant.
+     * @return ordered list of the Site.
      */
     @Override
-    public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length,
-                                            String order, ResourceUtil.JpaOrderDir orderDir,
-                                            Boolean activeFlag) {
-
+    public List<Site> findByAdHocSearch(String search, Integer start, Integer length, String
+            order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
-        Root<Merchant> root = query.from(Merchant.class);
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
+        Root<Site> root = query.from(Site.class);
         query.select(root);
 
         Predicate predicate = formulatePredicate(builder, root, search);
@@ -123,7 +119,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         Order orderBy = formulateOrderBy(builder, root, order, orderDir);
         query.orderBy(orderBy);
 
-        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
 
         typedQuery.setFirstResult(start);
         typedQuery.setMaxResults(length);
@@ -133,21 +129,20 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Count Merchant by criteria.
-     * Support id, name, active, MerchantStatus id.
+     * Count Site by criteria. Support attributes of Site.
+     * Supports id, name, url, id of SiteStatus, id of Merchant.
      *
-     * @param merchant contains criteria if the field is not null or empty.
-     * @return number of the Merchant matching search.
+     * @param site contains criteria if the field is not null or empty.
+     * @return number of the Site matching search.
      */
     @Override
-    public Long countByAdvanceSearch(Merchant merchant) {
-
+    public Long countByAdvanceSearch(Site site) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<Merchant> root = query.from(Merchant.class);
+        Root<Site> root = query.from(Site.class);
         query.select(builder.count(root));
 
-        Predicate predicate = formulatePredicate(builder, root, merchant);
+        Predicate predicate = formulatePredicate(builder, root, site);
 
         query.where(predicate);
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
@@ -156,71 +151,60 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     }
 
     /**
-     * Find Merchant by criteria.
-     * Support id, name, active, MerchantStatus id.
+     * Find Site by criteria.Support attributes of Site.
+     * Supports id, name, url, id of SiteStatus, id of Merchant.
      *
-     * @param merchant contains criteria if the field is not null or empty.
-     * @return List of the Merchant matching search ordered by id without pagination.
+     * @param site contains criteria if the field is not null or empty.
+     * @return List of the Site matching search ordered by id without pagination.
      */
     @Override
-    public List<Merchant> findByAdvanceSearch(Merchant merchant) {
-
+    public List<Site> findByAdvanceSearch(Site site) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
-        Root<Merchant> root = query.from(Merchant.class);
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
+        Root<Site> root = query.from(Site.class);
         query.select(root);
 
-        Predicate predicate = formulatePredicate(builder, root, merchant);
+        Predicate predicate = formulatePredicate(builder, root, site);
 
         query.where(predicate);
 
         // default order is id DESC
         query.orderBy(builder.desc(root.get("id")));
 
-        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
         logger.debug("countByAdHocSearch query is " + typedQuery.toString());
         return super.findAllByCriteria(typedQuery);
     }
 
     /**
      * Formulate JPA or Predicate for CriteriaQuery.
-     * Supports name, contact, tel, email and name of MerchantStatus.
+     * Supports name, url, name of SiteStatus, name of Merchant.
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
      * @param search  is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, String
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Site> root, String
             search) {
 
         String likeSearch = "%" + search + "%";
 
         // get all paths for the query
         Path<String> namePath = root.get("name");
-        Path<String> contactPath = root.get("contact");
-        Path<String> telPath = root.get("tel");
-        Path<String> emailPath = root.get("email");
-        // join on MerchantStatus to search on MerchantStatus name
-        Path<String> merchantStatusPath = root.join("merchantStatus").get("name");
+        Path<String> urlPath = root.get("url");
+        // join on SiteStatus to search on SiteStatus name
+        Path<String> siteStatusPath = root.join("siteStatus").get("name");
+        Path<String> merchantNamePath = root.join("merchant").get("name");
 
         // create the predicate expression for all the path
         Predicate namePredicate = builder.like(namePath, likeSearch);
-        Predicate contactPredicate = builder.like(contactPath, likeSearch);
-        Predicate telPredicate = builder.like(telPath, likeSearch);
-        Predicate emailPredicate = builder.like(emailPath, likeSearch);
-        Predicate merchantStatusPredicate = builder.like(merchantStatusPath, likeSearch);
+        Predicate urlPredicate = builder.like(urlPath, likeSearch);
+        Predicate siteStatusPredicate = builder.like(siteStatusPath, likeSearch);
+        Predicate merchantNamePredicate = builder.like(merchantNamePath, likeSearch);
 
-        Predicate predicate = builder.or(namePredicate, contactPredicate, telPredicate,
-                emailPredicate, merchantStatusPredicate);
-
-        // we don't want to have wildcard search on id actually
-        // create id predicate expression of search is numeric
-//        if (StringUtils.isNumeric(search)) {
-//            Path<Long> idPath = root.get("id");
-//            Predicate idPredicate = builder.equal(idPath, builder.literal(Long.valueOf(search)));
-//            predicate = builder.or(predicate, idPredicate);
-//        }
+        Predicate predicate = builder.or(namePredicate, urlPredicate, siteStatusPredicate,
+                merchantNamePredicate);
 
         // create the final Predicate and return
         logger.debug("Formulated jpa predicate is " + predicate.toString());
@@ -229,19 +213,20 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA Predicate for CriteriaQuery.
-     * Support id, name, active, MerchantStatus id.
+     * Support id, name, url, active, SiteStatus id, Merchant id.
      *
-     * @param builder  is the JPA CriteriaBuilder.
-     * @param root     is the root of the CriteriaQuery.
-     * @param merchant is the search keyword.
+     * @param builder is the JPA CriteriaBuilder.
+     * @param root    is the root of the CriteriaQuery.
+     * @param site    is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Merchant> root, Merchant
-            merchant) {
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Site> root, Site
+            site) {
 
         // neither of createdTime cannot be null
-        if (merchant.getId() == null && StringUtils.isBlank(merchant.getName()) &&
-                merchant.getActive() == null && merchant.getMerchantStatus() == null) {
+        if (site.getId() == null && StringUtils.isBlank(site.getName()) &&
+                site.getActive() == null && StringUtils.isBlank(site.getUrl()) &&
+                site.getSiteStatus() == null && site.getMerchant() == null) {
             return null;
         }
 
@@ -250,20 +235,25 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
         Predicate predicate = null;
         // check id, if id != null, query by id and return
-        if (merchant.getId() != null) {
-            predicate = builder.equal(root.<Long>get("id"), builder.literal(merchant.getId()));
+        if (site.getId() != null) {
+            predicate = builder.equal(root.<Long>get("id"), builder.literal(site.getId()));
             return predicate;
         }
 
         // check name
-        if (StringUtils.isNotBlank(merchant.getName())) {
+        if (StringUtils.isNotBlank(site.getName())) {
             predicate = builder.like(root.<String>get("name"),
-                    builder.literal("%" + merchant.getName() + "%"));
+                    builder.literal("%" + site.getName() + "%"));
+        }
+        // check url
+        if (StringUtils.isNotBlank(site.getUrl())) {
+            predicate = builder.like(root.<String>get("url"),
+                    builder.literal("%" + site.getUrl() + "%"));
         }
 
-        if (merchant.getActive() != null) {
+        if (site.getActive() != null) {
             Predicate activePredicate = builder.equal(root.<Boolean>get("active"),
-                    builder.literal(merchant.getActive()));
+                    builder.literal(site.getActive()));
             if (predicate == null) {
                 predicate = activePredicate;
             } else {
@@ -271,15 +261,26 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
             }
         }
 
-        // check Merchant Status id
-        if (merchant.getMerchantStatus() != null && merchant.getMerchantStatus().getId() != null) {
-            Predicate merchantStatusPredicate = builder.equal(
-                    root.join("merchantStatus").<Long>get("id"),
-                    builder.literal(merchant.getMerchantStatus().getId()));
+        // check Site Status id
+        if (site.getSiteStatus() != null && site.getSiteStatus().getId() != null) {
+            Predicate siteStatusPredicate = builder.equal(
+                    root.join("siteStatus").<Long>get("id"),
+                    builder.literal(site.getSiteStatus().getId()));
             if (predicate == null) {
-                predicate = merchantStatusPredicate;
+                predicate = siteStatusPredicate;
             } else {
-                predicate = builder.and(predicate, merchantStatusPredicate);
+                predicate = builder.and(predicate, siteStatusPredicate);
+            }
+        }
+        // check Merchant id
+        if (site.getMerchant() != null && site.getMerchant().getId() != null) {
+            Predicate merchantPredicate = builder.equal(
+                    root.join("merchant").<Long>get("id"),
+                    builder.literal(site.getMerchant().getId()));
+            if (predicate == null) {
+                predicate = merchantPredicate;
+            } else {
+                predicate = builder.and(predicate, merchantPredicate);
             }
         }
 
@@ -289,7 +290,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA Order for CriteriaQuery.
-     * Supports id, name, contact, tel, email, name of MerchantStatus, createdTime.
+     * Supports id, name, url, SiteStatus name, Merchant name, createdTime.
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.
@@ -297,16 +298,16 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      * @param orderDir is the order direction.
      * @return JPA Order for the CriteriaQuery.
      */
-    private Order formulateOrderBy(CriteriaBuilder builder, Root<Merchant> root,
+
+    private Order formulateOrderBy(CriteriaBuilder builder, Root<Site> root,
                                    String order, ResourceUtil.JpaOrderDir orderDir) {
 
         // get all supporting paths
         Path<Long> idPath = root.get("id");
         Path<String> namePath = root.get("name");
-        Path<String> contactPath = root.get("contact");
-        Path<String> telPath = root.get("tel");
-        Path<String> emailPath = root.get("email");
-        Path<String> merchantStatusPath = root.join("merchantStatus").get("name");
+        Path<String> urlPath = root.get("url");
+        Path<String> siteStatusPath = root.join("siteStatus").get("name");
+        Path<String> merchantPath = root.join("merchant").get("name");
         Path<Date> createdTimePath = root.get("createdTime");
 
         // create Order instance, default would be ORDER BY id DESC, newest to oldest
@@ -320,17 +321,14 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
                     case "name":
                         orderBy = builder.asc(namePath);
                         break;
-                    case "contact":
-                        orderBy = builder.asc(contactPath);
+                    case "url":
+                        orderBy = builder.asc(urlPath);
                         break;
-                    case "tel":
-                        orderBy = builder.asc(telPath);
+                    case "siteStatus":
+                        orderBy = builder.asc(siteStatusPath);
                         break;
-                    case "email":
-                        orderBy = builder.asc(emailPath);
-                        break;
-                    case "merchantStatus":
-                        orderBy = builder.asc(merchantStatusPath);
+                    case "merchant":
+                        orderBy = builder.asc(merchantPath);
                         break;
                     case "createdTime":
                         orderBy = builder.asc(createdTimePath);
@@ -347,17 +345,14 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
                     case "name":
                         orderBy = builder.desc(namePath);
                         break;
-                    case "contact":
-                        orderBy = builder.desc(contactPath);
+                    case "url":
+                        orderBy = builder.desc(urlPath);
                         break;
-                    case "tel":
-                        orderBy = builder.desc(telPath);
+                    case "siteStatus":
+                        orderBy = builder.desc(siteStatusPath);
                         break;
-                    case "email":
-                        orderBy = builder.desc(emailPath);
-                        break;
-                    case "merchantStatus":
-                        orderBy = builder.desc(merchantStatusPath);
+                    case "merchant":
+                        orderBy = builder.desc(merchantPath);
                         break;
                     case "createdTime":
                         orderBy = builder.desc(createdTimePath);

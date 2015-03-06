@@ -1,15 +1,14 @@
 package com.lambo.smartpay.test.dao;
 
 import com.lambo.smartpay.config.PersistenceConfigDev;
-import com.lambo.smartpay.persistence.dao.CredentialDao;
 import com.lambo.smartpay.persistence.dao.CredentialStatusDao;
 import com.lambo.smartpay.persistence.dao.CredentialTypeDao;
-import com.lambo.smartpay.persistence.dao.EncryptionDao;
 import com.lambo.smartpay.persistence.dao.EncryptionTypeDao;
-import com.lambo.smartpay.persistence.dao.FeeDao;
 import com.lambo.smartpay.persistence.dao.FeeTypeDao;
 import com.lambo.smartpay.persistence.dao.MerchantDao;
 import com.lambo.smartpay.persistence.dao.MerchantStatusDao;
+import com.lambo.smartpay.persistence.dao.SiteDao;
+import com.lambo.smartpay.persistence.dao.SiteStatusDao;
 import com.lambo.smartpay.persistence.entity.Credential;
 import com.lambo.smartpay.persistence.entity.CredentialStatus;
 import com.lambo.smartpay.persistence.entity.CredentialType;
@@ -19,6 +18,9 @@ import com.lambo.smartpay.persistence.entity.Fee;
 import com.lambo.smartpay.persistence.entity.FeeType;
 import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.MerchantStatus;
+import com.lambo.smartpay.persistence.entity.Site;
+import com.lambo.smartpay.persistence.entity.SiteStatus;
+import com.lambo.smartpay.util.ResourceUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -31,40 +33,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 
 /**
- * Created by swang on 3/3/2015.
+ * Created by swang on 3/6/2015.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {PersistenceConfigDev.class})
 @ActiveProfiles("dev")
-public class MerchantDaoImplTest {
+public class SiteDaoImplTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MerchantDaoImplTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SiteDaoImplTest.class);
 
-    @Autowired
-    private MerchantDao merchantDao;
     @Autowired
     private MerchantStatusDao merchantStatusDao;
     @Autowired
-    private CredentialDao credentialDao;
+    private MerchantDao merchantDao;
     @Autowired
-    private CredentialStatusDao credentialStatusDao;
+    private SiteStatusDao siteStatusDao;
+    @Autowired
+    private SiteDao siteDao;
     @Autowired
     private CredentialTypeDao credentialTypeDao;
     @Autowired
-    private EncryptionDao encryptionDao;
-    @Autowired
-    private EncryptionTypeDao encryptionTypeDao;
-    @Autowired
-    private FeeDao feeDao;
+    private CredentialStatusDao credentialStatusDao;
     @Autowired
     private FeeTypeDao feeTypeDao;
+    @Autowired
+    private EncryptionTypeDao encryptionTypeDao;
 
     private Date todayDate = Calendar.getInstance().getTime();
 
@@ -73,10 +73,12 @@ public class MerchantDaoImplTest {
     private String certificateCredentialTypeCode = "100";
     private String md5EncryptionTypeCode = "100";
     private String staticFeeTypeCode = "100";
+    private String createdSiteStatusCode = "400";
 
     @Test
     @Transactional
     public void testCrud() {
+
         Merchant merchant = new Merchant();
         merchant.setActive(true);
         merchant.setName("xyz");
@@ -131,38 +133,29 @@ public class MerchantDaoImplTest {
         merchant = merchantDao.create(merchant);
         assertNotNull(merchant);
 
-        LOG.info("Testing reading associations");
-        encryption = merchant.getEncryption();
-        assertNotNull(encryption);
-        credential = merchant.getCredential();
-        assertNotNull(credential);
-        fee = merchant.getCommissionFee();
-        assertNotNull(fee);
-        returnFee = merchant.getReturnFee();
-        assertNotNull(returnFee);
+        SiteStatus createdSiteStatus = siteStatusDao.findByCode(createdSiteStatusCode);
+        Site site = new Site();
+        site.setCreatedTime(todayDate);
+        site.setActive(true);
+        site.setName("xyz");
+        site.setMerchant(merchant);
+        site.setSiteStatus(createdSiteStatus);
+        site.setUrl("www.google.com");
+        site = siteDao.create(site);
+        assertNotNull(site);
 
-        LOG.info("Testing updating simple attributes");
-        merchant.setName("updated xyz");
-        merchant = merchantDao.update(merchant);
-        assertEquals("updated xyz", merchant.getName());
-
-        LOG.info("Testing updating associations");
-        merchant.getCredential().setContent("updated xyz");
-        merchant.getCommissionFee().setValue(new Float(2.0));
-        merchant.getReturnFee().setValue(new Float(3.0));
-        merchant = merchantDao.update(merchant);
-        assertEquals("updated xyz", merchant.getCredential().getContent());
-        assertEquals(new Float(2.0), merchant.getCommissionFee().getValue());
-        assertEquals(new Float(3.0), merchant.getReturnFee().getValue());
-
-        LOG.info("Testing deleting");
-        encryption = merchant.getEncryption();
-        fee = merchant.getCommissionFee();
-        returnFee = merchant.getReturnFee();
-        merchantDao.delete(merchant.getId());
-        assertNull(merchantDao.get(merchant.getId()));
-        assertNull(encryptionDao.get(encryption.getId()));
-        assertNull(feeDao.get(fee.getId()));
-        assertNull(feeDao.get(returnFee.getId()));
+        Long count = siteDao.countByAdHocSearch("yz", true);
+        assertEquals(new Long(1), count);
+        count = siteDao.countByAdHocSearch("yzx", true);
+        assertEquals(new Long(0), count);
+        List<Site> sites = siteDao.findByAdHocSearch("xyz", 0,10, "name", ResourceUtil
+                .JpaOrderDir.ASC, true);
+        assertNotNull(sites.get(0));
+        Site s = new Site();
+        s.setName("xyz");
+        count = siteDao.countByAdvanceSearch(s);
+        assertEquals(new Long(1), count);
+        sites = siteDao.findByAdvanceSearch(s);
+        assertNotNull(sites.get(0));
     }
 }
