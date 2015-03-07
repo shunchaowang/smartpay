@@ -231,4 +231,19 @@ public class AdministratorDaoImplTest {
         assertNotNull(administrators);
         assertEquals(0, administrators.size());
     }
+
+    @Test
+    public void testAdvanceSearch() {
+        Administrator administrator = new Administrator();
+        administrator.setId((long) 3);
+        administrator.setActive(true);
+        administrator.setEmail("xyz@xyz@me.com");
+        administrator.setFirstName("xyz");
+        administrator.setLastName("xyz");
+        administrator.setUsername("xyz");
+        Long count = administratorDao.countByAdvanceSearch(administrator);
+        assertEquals(new Long(0), count);
+        List<Administrator> administrators = administratorDao.findByAdvanceSearch(administrator);
+        assertEquals(0, administrators.size());
+    }
 }
