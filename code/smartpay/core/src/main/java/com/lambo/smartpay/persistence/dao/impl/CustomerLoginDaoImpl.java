@@ -1,7 +1,7 @@
 package com.lambo.smartpay.persistence.dao.impl;
 
-import com.lambo.smartpay.persistence.dao.CustomerDao;
-import com.lambo.smartpay.persistence.entity.Customer;
+import com.lambo.smartpay.persistence.dao.CustomerLoginDao;
+import com.lambo.smartpay.persistence.entity.CustomerLogin;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,40 +21,41 @@ import java.util.List;
 /**
  * Created by swang on 3/6/2015.
  */
-@Repository("customerDao")
-public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
-        implements CustomerDao {
+@Repository("customerLoginDao")
+public class CustomerLoginDaoImpl extends GenericDaoImpl<CustomerLogin, Long>
+        implements CustomerLoginDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomerLoginDaoImpl.class);
 
     /**
-     * Find Customer by email.
+     * Find CustomerLogin by loginEmail.
      *
-     * @param email email of Customer.
-     * @return Customer with email or null.
+     * @param loginEmail of the CustomerLogin
+     * @return CustomerLogin with loginEmail specified or null is not existing
      */
     @Override
-    public Customer findByEmail(String email) {
+    public CustomerLogin findByLoginEmail(String loginEmail) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
+        CriteriaQuery<CustomerLogin> query = builder.createQuery(CustomerLogin.class);
 
-        Root<Customer> root = query.from(Customer.class);
+        Root<CustomerLogin> root = query.from(CustomerLogin.class);
         query.select(root);
 
         Path<String> path = root.get("email");
-        Predicate predicate = builder.equal(path, email);
+        Predicate predicate = builder.equal(path, loginEmail);
         query.where(predicate);
 
-        TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
+        TypedQuery<CustomerLogin> typedQuery = entityManager.createQuery(query);
 
         logger.debug("findByName query is " + typedQuery);
         return typedQuery.getSingleResult();
     }
 
     /**
-     * Count number of Customer matching the search. Support ad hoc search on attributes of
-     * Customer.
-     * Supports firstName, lastName, email, CustomerStatus name, CustomerLogin loginEmail.
+     * Count number of CustomerLogin matching the search. Support ad hoc search on attributes of
+     * CustomerLogin.
+     * <p/>
+     * Support loginEmail, firstName, lastName, CustomerLoginStatus name.
      *
      * @param search     search keyword.
      * @param activeFlag specify active or not.
@@ -64,7 +65,7 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
     public Long countByAdHocSearch(String search, Boolean activeFlag) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<Customer> root = query.from(Customer.class);
+        Root<CustomerLogin> root = query.from(CustomerLogin.class);
         query.select(builder.count(root));
 
         Predicate predicate = formulatePredicate(builder, root, search);
@@ -85,8 +86,10 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
     }
 
     /**
-     * Find all Customer matching the search. Support ad hoc search on attributes of Customer.
-     * Supports firstName, lastName, email, CustomerStatus name, CustomerLogin loginEmail.
+     * Find all CustomerLogin matching the search. Support ad hoc search on attributes of
+     * CustomerLogin.
+     * <p/>
+     * Support loginEmail, firstName, lastName, CustomerLoginStatus name.
      *
      * @param search     search keyword.
      * @param start      start position for pagination.
@@ -94,14 +97,15 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
      * @param order      ordered field.
      * @param orderDir   ordered direction.
      * @param activeFlag active or not.
-     * @return ordered list of the Customer.
+     * @return ordered list of the CustomerLogin.
      */
     @Override
-    public List<Customer> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
+    public List<CustomerLogin> findByAdHocSearch(String search, Integer start, Integer length,
+                                                 String order, ResourceUtil.JpaOrderDir orderDir,
+                                                 Boolean activeFlag) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
-        Root<Customer> root = query.from(Customer.class);
+        CriteriaQuery<CustomerLogin> query = builder.createQuery(CustomerLogin.class);
+        Root<CustomerLogin> root = query.from(CustomerLogin.class);
         query.select(root);
 
         Predicate predicate = formulatePredicate(builder, root, search);
@@ -121,7 +125,7 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
         Order orderBy = formulateOrderBy(builder, root, order, orderDir);
         query.orderBy(orderBy);
 
-        TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
+        TypedQuery<CustomerLogin> typedQuery = entityManager.createQuery(query);
 
         typedQuery.setFirstResult(start);
         typedQuery.setMaxResults(length);
@@ -131,21 +135,21 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
     }
 
     /**
-     * Count Customer by criteria.
-     * Support attributes of Customer.
-     * Supports id, firstName, lastName, email, CustomerStatus id, CustomerLogin id, active.
+     * Count CustomerLogin by criteria. Support attributes of CustomerLogin.
+     * <p/>
+     * Support id, loginEmail, firstName, lastName, active, CustomerLoginStatus id.
      *
-     * @param customer contains criteria if the field is not null or empty.
-     * @return number of the T matching search.
+     * @param customerLogin contains criteria if the field is not null or empty.
+     * @return number of the CustomerLogin matching search.
      */
     @Override
-    public Long countByAdvanceSearch(Customer customer) {
+    public Long countByAdvanceSearch(CustomerLogin customerLogin) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<Customer> root = query.from(Customer.class);
+        Root<CustomerLogin> root = query.from(CustomerLogin.class);
         query.select(builder.count(root));
 
-        Predicate predicate = formulatePredicate(builder, root, customer);
+        Predicate predicate = formulatePredicate(builder, root, customerLogin);
 
         query.where(predicate);
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
@@ -154,63 +158,69 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
     }
 
     /**
-     * Find Customer by criteria.
-     * Support attributes of Customer.
-     * Supports id, firstName, lastName, email, CustomerStatus id, CustomerLogin id, active.
+     * Find CustomerLogin by criteria. Support attributes of CustomerLogin.
+     * <p/>
+     * Support id, loginEmail, firstName, lastName, active, CustomerLoginStatus id.
      *
-     * @param customer contains criteria if the field is not null or empty.
-     * @return List of the Customer matching search ordered by id without pagination.
+     * @param customerLogin contains criteria if the field is not null or empty.
+     * @return List of the T matching search ordered by id without pagination.
      */
     @Override
-    public List<Customer> findByAdvanceSearch(Customer customer) {
+    public List<CustomerLogin> findByAdvanceSearch(CustomerLogin customerLogin) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
-        Root<Customer> root = query.from(Customer.class);
+        CriteriaQuery<CustomerLogin> query = builder.createQuery(CustomerLogin.class);
+        Root<CustomerLogin> root = query.from(CustomerLogin.class);
         query.select(root);
 
-        Predicate predicate = formulatePredicate(builder, root, customer);
+        Predicate predicate = formulatePredicate(builder, root, customerLogin);
 
         query.where(predicate);
 
         // default order is id DESC
         query.orderBy(builder.desc(root.get("id")));
 
-        TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
+        TypedQuery<CustomerLogin> typedQuery = entityManager.createQuery(query);
         logger.debug("countByAdHocSearch query is " + typedQuery.toString());
         return super.findAllByCriteria(typedQuery);
     }
 
     /**
      * Formulate JPA or Predicate for CriteriaQuery.
-     * Supports firstName, lastName, email, CustomerStatus name, CustomerLogin loginEmail.
+     * Support loginEmail, firstName, lastName, CustomerLoginStatus name.
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
      * @param search  is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Customer> root, String
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<CustomerLogin> root, String
             search) {
 
         String likeSearch = "%" + search + "%";
 
         // get all paths for the query
+        Path<String> loginEmailPath = root.get("loginEmail");
         Path<String> firstNamePath = root.get("firstName");
         Path<String> lastNamePath = root.get("lastName");
-        Path<String> emailPath = root.get("email");
-        // join on CustomerStatus to search on CustomerStatus name
-        Path<String> customerStatusPath = root.join("customerStatus").get("name");
-        Path<String> customerLoginPath = root.join("customerLogin").get("loginEmail");
+        // join on CustomerLoginStatus to search on CustomerLoginStatus name
+        Path<String> customerLoginStatusPath = root.join("customerLoginStatus").get("name");
 
         // create the predicate expression for all the path
+        Predicate loginEmailPredicate = builder.like(loginEmailPath, likeSearch);
         Predicate firstNamePredicate = builder.like(firstNamePath, likeSearch);
         Predicate lastNamePredicate = builder.like(lastNamePath, likeSearch);
-        Predicate emailPredicate = builder.like(emailPath, likeSearch);
-        Predicate customerStatusPredicate = builder.like(customerStatusPath, likeSearch);
-        Predicate customerLoginPredicate = builder.like(customerLoginPath, likeSearch);
+        Predicate customerLoginStatusPredicate = builder.like(customerLoginStatusPath, likeSearch);
 
-        Predicate predicate = builder.or(firstNamePredicate, lastNamePredicate,
-                emailPredicate, customerStatusPredicate, customerLoginPredicate);
+        Predicate predicate = builder.or(loginEmailPredicate, firstNamePredicate,
+                lastNamePredicate, customerLoginStatusPredicate);
+
+        // we don't want to have wildcard search on id actually
+        // create id predicate expression of search is numeric
+//        if (StringUtils.isNumeric(search)) {
+//            Path<Long> idPath = root.get("id");
+//            Predicate idPredicate = builder.equal(idPath, builder.literal(Long.valueOf(search)));
+//            predicate = builder.or(predicate, idPredicate);
+//        }
 
         // create the final Predicate and return
         logger.debug("Formulated jpa predicate is " + predicate.toString());
@@ -219,21 +229,23 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
 
     /**
      * Formulate JPA Predicate for CriteriaQuery.
-     * Supports id, firstName, lastName, email, CustomerStatus id, CustomerLogin id, active.
+     * Support id, loginEmail, firstName, lastName, active, CustomerLoginStatus id.
      *
-     * @param builder  is the JPA CriteriaBuilder.
-     * @param root     is the root of the CriteriaQuery.
-     * @param customer is the search keyword.
+     * @param builder       is the JPA CriteriaBuilder.
+     * @param root          is the root of the CriteriaQuery.
+     * @param customerLogin is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<Customer> root, Customer
-            customer) {
+    private Predicate formulatePredicate(CriteriaBuilder builder, Root<CustomerLogin> root,
+                                         CustomerLogin customerLogin) {
 
         // neither of createdTime cannot be null
-        if (customer.getId() == null && StringUtils.isBlank(customer.getFirstName()) &&
-                StringUtils.isBlank(customer.getLastName()) && customer.getActive() == null &&
-                StringUtils.isBlank(customer.getEmail()) &&
-                customer.getCustomerStatus() == null && customer.getCustomerLogin() == null) {
+        if (customerLogin.getId() == null &&
+                StringUtils.isBlank(customerLogin.getLoginEmail()) &&
+                StringUtils.isBlank(customerLogin.getFirstName()) &&
+                StringUtils.isBlank(customerLogin.getLastName()) &&
+                customerLogin.getActive() == null &&
+                customerLogin.getCustomerLoginStatus() == null) {
             return null;
         }
 
@@ -242,30 +254,30 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
 
         Predicate predicate = null;
         // check id, if id != null, query by id and return
-        if (customer.getId() != null) {
-            predicate = builder.equal(root.<Long>get("id"), builder.literal(customer.getId()));
+        if (customerLogin.getId() != null) {
+            predicate = builder.equal(root.<Long>get("id"), builder.literal(customerLogin.getId()));
             return predicate;
         }
 
+        // check loginEmail
+        if (StringUtils.isNotBlank(customerLogin.getLoginEmail())) {
+            predicate = builder.like(root.<String>get("loginEmail"),
+                    builder.literal("%" + customerLogin.getLoginEmail() + "%"));
+        }
         // check firstName
-        if (StringUtils.isNotBlank(customer.getFirstName())) {
+        if (StringUtils.isNotBlank(customerLogin.getFirstName())) {
             predicate = builder.like(root.<String>get("firstName"),
-                    builder.literal("%" + customer.getFirstName() + "%"));
+                    builder.literal("%" + customerLogin.getFirstName() + "%"));
         }
-        // check lastName
-        if (StringUtils.isNotBlank(customer.getLastName())) {
+        // check loginEmail
+        if (StringUtils.isNotBlank(customerLogin.getLastName())) {
             predicate = builder.like(root.<String>get("lastName"),
-                    builder.literal("%" + customer.getLastName() + "%"));
-        }
-        // check email
-        if (StringUtils.isNotBlank(customer.getEmail())) {
-            predicate = builder.like(root.<String>get("email"),
-                    builder.literal("%" + customer.getEmail() + "%"));
+                    builder.literal("%" + customerLogin.getLastName() + "%"));
         }
 
-        if (customer.getActive() != null) {
+        if (customerLogin.getActive() != null) {
             Predicate activePredicate = builder.equal(root.<Boolean>get("active"),
-                    builder.literal(customer.getActive()));
+                    builder.literal(customerLogin.getActive()));
             if (predicate == null) {
                 predicate = activePredicate;
             } else {
@@ -273,26 +285,16 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
             }
         }
 
-        // check Customer Status id
-        if (customer.getCustomerStatus() != null && customer.getCustomerStatus().getId() != null) {
-            Predicate customerStatusPredicate = builder.equal(
-                    root.join("customerStatus").<Long>get("id"),
-                    builder.literal(customer.getCustomerStatus().getId()));
+        // check CustomerLoginStatus id
+        if (customerLogin.getCustomerLoginStatus() != null &&
+                customerLogin.getCustomerLoginStatus().getId() != null) {
+            Predicate customerLoginStatusPredicate = builder.equal(
+                    root.join("customerLoginStatus").<Long>get("id"),
+                    builder.literal(customerLogin.getCustomerLoginStatus().getId()));
             if (predicate == null) {
-                predicate = customerStatusPredicate;
+                predicate = customerLoginStatusPredicate;
             } else {
-                predicate = builder.and(predicate, customerStatusPredicate);
-            }
-        }
-        // check Customer Login id
-        if (customer.getCustomerLogin() != null && customer.getCustomerStatus().getId() != null) {
-            Predicate customerLoginPredicate = builder.equal(
-                    root.join("customerLogin").<Long>get("id"),
-                    builder.literal(customer.getCustomerLogin().getId()));
-            if (predicate == null) {
-                predicate = customerLoginPredicate;
-            } else {
-                predicate = builder.and(predicate, customerLoginPredicate);
+                predicate = builder.and(predicate, customerLoginStatusPredicate);
             }
         }
 
@@ -302,8 +304,7 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
 
     /**
      * Formulate JPA Order for CriteriaQuery.
-     * Supports id, firstName, lastName, email, CustomerStatus name, CustomerLogin loginEmail,
-     * createdTime.
+     * Supports id, loginEmail, firstName, lastName, CustomerLoginStatus name, createdTime.
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.
@@ -311,16 +312,15 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
      * @param orderDir is the order direction.
      * @return JPA Order for the CriteriaQuery.
      */
-    private Order formulateOrderBy(CriteriaBuilder builder, Root<Customer> root,
+    private Order formulateOrderBy(CriteriaBuilder builder, Root<CustomerLogin> root,
                                    String order, ResourceUtil.JpaOrderDir orderDir) {
 
         // get all supporting paths
         Path<Long> idPath = root.get("id");
+        Path<String> loginEmailPath = root.get("loginEmail");
         Path<String> firstNamePath = root.get("firstName");
         Path<String> lastNamePath = root.get("lastName");
-        Path<String> emailPath = root.get("email");
-        Path<String> customerStatusPath = root.join("customerStatus").get("name");
-        Path<String> customerLoginPath = root.join("customerLogin").get("loginEmail");
+        Path<String> customerLoginStatusPath = root.join("customerLoginStatus").get("name");
         Path<Date> createdTimePath = root.get("createdTime");
 
         // create Order instance, default would be ORDER BY id DESC, newest to oldest
@@ -331,20 +331,17 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
                     case "id":
                         orderBy = builder.asc(idPath);
                         break;
+                    case "loginEmail":
+                        orderBy = builder.asc(loginEmailPath);
+                        break;
                     case "firstName":
                         orderBy = builder.asc(firstNamePath);
                         break;
                     case "lastName":
                         orderBy = builder.asc(lastNamePath);
                         break;
-                    case "email":
-                        orderBy = builder.asc(emailPath);
-                        break;
-                    case "customerStatus":
-                        orderBy = builder.asc(customerStatusPath);
-                        break;
-                    case "customerLogin":
-                        orderBy = builder.asc(customerLoginPath);
+                    case "customerLoginStatus":
+                        orderBy = builder.asc(customerLoginStatusPath);
                         break;
                     case "createdTime":
                         orderBy = builder.asc(createdTimePath);
@@ -358,20 +355,17 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
                     case "id":
                         orderBy = builder.desc(idPath);
                         break;
+                    case "loginEmail":
+                        orderBy = builder.desc(loginEmailPath);
+                        break;
                     case "firstName":
                         orderBy = builder.desc(firstNamePath);
                         break;
                     case "lastName":
                         orderBy = builder.desc(lastNamePath);
                         break;
-                    case "email":
-                        orderBy = builder.desc(emailPath);
-                        break;
-                    case "customerStatus":
-                        orderBy = builder.desc(customerStatusPath);
-                        break;
-                    case "customerLogin":
-                        orderBy = builder.desc(customerLoginPath);
+                    case "customerLoginStatus":
+                        orderBy = builder.desc(customerLoginStatusPath);
                         break;
                     case "createdTime":
                         orderBy = builder.desc(createdTimePath);
