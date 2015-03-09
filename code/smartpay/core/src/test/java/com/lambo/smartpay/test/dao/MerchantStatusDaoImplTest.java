@@ -198,7 +198,7 @@ public class MerchantStatusDaoImplTest {
 
         try {
             merchantStatus = merchantStatusDao.switchMerchantStatus(merchantStatus.getId(), false);
-        } catch (EntityNotFoundException e) {
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
 
@@ -206,14 +206,14 @@ public class MerchantStatusDaoImplTest {
 
         try {
             merchantStatus = merchantStatusDao.switchMerchantStatus(merchantStatus.getId(), false);
-        } catch (EntityNotFoundException e) {
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
         assertEquals(false, merchantStatus.getActive());
 
         try {
             merchantStatus = merchantStatusDao.switchMerchantStatus(merchantStatus.getId(), true);
-        } catch (EntityNotFoundException e) {
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
         assertEquals(true, merchantStatus.getActive());
