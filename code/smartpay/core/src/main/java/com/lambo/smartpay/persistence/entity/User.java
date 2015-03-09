@@ -62,7 +62,7 @@ public class User implements Serializable {
     @Column(name = "USER_ACTIVE", nullable = false)
     private Boolean active;
 
-    @Column(name = "PROFILE_IMAGE")
+    @Column(name = "USER_PROFILE_IMAGE")
     @Lob
     private byte[] profileImage;
 
