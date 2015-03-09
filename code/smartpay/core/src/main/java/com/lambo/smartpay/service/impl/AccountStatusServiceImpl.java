@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Service also takes care of Transactional management.
  * Created by swang on 3/9/2015.
  */
-@Repository("accountStatusService")
+@Service("accountStatusService")
 public class AccountStatusServiceImpl implements AccountStatusService {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountStatusServiceImpl.class);
