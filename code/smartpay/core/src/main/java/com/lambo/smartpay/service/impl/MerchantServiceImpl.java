@@ -5,7 +5,6 @@ import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.service.GenericQueryService;
-import com.lambo.smartpay.service.GenericService;
 import com.lambo.smartpay.service.MerchantService;
 import com.lambo.smartpay.util.ResourceUtil;
 import org.slf4j.Logger;
@@ -18,8 +17,7 @@ import java.util.List;
  * Created by swang on 3/10/2015.
  */
 @Repository("merchantService")
-public class MerchantServiceImpl implements MerchantService, GenericQueryService<Merchant>,
-        GenericService<Merchant, Long> {
+public class MerchantServiceImpl implements MerchantService, GenericQueryService<Merchant, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
@@ -47,7 +45,8 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return ordered list of the T.
      */
     @Override
-    public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length, String order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
+    public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length, String
+            order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
         return null;
     }
 
@@ -88,7 +87,8 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
     }
 
     @Override
-    public Merchant update(Merchant merchant) throws MissingRequiredFieldException, NotUniqueException {
+    public Merchant update(Merchant merchant) throws MissingRequiredFieldException,
+            NotUniqueException {
         return null;
     }
 

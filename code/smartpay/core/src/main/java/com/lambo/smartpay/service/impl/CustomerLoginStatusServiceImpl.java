@@ -6,12 +6,15 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.CustomerLoginStatusDao;
 import com.lambo.smartpay.persistence.entity.CustomerLoginStatus;
 import com.lambo.smartpay.service.CustomerLoginStatusService;
+import com.lambo.smartpay.util.ResourceUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Service needs to check if the parameters passed in are null or empty.
@@ -21,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("customerLoginStatusService")
 public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerLoginStatusServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomerLoginStatusServiceImpl
+            .class);
     @Autowired
     private CustomerLoginStatusDao customerLoginStatusDao;
 
@@ -69,7 +73,8 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
      */
     @Transactional
     @Override
-    public CustomerLoginStatus create(CustomerLoginStatus customerLoginStatus) throws MissingRequiredFieldException,
+    public CustomerLoginStatus create(CustomerLoginStatus customerLoginStatus) throws
+            MissingRequiredFieldException,
             NotUniqueException {
         if (customerLoginStatus == null) {
             throw new MissingRequiredFieldException("CustomerLoginStatus is null.");
@@ -80,11 +85,13 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
 
         // check uniqueness
         if (customerLoginStatusDao.findByName(customerLoginStatus.getName()) != null) {
-            throw new NotUniqueException("CustomerLoginStatus with name " + customerLoginStatus.getName() +
+            throw new NotUniqueException("CustomerLoginStatus with name " + customerLoginStatus
+                    .getName() +
                     " already exists.");
         }
         if (customerLoginStatusDao.findByCode(customerLoginStatus.getCode()) != null) {
-            throw new NotUniqueException("CustomerLoginStatus with code " + customerLoginStatus.getName() +
+            throw new NotUniqueException("CustomerLoginStatus with code " + customerLoginStatus
+                    .getName() +
                     " already exists.");
         }
         customerLoginStatus.setActive(true);
@@ -122,7 +129,8 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
      */
     @Transactional
     @Override
-    public CustomerLoginStatus update(CustomerLoginStatus customerLoginStatus) throws MissingRequiredFieldException,
+    public CustomerLoginStatus update(CustomerLoginStatus customerLoginStatus) throws
+            MissingRequiredFieldException,
             NotUniqueException {
         // checking missing fields
         if (customerLoginStatus == null) {
@@ -136,16 +144,20 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
             throw new MissingRequiredFieldException("CustomerLoginStatus name or code is blank.");
         }
         // checking uniqueness
-        CustomerLoginStatus namedCustomerLoginStatus = customerLoginStatusDao.findByName(customerLoginStatus.getName());
+        CustomerLoginStatus namedCustomerLoginStatus = customerLoginStatusDao.findByName
+                (customerLoginStatus.getName());
         if (namedCustomerLoginStatus != null &&
                 !namedCustomerLoginStatus.getId().equals(customerLoginStatus.getId())) {
-            throw new NotUniqueException("CustomerLoginStatus with name " + customerLoginStatus.getName() +
+            throw new NotUniqueException("CustomerLoginStatus with name " + customerLoginStatus
+                    .getName() +
                     " already exists.");
         }
-        CustomerLoginStatus codedCustomerLoginStatus = customerLoginStatusDao.findByCode(customerLoginStatus.getCode());
+        CustomerLoginStatus codedCustomerLoginStatus = customerLoginStatusDao.findByCode
+                (customerLoginStatus.getCode());
         if (codedCustomerLoginStatus != null &&
                 !codedCustomerLoginStatus.getId().equals(customerLoginStatus.getId())) {
-            throw new NotUniqueException("CustomerLoginStatus with code " + customerLoginStatus.getCode() +
+            throw new NotUniqueException("CustomerLoginStatus with code " + customerLoginStatus
+                    .getCode() +
                     " already exists.");
         }
         return customerLoginStatusDao.update(customerLoginStatus);
@@ -171,5 +183,61 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
         }
         customerLoginStatusDao.delete(id);
         return customerLoginStatus;
+    }
+
+    /**
+     * Count number of T matching the search. Support ad hoc search on attributes of T.
+     *
+     * @param search     search keyword.
+     * @param activeFlag specify active or not.
+     * @return count of the result.
+     */
+    @Override
+    public Long countByAdHocSearch(String search, Boolean activeFlag) {
+        return null;
+    }
+
+    /**
+     * Find all T matching the search. Support ad hoc search on attributes of T.
+     *
+     * @param search     search keyword.
+     * @param start      start position for pagination.
+     * @param length     result size fo pagination.
+     * @param order      ordered field.
+     * @param orderDir   ordered direction.
+     * @param activeFlag active or not.
+     * @return ordered list of the T.
+     */
+    @Override
+    public List<CustomerLoginStatus> findByAdHocSearch(String search, Integer start, Integer
+            length, String order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
+        return null;
+    }
+
+    /**
+     * Count T by criteria.
+     * Support attributes of T.
+     *
+     * @param customerLoginStatus contains criteria if the field is not null or empty.
+     * @return number of the T matching search.
+     */
+    @Override
+    public Long countByAdvanceSearch(CustomerLoginStatus customerLoginStatus) {
+        return null;
+    }
+
+    /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param customerLoginStatus contains criteria if the field is not null or empty.
+     * @param start
+     * @param length              @return List of the T matching search ordered by id with
+     *                            pagination.
+     */
+    @Override
+    public List<CustomerLoginStatus> findByAdvanceSearch(CustomerLoginStatus customerLoginStatus,
+                                                         Integer start, Integer length) {
+        return null;
     }
 }

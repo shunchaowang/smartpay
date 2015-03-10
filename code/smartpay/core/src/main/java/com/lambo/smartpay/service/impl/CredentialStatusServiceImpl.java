@@ -6,12 +6,15 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.CredentialStatusDao;
 import com.lambo.smartpay.persistence.entity.CredentialStatus;
 import com.lambo.smartpay.service.CredentialStatusService;
+import com.lambo.smartpay.util.ResourceUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Service needs to check if the parameters passed in are null or empty.
@@ -69,7 +72,8 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
      */
     @Transactional
     @Override
-    public CredentialStatus create(CredentialStatus credentialStatus) throws MissingRequiredFieldException,
+    public CredentialStatus create(CredentialStatus credentialStatus) throws
+            MissingRequiredFieldException,
             NotUniqueException {
         if (credentialStatus == null) {
             throw new MissingRequiredFieldException("CredentialStatus is null.");
@@ -80,11 +84,13 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
 
         // check uniqueness
         if (credentialStatusDao.findByName(credentialStatus.getName()) != null) {
-            throw new NotUniqueException("CredentialStatus with name " + credentialStatus.getName() +
+            throw new NotUniqueException("CredentialStatus with name " + credentialStatus.getName
+                    () +
                     " already exists.");
         }
         if (credentialStatusDao.findByCode(credentialStatus.getCode()) != null) {
-            throw new NotUniqueException("CredentialStatus with code " + credentialStatus.getName() +
+            throw new NotUniqueException("CredentialStatus with code " + credentialStatus.getName
+                    () +
                     " already exists.");
         }
         credentialStatus.setActive(true);
@@ -122,7 +128,8 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
      */
     @Transactional
     @Override
-    public CredentialStatus update(CredentialStatus credentialStatus) throws MissingRequiredFieldException,
+    public CredentialStatus update(CredentialStatus credentialStatus) throws
+            MissingRequiredFieldException,
             NotUniqueException {
         // checking missing fields
         if (credentialStatus == null) {
@@ -136,16 +143,20 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
             throw new MissingRequiredFieldException("CredentialStatus name or code is blank.");
         }
         // checking uniqueness
-        CredentialStatus namedCredentialStatus = credentialStatusDao.findByName(credentialStatus.getName());
+        CredentialStatus namedCredentialStatus = credentialStatusDao.findByName(credentialStatus
+                .getName());
         if (namedCredentialStatus != null &&
                 !namedCredentialStatus.getId().equals(credentialStatus.getId())) {
-            throw new NotUniqueException("CredentialStatus with name " + credentialStatus.getName() +
+            throw new NotUniqueException("CredentialStatus with name " + credentialStatus.getName
+                    () +
                     " already exists.");
         }
-        CredentialStatus codedCredentialStatus = credentialStatusDao.findByCode(credentialStatus.getCode());
+        CredentialStatus codedCredentialStatus = credentialStatusDao.findByCode(credentialStatus
+                .getCode());
         if (codedCredentialStatus != null &&
                 !codedCredentialStatus.getId().equals(credentialStatus.getId())) {
-            throw new NotUniqueException("CredentialStatus with code " + credentialStatus.getCode() +
+            throw new NotUniqueException("CredentialStatus with code " + credentialStatus.getCode
+                    () +
                     " already exists.");
         }
         return credentialStatusDao.update(credentialStatus);
@@ -171,5 +182,61 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
         }
         credentialStatusDao.delete(id);
         return credentialStatus;
+    }
+
+    /**
+     * Count number of T matching the search. Support ad hoc search on attributes of T.
+     *
+     * @param search     search keyword.
+     * @param activeFlag specify active or not.
+     * @return count of the result.
+     */
+    @Override
+    public Long countByAdHocSearch(String search, Boolean activeFlag) {
+        return null;
+    }
+
+    /**
+     * Find all T matching the search. Support ad hoc search on attributes of T.
+     *
+     * @param search     search keyword.
+     * @param start      start position for pagination.
+     * @param length     result size fo pagination.
+     * @param order      ordered field.
+     * @param orderDir   ordered direction.
+     * @param activeFlag active or not.
+     * @return ordered list of the T.
+     */
+    @Override
+    public List<CredentialStatus> findByAdHocSearch(String search, Integer start, Integer length,
+                                                    String order, ResourceUtil.JpaOrderDir
+            orderDir, Boolean activeFlag) {
+        return null;
+    }
+
+    /**
+     * Count T by criteria.
+     * Support attributes of T.
+     *
+     * @param credentialStatus contains criteria if the field is not null or empty.
+     * @return number of the T matching search.
+     */
+    @Override
+    public Long countByAdvanceSearch(CredentialStatus credentialStatus) {
+        return null;
+    }
+
+    /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param credentialStatus contains criteria if the field is not null or empty.
+     * @param start
+     * @param length           @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<CredentialStatus> findByAdvanceSearch(CredentialStatus credentialStatus, Integer
+            start, Integer length) {
+        return null;
     }
 }

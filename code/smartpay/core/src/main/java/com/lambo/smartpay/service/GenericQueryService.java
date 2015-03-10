@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Created by swang on 3/10/2015.
  */
-public interface GenericQueryService<T extends Serializable> {
+public interface GenericQueryService<T extends Serializable, PK>
+        extends GenericService<T, PK> {
 
     /**
      * Count number of T matching the search. Support ad hoc search on attributes of T.
