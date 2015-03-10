@@ -168,6 +168,35 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
     }
 
     /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param user   contains criteria if the field is not null or empty.
+     * @param start
+     * @param length @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<User> findByAdvanceSearch(User user, Integer start, Integer length) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, user);
+
+        query.where(predicate);
+
+// default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<User> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
+        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
      * Formulate JPA or Predicate for CriteriaQuery.
      *
      * @param builder is the JPA CriteriaBuilder.

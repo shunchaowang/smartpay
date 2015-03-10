@@ -157,6 +157,40 @@ public class ReturnDaoImpl extends GenericDaoImpl<Return, Long> implements Retur
     }
 
     /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param aReturn          contains criteria if the field is not null or empty.
+     * @param createdTimeStart
+     * @param createdTimeEnd
+     * @param start
+     * @param length           @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<Return> findByAdvanceSearch(Return aReturn,
+                                            Date createdTimeStart, Date createdTimeEnd,
+                                            Integer start, Integer length) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Return> query = builder.createQuery(Return.class);
+        Root<Return> root = query.from(Return.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, aReturn, createdTimeStart,
+                createdTimeEnd);
+
+        query.where(predicate);
+
+// default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<Return> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
+        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
      * Formulate JPA or Predicate for CriteriaQuery.
      *
      * @param builder is the JPA CriteriaBuilder.

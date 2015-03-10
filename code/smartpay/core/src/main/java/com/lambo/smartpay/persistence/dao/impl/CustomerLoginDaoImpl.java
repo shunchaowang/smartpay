@@ -185,6 +185,36 @@ public class CustomerLoginDaoImpl extends GenericDaoImpl<CustomerLogin, Long>
     }
 
     /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param customerLogin contains criteria if the field is not null or empty.
+     * @param start
+     * @param length        @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<CustomerLogin> findByAdvanceSearch(CustomerLogin customerLogin, Integer start,
+                                                   Integer length) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CustomerLogin> query = builder.createQuery(CustomerLogin.class);
+        Root<CustomerLogin> root = query.from(CustomerLogin.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, customerLogin);
+
+        query.where(predicate);
+
+        // default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<CustomerLogin> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
+        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
      * Formulate JPA or Predicate for CriteriaQuery.
      * Support loginEmail, firstName, lastName, CustomerLoginStatus name.
      *

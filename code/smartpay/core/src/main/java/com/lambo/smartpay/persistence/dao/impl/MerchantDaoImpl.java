@@ -164,7 +164,6 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
      */
     @Override
     public List<Merchant> findByAdvanceSearch(Merchant merchant) {
-
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
         Root<Merchant> root = query.from(Merchant.class);
@@ -178,6 +177,36 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         query.orderBy(builder.desc(root.get("id")));
 
         TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param merchant contains criteria if the field is not null or empty.
+     * @param start
+     * @param length
+     * @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<Merchant> findByAdvanceSearch(Merchant merchant, Integer start, Integer length) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, merchant);
+
+        query.where(predicate);
+
+        // default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
         logger.debug("countByAdHocSearch query is " + typedQuery.toString());
         return super.findAllByCriteria(typedQuery);
     }

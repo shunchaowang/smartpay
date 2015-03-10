@@ -39,9 +39,9 @@ public interface GenericDateQueryDao<T, PK extends Serializable> extends Generic
      * Count T by criteria.
      * Support attributes of T.
      *
-     * @param t contains criteria if the field is not null or empty.
+     * @param t                contains criteria if the field is not null or empty.
      * @param createdTimeStart when T was created
-     * @param createdTimeEnd till when T was created
+     * @param createdTimeEnd   till when T was created
      * @return number of the T matching search
      */
     Long countByAdvanceSearch(T t, Date createdTimeStart, Date createdTimeEnd);
@@ -51,8 +51,18 @@ public interface GenericDateQueryDao<T, PK extends Serializable> extends Generic
      * Support attributes of T.
      *
      * @param t contains criteria if the field is not null or empty.
+     * @return List of the T matching search ordered by id with pagination.
+     */
+    List<T> findByAdvanceSearch(T t, Date createdTimeStart, Date createdTimeEnd,
+                                Integer start, Integer length);
+
+    /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param t                contains criteria if the field is not null or empty.
      * @param createdTimeStart when T was created
-     * @param createdTimeEnd till when T was created
+     * @param createdTimeEnd   till when T was created
      * @return List of the T matching search ordered by id without pagination.
      */
     List<T> findByAdvanceSearch(T t, Date createdTimeStart, Date createdTimeEnd);

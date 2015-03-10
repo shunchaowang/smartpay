@@ -177,6 +177,35 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
     }
 
     /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param site   contains criteria if the field is not null or empty.
+     * @param start
+     * @param length @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<Site> findByAdvanceSearch(Site site, Integer start, Integer length) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
+        Root<Site> root = query.from(Site.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, site);
+
+        query.where(predicate);
+
+        // default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
+        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
      * Formulate JPA or Predicate for CriteriaQuery.
      * Supports name, url, name of SiteStatus, name of Merchant.
      *

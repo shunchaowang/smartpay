@@ -205,6 +205,36 @@ public class AdministratorDaoImpl extends GenericDaoImpl<Administrator, Long>
     }
 
     /**
+     * Find T by criteria.
+     * Support attributes of T.
+     *
+     * @param administrator contains criteria if the field is not null or empty.
+     * @param start
+     * @param length        @return List of the T matching search ordered by id with pagination.
+     */
+    @Override
+    public List<Administrator> findByAdvanceSearch(Administrator administrator,
+                                                   Integer start, Integer length) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Administrator> query = builder.createQuery(Administrator.class);
+        Root<Administrator> root = query.from(Administrator.class);
+        query.select(root);
+
+        Predicate predicate = formulatePredicate(builder, root, administrator);
+
+        query.where(predicate);
+
+        // default order is id DESC
+        query.orderBy(builder.desc(root.get("id")));
+
+        TypedQuery<Administrator> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(start);
+        typedQuery.setMaxResults(length);
+        LOG.debug("countByAdHocSearch query is " + typedQuery.toString());
+        return super.findAllByCriteria(typedQuery);
+    }
+
+    /**
      * Formulate JPA or Predicate for CriteriaQuery.
      * Supports username, firstName, lastName, email.
      *

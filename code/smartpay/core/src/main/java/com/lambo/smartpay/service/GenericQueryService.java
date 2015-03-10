@@ -1,4 +1,4 @@
-package com.lambo.smartpay.persistence.dao;
+package com.lambo.smartpay.service;
 
 import com.lambo.smartpay.util.ResourceUtil;
 
@@ -6,10 +6,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Generic Dao Interface for count/query operations.
- * Created by swang on 3/6/2015.
+ * Created by swang on 3/10/2015.
  */
-public interface GenericQueryDao<T, PK extends Serializable> extends GenericDao<T, PK> {
+public interface GenericQueryService<T extends Serializable> {
 
     /**
      * Count number of T matching the search. Support ad hoc search on attributes of T.
@@ -52,14 +51,4 @@ public interface GenericQueryDao<T, PK extends Serializable> extends GenericDao<
      * @return List of the T matching search ordered by id with pagination.
      */
     List<T> findByAdvanceSearch(T t, Integer start, Integer length);
-
-    /**
-     * Find T by criteria.
-     * Support attributes of T.
-     *
-     * @param t contains criteria if the field is not null or empty.
-     * @return List of the T matching search ordered by id without pagination.
-     */
-    List<T> findByAdvanceSearch(T t);
 }
-
