@@ -20,7 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * Created by swang on 3/10/2015.
  */
-@Repository("merchantService")
+@Service("merchantService")
 public class MerchantServiceImpl implements MerchantService, GenericQueryService<Merchant, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
@@ -145,6 +146,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @throws MissingRequiredFieldException
      * @throws NotUniqueException
      */
+    @Transactional
     @Override
     public Merchant create(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
@@ -242,12 +244,14 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
         return merchantDao.get(id);
     }
 
+    @Transactional
     @Override
     public Merchant update(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
         return null;
     }
 
+    @Transactional
     @Override
     public Merchant delete(Long id) throws NoSuchEntityException {
         if (id == null) {
@@ -277,6 +281,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param id
      * @return
      */
+    @Transactional
     @Override
     public Boolean freezeMerchant(Long id) throws NoSuchEntityException {
         if (id == null) {
@@ -300,6 +305,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param id
      * @return
      */
+    @Transactional
     @Override
     public Boolean unfreezeMerchant(Long id) throws NoSuchEntityException {
         if (id == null) {
@@ -322,6 +328,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param credential
      * @return
      */
+    @Transactional
     @Override
     public Credential updateCredential(Credential credential) throws MissingRequiredFieldException {
         Date date = Calendar.getInstance().getTime();
@@ -354,6 +361,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param credential
      * @return
      */
+    @Transactional
     @Override
     public Credential approveCredential(Credential credential) throws
             MissingRequiredFieldException {
@@ -386,6 +394,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param credential
      * @return
      */
+    @Transactional
     @Override
     public Credential denyCredential(Credential credential) throws MissingRequiredFieldException {
         Date date = Calendar.getInstance().getTime();
@@ -417,6 +426,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param encryption
      * @return
      */
+    @Transactional
     @Override
     public Encryption updateEncryption(Encryption encryption) throws MissingRequiredFieldException {
         Date date = Calendar.getInstance().getTime();
@@ -442,6 +452,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param fee
      * @return
      */
+    @Transactional
     @Override
     public Fee updateCommissionFee(Fee fee) throws MissingRequiredFieldException {
         Date date = Calendar.getInstance().getTime();
@@ -467,6 +478,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @param fee
      * @return
      */
+    @Transactional
     @Override
     public Fee updateReturnFee(Fee fee) throws MissingRequiredFieldException {
         Date date = Calendar.getInstance().getTime();
