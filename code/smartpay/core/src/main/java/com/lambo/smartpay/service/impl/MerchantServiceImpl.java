@@ -3,11 +3,16 @@ package com.lambo.smartpay.service.impl;
 import com.lambo.smartpay.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
+import com.lambo.smartpay.persistence.dao.CredentialDao;
+import com.lambo.smartpay.persistence.dao.EncryptionDao;
+import com.lambo.smartpay.persistence.dao.FeeDao;
 import com.lambo.smartpay.persistence.dao.MerchantDao;
+import com.lambo.smartpay.persistence.dao.MerchantStatusDao;
 import com.lambo.smartpay.persistence.entity.Credential;
 import com.lambo.smartpay.persistence.entity.Encryption;
 import com.lambo.smartpay.persistence.entity.Fee;
 import com.lambo.smartpay.persistence.entity.Merchant;
+import com.lambo.smartpay.persistence.entity.MerchantStatus;
 import com.lambo.smartpay.service.GenericQueryService;
 import com.lambo.smartpay.service.MerchantService;
 import com.lambo.smartpay.util.ResourceUtil;
@@ -17,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +36,14 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
 
     @Autowired
     private MerchantDao merchantDao;
+    @Autowired
+    private MerchantStatusDao merchantStatusDao;
+    @Autowired
+    private CredentialDao credentialDao;
+    @Autowired
+    private FeeDao feeDao;
+    @Autowired
+    private EncryptionDao encryptionDao;
 
     /**
      * Count number of T matching the search. Support ad hoc search on attributes of T.
@@ -60,7 +75,28 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
     @Override
     public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length, String
             order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
-        return null;
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return merchantDao.findByAdHocSearch(search, start, length, order, orderDir, activeFlag);
     }
 
     /**
@@ -72,7 +108,10 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      */
     @Override
     public Long countByAdvanceSearch(Merchant merchant) {
-        return null;
+        if (merchant == null) {
+            logger.info("Merchant is null.");
+        }
+        return merchantDao.countByAdvanceSearch(merchant);
     }
 
     /**
@@ -85,18 +124,122 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      */
     @Override
     public List<Merchant> findByAdvanceSearch(Merchant merchant, Integer start, Integer length) {
-        return null;
+        if (merchant == null) {
+            logger.info("Merchant is null.");
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+        }
+        return merchantDao.findByAdvanceSearch(merchant, start, length);
     }
 
+    /**
+     * Create a new merchant.
+     *
+     * @param merchant should have unique name, new credential attached,
+     *                 new commission fee attached, new return fee attached.
+     * @return
+     * @throws MissingRequiredFieldException
+     * @throws NotUniqueException
+     */
     @Override
     public Merchant create(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
-        return null;
+        Date date = Calendar.getInstance().getTime();
+        if (merchant == null) {
+            throw new MissingRequiredFieldException("Merchant is null.");
+        }
+        if (StringUtils.isBlank(merchant.getName())) {
+            throw new MissingRequiredFieldException("Merchant name is null.");
+        }
+        if (merchantDao.findByName(merchant.getName()) != null) {
+            throw new NotUniqueException("Merchant with name " + merchant.getName() +
+                    " already exists.");
+        }
+        // check credential, commission fee and return fee
+        if (merchant.getCredential() == null) {
+            throw new MissingRequiredFieldException("Merchant credential is null.");
+        }
+        // check credential required fields
+        if (StringUtils.isBlank(merchant.getCredential().getContent())) {
+            throw new MissingRequiredFieldException("Merchant credential content is null.");
+        }
+        if (merchant.getCredential().getExpirationDate() == null) {
+            throw new MissingRequiredFieldException("Merchant credential expiration date is null.");
+        }
+        if (merchant.getCredential().getCredentialStatus() == null) {
+            throw new MissingRequiredFieldException("Merchant credential status is null.");
+        }
+        if (merchant.getCredential().getCredentialType() == null) {
+            throw new MissingRequiredFieldException("Merchant credential type is null.");
+        }
+        // set active default to be active and created time for credential
+        merchant.getCredential().setCreatedTime(date);
+        merchant.getCredential().setActive(true);
+
+        // check commission fee
+        if (merchant.getCommissionFee() == null) {
+            throw new MissingRequiredFieldException("Merchant commission fee is null.");
+        }
+        if (merchant.getCommissionFee().getValue() == null) {
+            throw new MissingRequiredFieldException("Merchant commission fee value is null.");
+        }
+        if (merchant.getCommissionFee().getFeeType() == null) {
+            throw new MissingRequiredFieldException("Merchant commission fee type is null.");
+        }
+        // set active default to be active and created time
+        merchant.getCommissionFee().setActive(true);
+        merchant.getCommissionFee().setCreatedTime(date);
+
+        // check return fee
+        if (merchant.getReturnFee() == null) {
+            throw new MissingRequiredFieldException("Merchant return fee is null.");
+        }
+        if (merchant.getReturnFee().getValue() == null) {
+            throw new MissingRequiredFieldException("Merchant return fee value is null.");
+        }
+        if (merchant.getReturnFee().getFeeType() == null) {
+            throw new MissingRequiredFieldException("Merchant return fee type is null.");
+        }
+        // set active default to be active and created time
+        merchant.getReturnFee().setActive(true);
+        merchant.getReturnFee().setCreatedTime(date);
+
+        // set createdTime
+        merchant.setCreatedTime(date);
+        // set merchant status to be normal when creating
+        merchant.setActive(true);
+
+        // generate encryption key for the merchant
+        if (merchant.getEncryption() == null) {
+            throw new MissingRequiredFieldException("Merchant encryption is null.");
+        }
+        if (merchant.getEncryption().getEncryptionType() == null) {
+            throw new MissingRequiredFieldException("Merchant encryption type is null.");
+        }
+        if (StringUtils.isBlank(merchant.getEncryption().getKey())) {
+            throw new MissingRequiredFieldException("Merchant encryption key is null.");
+        }
+        merchant.getEncryption().setCreatedTime(date);
+        merchant.getEncryption().setActive(true);
+        // key generation should be done by web
+//        String key = RandomStringUtils.randomNumeric(ResourceUtil.ENCRYPTION_KEY_LENGTH);
+//        merchant.getEncryption().setKey(key);
+        return merchantDao.create(merchant);
     }
 
     @Override
     public Merchant get(Long id) throws NoSuchEntityException {
-        return null;
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        if (merchantDao.get(id) == null) {
+            throw new NoSuchEntityException("Merchant with id " + id + " does not exist.");
+        }
+        return merchantDao.get(id);
     }
 
     @Override
@@ -107,12 +250,24 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
 
     @Override
     public Merchant delete(Long id) throws NoSuchEntityException {
-        return null;
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Merchant merchant = merchantDao.get(id);
+        if (merchant == null) {
+            throw new NoSuchEntityException("Merchant with id " + id + " does not exist.");
+        }
+        merchantDao.get(id);
+        return merchant;
     }
 
     @Override
     public Merchant findByName(String name) {
-        return null;
+        if (StringUtils.isBlank(name)) {
+            logger.info("Name is null.");
+            return null;
+        }
+        return merchantDao.findByName(name);
     }
 
     /**
@@ -123,8 +278,19 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Boolean freezeMerchant(Long id) {
-        return null;
+    public Boolean freezeMerchant(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Merchant merchant = merchantDao.get(id);
+        if (merchant == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceUtil
+                .MERCHANT_STATUS_FROZEN_CODE);
+        merchant.setMerchantStatus(merchantStatus);
+        return true;
     }
 
     /**
@@ -135,8 +301,19 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Boolean unfreezeMerchant(Long id) {
-        return null;
+    public Boolean unfreezeMerchant(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Merchant merchant = merchantDao.get(id);
+        if (merchant == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceUtil
+                .MERCHANT_STATUS_NORMAL_CODE);
+        merchant.setMerchantStatus(merchantStatus);
+        return true;
     }
 
     /**
@@ -146,8 +323,28 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Credential updateCredential(Credential credential) {
-        return null;
+    public Credential updateCredential(Credential credential) throws MissingRequiredFieldException {
+        Date date = Calendar.getInstance().getTime();
+        if (credential == null) {
+            throw new MissingRequiredFieldException("Credential is null.");
+        }
+        if (credential.getId() == null) {
+            throw new MissingRequiredFieldException("Credential id is null.");
+        }
+        if (credential.getCredentialStatus() == null) {
+            throw new MissingRequiredFieldException("Credential status is null.");
+        }
+        if (credential.getCredentialType() == null) {
+            throw new MissingRequiredFieldException("Credential type is null.");
+        }
+        if (credential.getExpirationDate() == null) {
+            throw new MissingRequiredFieldException("Credential expiration date is null.");
+        }
+        if (StringUtils.isBlank(credential.getContent())) {
+            throw new MissingRequiredFieldException("Credential content is null.");
+        }
+        credential.setUpdatedTime(date);
+        return credentialDao.update(credential);
     }
 
     /**
@@ -158,8 +355,29 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Credential approveCredential(Credential credential) {
-        return null;
+    public Credential approveCredential(Credential credential) throws
+            MissingRequiredFieldException {
+        Date date = Calendar.getInstance().getTime();
+        if (credential == null) {
+            throw new MissingRequiredFieldException("Credential is null.");
+        }
+        if (credential.getId() == null) {
+            throw new MissingRequiredFieldException("Credential id is null.");
+        }
+        if (credential.getCredentialStatus() == null) {
+            throw new MissingRequiredFieldException("Credential status is null.");
+        }
+        if (credential.getCredentialType() == null) {
+            throw new MissingRequiredFieldException("Credential type is null.");
+        }
+        if (credential.getExpirationDate() == null) {
+            throw new MissingRequiredFieldException("Credential expiration date is null.");
+        }
+        if (StringUtils.isBlank(credential.getContent())) {
+            throw new MissingRequiredFieldException("Credential content is null.");
+        }
+        credential.setUpdatedTime(date);
+        return credentialDao.update(credential);
     }
 
     /**
@@ -169,8 +387,28 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Credential denyCredential(Credential credential) {
-        return null;
+    public Credential denyCredential(Credential credential) throws MissingRequiredFieldException {
+        Date date = Calendar.getInstance().getTime();
+        if (credential == null) {
+            throw new MissingRequiredFieldException("Credential is null.");
+        }
+        if (credential.getId() == null) {
+            throw new MissingRequiredFieldException("Credential id is null.");
+        }
+        if (credential.getCredentialStatus() == null) {
+            throw new MissingRequiredFieldException("Credential status is null.");
+        }
+        if (credential.getCredentialType() == null) {
+            throw new MissingRequiredFieldException("Credential type is null.");
+        }
+        if (credential.getExpirationDate() == null) {
+            throw new MissingRequiredFieldException("Credential expiration date is null.");
+        }
+        if (StringUtils.isBlank(credential.getContent())) {
+            throw new MissingRequiredFieldException("Credential content is null.");
+        }
+        credential.setUpdatedTime(date);
+        return credentialDao.update(credential);
     }
 
     /**
@@ -180,8 +418,22 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Encryption updateEncryption(Encryption encryption) {
-        return null;
+    public Encryption updateEncryption(Encryption encryption) throws MissingRequiredFieldException {
+        Date date = Calendar.getInstance().getTime();
+        if (encryption == null) {
+            throw new MissingRequiredFieldException("Encryption is null.");
+        }
+        if (encryption.getId() == null) {
+            throw new MissingRequiredFieldException("Encryption id is null.");
+        }
+        if (encryption.getEncryptionType() == null) {
+            throw new MissingRequiredFieldException("Encryption type is null.");
+        }
+        if (StringUtils.isBlank(encryption.getKey())) {
+            throw new MissingRequiredFieldException("Encryption key is null.");
+        }
+        encryption.setUpdatedTime(date);
+        return encryptionDao.update(encryption);
     }
 
     /**
@@ -191,8 +443,22 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Fee updateCommissionFee(Fee fee) {
-        return null;
+    public Fee updateCommissionFee(Fee fee) throws MissingRequiredFieldException {
+        Date date = Calendar.getInstance().getTime();
+        if (fee == null) {
+            throw new MissingRequiredFieldException("Fee is null.");
+        }
+        if (fee.getId() == null) {
+            throw new MissingRequiredFieldException("Fee id is null.");
+        }
+        if (fee.getFeeType() == null) {
+            throw new MissingRequiredFieldException("Fee type is null.");
+        }
+        if (fee.getValue() == null) {
+            throw new MissingRequiredFieldException("Fee value is null.");
+        }
+        fee.setUpdatedTime(date);
+        return feeDao.update(fee);
     }
 
     /**
@@ -202,7 +468,21 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      * @return
      */
     @Override
-    public Fee updateReturnFee(Fee fee) {
-        return null;
+    public Fee updateReturnFee(Fee fee) throws MissingRequiredFieldException {
+        Date date = Calendar.getInstance().getTime();
+        if (fee == null) {
+            throw new MissingRequiredFieldException("Fee is null.");
+        }
+        if (fee.getId() == null) {
+            throw new MissingRequiredFieldException("Fee id is null.");
+        }
+        if (fee.getFeeType() == null) {
+            throw new MissingRequiredFieldException("Fee type is null.");
+        }
+        if (fee.getValue() == null) {
+            throw new MissingRequiredFieldException("Fee value is null.");
+        }
+        fee.setUpdatedTime(date);
+        return feeDao.update(fee);
     }
 }

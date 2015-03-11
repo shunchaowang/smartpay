@@ -1,5 +1,7 @@
 package com.lambo.smartpay.service;
 
+import com.lambo.smartpay.exception.MissingRequiredFieldException;
+import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.persistence.entity.Credential;
 import com.lambo.smartpay.persistence.entity.Encryption;
 import com.lambo.smartpay.persistence.entity.Fee;
@@ -19,7 +21,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param id
      * @return
      */
-    Boolean freezeMerchant(Long id);
+    Boolean freezeMerchant(Long id) throws NoSuchEntityException;
 
     /**
      * Unfreeze a Merchant by updating the MerchantStatus from Frozen to Normal.
@@ -28,7 +30,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param id
      * @return
      */
-    Boolean unfreezeMerchant(Long id);
+    Boolean unfreezeMerchant(Long id) throws NoSuchEntityException;
 
     /**
      * Update the credential/certificate of the Merchant.
@@ -36,7 +38,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param credential
      * @return
      */
-    Credential updateCredential(Credential credential);
+    Credential updateCredential(Credential credential) throws MissingRequiredFieldException;
 
     /**
      * Approve the credential of the Merchant. The credential must be approved before
@@ -45,7 +47,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param credential
      * @return
      */
-    Credential approveCredential(Credential credential);
+    Credential approveCredential(Credential credential) throws MissingRequiredFieldException;
 
     /**
      * Deny the Credential of the merchant.
@@ -53,7 +55,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param credential
      * @return
      */
-    Credential denyCredential(Credential credential);
+    Credential denyCredential(Credential credential) throws MissingRequiredFieldException;
 
     /**
      * Update merchant's encryption, key of md5/sha.
@@ -61,7 +63,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param encryption
      * @return
      */
-    Encryption updateEncryption(Encryption encryption);
+    Encryption updateEncryption(Encryption encryption) throws MissingRequiredFieldException;
 
     /**
      * Update the commission fee of the merchant.
@@ -69,7 +71,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param fee
      * @return
      */
-    Fee updateCommissionFee(Fee fee);
+    Fee updateCommissionFee(Fee fee) throws MissingRequiredFieldException;
 
     /**
      * Update the return fee of the merchant.
@@ -77,5 +79,5 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param fee
      * @return
      */
-    Fee updateReturnFee(Fee fee);
+    Fee updateReturnFee(Fee fee) throws MissingRequiredFieldException;
 }
