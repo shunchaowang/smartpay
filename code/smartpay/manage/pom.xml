@@ -11,7 +11,7 @@
     <artifactId>manage</artifactId>
     <packaging>war</packaging>
     <version>${com.lambo.smartpay.manage.version}</version>
-    <name>manage Webapp</name>
+    <name>Manage Web Application</name>
     <url>http://maven.apache.org</url>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>

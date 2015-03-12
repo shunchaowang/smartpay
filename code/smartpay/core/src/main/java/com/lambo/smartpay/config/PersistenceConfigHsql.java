@@ -1,10 +1,8 @@
 package com.lambo.smartpay.config;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +10,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -43,20 +40,17 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@Profile("dev")
+@Profile("hsql")
 @ComponentScan({"com.lambo.smartpay.persistence"})
-@PropertySources(@PropertySource(value = {"classpath:application-dev.properties"})/*,
+@PropertySources(@PropertySource(value = {"classpath:application-hsql.properties"})/*,
 ignoreResourceNotFound = true*/)
 //@EnableJpaRepositories(basePackages = {"com.lambo.smartpay.repositories"}) // not used right now
-public class PersistenceConfigDev {
+public class PersistenceConfigHsql {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersistenceConfigDev.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PersistenceConfigHsql.class);
 
     @Autowired
     private Environment env;
-
-    @Value("${init-db: false}")
-    private String initDatabase;
 
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
@@ -75,6 +69,7 @@ public class PersistenceConfigDev {
 
         Properties jpaProperties = new Properties();
         jpaProperties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        jpaProperties.put("hibernate.default_schema", env.getProperty("hibernate.default_schema"));
         jpaProperties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
         jpaProperties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         jpaProperties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
@@ -85,35 +80,19 @@ public class PersistenceConfigDev {
         return factory;
     }
 
-    @Bean(name = "hibernateExceptionTranslation")
+    @Bean(name = "hibernateExceptionTranslator")
     public HibernateExceptionTranslator hibernateExceptionTranslator() {
         return new HibernateExceptionTranslator();
     }
 
     @Bean(name = "dataSource")
     public DataSource dataSource() {
-        LOG.debug("Creating instance of singleton bean '" + BasicDataSource.class.getName() + "'");
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-        dataSource.setUrl(env.getProperty("jdbc.url"));
-        dataSource.setUsername(env.getProperty("jdbc.username"));
-        dataSource.setPassword(env.getProperty("jdbc.password"));
-        return dataSource;
+        LOG.debug("Creating instance of singleton bean '" + EmbeddedDatabaseBuilder.class.getName
+                () + "'");
+        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).setName("smartpay")
+                .addScript("classpath:hsql_schema.sql")
+                .build();
     }
-
-    @Bean(name = "dataSourceInitializer")
-    public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-        LOG.debug("Creating instance of singleton bean '" + DataSourceInitializer.class.getName()
-                + "'");
-        DataSourceInitializer dataSourceInitializer = new DataSourceInitializer();
-        dataSourceInitializer.setDataSource(dataSource);
-        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
-        databasePopulator.addScript(new ClassPathResource("db.sql"));
-        dataSourceInitializer.setDatabasePopulator(databasePopulator);
-        dataSourceInitializer.setEnabled(Boolean.parseBoolean(initDatabase));
-        return dataSourceInitializer;
-    }
-
 
     @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager() {

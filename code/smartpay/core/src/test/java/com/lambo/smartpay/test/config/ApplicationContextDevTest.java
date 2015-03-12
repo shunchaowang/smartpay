@@ -30,9 +30,9 @@ import static org.junit.Assert.assertNotNull;
         PersistenceConfigDev.class})
 // profile related config will be loaded by ActiveProfiles
 @ActiveProfiles(profiles = {"dev"})
-public class ApplicationContextTest {
+public class ApplicationContextDevTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationContextTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationContextDevTest.class);
 
     @Autowired
     private ApplicationContext applicationContext;
