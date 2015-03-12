@@ -2,7 +2,7 @@ package com.lambo.smartpay.persistence.dao.impl;
 
 import com.lambo.smartpay.persistence.dao.RefundDao;
 import com.lambo.smartpay.persistence.entity.Refund;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -69,7 +69,7 @@ public class RefundDaoImpl extends GenericDaoImpl<Refund, Long> implements Refun
      */
     @Override
     public List<Refund> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
+            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Refund> query = builder.createQuery(Refund.class);
         Root<Refund> root = query.from(Refund.class);
@@ -286,7 +286,7 @@ public class RefundDaoImpl extends GenericDaoImpl<Refund, Long> implements Refun
      * @return JPA Order for the CriteriaQuery.
      */
     private Order formulateOrderBy(CriteriaBuilder builder, Root<Refund> root,
-                                   String order, ResourceUtil.JpaOrderDir orderDir) {
+                                   String order, ResourceProperties.JpaOrderDir orderDir) {
 
         // get all supporting paths
         Path<Long> idPath = root.get("id");

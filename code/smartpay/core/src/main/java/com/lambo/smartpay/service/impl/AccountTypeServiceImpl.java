@@ -6,7 +6,7 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.AccountTypeDao;
 import com.lambo.smartpay.persistence.entity.AccountType;
 import com.lambo.smartpay.service.AccountTypeService;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +201,8 @@ public class AccountTypeServiceImpl implements AccountTypeService {
      */
     @Override
     public List<AccountType> findByAdHocSearch(String search, Integer start, Integer length,
-                                               String order, ResourceUtil.JpaOrderDir orderDir,
+                                               String order, ResourceProperties.JpaOrderDir
+            orderDir,
                                                Boolean activeFlag) {
         return null;
     }
@@ -227,7 +228,8 @@ public class AccountTypeServiceImpl implements AccountTypeService {
      * @param length      @return List of the T matching search ordered by id with pagination.
      */
     @Override
-    public List<AccountType> findByAdvanceSearch(AccountType accountType, Integer start, Integer length) {
+    public List<AccountType> findByAdvanceSearch(AccountType accountType, Integer start, Integer
+            length) {
         return null;
     }
 }

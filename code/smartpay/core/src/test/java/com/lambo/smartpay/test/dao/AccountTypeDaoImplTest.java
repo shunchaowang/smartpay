@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.AccountTypeDao;
 import com.lambo.smartpay.persistence.entity.AccountType;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -128,7 +128,8 @@ public class AccountTypeDaoImplTest {
 
         // testing order asc
         List<AccountType> types =
-                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir
                                 .ASC,
                         null);
         assertEquals(4, types.size());
@@ -138,13 +139,15 @@ public class AccountTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<AccountType> activeTypes =
-                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir
                                 .ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<AccountType> archivedTypes =
-                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir
                                 .ASC,
                         false);
         assertEquals(1, archivedTypes.size());
@@ -152,14 +155,15 @@ public class AccountTypeDaoImplTest {
 
         // testing order desc
         types = accountTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, types.size());
 
         type = types.get(0);
         assertNotNull(type);
         assertEquals("003", type.getCode());
 
-        types = accountTypeDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        types = accountTypeDao.findByAdHocSearch("X", 0, 10, "id", ResourceProperties.JpaOrderDir
+                        .ASC,
                 null);
         assertNotNull(types);
         assertEquals(0, types.size());

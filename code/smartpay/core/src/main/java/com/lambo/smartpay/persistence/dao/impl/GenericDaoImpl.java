@@ -1,7 +1,7 @@
 package com.lambo.smartpay.persistence.dao.impl;
 
 import com.lambo.smartpay.persistence.dao.GenericDao;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +163,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
         // if pageSize is null, set it to default value
         if (pageSize == null) {
-            pageSize = ResourceUtil.PAGE_SIZE;
+            pageSize = ResourceProperties.PAGE_SIZE;
         }
 
         int firstResult = calculateFirstResult(pageNumber, pageSize);

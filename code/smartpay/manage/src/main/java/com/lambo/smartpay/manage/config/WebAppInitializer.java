@@ -1,0 +1,62 @@
+package com.lambo.smartpay.manage.config;
+
+import com.lambo.smartpay.config.CoreConfig;
+import com.lambo.smartpay.util.PropertiesLoader;
+import com.lambo.smartpay.util.ResourceProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import javax.servlet.Filter;
+import java.util.Properties;
+
+/**
+ * Web application initializer replaces web.xml.
+ * Created by swang on 3/12/2015.
+ */
+public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebAppInitializer.class);
+
+    private static final PropertiesLoader propertiesLoader = new PropertiesLoader();
+
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        logger.info("Loading core config and application config.");
+        return new Class<?>[]{CoreConfig.class, ManageConfig.class};
+    }
+
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        logger.info("Loading mvc config.");
+        return new Class<?>[]{MvcConfig.class};
+    }
+
+    @Override
+    protected String[] getServletMappings() {
+
+        return new String[]{"/"};
+    }
+
+    @Override
+    protected Filter[] getServletFilters() {
+        return new Filter[]{
+                new DelegatingFilterProxy("springSecurityFilterChain"),
+                new OpenEntityManagerInViewFilter()};
+    }
+
+    @Override
+    protected WebApplicationContext createRootApplicationContext() {
+        WebApplicationContext context = super.createRootApplicationContext();
+        Properties properties = propertiesLoader.load(ResourceProperties.SPRING_PROPERTIES_FILE);
+        logger.info("Loading context active profile "
+                + properties.getProperty("spring.profiles.active"));
+        ((ConfigurableEnvironment) context.getEnvironment())
+                .setActiveProfiles(properties.getProperty("spring.profiles.active"));
+        return context;
+    }
+}

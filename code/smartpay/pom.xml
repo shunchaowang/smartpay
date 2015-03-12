@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Spring -->
-        <spring-framework.version>4.1.4.RELEASE</spring-framework.version>
+        <spring-framework.version>4.1.5.RELEASE</spring-framework.version>
 
         <!-- Spring security -->
         <spring-security.version>3.2.6.RELEASE</spring-security.version>
@@ -39,6 +39,7 @@
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <mysql.version>5.1.26</mysql.version>
         <javax.servlet.version>3.1.0</javax.servlet.version>
+        <jsp-api.version>2.2</jsp-api.version>
         <javax.mail.version>1.4.3</javax.mail.version>
         <commons-logging.version>1.1.3</commons-logging.version>
         <log4j.version>1.2.17</log4j.version>
@@ -49,6 +50,10 @@
 
         <junit.version>4.11</junit.version>
         <hsqldb.version>2.3.2</hsqldb.version>
+        <!-- xml and json version -->
+        <codehaus.jackson.version>1.9.13</codehaus.jackson.version>
+        <xml.jackson.version>2.5.1</xml.jackson.version>
+        <common-fileupload.version>1.3</common-fileupload.version>
     </properties>
     <groupId>com.lambo.smartpay</groupId>
     <artifactId>smartpay</artifactId>

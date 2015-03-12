@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.MerchantStatusDao;
 import com.lambo.smartpay.persistence.entity.MerchantStatus;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class MerchantStatusDaoImplTest {
 
         // testing order asc
         List<MerchantStatus> statuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         null);
         assertEquals(4, statuses.size());
@@ -149,13 +149,13 @@ public class MerchantStatusDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<MerchantStatus> activeStatuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<MerchantStatus> archivedStatuses =
-                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
@@ -163,14 +163,15 @@ public class MerchantStatusDaoImplTest {
 
         // testing order desc
         statuses = merchantStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, statuses.size());
 
         status = statuses.get(0);
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        statuses = merchantStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir
+        statuses = merchantStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceProperties
+                        .JpaOrderDir
                         .ASC,
                 null);
         assertNotNull(statuses);
@@ -178,7 +179,8 @@ public class MerchantStatusDaoImplTest {
 
         // we don't want to have wildcard search on id actually
 //        List<MerchantStatus> findById =
-//                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceUtil.JpaOrderDir
+//                merchantStatusDao.findByAdHocSearch("1", 0, 10, "id", ResourceProperties
+// .JpaOrderDir
 // .ASC, null);
 //        assertNotNull(findById);
     }

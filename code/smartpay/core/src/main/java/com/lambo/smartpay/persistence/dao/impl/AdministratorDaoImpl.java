@@ -2,7 +2,7 @@ package com.lambo.smartpay.persistence.dao.impl;
 
 import com.lambo.smartpay.persistence.dao.AdministratorDao;
 import com.lambo.smartpay.persistence.entity.Administrator;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +123,8 @@ public class AdministratorDaoImpl extends GenericDaoImpl<Administrator, Long>
      */
     @Override
     public List<Administrator> findByAdHocSearch(String search, Integer start, Integer length,
-                                                 String order, ResourceUtil.JpaOrderDir orderDir,
+                                                 String order, ResourceProperties.JpaOrderDir
+            orderDir,
                                                  Boolean activeFlag) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Administrator> query = builder.createQuery(Administrator.class);
@@ -355,7 +356,7 @@ public class AdministratorDaoImpl extends GenericDaoImpl<Administrator, Long>
      * @return JPA Order for the CriteriaQuery.
      */
     private Order formulateOrderBy(CriteriaBuilder builder, Root<Administrator> root,
-                                   String order, ResourceUtil.JpaOrderDir orderDir) {
+                                   String order, ResourceProperties.JpaOrderDir orderDir) {
         // get all paths
         Path<Long> idPath = root.get("id");
         Path<String> usernamePath = root.get("username");

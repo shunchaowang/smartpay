@@ -6,7 +6,7 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.CredentialStatusDao;
 import com.lambo.smartpay.persistence.entity.CredentialStatus;
 import com.lambo.smartpay.service.CredentialStatusService;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -209,7 +209,7 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
      */
     @Override
     public List<CredentialStatus> findByAdHocSearch(String search, Integer start, Integer length,
-                                                    String order, ResourceUtil.JpaOrderDir
+                                                    String order, ResourceProperties.JpaOrderDir
             orderDir, Boolean activeFlag) {
         return null;
     }

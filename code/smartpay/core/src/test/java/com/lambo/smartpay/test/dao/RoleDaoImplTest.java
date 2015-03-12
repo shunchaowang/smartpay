@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.RoleDao;
 import com.lambo.smartpay.persistence.entity.Role;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -127,7 +127,7 @@ public class RoleDaoImplTest {
 
         // testing order asc
         List<Role> roles =
-                roleDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                roleDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties.JpaOrderDir.ASC,
                         null);
         assertEquals(4, roles.size());
 
@@ -136,26 +136,26 @@ public class RoleDaoImplTest {
         assertEquals("000", role.getCode());
 
         List<Role> activeTypes =
-                roleDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                roleDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties.JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<Role> archivedTypes =
-                roleDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                roleDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties.JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedTypes.size());
 
 
         // testing order desc
         roles = roleDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, roles.size());
 
         role = roles.get(0);
         assertNotNull(role);
         assertEquals("003", role.getCode());
 
-        roles = roleDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        roles = roleDao.findByAdHocSearch("X", 0, 10, "id", ResourceProperties.JpaOrderDir.ASC,
                 null);
         assertNotNull(roles);
         assertEquals(0, roles.size());

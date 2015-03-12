@@ -8,6 +8,14 @@ import com.lambo.smartpay.persistence.entity.User;
 public interface UserService extends GenericQueryService<User, Long> {
 
     /**
+     * Find user by the unique username.
+     *
+     * @param username
+     * @return
+     */
+    User findByUsername(String username);
+
+    /**
      * Create a merchant admin for the merchant.
      *
      * @param user

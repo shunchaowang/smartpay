@@ -13,9 +13,8 @@ import com.lambo.smartpay.persistence.entity.Encryption;
 import com.lambo.smartpay.persistence.entity.Fee;
 import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.MerchantStatus;
-import com.lambo.smartpay.service.GenericQueryService;
 import com.lambo.smartpay.service.MerchantService;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ import java.util.List;
  * Created by swang on 3/10/2015.
  */
 @Service("merchantService")
-public class MerchantServiceImpl implements MerchantService, GenericQueryService<Merchant, Long> {
+public class MerchantServiceImpl implements MerchantService {
 
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
@@ -75,7 +74,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
      */
     @Override
     public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
+            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
         if (StringUtils.isBlank(search)) {
             logger.info("Search keyword is blank.");
             return null;
@@ -228,7 +227,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
         merchant.getEncryption().setCreatedTime(date);
         merchant.getEncryption().setActive(true);
         // key generation should be done by web
-//        String key = RandomStringUtils.randomNumeric(ResourceUtil.ENCRYPTION_KEY_LENGTH);
+//        String key = RandomStringUtils.randomNumeric(ResourceProperties.ENCRYPTION_KEY_LENGTH);
 //        merchant.getEncryption().setKey(key);
         return merchantDao.create(merchant);
     }
@@ -292,7 +291,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
             throw new NoSuchEntityException("Merchant with id " + id +
                     " does not exist.");
         }
-        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceUtil
+        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_FROZEN_CODE);
         merchant.setMerchantStatus(merchantStatus);
         return true;
@@ -316,7 +315,7 @@ public class MerchantServiceImpl implements MerchantService, GenericQueryService
             throw new NoSuchEntityException("Merchant with id " + id +
                     " does not exist.");
         }
-        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceUtil
+        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_NORMAL_CODE);
         merchant.setMerchantStatus(merchantStatus);
         return true;

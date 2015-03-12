@@ -20,7 +20,7 @@ import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.MerchantStatus;
 import com.lambo.smartpay.persistence.entity.Site;
 import com.lambo.smartpay.persistence.entity.SiteStatus;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -148,7 +147,7 @@ public class SiteDaoImplTest {
         assertEquals(new Long(1), count);
         count = siteDao.countByAdHocSearch("yzx", true);
         assertEquals(new Long(0), count);
-        List<Site> sites = siteDao.findByAdHocSearch("xyz", 0,10, "name", ResourceUtil
+        List<Site> sites = siteDao.findByAdHocSearch("xyz", 0, 10, "name", ResourceProperties
                 .JpaOrderDir.ASC, true);
         assertNotNull(sites.get(0));
         Site s = new Site();

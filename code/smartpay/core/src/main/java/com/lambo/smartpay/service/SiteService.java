@@ -9,6 +9,7 @@ public interface SiteService extends GenericQueryService<Site, Long> {
 
     /**
      * Create a site for the merchant.
+     *
      * @param site
      * @return
      */

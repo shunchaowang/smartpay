@@ -386,7 +386,7 @@ DROP TABLE IF EXISTS `smartpay`.`USERS` ;
 CREATE TABLE IF NOT EXISTS `smartpay`.`USERS` (
   `USER_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `USER_USERNAME` VARCHAR(32) NOT NULL,
-  `USER_PASSWORD` VARCHAR(32) NOT NULL,
+  `USER_PASSWORD` VARCHAR(127) NOT NULL,
   `USER_FIRST_NAME` VARCHAR(32) NOT NULL,
   `USER_LAST_NAME` VARCHAR(32) NOT NULL,
   `USER_EMAIL` VARCHAR(32) NOT NULL,
@@ -395,9 +395,9 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`USERS` (
   `USER_CREATED_TIME` TIMESTAMP NOT NULL,
   `USER_UPDATED_TIME` TIMESTAMP NULL,
   `USER_ACTIVE` TINYINT NOT NULL,
-  `USER_MCHT_ID` BIGINT UNSIGNED NOT NULL,
+  `USER_MCHT_ID` BIGINT UNSIGNED NULL,
   `USER_USST_ID` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`USER_ID`, `USER_MCHT_ID`, `USER_USST_ID`),
+  PRIMARY KEY (`USER_ID`, `USER_USST_ID`),
   INDEX `fk_USER_MCHT_idx` (`USER_MCHT_ID` ASC),
   INDEX `fk_USER_USST_idx` (`USER_USST_ID` ASC),
   UNIQUE INDEX `USER_ID_UNIQUE` (`USER_ID` ASC),
@@ -803,7 +803,7 @@ DROP TABLE IF EXISTS `smartpay`.`ADMINISTRATORS` ;
 CREATE TABLE IF NOT EXISTS `smartpay`.`ADMINISTRATORS` (
   `ADMN_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ADMN_USERNAME` VARCHAR(32) NOT NULL,
-  `ADMN_PASSWORD` VARCHAR(32) NOT NULL,
+  `ADMN_PASSWORD` VARCHAR(127) NOT NULL,
   `ADMN_FIRST_NAME` VARCHAR(32) NOT NULL,
   `ADMN_LAST_NAME` VARCHAR(32) NOT NULL,
   `ADMN_EMAIL` VARCHAR(32) NOT NULL,
@@ -1095,9 +1095,19 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `smartpay`;
-INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '100');
-INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (NULL, 'Deactived', 'Deactived', 1, '400');
-INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '501');
+INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (1, 'Normal', 'Normal', 1, '100');
+INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (2, 'Deactived', 'Deactived', 1, '400');
+INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (3, 'Frozen', 'Frozen', 1, '501');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `smartpay`.`USERS`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `smartpay`;
+INSERT INTO `smartpay`.`USERS` (`USER_ID`, `USER_USERNAME`, `USER_PASSWORD`, `USER_FIRST_NAME`, `USER_LAST_NAME`, `USER_EMAIL`, `USER_PROFILE_IMAGE`, `USER_REMARK`, `USER_CREATED_TIME`, `USER_UPDATED_TIME`, `USER_ACTIVE`, `USER_MCHT_ID`, `USER_USST_ID`) VALUES (1, 'admin', '$2a$10$Ce2HJja0Trha0ee3.rMqQewIzJMVe87.jNi5zF5gDdsyvHjJsnwOm', 'Admin', 'Admin', 'ironaire@gmail.com', NULL, NULL, now(), NULL, 1, NULL, 1);
 
 COMMIT;
 
@@ -1107,9 +1117,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `smartpay`;
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'ROLE_ADMIN', 'System Admin', 1, '100');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'ROLE_MERCHANT_ADMIN', 'Merchant Admin', 1, '200');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'ROLE_MERCHANT_OPERATOR', 'Merchant Operator', 1, '201');
+INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (1, 'ROLE_ADMIN', 'System Admin', 1, '100');
+INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (2, 'ROLE_MERCHANT_ADMIN', 'Merchant Admin', 1, '200');
+INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (3, 'ROLE_MERCHANT_OPERATOR', 'Merchant Operator', 1, '201');
 
 COMMIT;
 
@@ -1201,16 +1211,6 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`ADMINISTRATORS`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`ADMINISTRATORS` (`ADMN_ID`, `ADMN_USERNAME`, `ADMN_PASSWORD`, `ADMN_FIRST_NAME`, `ADMN_LAST_NAME`, `ADMN_EMAIL`, `ADMN_PROFILE_IMAGE`, `ADMN_REMARK`, `ADMN_CREATED_TIME`, `ADMN_UPDATED_TIME`, `ADMN_ACTIVE`, `ADMN_ROLE_ID`) VALUES (NULL, 'admin', 'admin', 'Admin', 'Admin', 'ironaire@gmail.com', NULL, NULL, NOW(), NULL, 1, 1);
-
-COMMIT;
-
-
--- -----------------------------------------------------
 -- Data for table `smartpay`.`RETURN_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
@@ -1228,6 +1228,16 @@ START TRANSACTION;
 USE `smartpay`;
 INSERT INTO `smartpay`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Issued', 'Issued', 1, '500');
 INSERT INTO `smartpay`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Funded', 'Funded', 1, '501');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `smartpay`.`USER_ROLE_MAPPINGS`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `smartpay`;
+INSERT INTO `smartpay`.`USER_ROLE_MAPPINGS` (`URMP_USER_ID`, `URMP_ROLE_ID`) VALUES (1, 1);
 
 COMMIT;
 

@@ -6,7 +6,7 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.EncryptionTypeDao;
 import com.lambo.smartpay.persistence.entity.EncryptionType;
 import com.lambo.smartpay.service.EncryptionTypeService;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,7 +203,7 @@ public class EncryptionTypeServiceImpl implements EncryptionTypeService {
      */
     @Override
     public List<EncryptionType> findByAdHocSearch(String search, Integer start, Integer length,
-                                                  String order, ResourceUtil.JpaOrderDir
+                                                  String order, ResourceProperties.JpaOrderDir
             orderDir, Boolean activeFlag) {
         return null;
     }

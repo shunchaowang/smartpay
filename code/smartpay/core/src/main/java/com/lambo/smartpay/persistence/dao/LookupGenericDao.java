@@ -1,6 +1,6 @@
 package com.lambo.smartpay.persistence.dao;
 
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 
 import java.io.Serializable;
 import java.util.List;
@@ -55,6 +55,6 @@ public interface LookupGenericDao<T, PK extends Serializable> extends GenericDao
      * @return List of MerchantStatus matching search, starting from start offest and max of length
      */
     List<T> findByAdHocSearch(String search, Integer start, Integer length,
-                              String order, ResourceUtil.JpaOrderDir orderDir,
+                              String order, ResourceProperties.JpaOrderDir orderDir,
                               Boolean activeFlag);
 }

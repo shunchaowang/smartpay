@@ -6,7 +6,7 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.ReturnStatusDao;
 import com.lambo.smartpay.persistence.entity.ReturnStatus;
 import com.lambo.smartpay.service.ReturnStatusService;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +201,8 @@ public class ReturnStatusServiceImpl implements ReturnStatusService {
      */
     @Override
     public List<ReturnStatus> findByAdHocSearch(String search, Integer start, Integer length,
-                                                String order, ResourceUtil.JpaOrderDir orderDir,
+                                                String order, ResourceProperties.JpaOrderDir
+            orderDir,
                                                 Boolean activeFlag) {
         return null;
     }

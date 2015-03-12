@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.CurrencyDao;
 import com.lambo.smartpay.persistence.entity.Currency;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -128,7 +128,8 @@ public class CurrencyDaoImplTest {
 
         // testing order asc
         List<Currency> currencies =
-                currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir.ASC,
                         null);
         assertEquals(4, currencies.size());
 
@@ -137,26 +138,29 @@ public class CurrencyDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<Currency> activeStatuses =
-                currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<Currency> archivedStatuses =
-                currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+                currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
 
 
         // testing order desc
         currencies = currencyDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, currencies.size());
 
         status = currencies.get(0);
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        currencies = currencyDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        currencies = currencyDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceProperties
+                        .JpaOrderDir.ASC,
                 null);
         assertNotNull(currencies);
         assertEquals(0, currencies.size());

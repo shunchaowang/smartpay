@@ -5,7 +5,7 @@ import com.lambo.smartpay.persistence.dao.AdministratorDao;
 import com.lambo.smartpay.persistence.dao.RoleDao;
 import com.lambo.smartpay.persistence.entity.Administrator;
 import com.lambo.smartpay.persistence.entity.Role;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -194,7 +194,7 @@ public class AdministratorDaoImplTest {
 
         // testing order asc
         List<Administrator> administrators =
-                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         null);
         assertEquals(4, administrators.size());
@@ -204,13 +204,13 @@ public class AdministratorDaoImplTest {
         assertEquals("password 0", administrator1.getPassword());
 
         List<Administrator> activeAdministrators =
-                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeAdministrators.size());
 
         List<Administrator> archivedAdministrators =
-                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedAdministrators.size());
@@ -218,14 +218,14 @@ public class AdministratorDaoImplTest {
 
         // testing order desc
         administrators = administratorDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, administrators.size());
 
         administrator1 = administrators.get(0);
         assertNotNull(administrator1);
         assertEquals("password 3", administrator1.getPassword());
 
-        administrators = administratorDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil
+        administrators = administratorDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceProperties
                         .JpaOrderDir.ASC,
                 null);
         assertNotNull(administrators);

@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.PaymentTypeDao;
 import com.lambo.smartpay.persistence.entity.PaymentType;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -127,7 +127,8 @@ public class PaymentTypeDaoImplTest {
 
         // testing order asc
         List<PaymentType> types =
-                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir
                                 .ASC,
                         null);
         assertEquals(4, types.size());
@@ -137,13 +138,15 @@ public class PaymentTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<PaymentType> activeTypes =
-                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir
                                 .ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<PaymentType> archivedTypes =
-                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil.JpaOrderDir
+                paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
+                                .JpaOrderDir
                                 .ASC,
                         false);
         assertEquals(1, archivedTypes.size());
@@ -151,14 +154,15 @@ public class PaymentTypeDaoImplTest {
 
         // testing order desc
         types = paymentTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, types.size());
 
         type = types.get(0);
         assertNotNull(type);
         assertEquals("003", type.getCode());
 
-        types = paymentTypeDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir.ASC,
+        types = paymentTypeDao.findByAdHocSearch("X", 0, 10, "id", ResourceProperties.JpaOrderDir
+                        .ASC,
                 null);
         assertNotNull(types);
         assertEquals(0, types.size());

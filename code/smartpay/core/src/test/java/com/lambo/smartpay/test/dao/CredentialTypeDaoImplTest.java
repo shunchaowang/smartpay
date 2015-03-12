@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.CredentialTypeDao;
 import com.lambo.smartpay.persistence.entity.CredentialType;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -128,7 +128,7 @@ public class CredentialTypeDaoImplTest {
 
         // testing order asc
         List<CredentialType> types =
-                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         null);
         assertEquals(4, types.size());
@@ -138,13 +138,13 @@ public class CredentialTypeDaoImplTest {
         assertEquals("000", type.getCode());
 
         List<CredentialType> activeTypes =
-                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeTypes.size());
 
         List<CredentialType> archivedTypes =
-                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedTypes.size());
@@ -152,14 +152,15 @@ public class CredentialTypeDaoImplTest {
 
         // testing order desc
         types = credentialTypeDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, types.size());
 
         type = types.get(0);
         assertNotNull(type);
         assertEquals("003", type.getCode());
 
-        types = credentialTypeDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceUtil.JpaOrderDir
+        types = credentialTypeDao.findByAdHocSearch("XYZ", 0, 10, "id", ResourceProperties
+                        .JpaOrderDir
                         .ASC,
                 null);
         assertNotNull(types);

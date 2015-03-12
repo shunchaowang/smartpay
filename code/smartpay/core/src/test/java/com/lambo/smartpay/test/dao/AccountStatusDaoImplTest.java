@@ -3,7 +3,7 @@ package com.lambo.smartpay.test.dao;
 import com.lambo.smartpay.config.PersistenceConfigDev;
 import com.lambo.smartpay.persistence.dao.AccountStatusDao;
 import com.lambo.smartpay.persistence.entity.AccountStatus;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -128,7 +128,7 @@ public class AccountStatusDaoImplTest {
 
         // testing order asc
         List<AccountStatus> statuses =
-                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         null);
         assertEquals(4, statuses.size());
@@ -138,13 +138,13 @@ public class AccountStatusDaoImplTest {
         assertEquals("000", status.getCode());
 
         List<AccountStatus> activeStatuses =
-                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         true);
         assertEquals(3, activeStatuses.size());
 
         List<AccountStatus> archivedStatuses =
-                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceUtil
+                accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id", ResourceProperties
                                 .JpaOrderDir.ASC,
                         false);
         assertEquals(1, archivedStatuses.size());
@@ -152,14 +152,15 @@ public class AccountStatusDaoImplTest {
 
         // testing order desc
         statuses = accountStatusDao.findByAdHocSearch("ad hoc", 0, 10, "id",
-                ResourceUtil.JpaOrderDir.DESC, null);
+                ResourceProperties.JpaOrderDir.DESC, null);
         assertEquals(4, statuses.size());
 
         status = statuses.get(0);
         assertNotNull(status);
         assertEquals("003", status.getCode());
 
-        statuses = accountStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceUtil.JpaOrderDir
+        statuses = accountStatusDao.findByAdHocSearch("X", 0, 10, "id", ResourceProperties
+                        .JpaOrderDir
                         .ASC,
                 null);
         assertNotNull(statuses);

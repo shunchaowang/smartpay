@@ -6,7 +6,7 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.UserStatusDao;
 import com.lambo.smartpay.persistence.entity.UserStatus;
 import com.lambo.smartpay.service.UserStatusService;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +201,7 @@ public class UserStatusServiceImpl implements UserStatusService {
      */
     @Override
     public List<UserStatus> findByAdHocSearch(String search, Integer start, Integer length,
-                                              String order, ResourceUtil.JpaOrderDir orderDir,
+                                              String order, ResourceProperties.JpaOrderDir orderDir,
                                               Boolean activeFlag) {
         return null;
     }

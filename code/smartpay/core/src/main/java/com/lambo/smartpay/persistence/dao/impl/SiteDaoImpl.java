@@ -2,7 +2,7 @@ package com.lambo.smartpay.persistence.dao.impl;
 
 import com.lambo.smartpay.persistence.dao.SiteDao;
 import com.lambo.smartpay.persistence.entity.Site;
-import com.lambo.smartpay.util.ResourceUtil;
+import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
      */
     @Override
     public List<Site> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceUtil.JpaOrderDir orderDir, Boolean activeFlag) {
+            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Site> query = builder.createQuery(Site.class);
         Root<Site> root = query.from(Site.class);
@@ -329,7 +329,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
      */
 
     private Order formulateOrderBy(CriteriaBuilder builder, Root<Site> root,
-                                   String order, ResourceUtil.JpaOrderDir orderDir) {
+                                   String order, ResourceProperties.JpaOrderDir orderDir) {
 
         // get all supporting paths
         Path<Long> idPath = root.get("id");
