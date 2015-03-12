@@ -1107,9 +1107,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `smartpay`;
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'Admin', 'System Admin', 1, '100');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'Merchant Admin', 'Merchant Admin', 1, '200');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'Merchant Operator', 'Merchant Operator', 1, '201');
+INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'ROLE_ADMIN', 'System Admin', 1, '100');
+INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'ROLE_MERCHANT_ADMIN', 'Merchant Admin', 1, '200');
+INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (NULL, 'ROLE_MERCHANT_OPERATOR', 'Merchant Operator', 1, '201');
 
 COMMIT;
 
