@@ -53,7 +53,7 @@
             <version>${commons-lang.version}</version>
         </dependency>
 
-        <!-- use psring context and context support -->
+        <!-- use spring context and context support -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -79,7 +79,7 @@
         </dependency>
 
 
-        <!-- Spring ORM support, for the spring org.springframework.orm.hibernate4.LocalSessionFactory -->
+        <!-- Spring ORM support, for the spring org.spring.framework.orm.hibernate4.LocalSessionFactory -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
