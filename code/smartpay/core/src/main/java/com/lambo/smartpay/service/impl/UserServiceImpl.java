@@ -5,7 +5,6 @@ import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.UserDao;
 import com.lambo.smartpay.persistence.entity.User;
-import com.lambo.smartpay.service.RoleService;
 import com.lambo.smartpay.service.UserService;
 import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -26,8 +27,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private RoleService roleService;
 
     /**
      * Find user by the unique username.
@@ -45,28 +44,6 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Create a merchant admin for the merchant.
-     *
-     * @param user
-     * @return
-     */
-    @Override
-    public User createMerchantAdmin(User user) {
-        return null;
-    }
-
-    /**
-     * Create a merchant operator for the merchant.
-     *
-     * @param user
-     * @return
-     */
-    @Override
-    public User createMerchantOperator(User user) {
-        return null;
-    }
-
-    /**
      * Count number of T matching the search. Support ad hoc search on attributes of T.
      *
      * @param search     search keyword.
@@ -75,7 +52,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        return null;
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        return userDao.countByAdHocSearch(search, activeFlag);
     }
 
     /**
@@ -92,7 +73,28 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByAdHocSearch(String search, Integer start, Integer length, String
             order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
-        return null;
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return userDao.findByAdHocSearch(search, start, length, order, orderDir, activeFlag);
     }
 
     /**
@@ -104,7 +106,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Long countByAdvanceSearch(User user) {
-        return null;
+        if (user == null) {
+            logger.info("Merchant is null.");
+        }
+        return userDao.countByAdvanceSearch(user);
     }
 
     /**
@@ -117,26 +122,144 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<User> findByAdvanceSearch(User user, Integer start, Integer length) {
-        return null;
+        if (user == null) {
+            logger.info("Merchant is null.");
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+        }
+        return userDao.findByAdvanceSearch(user, start, length);
     }
 
+    @Transactional
     @Override
     public User create(User user) throws MissingRequiredFieldException, NotUniqueException {
-        return null;
+        if (user == null) {
+            throw new MissingRequiredFieldException("User is null.");
+        }
+        if (StringUtils.isBlank(user.getUsername())) {
+            throw new MissingRequiredFieldException("User username is blank.");
+        }
+        if (StringUtils.isBlank(user.getPassword())) {
+            throw new MissingRequiredFieldException("User password is blank.");
+        }
+        if (StringUtils.isBlank(user.getEmail())) {
+            throw new MissingRequiredFieldException("User email is blank.");
+        }
+        if (StringUtils.isBlank(user.getFirstName())) {
+            throw new MissingRequiredFieldException("User first name is blank.");
+        }
+        if (StringUtils.isBlank(user.getLastName())) {
+            throw new MissingRequiredFieldException("User last name is blank.");
+        }
+        if (user.getActive() == null) {
+            throw new MissingRequiredFieldException("User active is null.");
+        }
+        if (user.getUserStatus() == null) {
+            throw new MissingRequiredFieldException("User status is null.");
+        }
+        if (user.getCreatedTime() == null) {
+            throw new MissingRequiredFieldException("User created time is null.");
+        }
+
+        // check uniqueness on username and email
+        if (userDao.findByUsername(user.getUsername()) != null) {
+            throw new NotUniqueException("User with username " + user.getUsername()
+                    + " already exists.");
+        }
+        if (userDao.findByEmail(user.getEmail()) != null) {
+            throw new NotUniqueException("User with email " + user.getEmail()
+                    + " already exists.");
+        }
+        return userDao.create(user);
     }
 
     @Override
     public User get(Long id) throws NoSuchEntityException {
-        return null;
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        if (userDao.get(id) == null) {
+            throw new NoSuchEntityException("User with id " + id + " does not exist.");
+        }
+        return userDao.get(id);
     }
 
+    /**
+     * Update a user.
+     * Username is not allowed to change.
+     *
+     * @param user
+     * @return
+     * @throws MissingRequiredFieldException
+     * @throws NotUniqueException
+     */
+    @Transactional
     @Override
     public User update(User user) throws MissingRequiredFieldException, NotUniqueException {
-        return null;
+        if (user == null) {
+            throw new MissingRequiredFieldException("User is null.");
+        }
+        if (user.getId() == null) {
+            throw new MissingRequiredFieldException("User id is null.");
+        }
+        if (StringUtils.isBlank(user.getUsername())) {
+            throw new MissingRequiredFieldException("User username is blank.");
+        }
+        if (StringUtils.isBlank(user.getPassword())) {
+            throw new MissingRequiredFieldException("User password is blank.");
+        }
+        if (StringUtils.isBlank(user.getEmail())) {
+            throw new MissingRequiredFieldException("User email is blank.");
+        }
+        if (StringUtils.isBlank(user.getFirstName())) {
+            throw new MissingRequiredFieldException("User first name is blank.");
+        }
+        if (StringUtils.isBlank(user.getLastName())) {
+            throw new MissingRequiredFieldException("User last name is blank.");
+        }
+        if (user.getActive() == null) {
+            throw new MissingRequiredFieldException("User active is null.");
+        }
+        if (user.getUserStatus() == null) {
+            throw new MissingRequiredFieldException("User status is null.");
+        }
+        if (user.getCreatedTime() == null) {
+            throw new MissingRequiredFieldException("User created time is null.");
+        }
+
+        // check uniqueness on username and email
+        User currentUser = userDao.get(user.getId());
+        if (!user.getUsername().equals(currentUser.getUsername())) {
+            throw new MissingRequiredFieldException("User username cannot be changed.");
+        }
+        // if the email already in the system
+        if ((!user.getEmail().equals(currentUser.getEmail()))
+                && (userDao.findByEmail(user.getEmail()) != null)) {
+            throw new NotUniqueException("User with email " + user.getEmail() + " already exists.");
+
+        }
+        // set updated time if not set
+        if (user.getUpdatedTime() == null) {
+            user.setUpdatedTime(Calendar.getInstance().getTime());
+        }
+        return userDao.update(user);
     }
 
+    @Transactional
     @Override
     public User delete(Long id) throws NoSuchEntityException {
-        return null;
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        User user = userDao.get(id);
+        if (user == null) {
+            throw new NoSuchEntityException("User with id " + id + " does not exist.");
+        }
+        userDao.get(id);
+        return user;
     }
 }

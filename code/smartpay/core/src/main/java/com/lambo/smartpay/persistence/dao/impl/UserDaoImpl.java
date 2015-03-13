@@ -39,7 +39,25 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
 
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
 
-        logger.debug("findByName query is " + typedQuery);
+        logger.debug("findByUsername query is " + typedQuery);
+        return typedQuery.getSingleResult();
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+
+        Root<User> root = query.from(User.class);
+        query.select(root);
+
+        Path<String> path = root.get("email");
+        Predicate predicate = builder.equal(path, email);
+        query.where(predicate);
+
+        TypedQuery<User> typedQuery = entityManager.createQuery(query);
+
+        logger.debug("findByEmail query is " + typedQuery);
         return typedQuery.getSingleResult();
     }
 

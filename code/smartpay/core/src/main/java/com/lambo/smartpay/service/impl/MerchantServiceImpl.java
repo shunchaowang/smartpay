@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Service("merchantService")
 public class MerchantServiceImpl implements MerchantService {
-
+    //TODO WE WANT TO MAKE CONTROLLER FILE ALL REQUIRED FIELDS, AND SERVICE CHECK ONLY
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
     @Autowired
