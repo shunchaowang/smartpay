@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@include file="taglib.jsp" %>
 <html>
@@ -13,7 +14,7 @@
 <body>
 <h2>Administrator Home Page</h2>
 
-<p><a href="${rootURL}home">Home</a></p>
+<p><a href="${rootURL}">Home</a></p>
 
 <p><a href="${rootURL}logout">Logout</a></p>
 

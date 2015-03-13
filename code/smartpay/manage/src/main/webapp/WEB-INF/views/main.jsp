@@ -1,10 +1,12 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="taglib.jsp"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<!DOCTYPE html>
+<%@include file="taglib.jsp" %>
 <html>
 <head>
-    <title></title>
+    <jsp:include page="_import.jsp"/>
 </head>
-<body>
-
+<body class="container">
+<jsp:include page="_header.jsp"/>
+<jsp:include page="${_view}.jsp"/>
+<jsp:include page="_footer.jsp"/>
 </body>
-</html>

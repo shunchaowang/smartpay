@@ -13,7 +13,8 @@ public class HomeController {
 
     @RequestMapping("/")
     public ModelAndView home() {
-        ModelAndView mv = new ModelAndView("home");
+        ModelAndView mv = new ModelAndView("main");
+        mv.addObject("_view", "home");
         return mv;
     }
 
