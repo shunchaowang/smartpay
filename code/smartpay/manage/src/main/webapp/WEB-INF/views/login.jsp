@@ -2,11 +2,7 @@
 <%@include file="taglib.jsp" %>
 <html>
 <head>
-    <title>Login</title>
-    <link href="${rootURL}resources/vendor/bootstrap-3.3.2/css/bootstrap.css" media="screen"
-          rel="stylesheet" type="text/css"/>
-    <script type="text/javascript"
-            src="${rootURL}resources/vendor/jquery-2.1.3/jquery-2.1.3.js"></script>
+    <jsp:include page="_import.jsp"/>
 </head>
 <body>
 <div class="col-md-6 col-md-offset-2">

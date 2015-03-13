@@ -4,4 +4,5 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<!-- since taglib will be imported by all parts of page, we put rootURL here -->
 <c:url var="rootURL" value="/"/>
