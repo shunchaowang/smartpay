@@ -134,6 +134,14 @@ public class SiteServiceImpl implements SiteService {
         return siteDao.findByAdvanceSearch(site, start, length);
     }
 
+    /**
+     * Finally we decide to put all timestamp in service layer.
+     *
+     * @param site
+     * @return
+     * @throws MissingRequiredFieldException
+     * @throws NotUniqueException
+     */
     @Transactional
     @Override
     public Site create(Site site) throws MissingRequiredFieldException, NotUniqueException {
@@ -146,17 +154,14 @@ public class SiteServiceImpl implements SiteService {
         if (StringUtils.isBlank(site.getUrl())) {
             throw new MissingRequiredFieldException("Site URL is blank.");
         }
-        if (site.getCreatedTime() == null) {
-            throw new MissingRequiredFieldException("Site created time is null.");
-        }
         if (site.getActive() == null) {
             throw new MissingRequiredFieldException("Site active is null.");
         }
         if (site.getSiteStatus() == null) {
             throw new MissingRequiredFieldException("Site status is null.");
         }
-        if(site.getMerchant() == null){
-            throw new MissingRequiredFieldException("Site Merchent is null.");
+        if (site.getMerchant() == null) {
+            throw new MissingRequiredFieldException("Site Merchant is null.");
         }
 
         // check uniqueness on sitename
@@ -164,6 +169,7 @@ public class SiteServiceImpl implements SiteService {
             throw new NotUniqueException("Site with sitename " + site.getName()
                     + " already exists.");
         }
+        site.setCreatedTime(Calendar.getInstance().getTime());
         return siteDao.create(site);
     }
 
@@ -211,7 +217,7 @@ public class SiteServiceImpl implements SiteService {
         if (site.getSiteStatus() == null) {
             throw new MissingRequiredFieldException("Site status is null.");
         }
-        if(site.getMerchant() == null){
+        if (site.getMerchant() == null) {
             throw new MissingRequiredFieldException("Site Merchent is null.");
         }
 
@@ -222,9 +228,8 @@ public class SiteServiceImpl implements SiteService {
         }
 
         // set updated time if not set
-        if (site.getUpdatedTime() == null) {
-            site.setUpdatedTime(Calendar.getInstance().getTime());
-        }
+        site.setUpdatedTime(Calendar.getInstance().getTime());
+
         return siteDao.update(site);
     }
 

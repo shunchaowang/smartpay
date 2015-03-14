@@ -161,9 +161,6 @@ public class UserServiceImpl implements UserService {
         if (user.getUserStatus() == null) {
             throw new MissingRequiredFieldException("User status is null.");
         }
-        if (user.getCreatedTime() == null) {
-            throw new MissingRequiredFieldException("User created time is null.");
-        }
 
         // check uniqueness on username and email
         if (userDao.findByUsername(user.getUsername()) != null) {
@@ -174,6 +171,8 @@ public class UserServiceImpl implements UserService {
             throw new NotUniqueException("User with email " + user.getEmail()
                     + " already exists.");
         }
+
+        user.setCreatedTime(Calendar.getInstance().getTime());
         return userDao.create(user);
     }
 
@@ -243,9 +242,7 @@ public class UserServiceImpl implements UserService {
 
         }
         // set updated time if not set
-        if (user.getUpdatedTime() == null) {
-            user.setUpdatedTime(Calendar.getInstance().getTime());
-        }
+        user.setUpdatedTime(Calendar.getInstance().getTime());
         return userDao.update(user);
     }
 
@@ -259,7 +256,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new NoSuchEntityException("User with id " + id + " does not exist.");
         }
-        userDao.get(id);
+        userDao.delete(id);
         return user;
     }
 }
