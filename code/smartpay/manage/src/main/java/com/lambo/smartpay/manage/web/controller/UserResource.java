@@ -1,4 +1,4 @@
-package com.lambo.smartpay.manage.controller;
+package com.lambo.smartpay.manage.web.controller;
 
 import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.persistence.entity.User;

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.lambo.smartpay.manage.controller.UserResource" %>
+<%@ page import="com.lambo.smartpay.manage.web.controller.UserResource" %>
 <!DOCTYPE html>
 <%@include file="taglib.jsp" %>
 

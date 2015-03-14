@@ -1,4 +1,4 @@
-package com.lambo.smartpay.manage.controller;
+package com.lambo.smartpay.manage.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

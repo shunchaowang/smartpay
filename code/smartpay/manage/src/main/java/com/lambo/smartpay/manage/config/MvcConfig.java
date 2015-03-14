@@ -24,7 +24,7 @@ import java.util.Properties;
  */
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = {"com.lambo.smartpay.manage.controller"})
+@ComponentScan(basePackages = {"com.lambo.smartpay.manage.web.controller"})
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Override

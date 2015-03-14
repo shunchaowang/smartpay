@@ -1,4 +1,4 @@
-<%@ page import="com.lambo.smartpay.manage.controller.UserResource" %>
+<%@ page import="com.lambo.smartpay.manage.web.controller.UserResource" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
 <div class="container-fluid">
