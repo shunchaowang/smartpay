@@ -3,7 +3,7 @@
 <%@include file="taglib.jsp" %>
 <html>
 <head>
-    <jsp:include page="_import.jsp"/>
+    <jsp:include page="_pre_import.jsp"/>
 </head>
 <body>
 <div class="col-md-6 col-md-offset-2">
@@ -49,5 +49,6 @@
         </form:form>
     </div>
 </div>
+<jsp:include page="_post_import.jsp"/>
 </body>
 </html>

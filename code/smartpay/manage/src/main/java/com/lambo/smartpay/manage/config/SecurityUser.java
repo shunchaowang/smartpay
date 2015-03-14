@@ -29,6 +29,7 @@ public class SecurityUser extends User implements UserDetails {
             this.setMerchant(user.getMerchant());
             this.setActive(user.getActive());
             this.setRoles(user.getRoles());
+            this.setMerchant(user.getMerchant());
         }
     }
 

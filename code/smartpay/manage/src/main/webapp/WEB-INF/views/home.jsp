@@ -2,11 +2,6 @@
 <%@ page import="com.lambo.smartpay.manage.controller.UserResource" %>
 <!DOCTYPE html>
 <%@include file="taglib.jsp" %>
-<html>
-<head>
-    <jsp:include page="_import.jsp"/>
-</head>
-<body>
 
 <c:set var="username" value="<%=UserResource.getCurrentUser().getUsername()%>" scope="session"/>
 <h2>Welcome ${username}
@@ -27,4 +22,3 @@
 <a href="${rootURL}user/json">User in Json Array</a>
 
 <p><a href="${rootURL}logout">Logout</a></p>
-</body>

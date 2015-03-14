@@ -2,5 +2,5 @@
 <%@include file="taglib.jsp" %>
 <nav class="navbar navbar-default" role="navigation">
     <jsp:include page="_navbar.jsp"/>
-    <!-- include profile here -->
-</nav> <!-- end navbar -->
+</nav>
+<!-- end navbar -->
