@@ -173,14 +173,14 @@ public class SiteServiceImpl implements SiteService {
             throw new NoSuchEntityException("Id is null.");
         }
         if (siteDao.get(id) == null) {
-            throw new NoSuchEntityException("User with id " + id + " does not exist.");
+            throw new NoSuchEntityException("Site with id " + id + " does not exist.");
         }
         return siteDao.get(id);
     }
 
     /**
-     * Update a user.
-     * Username is not allowed to change.
+     * Update a site.
+     * Sitename is not allowed to change.
      *
      * @param site
      * @return
@@ -216,8 +216,8 @@ public class SiteServiceImpl implements SiteService {
         }
 
         // check uniqueness on sitename
-        Site currentUser = siteDao.get(site.getId());
-        if (!site.getName().equals(currentUser.getName())) {
+        Site currentSite = siteDao.get(site.getId());
+        if (!site.getName().equals(currentSite.getName())) {
             throw new MissingRequiredFieldException("Site name cannot be changed.");
         }
 
