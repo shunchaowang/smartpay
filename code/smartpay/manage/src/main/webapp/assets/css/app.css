@@ -1,0 +1,50 @@
+/*  ---------------------------------
+    Layout
+    --------------------------------- */
+body {
+    /*padding-top: 70px;*/
+    padding-bottom: 70px;
+}
+
+footer {
+    height: 33px;
+    /* color: #eee; */
+    font-size: 11px;
+    text-align: center;
+    padding-top: 8px;
+}
+
+/*  ---------------------------------------
+    navbar TODO ADJUST NAVBAR HEIGHT
+    ---------------------------------------*/
+/*
+.navbar-fixed-top {
+    min-height: 62px !important;
+}
+
+.navbar-form .form-group {
+    margin-top: 12px;
+}
+
+.navbar-brand {
+    margin-top: 10px !important;
+}
+
+.navbar-nav {
+    margin-top: 10px !important;
+}
+
+.navbar-nav > li > a {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+.navbar {
+    min-height: 32px !important
+}
+
+#logo {
+    height: 56px;
+    margin-top: -13px;
+}
+*/
