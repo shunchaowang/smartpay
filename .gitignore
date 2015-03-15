@@ -41,3 +41,6 @@
 # bak files
 **/*.bak
 
+# ignore all application-*.properties under all resources folder
+**/resources/application-*.properties
+
