@@ -7,3 +7,7 @@
 
 <!-- since taglib will be imported by all parts of page, we put rootURL here -->
 <c:url var="rootURL" value="/"/>
+<c:url var="_view" value="${action}"/>
+<c:if test="${controller != null}">
+    <c:url var="_view" value="${controller}/${action}"/>
+</c:if>

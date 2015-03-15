@@ -9,6 +9,9 @@
 
 <h2>Authorities <%=UserResource.getCurrentUser().getAuthorities()%>
 </h2>
+<h2>Controller: ${controller}</h2>
+<h2>Action: ${action}</h2>
+<h2>View: ${_view}</h2>
 
 <h3>Name: <sec:authentication property="name"/></h3>
 

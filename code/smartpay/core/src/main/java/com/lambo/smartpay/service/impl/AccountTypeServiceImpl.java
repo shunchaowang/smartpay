@@ -232,4 +232,118 @@ public class AccountTypeServiceImpl implements AccountTypeService {
             length) {
         return null;
     }
+
+    //TODO newly added methods
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * There are two parts of the search to support grails criteria search with DataTables instant
+     * search.
+     *
+     * @param accountType contains all criteria for equals, like name equals xx and active equals
+     *                    true, etc.
+     *                    it means no criteria on exact equals if t is null.
+     * @param search      instance wildcard search keyword, like name likes %xx%, etc.
+     *                    it means no criteria with wildcard search if search is null.
+     * @return number of the T matching criteria.
+     */
+    @Override
+    public Long countByCriteria(AccountType accountType, String search) {
+        return null;
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     *
+     * @param accountType contains all criteria for equals, like name equals xx and active equals
+     *                    true, etc.
+     *                    it means no criteria on exact equals if t is null.
+     * @return number of the T matching criteria.
+     */
+    @Override
+    public Long countByCriteria(AccountType accountType) {
+        return null;
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * <p/>
+     * it means no criteria on exact equals if t is null.
+     *
+     * @param search instance wildcard search keyword, like name likes %xx%, etc.
+     *               it means no criteria with wildcard search if search is null.
+     * @return number of the T matching criteria.
+     */
+    @Override
+    public Long countByCriteria(String search) {
+        return null;
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * There are two parts of the search to support grails criteria search with DataTables instant
+     * search; DataTables dynamic ordering is also supported;
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param accountType contains all criteria for equals, like name equals xx and active equals
+     *                    true, etc.
+     *                    it means no criteria on exact equals if t is null.
+     * @param search      instance wildcard search keyword, like name likes %xx%, etc.
+     *                    it means no criteria with wildcard search if search is null.
+     * @param start       first position of the result.
+     * @param length      max record of the result.
+     * @param order       order by field, default is id.
+     * @param orderDir    order direction on the order field. default is DESC.
+     * @return
+     */
+    @Override
+    public List<AccountType> findByCriteria(AccountType accountType, String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+        return null;
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * DataTables dynamic ordering is also supported.
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param accountType contains all criteria for equals, like name equals xx and active equals
+     *                    true, etc.
+     *                    it means no criteria on exact equals if t is null.
+     * @param start       first position of the result.
+     * @param length      max record of the result.
+     * @param order       order by field, default is id.
+     * @param orderDir    order direction on the order field. default is DESC.
+     * @return
+     */
+    @Override
+    public List<AccountType> findByCriteria(AccountType accountType, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+        return null;
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * DataTables dynamic ordering is also supported.
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
+     *                 it means no criteria with wildcard search if search is null.
+     * @param start    first position of the result.
+     * @param length   max record of the result.
+     * @param order    order by field, default is id.
+     * @param orderDir order direction on the order field. default is DESC.
+     * @return
+     */
+    @Override
+    public List<AccountType> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+        return null;
+    }
 }

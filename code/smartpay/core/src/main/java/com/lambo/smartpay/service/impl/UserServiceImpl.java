@@ -267,7 +267,6 @@ public class UserServiceImpl implements UserService {
 
     //TODO newly added methods
 
-
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
@@ -286,6 +285,9 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             logger.info("User is null.");
             return null;
+        }
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search is blank.");
         }
         return userDao.countByCriteria(user, search);
     }
@@ -310,7 +312,8 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public List<User> findByCriteria(User user, String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<User> findByCriteria(User user, String search, Integer start, Integer length,
+                                     String order, ResourceProperties.JpaOrderDir orderDir) {
         if (user == null) {
             logger.info("User is null.");
             return null;
@@ -336,5 +339,125 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         return userDao.findByCriteria(user, search, start, length, order, orderDir);
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     *
+     * @param user contains all criteria for equals, like name equals xx and active equals
+     *             true, etc.
+     *             it means no criteria on exact equals if t is null.
+     * @return number of the T matching criteria.
+     */
+    @Override
+    public Long countByCriteria(User user) {
+        if (user == null) {
+            logger.info("User is null.");
+            return null;
+        }
+
+        return userDao.countByCriteria(user, null);
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * <p/>
+     * it means no criteria on exact equals if t is null.
+     *
+     * @param search instance wildcard search keyword, like name likes %xx%, etc.
+     *               it means no criteria with wildcard search if search is null.
+     * @return number of the T matching criteria.
+     */
+    @Override
+    public Long countByCriteria(String search) {
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search is blank.");
+        }
+        return userDao.countByCriteria(null, search);
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * DataTables dynamic ordering is also supported.
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param user     contains all criteria for equals, like name equals xx and active equals
+     *                 true, etc.
+     *                 it means no criteria on exact equals if t is null.
+     * @param start    first position of the result.
+     * @param length   max record of the result.
+     * @param order    order by field, default is id.
+     * @param orderDir order direction on the order field. default is DESC.
+     * @return
+     */
+    @Override
+    public List<User> findByCriteria(User user, Integer start, Integer length, String order,
+                                     ResourceProperties.JpaOrderDir orderDir) {
+        if (user == null) {
+            logger.info("User is null.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return userDao.findByCriteria(user, null, start, length, order, orderDir);
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * DataTables dynamic ordering is also supported.
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
+     *                 it means no criteria with wildcard search if search is null.
+     * @param start    first position of the result.
+     * @param length   max record of the result.
+     * @param order    order by field, default is id.
+     * @param orderDir order direction on the order field. default is DESC.
+     * @return
+     */
+    @Override
+    public List<User> findByCriteria(String search, Integer start, Integer length, String order,
+                                     ResourceProperties.JpaOrderDir orderDir) {
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return userDao.findByCriteria(null, search, start, length, order, orderDir);
     }
 }
