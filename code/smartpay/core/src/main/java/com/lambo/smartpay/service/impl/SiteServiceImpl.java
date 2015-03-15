@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * Created by Linly on 3/14/2015.
+ * Modified by linly on 3/15/2015.
  */
 @Service("siteService")
 public class SiteServiceImpl implements SiteService {
@@ -245,5 +246,80 @@ public class SiteServiceImpl implements SiteService {
         }
         siteDao.delete(id);
         return site;
+    }
+
+
+    //TODO newly added methods
+
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * There are two parts of the search to support grails criteria search with DataTables instant
+     * search.
+     *
+     * @param site   contains all criteria for equals, like name equals xx and active equals
+     *               true, etc.
+     *               it means no criteria on exact equals if t is null.
+     * @param search instance wildcard search keyword, like name likes %xx%, etc.
+     *               it means no criteria with wildcard search if search is null.
+     * @return number of the T matching criteria.
+     */
+    @Override
+    public Long countByCriteria(Site site, String search) {
+        if (site == null) {
+            logger.info("Site is null.");
+            return null;
+        }
+        return siteDao.countByCriteria(site, search);
+    }
+
+    /**
+     * Dynamic search like grails findBy...
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * There are two parts of the search to support grails criteria search with DataTables instant
+     * search; DataTables dynamic ordering is also supported;
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param site     contains all criteria for equals, like name equals xx and active equals
+     *                 true, etc.
+     *                 it means no criteria on exact equals if t is null.
+     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
+     *                 it means no criteria with wildcard search if search is null.
+     * @param start    first position of the result.
+     * @param length   max record of the result.
+     * @param order    order by field, default is id.
+     * @param orderDir order direction on the order field. default is DESC.
+     * @return
+     */
+    @Override
+    public List<Site> findByCriteria(Site site, String search, Integer start, Integer length, String order,
+                                  ResourceProperties.JpaOrderDir orderDir) {
+        if (site == null) {
+            logger.info("Site is null.");
+            return null;
+        }
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return siteDao.findByCriteria(site, search, start, length, order, orderDir);
     }
 }

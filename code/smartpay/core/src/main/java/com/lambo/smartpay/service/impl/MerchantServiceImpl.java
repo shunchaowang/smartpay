@@ -28,6 +28,7 @@ import java.util.List;
 
 /**
  * Created by swang on 3/10/2015.
+ * Modified by linly on 3/15/2015.
  */
 @Service("merchantService")
 public class MerchantServiceImpl implements MerchantService {
@@ -506,16 +507,20 @@ public class MerchantServiceImpl implements MerchantService {
      * There are two parts of the search to support grails criteria search with DataTables instant
      * search.
      *
-     * @param merchant contains all criteria for equals, like name equals xx and active equals
-     *                 true, etc.
-     *                 it means no criteria on exact equals if t is null.
-     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
-     *                 it means no criteria with wildcard search if search is null.
+     * @param merchant   contains all criteria for equals, like name equals xx and active equals
+     *               true, etc.
+     *               it means no criteria on exact equals if t is null.
+     * @param search instance wildcard search keyword, like name likes %xx%, etc.
+     *               it means no criteria with wildcard search if search is null.
      * @return number of the T matching criteria.
      */
     @Override
     public Long countByCriteria(Merchant merchant, String search) {
-        return null;
+        if (merchant == null) {
+            logger.info("Merchant is null.");
+            return null;
+        }
+        return merchantDao.countByCriteria(merchant, search);
     }
 
     /**
@@ -526,7 +531,7 @@ public class MerchantServiceImpl implements MerchantService {
      * To support DataTables pagination we have the start for the offset of the search, and
      * length for the max results we want to return.
      *
-     * @param merchant contains all criteria for equals, like name equals xx and active equals
+     * @param merchant     contains all criteria for equals, like name equals xx and active equals
      *                 true, etc.
      *                 it means no criteria on exact equals if t is null.
      * @param search   instance wildcard search keyword, like name likes %xx%, etc.
@@ -538,8 +543,32 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
-    public List<Merchant> findByCriteria(Merchant merchant, String search, Integer start, Integer
-            length, String order, ResourceProperties.JpaOrderDir orderDir) {
-        return null;
+    public List<Merchant> findByCriteria(Merchant merchant, String search, Integer start, Integer length, String order,
+                                     ResourceProperties.JpaOrderDir orderDir) {
+        if (merchant == null) {
+            logger.info("Merchant is null.");
+            return null;
+        }
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return merchantDao.findByCriteria(merchant, search, start, length, order, orderDir);
     }
 }

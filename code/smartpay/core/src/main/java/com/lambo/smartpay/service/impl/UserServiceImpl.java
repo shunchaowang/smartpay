@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * Created by swang on 3/12/2015.
+ * Modified by Linly on 3/15/2015.
  */
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -107,7 +108,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long countByAdvanceSearch(User user) {
         if (user == null) {
-            logger.info("Merchant is null.");
+            logger.info("User is null.");
+            return null;
         }
         return userDao.countByAdvanceSearch(user);
     }
@@ -123,13 +125,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByAdvanceSearch(User user, Integer start, Integer length) {
         if (user == null) {
-            logger.info("Merchant is null.");
+            logger.info("User is null.");
+            return null;
         }
         if (start == null) {
             logger.info("Start is null.");
+            return null;
         }
         if (length == null) {
             logger.info("Length is null.");
+            return null;
         }
         return userDao.findByAdvanceSearch(user, start, length);
     }
@@ -278,7 +283,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Long countByCriteria(User user, String search) {
-        return null;
+        if (user == null) {
+            logger.info("User is null.");
+            return null;
+        }
+        return userDao.countByCriteria(user, search);
     }
 
     /**
@@ -302,6 +311,30 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<User> findByCriteria(User user, String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
-        return null;
+        if (user == null) {
+            logger.info("User is null.");
+            return null;
+        }
+        if (StringUtils.isBlank(search)) {
+            logger.info("Search keyword is blank.");
+            return null;
+        }
+        if (start == null) {
+            logger.info("Start is null.");
+            return null;
+        }
+        if (length == null) {
+            logger.info("Length is null.");
+            return null;
+        }
+        if (order == null) {
+            logger.info("Order is null.");
+            return null;
+        }
+        if (orderDir == null) {
+            logger.info("OrderDir is null.");
+            return null;
+        }
+        return userDao.findByCriteria(user, search, start, length, order, orderDir);
     }
 }
