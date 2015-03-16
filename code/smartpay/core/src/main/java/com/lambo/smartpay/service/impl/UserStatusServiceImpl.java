@@ -301,7 +301,9 @@ public class UserStatusServiceImpl implements UserStatusService {
      * @return
      */
     @Override
-    public List<UserStatus> findByCriteria(UserStatus userStatus, String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<UserStatus> findByCriteria(UserStatus userStatus, String search, Integer start,
+                                           Integer length, String order, ResourceProperties
+            .JpaOrderDir orderDir) {
         return null;
     }
 
@@ -322,7 +324,8 @@ public class UserStatusServiceImpl implements UserStatusService {
      * @return
      */
     @Override
-    public List<UserStatus> findByCriteria(UserStatus userStatus, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<UserStatus> findByCriteria(UserStatus userStatus, Integer start, Integer length,
+                                           String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
 
@@ -342,12 +345,13 @@ public class UserStatusServiceImpl implements UserStatusService {
      * @return
      */
     @Override
-    public List<UserStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<UserStatus> findByCriteria(String search, Integer start, Integer length, String
+            order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
 
     @Override
     public List<UserStatus> getAll() {
-        return null;
+        return userStatusDao.getAll();
     }
 }

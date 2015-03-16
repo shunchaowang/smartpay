@@ -165,7 +165,7 @@ public class UserController {
     @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
     @Secured({"ROLE_ADMIN"})
     public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
-        return "index";
+        return "main";
     }
 
 }
