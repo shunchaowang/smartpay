@@ -21,7 +21,7 @@
             <ul class="nav navbar-nav">
                 <sec:authorize ifAnyGranted="ROLE_ADMIN">
                     <li>
-                        <a href="${rootURL}merchant/list">
+                        <a href="${rootURL}merchant">
                             <spring:message code="merchant.label"/>
                         </a>
                     </li>
@@ -36,7 +36,7 @@
                     </li>
                 </sec:authorize>
                 <li>
-                    <a href="${rootURL}site/list">
+                    <a href="${rootURL}site">
                         <spring:message code="site.label"/>
                     </a>
                 </li>

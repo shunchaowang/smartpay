@@ -68,6 +68,7 @@ public class Site implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true,
             mappedBy = "site")
+
     private Set<Order> orders;
 
     public Long getId() {

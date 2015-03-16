@@ -13,16 +13,16 @@ public class DataTablesSite implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String siteName;
-    private String siteUrl;
+    private String name;
+    private String url;
     private Date createdTime;
     private String siteStatus;
 
 
     public DataTablesSite(Site site) {
         id = site.getId();
-        siteName = site.getName();
-        siteUrl = site.getUrl();
+        name = site.getName();
+        url = site.getUrl();
         createdTime = site.getCreatedTime();
         siteStatus = site.getSiteStatus().getName();
     }
@@ -36,19 +36,19 @@ public class DataTablesSite implements Serializable {
     }
 
     public String getName() {
-        return siteName;
+        return name;
     }
 
-    public void setName(String siteName) {
-        this.siteName = siteName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUrl() {
-        return siteUrl;
+        return url;
     }
 
-    public void setUrl(String siteUrl) {
-        this.siteUrl = siteUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Date getCreatedTime() {

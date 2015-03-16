@@ -267,10 +267,10 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public Long countByCriteria(Site site, String search) {
-        if (site == null) {
+        /*if (site == null) {
             logger.info("Site is null.");
             return null;
-        }
+        }*/
         return siteDao.countByCriteria(site, search);
     }
 
@@ -296,7 +296,7 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public List<Site> findByCriteria(Site site, String search, Integer start, Integer length, String order,
                                   ResourceProperties.JpaOrderDir orderDir) {
-        if (site == null) {
+        /*if (site == null) {
             logger.info("Site is null.");
             return null;
         }
@@ -319,7 +319,7 @@ public class SiteServiceImpl implements SiteService {
         if (orderDir == null) {
             logger.info("OrderDir is null.");
             return null;
-        }
+        }*/
         return siteDao.findByCriteria(site, search, start, length, order, orderDir);
     }
 
@@ -334,7 +334,8 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public Long countByCriteria(Site site) {
-        return null;
+
+        return siteDao.countByCriteria(site, null);
     }
 
     /**
@@ -349,7 +350,8 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public Long countByCriteria(String search) {
-        return null;
+
+        return siteDao.countByCriteria(null, search);
     }
 
     /**
@@ -370,7 +372,7 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public List<Site> findByCriteria(Site site, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
-        return null;
+        return siteDao.findByCriteria(site, null, start, length, order, orderDir);
     }
 
     /**
@@ -390,6 +392,6 @@ public class SiteServiceImpl implements SiteService {
      */
     @Override
     public List<Site> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
-        return null;
+        return siteDao.findByCriteria(null, search, start, length, order, orderDir);
     }
 }

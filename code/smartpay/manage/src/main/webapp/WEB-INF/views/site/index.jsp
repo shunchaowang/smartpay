@@ -42,11 +42,12 @@
                 'type': "GET",
                 'dataType': 'json'
             },
+
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {'name': 'siteName', 'targets': 1, 'data': 'siteName'},
-                {'name': 'siteUrl', 'targets': 2, 'data': 'siteUrl'},
+                {'name': 'name', 'targets': 1, 'data': 'name'},
+                {'name': 'url', 'targets': 2, 'data': 'url'},
                 {'name': 'createdTime', 'targets': 3, 'searchable': false, 'data': 'createdTime'},
                 {
                     'name': 'siteStatus', 'targets': 4, 'searchable': false,
