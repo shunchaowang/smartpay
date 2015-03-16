@@ -282,13 +282,13 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Long countByCriteria(User user, String search) {
-        if (user == null) {
+        /*if (user == null) {
             logger.info("User is null.");
             return null;
         }
         if (StringUtils.isBlank(search)) {
             logger.info("Search is blank.");
-        }
+        }*/
         return userDao.countByCriteria(user, search);
     }
 
@@ -314,7 +314,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByCriteria(User user, String search, Integer start, Integer length,
                                      String order, ResourceProperties.JpaOrderDir orderDir) {
-        if (user == null) {
+        /*if (user == null) {
             logger.info("User is null.");
             return null;
         }
@@ -337,7 +337,7 @@ public class UserServiceImpl implements UserService {
         if (orderDir == null) {
             logger.info("OrderDir is null.");
             return null;
-        }
+        }*/
         return userDao.findByCriteria(user, search, start, length, order, orderDir);
     }
 
@@ -352,11 +352,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Long countByCriteria(User user) {
+        /*
         if (user == null) {
             logger.info("User is null.");
             return null;
         }
-
+*/
         return userDao.countByCriteria(user, null);
     }
 
@@ -372,9 +373,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Long countByCriteria(String search) {
+        /*
         if (StringUtils.isBlank(search)) {
             logger.info("Search is blank.");
-        }
+        }*/
         return userDao.countByCriteria(null, search);
     }
 
@@ -397,6 +399,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByCriteria(User user, Integer start, Integer length, String order,
                                      ResourceProperties.JpaOrderDir orderDir) {
+        /*
         if (user == null) {
             logger.info("User is null.");
             return null;
@@ -417,6 +420,7 @@ public class UserServiceImpl implements UserService {
             logger.info("OrderDir is null.");
             return null;
         }
+        */
         return userDao.findByCriteria(user, null, start, length, order, orderDir);
     }
 
@@ -438,10 +442,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByCriteria(String search, Integer start, Integer length, String order,
                                      ResourceProperties.JpaOrderDir orderDir) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
+/*
         if (start == null) {
             logger.info("Start is null.");
             return null;
@@ -458,6 +459,7 @@ public class UserServiceImpl implements UserService {
             logger.info("OrderDir is null.");
             return null;
         }
+        */
         return userDao.findByCriteria(null, search, start, length, order, orderDir);
     }
 }

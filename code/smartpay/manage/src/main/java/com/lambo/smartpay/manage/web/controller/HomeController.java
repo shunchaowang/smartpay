@@ -13,16 +13,16 @@ public class HomeController {
 
     @RequestMapping("/")
     public ModelAndView home() {
-        ModelAndView mv = new ModelAndView("main");
-        mv.addObject("action", "home");
-        return mv;
+        ModelAndView view = new ModelAndView("main");
+        //view.addObject("action", "index");
+        return view;
     }
 
     // for 403 access denied page
     @RequestMapping(value = "/403", method = RequestMethod.GET)
     public ModelAndView accessDenied() {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("403");
-        return mv;
+        ModelAndView view = new ModelAndView();
+        view.setViewName("403");
+        return view;
     }
 }

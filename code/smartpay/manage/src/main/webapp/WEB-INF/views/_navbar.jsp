@@ -42,7 +42,7 @@
                 </li>
                 <sec:authorize ifAnyGranted="ROLE_ADMIN, ROLE_MERCHANT_ROLE">
                     <li>
-                        <a href="${rootURL}user/list">
+                        <a href="${rootURL}user">
                             <spring:message code="user.label"/>
                         </a>
                     </li>
