@@ -349,4 +349,9 @@ public class CredentialTypeServiceImpl implements CredentialTypeService {
     public List<CredentialType> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<CredentialType> getAll() {
+        return null;
+    }
 }

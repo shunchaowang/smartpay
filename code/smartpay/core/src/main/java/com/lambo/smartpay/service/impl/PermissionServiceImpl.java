@@ -345,4 +345,9 @@ public class PermissionServiceImpl implements PermissionService {
     public List<Permission> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<Permission> getAll() {
+        return null;
+    }
 }

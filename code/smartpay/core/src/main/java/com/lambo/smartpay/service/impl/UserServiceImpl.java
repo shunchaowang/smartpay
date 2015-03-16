@@ -462,4 +462,9 @@ public class UserServiceImpl implements UserService {
         */
         return userDao.findByCriteria(null, search, start, length, order, orderDir);
     }
+
+    @Override
+    public List<User> getAll() {
+        return null;
+    }
 }

@@ -348,4 +348,9 @@ public class AccountStatusServiceImpl implements AccountStatusService {
                                               String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<AccountStatus> getAll() {
+        return null;
+    }
 }

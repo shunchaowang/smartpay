@@ -363,4 +363,9 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
     public List<CustomerLoginStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<CustomerLoginStatus> getAll() {
+        return null;
+    }
 }

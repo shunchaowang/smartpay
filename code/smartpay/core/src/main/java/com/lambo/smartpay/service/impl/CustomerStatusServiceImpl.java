@@ -349,4 +349,9 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     public List<CustomerStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<CustomerStatus> getAll() {
+        return null;
+    }
 }

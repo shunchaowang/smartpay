@@ -346,4 +346,9 @@ public class FeeTypeServiceImpl implements FeeTypeService {
             order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<FeeType> getAll() {
+        return null;
+    }
 }

@@ -394,4 +394,9 @@ public class SiteServiceImpl implements SiteService {
     public List<Site> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return siteDao.findByCriteria(null, search, start, length, order, orderDir);
     }
+
+    @Override
+    public List<Site> getAll() {
+        return null;
+    }
 }

@@ -345,4 +345,9 @@ public class RoleServiceImpl implements RoleService {
                                      ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<Role> getAll() {
+        return roleDao.getAll();
+    }
 }

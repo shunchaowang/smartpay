@@ -641,4 +641,9 @@ public class MerchantServiceImpl implements MerchantService {
     public List<Merchant> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<Merchant> getAll() {
+        return null;
+    }
 }

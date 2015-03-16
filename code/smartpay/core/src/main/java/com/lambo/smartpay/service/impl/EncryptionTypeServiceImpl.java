@@ -349,4 +349,9 @@ public class EncryptionTypeServiceImpl implements EncryptionTypeService {
     public List<EncryptionType> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<EncryptionType> getAll() {
+        return null;
+    }
 }

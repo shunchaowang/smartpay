@@ -346,4 +346,9 @@ public class CurrencyServiceImpl implements CurrencyService {
             order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<Currency> getAll() {
+        return null;
+    }
 }

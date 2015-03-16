@@ -348,4 +348,9 @@ public class RefundStatusServiceImpl implements RefundStatusService {
             order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<RefundStatus> getAll() {
+        return null;
+    }
 }

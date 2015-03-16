@@ -360,4 +360,9 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
     public List<CredentialStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<CredentialStatus> getAll() {
+        return null;
+    }
 }

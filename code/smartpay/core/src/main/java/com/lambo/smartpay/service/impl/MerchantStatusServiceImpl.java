@@ -349,4 +349,9 @@ public class MerchantStatusServiceImpl implements MerchantStatusService {
     public List<MerchantStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<MerchantStatus> getAll() {
+        return null;
+    }
 }

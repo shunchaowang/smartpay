@@ -349,4 +349,9 @@ public class ShipmentStatusServiceImpl implements ShipmentStatusService {
     public List<ShipmentStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<ShipmentStatus> getAll() {
+        return null;
+    }
 }

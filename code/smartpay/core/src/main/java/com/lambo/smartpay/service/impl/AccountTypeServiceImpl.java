@@ -346,4 +346,9 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     public List<AccountType> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<AccountType> getAll() {
+        return null;
+    }
 }

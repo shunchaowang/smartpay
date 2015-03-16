@@ -345,4 +345,9 @@ public class UserStatusServiceImpl implements UserStatusService {
     public List<UserStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<UserStatus> getAll() {
+        return null;
+    }
 }

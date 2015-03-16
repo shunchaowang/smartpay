@@ -348,4 +348,9 @@ public class PaymentStatusServiceImpl implements PaymentStatusService {
                                               String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<PaymentStatus> getAll() {
+        return null;
+    }
 }

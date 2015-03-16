@@ -345,4 +345,9 @@ public class SiteStatusServiceImpl implements SiteStatusService {
     public List<SiteStatus> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
+
+    @Override
+    public List<SiteStatus> getAll() {
+        return null;
+    }
 }
