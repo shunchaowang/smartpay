@@ -12,31 +12,31 @@ public class DataTablesUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    //private String id;
+    private Long id;
     private String username;
-//    private String firstName;
-//    private String lastName;
-//    private String email;
-//    private String createdTime;
-//    private String userStatus;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private Date createdTime;
+    private String userStatus;
 
     public DataTablesUser(User user) {
-        //id = user.getId().toString();
+        id = user.getId();
         username = user.getUsername();
-//        firstName = user.getFirstName();
-//        lastName = user.getLastName();
-//        email = user.getEmail();
-//        createdTime = user.getCreatedTime().toString();
-//        userStatus = user.getUserStatus().getName();
+        firstName = user.getFirstName();
+        lastName = user.getLastName();
+        email = user.getEmail();
+        createdTime = user.getCreatedTime();
+        userStatus = user.getUserStatus().getName();
     }
 
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public void setId(String id) {
-//        this.id = id;
-//    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -46,43 +46,43 @@ public class DataTablesUser implements Serializable {
         this.username = username;
     }
 
-//    public String getFirstName() {
-//        return firstName;
-//    }
-//
-//    public void setFirstName(String firstName) {
-//        this.firstName = firstName;
-//    }
-//
-//    public String getLastName() {
-//        return lastName;
-//    }
-//
-//    public void setLastName(String lastName) {
-//        this.lastName = lastName;
-//    }
-//
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    public String getCreatedTime() {
-//        return createdTime;
-//    }
-//
-//    public void setCreatedTime(String createdTime) {
-//        this.createdTime = createdTime;
-//    }
-//
-//    public String getUserStatus() {
-//        return userStatus;
-//    }
-//
-//    public void setUserStatus(String userStatus) {
-//        this.userStatus = userStatus;
-//    }
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(String userStatus) {
+        this.userStatus = userStatus;
+    }
 }

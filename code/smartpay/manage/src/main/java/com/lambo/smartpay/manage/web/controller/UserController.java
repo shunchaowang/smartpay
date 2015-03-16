@@ -110,10 +110,11 @@ public class UserController {
         Integer recordsTotal = userService.countByCriteria(search).intValue();
 
         List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+
         if (users != null) {
             for (User user : users) {
-                DataTablesUser dataTableUser = new DataTablesUser(user);
-                dataTablesUsers.add(dataTableUser);
+                DataTablesUser tableUser = new DataTablesUser(user);
+                dataTablesUsers.add(tableUser);
             }
         }
 
@@ -121,16 +122,10 @@ public class UserController {
         result.setData(dataTablesUsers);
         result.setRecordsFiltered(dataTablesUsers.size());
         result.setRecordsTotal(recordsTotal);
-        //logger.debug("Result before return: " + result.toString());
+        logger.debug("Result before return: " + result.toString());
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(result);
-        logger.debug("Json from Gson: " + json);
-        return json;
-        //return result.toString();
-//        return "{\"data\":[{\"id\":\"1\",\"username\":\"admin\",\"firstName\":\"Admin\"," +
-//                "\"lastName\":\"Admin\",\"email\":\"ironaire@gmail.com\"," +
-//                "\"createdTime\":\"2015-03-13 08:04:35.0\",\"userStatus\":\"Normal\"}]," +
-//                "\"recordsTotal\":1,\"recordsFiltered\":1}";
+        return gson.toJson(result);
     }
 
 }

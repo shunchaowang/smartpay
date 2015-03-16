@@ -2,7 +2,7 @@
 <%@include file="../taglib.jsp" %>
 <div class="row">
     <div class="col-xs-6 pull-left">
-        <b>My Bundles</b>
+        <h2><b><spring:message code="user.list.label"/></b></h2>
     </div>
     <!-- end of pull-left -->
     <div class="col-xs-2 pull-right">
@@ -19,15 +19,13 @@
     <table class="display cell-border" id="user-table">
         <thead>
         <tr>
-            <!--<th><spring:message code="id.label"/></th>-->
+            <th><spring:message code="id.label"/></th>
             <th><spring:message code="user.username.label"/></th>
-            <!--
             <th><spring:message code="user.firstName.label"/></th>
             <th><spring:message code="user.lastName.label"/></th>
             <th><spring:message code="user.email.label"/></th>
             <th><spring:message code="user.createdTime.label"/></th>
             <th><spring:message code="user.userStatus.label"/></th>
-            -->
         </tr>
         </thead>
         <tbody></tbody>
@@ -46,17 +44,18 @@
                 'type': "GET",
                 'dataType': 'json'
             },
+            // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                //{'name': 'id', 'targets': 0, 'visible': true},
-                {'name': 'username', 'targets': 0}/*,
-                {'name': 'firstName', 'targets': 1},
-                {'name': 'lastName', 'targets': 2},
-                {'name': 'email', 'targets': 3},
-                {'name': 'createdTime', 'targets': 4, 'searchable': false},
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
+                {'name': 'username', 'targets': 1, 'data': 'username'},
+                {'name': 'firstName', 'targets': 2, 'data': 'firstName'},
+                {'name': 'lastName', 'targets': 3, 'data': 'lastName'},
+                {'name': 'email', 'targets': 4, 'data': 'email'},
+                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'userStatus', 'targets': 5, 'searchable': false,
-                    'orderable': false
-                }*/
+                    'name': 'userStatus', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'userStatus'
+                }
             ]
         });
     });

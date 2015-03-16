@@ -1,8 +1,5 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -39,16 +36,5 @@ public class DataTablesResultSet<T> implements Serializable {
 
     public void setRecordsFiltered(Integer recordsFiltered) {
         this.recordsFiltered = recordsFiltered;
-    }
-
-    @Override
-    public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
