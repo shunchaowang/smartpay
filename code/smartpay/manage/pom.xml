@@ -143,7 +143,7 @@
             <version>${xml.jackson.version}</version>
         </dependency>
 
-        <!-- test gson -->
+        <!-- gson for json -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
