@@ -19,14 +19,40 @@
         <!-- navbar -->
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav">
-                <sec:authorize ifAnyGranted="ROLE_ADMIN">
-                    <li>
-                        <a href="${rootURL}merchant">
+
+                <!-- merchant management goes here -->
+                <!-- admin can view merchant list, add merchant -->
+                <!-- merchant admin can view merchant detail -->
+
+                <!-- admin menu starts -->
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                    <!-- show merchant management as hierarchical dropdown menu -->
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                           data-target="#" href="#">
                             <spring:message code="merchant.label"/>
+                            <b class="caret"></b>
                         </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="">
+                                <a href="${rootURL}merchant">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="merchant.list.label"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}merchant">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <spring:message code="merchant.new.label"/>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </sec:authorize>
-                <sec:authorize ifAnyGranted="ROLE_MERCHANT_ADMIN">
+                <!-- admin menu ends -->
+
+                <!-- merchant admin menu starts -->
+                <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
                     <c:set var="merchantId"
                            value="<%=UserResource.getCurrentUser().getMerchant().getId()%>"/>
                     <li>
@@ -35,18 +61,107 @@
                         </a>
                     </li>
                 </sec:authorize>
-                <li>
-                    <a href="${rootURL}site">
+                <!-- merchant admin menu ends -->
+
+                <!-- site management goes here -->
+                <!-- admin is able to view site list, approve site  -->
+                <!-- merchant admin/operator is able to view site list of the merchant,
+                    add site, edit site.
+                -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                       href="#">
                         <spring:message code="site.label"/>
+                        <b class="caret"></b>
                     </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}site">
+                                <i class="glyphicon glyphicon-th-list"></i>
+                                <spring:message code="site.list.label"/>
+                            </a>
+                        </li>
+                        <!-- admin menu starts -->
+                        <sec:authorize
+                                access="hasAnyRole('ROLE_ADMIN', 'ROLE_MERCHANT_ADMIN')">
+                            <li class="">
+                                <a href="${rootURL}site/audit">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="site.audit.label"/>
+                                </a>
+                            </li>
+                        </sec:authorize>
+                        <!-- admin menu ends -->
+
+                        <!-- merchant admin/operator starts -->
+                        <sec:authorize
+                                access="hasAnyRole('ROLE_MERCHANT_ADMIN', 'ROLE_MERCHANT_OPERATOR')">
+                            <li class="">
+                                <a href="${rootURL}site/create">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <spring:message code="site.new.label"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}site/edit">
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                    <spring:message code="site.edit.label"/>
+                                </a>
+                            </li>
+                        </sec:authorize>
+                        <!-- merchant admin/operator ends -->
+
+                    </ul>
                 </li>
-                <sec:authorize ifAnyGranted="ROLE_ADMIN, ROLE_MERCHANT_ROLE">
-                    <li>
-                        <a href="${rootURL}user">
+
+                <!-- user management goes here -->
+                <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MERCHANT_ADMIN')">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                           data-target="#" href="#">
                             <spring:message code="user.label"/>
+                            <b class="caret"></b>
                         </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="">
+                                <a href="${rootURL}user">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="user.list.label"/>
+                                </a>
+                            </li>
+
+                            <!-- admin menu goes here -->
+                            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                                <li class="">
+                                    <a href="${rootURL}user/createAdmin">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        <spring:message code="user.new.admin.label"/>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="${rootURL}user/createMerchantAdmin">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        <spring:message code="user.new.merchant.admin.label"/>
+                                    </a>
+                                </li>
+                            </sec:authorize>
+                            <!-- admin menu ends -->
+
+                            <!-- merchant admin menu goes here -->
+                            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
+                                <li class="">
+                                    <a href="${rootURL}user/createMerchantOperator">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        <spring:message code="user.new.admin.label"/>
+                                    </a>
+                                </li>
+                            </sec:authorize>
+                            <!-- merchant admin menu ends -->
+                        </ul>
                     </li>
                 </sec:authorize>
+                <!-- user management ends -->
+
                 <li>
                     <a href="${rootURL}order/list">
                         <spring:message code="order.label"/>

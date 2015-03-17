@@ -5,6 +5,8 @@
         <h3><b><spring:message code="user.list.label"/></b></h3>
     </div>
     <!-- end of pull-left -->
+    <!-- we have 2nd level menu bar donot need this now -->
+    <!--
     <div class="col-sm-6">
         <sec:authorize access="hasRole('ROLE_ADMIN')">
             <a href="${rootURL}${controller}/createAdmin">
@@ -14,7 +16,7 @@
             </a>
             <a href="${rootURL}${controller}/createMerchantAdmin">
             <button type="button" class="btn btn-primary" id="new-merchant-admin-button">
-                <spring:message code="user.new..merchant.admin.label"/>
+                <spring:message code="user.new.merchant.admin.label"/>
             </button>
             </a>
         </sec:authorize>
@@ -26,6 +28,7 @@
             </a>
         </sec:authorize>
     </div>
+    -->
     <!-- end of pull-right -->
 </div>
 <!-- end of class row -->
