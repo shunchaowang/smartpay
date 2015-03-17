@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -47,7 +48,13 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         TypedQuery<Site> typedQuery = entityManager.createQuery(query);
 
         logger.debug("findByName query is " + typedQuery);
-        return typedQuery.getSingleResult();
+        try {
+            return typedQuery.getSingleResult();
+        } catch (NoResultException e) {
+            logger.info("Cannot find site with name " + name);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -560,7 +567,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.
-     * @param customer is the search keyword.
+     * @param site is the search keyword.
      * @return JPA Predicate used by CriteriaQuery.
      */
     private Predicate equalPredicate(CriteriaBuilder builder, Root<Site> root, Site

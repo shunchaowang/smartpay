@@ -156,6 +156,75 @@ public class SiteController {
     }
 
 
+    @RequestMapping(value = "/audit", method = RequestMethod.GET, produces = "application/json")
+    public
+    @ResponseBody
+    String audit(HttpServletRequest request) {
+        Enumeration<String> params = request.getParameterNames();
+        while (params.hasMoreElements()) {
+            String paramName = params.nextElement();
+            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
+                    (paramName));
+        }
+        // parse sorting column
+        Integer orderIndex = Integer.valueOf(request.getParameter("order[0][column]"));
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        logger.debug("Parsed Request: " + search + " " + start + " " + length
+                + " " + order + " " + orderDir);
+        List<Site> sites = null;
+        if (StringUtils.isBlank(search)) {
+            //sites = siteService.f
+        }
+
+        Site siteApproved = new Site();
+        SiteStatus approvedStatus;
+        try {
+            approvedStatus = siteStatusService.findByCode("400");
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find SiteStatus with Code 400");
+            e.printStackTrace();
+            return null;
+        }
+        siteApproved.setSiteStatus(approvedStatus);
+
+        sites = siteService.findByCriteria(siteApproved, search, start, length, order,
+                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+
+        // count total records
+        Integer recordsTotal = siteService.countByCriteria(search).intValue();
+
+        List<DataTablesSite> dataTablesSites = new ArrayList<>();
+
+        if (sites != null) {
+            for (Site site : sites) {
+                DataTablesSite tableSite = new DataTablesSite(site);
+                dataTablesSites.add(tableSite);
+            }
+        }
+
+        DataTablesResultSet<DataTablesSite> result = new DataTablesResultSet<>();
+        result.setData(dataTablesSites);
+        result.setRecordsFiltered(dataTablesSites.size());
+        result.setRecordsTotal(recordsTotal);
+        logger.debug("Result before return: " + result.toString());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(result);
+    }
+
+
 
     @RequestMapping(value = "/createSite", method = RequestMethod.GET)
     @Secured({"ROLE_ADMIN"})

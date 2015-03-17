@@ -90,6 +90,18 @@
                                     <spring:message code="site.audit.label"/>
                                 </a>
                             </li>
+                            <li class="">
+                                <a href="${rootURL}site/audit">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="site.freeze.label"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}site/audit">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="site.approve.label"/>
+                                </a>
+                            </li>
                         </sec:authorize>
                         <!-- admin menu ends -->
 

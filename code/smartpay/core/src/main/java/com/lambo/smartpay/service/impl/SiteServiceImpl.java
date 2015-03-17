@@ -165,13 +165,13 @@ public class SiteServiceImpl implements SiteService {
             throw new MissingRequiredFieldException("Site Merchant is null.");
         }
 
-        /*
+
         // check uniqueness on sitename
         if (siteDao.findByName(site.getName()) != null) {
             throw new NotUniqueException("Site with sitename " + site.getName()
                     + " already exists.");
         }
-        */
+
         site.setCreatedTime(Calendar.getInstance().getTime());
         return siteDao.create(site);
     }
