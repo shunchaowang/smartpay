@@ -28,8 +28,6 @@
 </div>
 
 <script type="text/javascript">
-    <spring:message var="operationLabel" code="operation.label"/>
-    <spring:message var="editLabel" code="edit.label"/>
     $(document).ready(function () {
         $('#user-table').DataTable({
             'processing': true,
@@ -48,7 +46,8 @@
                     'name': 'username', 'targets': 1, 'data': 'username',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row[0] + '>' + data + '</a>';
+                                + row[0] + '>' + '<spring:message code="edit.label"/>'
+                                + '</a>';
                     }
                 },
                 {'name': 'firstName', 'targets': 2, 'data': 'firstName'},
@@ -64,7 +63,8 @@
                     'render': function (data, type, row) {
                         return '<button type="button" name="edit-button" class="btn btn-default" '
                                 + ' value="' + "${rootURL}${controller}" + '/show/'
-                                + row[0] + '">' + "${editLabel}" + '</button>';
+                                + row[0] + '">' + '<spring:message code="operation.label"/>'
+                                + '</button>';
                     }
                 }
             ]
