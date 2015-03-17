@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -41,7 +42,13 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
 
         logger.debug("findByUsername query is " + typedQuery);
-        return typedQuery.getSingleResult();
+        try {
+            return typedQuery.getSingleResult();
+        } catch (NoResultException e) {
+            logger.info("Cannot find user with username " + username);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -59,7 +66,13 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
 
         logger.debug("findByEmail query is " + typedQuery);
-        return typedQuery.getSingleResult();
+        try {
+            return typedQuery.getSingleResult();
+        } catch (NoResultException e) {
+            logger.info("Cannot find user with email " + email);
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

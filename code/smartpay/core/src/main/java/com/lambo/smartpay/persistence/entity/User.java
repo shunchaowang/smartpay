@@ -66,9 +66,8 @@ public class User implements Serializable {
     @Lob
     private byte[] profileImage;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            optional = false)
-    @JoinColumn(name = "USER_MCHT_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "USER_MCHT_ID")
     private Merchant merchant;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},

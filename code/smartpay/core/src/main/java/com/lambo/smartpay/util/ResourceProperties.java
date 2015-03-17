@@ -19,6 +19,9 @@ public abstract class ResourceProperties {
     public static final String ROLE_MERCHANT_ADMIN_CODE = "200";
     public static final String ROLE_MERCHANT_OPERATOR_CODE = "201";
 
+    // initial password for new user
+    public static final String INITIAL_PASSWORD = "asdf1234";
+
     // user status code
     public static final String USER_STATUS_NORMAL_CODE = "100";
 

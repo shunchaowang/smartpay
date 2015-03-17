@@ -2,12 +2,17 @@ package com.lambo.smartpay.manage.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lambo.smartpay.exception.MissingRequiredFieldException;
+import com.lambo.smartpay.exception.NoSuchEntityException;
+import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
+import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.Role;
 import com.lambo.smartpay.persistence.entity.User;
 import com.lambo.smartpay.persistence.entity.UserStatus;
+import com.lambo.smartpay.service.MerchantService;
 import com.lambo.smartpay.service.RoleService;
 import com.lambo.smartpay.service.UserService;
 import com.lambo.smartpay.service.UserStatusService;
@@ -18,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -45,6 +52,10 @@ public class UserController {
     private UserStatusService userStatusService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MerchantService merchantService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private MessageSource messageSource;
 
@@ -165,7 +176,67 @@ public class UserController {
     @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
     @Secured({"ROLE_ADMIN"})
     public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+        // get admin role
+        Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find role " + ResourceProperties.ROLE_ADMIN_CODE);
+            e.printStackTrace();
+        }
+        // create User and set admin to user
+        User user = createUser(userCommand, role);
+        // set initial password
+        user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
+        // persist user
+        try {
+            user = userService.create(user);
+        } catch (MissingRequiredFieldException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        }
+        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
+        model.addAttribute("action", "index");
         return "main";
+    }
+
+    // create a new User from a UserCommand
+    private User createUser(UserCommand userCommand, Role role) {
+        User user = new User();
+        user.setUsername(userCommand.getUsername());
+        user.setFirstName(userCommand.getFirstName());
+        user.setLastName(userCommand.getLastName());
+        user.setEmail(userCommand.getEmail());
+        user.setRemark(userCommand.getRemark());
+        // we set user to be active right now
+        user.setActive(true);
+        user.setRoles(new HashSet<Role>());
+        user.getRoles().add(role);
+        // set user merchant if user is not admin
+        if (userCommand.getMerchant() != null) {
+            Merchant merchant = null;
+            try {
+                merchant = merchantService.get(userCommand.getMerchant());
+            } catch (NoSuchEntityException e) {
+                logger.info("Cannot find merchant " + userCommand.getMerchant());
+                e.printStackTrace();
+            }
+            user.setMerchant(merchant);
+        }
+
+        // set UserStatus
+        UserStatus userStatus = null;
+        try {
+            userStatus = userStatusService.get(userCommand.getUserStatus());
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find user status " + userCommand.getUserStatus());
+            e.printStackTrace();
+        }
+        user.setUserStatus(userStatus);
+        return user;
     }
 
 }
