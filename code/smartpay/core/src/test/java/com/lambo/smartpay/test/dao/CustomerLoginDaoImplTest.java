@@ -26,16 +26,17 @@ public class CustomerLoginDaoImplTest {
     private CustomerLoginDao customerLoginDao;
 
     @Test
-    public void testAdvanceSearch() {
+    public void testQueryByCriteria() {
         CustomerLogin customerLogin = new CustomerLogin();
         customerLogin.setId((long) 3);
         customerLogin.setLastName("zzz");
         customerLogin.setActive(true);
         customerLogin.setFirstName("zzz");
         customerLogin.setLoginEmail("zzz@me.com");
-        Long count = customerLoginDao.countByAdvanceSearch(customerLogin);
+        Long count = customerLoginDao.countByCriteria(customerLogin, null);
         assertEquals(new Long(0), count);
-        List<CustomerLogin> customerLogins = customerLoginDao.findByAdvanceSearch(customerLogin);
+        List<CustomerLogin> customerLogins = customerLoginDao.
+                findByCriteria(customerLogin, null, null, null, null, null);
         assertEquals((long) 0, customerLogins.size());
     }
 }

@@ -33,9 +33,10 @@ public class CustomerDaoImplTest {
         customer.setEmail("aaa@me.com");
         customer.setActive(true);
         customer.setId((long) 3);
-        Long count = customerDao.countByAdvanceSearch(customer);
+        Long count = customerDao.countByCriteria(customer, null);
         assertEquals(new Long(0), count);
-        List<Customer> customers = customerDao.findByAdvanceSearch(customer);
+        List<Customer> customers = customerDao
+                .findByCriteria(customer, null, null, null, null, null);
         assertEquals((long) 0, customers.size());
     }
 }

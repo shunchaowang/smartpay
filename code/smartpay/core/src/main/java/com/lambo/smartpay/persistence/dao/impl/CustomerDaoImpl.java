@@ -323,6 +323,12 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
         if (predicate != null) {
             query.where(predicate);
         }
+        if (StringUtils.isBlank(order)) {
+            order = "id";
+        }
+        if (orderDir == null) {
+            orderDir = ResourceProperties.JpaOrderDir.DESC;
+        }
         query.orderBy(orderBy(builder, root, order, orderDir));
         TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
         // pagination

@@ -44,8 +44,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         logger.debug("findByUsername query is " + typedQuery);
         try {
             return typedQuery.getSingleResult();
-        } catch (NoResultException e) {
-            logger.info("Cannot find user with username " + username);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
