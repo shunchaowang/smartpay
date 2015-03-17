@@ -48,169 +48,13 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
         TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
 
         logger.debug("findByName query is " + typedQuery);
-        return typedQuery.getSingleResult();
-    }
-
-    /**
-     * Count number of Customer matching the search. Support ad hoc search on attributes of
-     * Customer.
-     * Supports firstName, lastName, email, CustomerStatus name, CustomerLogin loginEmail.
-     *
-     * @param search     search keyword.
-     * @param activeFlag specify active or not.
-     * @return count of the result.
-     */
-    @Override
-    public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<Customer> root = query.from(Customer.class);
-        query.select(builder.count(root));
-
-        Predicate predicate = formulatePredicate(builder, root, search);
-
-        if (activeFlag != null) {
-            // set active Predicate
-            // literal true expression
-            Path<Boolean> activePath = root.get("active");
-            Predicate activePredicate = builder.equal(activePath, activeFlag);
-
-            predicate = builder.and(predicate, activePredicate);
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-
-        query.where(predicate);
-        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByAdHocSearch query is " + typedQuery);
-        return super.countAllByCriteria(typedQuery);
     }
-
-    /**
-     * Find all Customer matching the search. Support ad hoc search on attributes of Customer.
-     * Supports firstName, lastName, email, CustomerStatus name, CustomerLogin loginEmail.
-     *
-     * @param search     search keyword.
-     * @param start      start position for pagination.
-     * @param length     result size fo pagination.
-     * @param order      ordered field.
-     * @param orderDir   ordered direction.
-     * @param activeFlag active or not.
-     * @return ordered list of the Customer.
-     */
-    @Override
-    public List<Customer> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
-        Root<Customer> root = query.from(Customer.class);
-        query.select(root);
-
-        Predicate predicate = formulatePredicate(builder, root, search);
-
-        if (activeFlag != null) {
-            // set active Predicate
-            // literal true expression
-            Path<Boolean> activePath = root.get("active");
-            Predicate activePredicate = builder.equal(activePath, activeFlag);
-
-            predicate = builder.and(predicate, activePredicate);
-        }
-
-        query.where(predicate);
-
-        // formulate order by
-        Order orderBy = formulateOrderBy(builder, root, order, orderDir);
-        query.orderBy(orderBy);
-
-        TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
-
-        typedQuery.setFirstResult(start);
-        typedQuery.setMaxResults(length);
-
-        logger.debug("findByAdHocSearch query is " + typedQuery);
-        return super.findAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Count Customer by criteria.
-     * Support attributes of Customer.
-     * Supports id, firstName, lastName, email, CustomerStatus id, CustomerLogin id, active.
-     *
-     * @param customer contains criteria if the field is not null or empty.
-     * @return number of the T matching search.
-     */
-    @Override
-    public Long countByAdvanceSearch(Customer customer) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<Customer> root = query.from(Customer.class);
-        query.select(builder.count(root));
-
-        Predicate predicate = formulatePredicate(builder, root, customer);
-
-        query.where(predicate);
-        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByAdHocSearch query is " + typedQuery);
-        return super.countAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Find Customer by criteria.
-     * Support attributes of Customer.
-     * Supports id, firstName, lastName, email, CustomerStatus id, CustomerLogin id, active.
-     *
-     * @param customer contains criteria if the field is not null or empty.
-     * @return List of the Customer matching search ordered by id without pagination.
-     */
-    @Override
-    public List<Customer> findByAdvanceSearch(Customer customer) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
-        Root<Customer> root = query.from(Customer.class);
-        query.select(root);
-
-        Predicate predicate = formulatePredicate(builder, root, customer);
-
-        query.where(predicate);
-
-        // default order is id DESC
-        query.orderBy(builder.desc(root.get("id")));
-
-        TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
-        return super.findAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Find T by criteria.
-     * Support attributes of T.
-     *
-     * @param customer contains criteria if the field is not null or empty.
-     * @param start
-     * @param length   @return List of the T matching search ordered by id with pagination.
-     */
-    @Override
-    public List<Customer> findByAdvanceSearch(Customer customer, Integer start, Integer length) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Customer> query = builder.createQuery(Customer.class);
-        Root<Customer> root = query.from(Customer.class);
-        query.select(root);
-
-        Predicate predicate = formulatePredicate(builder, root, customer);
-
-        query.where(predicate);
-
-        // default order is id DESC
-        query.orderBy(builder.desc(root.get("id")));
-
-        TypedQuery<Customer> typedQuery = entityManager.createQuery(query);
-        typedQuery.setFirstResult(start);
-        typedQuery.setMaxResults(length);
-        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
-        return super.findAllByCriteria(typedQuery);
-    }
-
-    //TODO NEWLY FROM HERE
-
 
     /**
      * Test if T is blank for the query.
@@ -274,7 +118,12 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
         }
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
         logger.debug("countByCriteria query is " + typedQuery);
-        return super.countAllByCriteria(typedQuery);
+        try {
+            return super.countAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -340,7 +189,12 @@ public class CustomerDaoImpl extends GenericDaoImpl<Customer, Long>
         }
 
         logger.debug("findByCriteria query is " + typedQuery);
-        return super.findAllByCriteria(typedQuery);
+        try {
+            return super.findAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

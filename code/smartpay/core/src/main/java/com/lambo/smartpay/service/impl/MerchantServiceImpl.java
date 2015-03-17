@@ -47,97 +47,6 @@ public class MerchantServiceImpl implements MerchantService {
     private EncryptionDao encryptionDao;
 
     /**
-     * Count number of T matching the search. Support ad hoc search on attributes of T.
-     *
-     * @param search     search keyword.
-     * @param activeFlag specify active or not.
-     * @return count of the result.
-     */
-    @Override
-    public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        return merchantDao.countByAdHocSearch(search, activeFlag);
-    }
-
-    /**
-     * Find all T matching the search. Support ad hoc search on attributes of T.
-     *
-     * @param search     search keyword.
-     * @param start      start position for pagination.
-     * @param length     result size fo pagination.
-     * @param order      ordered field.
-     * @param orderDir   ordered direction.
-     * @param activeFlag active or not.
-     * @return ordered list of the T.
-     */
-    @Override
-    public List<Merchant> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-            return null;
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-            return null;
-        }
-
-        if (order == null) {
-            logger.info("Order is null.");
-            return null;
-        }
-        if (orderDir == null) {
-            logger.info("OrderDir is null.");
-            return null;
-        }
-        return merchantDao.findByAdHocSearch(search, start, length, order, orderDir, activeFlag);
-    }
-
-    /**
-     * Count T by criteria.
-     * Support attributes of T.
-     *
-     * @param merchant contains criteria if the field is not null or empty.
-     * @return number of the T matching search.
-     */
-    @Override
-    public Long countByAdvanceSearch(Merchant merchant) {
-        if (merchant == null) {
-            logger.info("Merchant is null.");
-        }
-        return merchantDao.countByAdvanceSearch(merchant);
-    }
-
-    /**
-     * Find T by criteria.
-     * Support attributes of T.
-     *
-     * @param merchant contains criteria if the field is not null or empty.
-     * @param start
-     * @param length   @return List of the T matching search ordered by id with pagination.
-     */
-    @Override
-    public List<Merchant> findByAdvanceSearch(Merchant merchant, Integer start, Integer length) {
-        if (merchant == null) {
-            logger.info("Merchant is null.");
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-        }
-        return merchantDao.findByAdvanceSearch(merchant, start, length);
-    }
-
-    /**
      * Create a new merchant.
      *
      * @param merchant should have unique name, new credential attached,
@@ -507,11 +416,11 @@ public class MerchantServiceImpl implements MerchantService {
      * There are two parts of the search to support grails criteria search with DataTables instant
      * search.
      *
-     * @param merchant   contains all criteria for equals, like name equals xx and active equals
-     *               true, etc.
-     *               it means no criteria on exact equals if t is null.
-     * @param search instance wildcard search keyword, like name likes %xx%, etc.
-     *               it means no criteria with wildcard search if search is null.
+     * @param merchant contains all criteria for equals, like name equals xx and active equals
+     *                 true, etc.
+     *                 it means no criteria on exact equals if t is null.
+     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
+     *                 it means no criteria with wildcard search if search is null.
      * @return number of the T matching criteria.
      */
     @Override
@@ -531,7 +440,7 @@ public class MerchantServiceImpl implements MerchantService {
      * To support DataTables pagination we have the start for the offset of the search, and
      * length for the max results we want to return.
      *
-     * @param merchant     contains all criteria for equals, like name equals xx and active equals
+     * @param merchant contains all criteria for equals, like name equals xx and active equals
      *                 true, etc.
      *                 it means no criteria on exact equals if t is null.
      * @param search   instance wildcard search keyword, like name likes %xx%, etc.
@@ -543,8 +452,9 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
-    public List<Merchant> findByCriteria(Merchant merchant, String search, Integer start, Integer length, String order,
-                                     ResourceProperties.JpaOrderDir orderDir) {
+    public List<Merchant> findByCriteria(Merchant merchant, String search, Integer start, Integer
+            length, String order,
+                                         ResourceProperties.JpaOrderDir orderDir) {
         if (merchant == null) {
             logger.info("Merchant is null.");
             return null;
@@ -618,7 +528,8 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
-    public List<Merchant> findByCriteria(Merchant merchant, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<Merchant> findByCriteria(Merchant merchant, Integer start, Integer length, String
+            order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
 
@@ -638,7 +549,8 @@ public class MerchantServiceImpl implements MerchantService {
      * @return
      */
     @Override
-    public List<Merchant> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<Merchant> findByCriteria(String search, Integer start, Integer length, String
+            order, ResourceProperties.JpaOrderDir orderDir) {
         return null;
     }
 

@@ -58,8 +58,9 @@
                     'name': 'siteStatus', 'targets': 4, 'searchable': false,
                     'orderable': false, 'data': 'siteStatus'
                 },
-                {'name': 'operation', 'targets': 5, 'orderable': false,'searchable': false,
-                    'render': function(data, type, row) {
+                {
+                    'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
+                    'render': function (data, type, row) {
                         return "<a href=" + "${rootURL}${controller}/audit?id=" + row[1] +
                                 "><spring:message code="site.audit.label"/></a> "
                     }

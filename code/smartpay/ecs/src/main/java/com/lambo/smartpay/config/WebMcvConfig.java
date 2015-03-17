@@ -58,7 +58,8 @@ public class WebMcvConfig extends WebMvcConfigurerAdapter {
 
     @Bean(name = "messageSource")
     public MessageSource configureMessageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        ReloadableResourceBundleMessageSource messageSource = new
+                ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:messages");
         messageSource.setCacheSeconds(5);
         messageSource.setDefaultEncoding("UTF-8");

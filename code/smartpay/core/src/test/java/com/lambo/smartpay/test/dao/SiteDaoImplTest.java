@@ -143,18 +143,20 @@ public class SiteDaoImplTest {
         site = siteDao.create(site);
         assertNotNull(site);
 
-        Long count = siteDao.countByAdHocSearch("yz", true);
+        Site siteSearch = new Site();
+        siteSearch.setActive(true);
+        Long count = siteDao.countByCriteria(siteSearch, "yz");
         assertEquals(new Long(1), count);
-        count = siteDao.countByAdHocSearch("yzx", true);
+        count = siteDao.countByCriteria(siteSearch, "yzx");
         assertEquals(new Long(0), count);
-        List<Site> sites = siteDao.findByAdHocSearch("xyz", 0, 10, "name", ResourceProperties
-                .JpaOrderDir.ASC, true);
+        List<Site> sites = siteDao.findByCriteria(null, "xyz", 0, 10, "name", ResourceProperties
+                .JpaOrderDir.ASC);
         assertNotNull(sites.get(0));
         Site s = new Site();
         s.setName("xyz");
-        count = siteDao.countByAdvanceSearch(s);
+        count = siteDao.countByCriteria(s, null);
         assertEquals(new Long(1), count);
-        sites = siteDao.findByAdvanceSearch(s);
+        sites = siteDao.findByCriteria(s, null, null, null, null, null);
         assertNotNull(sites.get(0));
     }
 }

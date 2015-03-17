@@ -2,9 +2,9 @@ package com.lambo.smartpay.manage.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lambo.smartpay.exception.NotUniqueException;
-import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.MissingRequiredFieldException;
+import com.lambo.smartpay.exception.NoSuchEntityException;
+import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.manage.web.vo.SiteCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
@@ -19,16 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.ui.Model;
-
-
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -223,7 +220,6 @@ public class SiteController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
     }
-
 
 
     @RequestMapping(value = "/createSite", method = RequestMethod.GET)

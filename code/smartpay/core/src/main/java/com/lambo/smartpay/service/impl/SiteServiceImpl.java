@@ -45,97 +45,6 @@ public class SiteServiceImpl implements SiteService {
     }
 
     /**
-     * Count number of T matching the search. Support ad hoc search on attributes of T.
-     *
-     * @param search     search keyword.
-     * @param activeFlag specify active or not.
-     * @return count of the result.
-     */
-    @Override
-    public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        return siteDao.countByAdHocSearch(search, activeFlag);
-    }
-
-    /**
-     * Find all T matching the search. Support ad hoc search on attributes of T.
-     *
-     * @param search     search keyword.
-     * @param start      start position for pagination.
-     * @param length     result size fo pagination.
-     * @param order      ordered field.
-     * @param orderDir   ordered direction.
-     * @param activeFlag active or not.
-     * @return ordered list of the T.
-     */
-    @Override
-    public List<Site> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-            return null;
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-            return null;
-        }
-
-        if (order == null) {
-            logger.info("Order is null.");
-            return null;
-        }
-        if (orderDir == null) {
-            logger.info("OrderDir is null.");
-            return null;
-        }
-        return siteDao.findByAdHocSearch(search, start, length, order, orderDir, activeFlag);
-    }
-
-    /**
-     * Count T by criteria.
-     * Support attributes of T.
-     *
-     * @param site contains criteria if the field is not null or empty.
-     * @return number of the T matching search.
-     */
-    @Override
-    public Long countByAdvanceSearch(Site site) {
-        if (site == null) {
-            logger.info("Site is null.");
-        }
-        return siteDao.countByAdvanceSearch(site);
-    }
-
-    /**
-     * Find T by criteria.
-     * Support attributes of T.
-     *
-     * @param site   contains criteria if the field is not null or empty.
-     * @param start
-     * @param length @return List of the T matching search ordered by id with pagination.
-     */
-    @Override
-    public List<Site> findByAdvanceSearch(Site site, Integer start, Integer length) {
-        if (site == null) {
-            logger.info("Site is null.");
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-        }
-        return siteDao.findByAdvanceSearch(site, start, length);
-    }
-
-    /**
      * Finally we decide to put all timestamp in service layer.
      *
      * @param site
@@ -250,10 +159,6 @@ public class SiteServiceImpl implements SiteService {
         return site;
     }
 
-
-    //TODO newly added methods
-
-
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
@@ -296,32 +201,10 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public List<Site> findByCriteria(Site site, String search, Integer start, Integer length, String order,
-                                  ResourceProperties.JpaOrderDir orderDir) {
-        /*if (site == null) {
-            logger.info("Site is null.");
-            return null;
-        }
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-            return null;
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-            return null;
-        }
-        if (order == null) {
-            logger.info("Order is null.");
-            return null;
-        }
-        if (orderDir == null) {
-            logger.info("OrderDir is null.");
-            return null;
-        }*/
+    public List<Site> findByCriteria(Site site, String search, Integer start, Integer length,
+                                     String order,
+                                     ResourceProperties.JpaOrderDir orderDir) {
+
         return siteDao.findByCriteria(site, search, start, length, order, orderDir);
     }
 
@@ -373,7 +256,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public List<Site> findByCriteria(Site site, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<Site> findByCriteria(Site site, Integer start, Integer length, String order,
+                                     ResourceProperties.JpaOrderDir orderDir) {
         return siteDao.findByCriteria(site, null, start, length, order, orderDir);
     }
 
@@ -393,7 +277,8 @@ public class SiteServiceImpl implements SiteService {
      * @return
      */
     @Override
-    public List<Site> findByCriteria(String search, Integer start, Integer length, String order, ResourceProperties.JpaOrderDir orderDir) {
+    public List<Site> findByCriteria(String search, Integer start, Integer length, String order,
+                                     ResourceProperties.JpaOrderDir orderDir) {
         return siteDao.findByCriteria(null, search, start, length, order, orderDir);
     }
 

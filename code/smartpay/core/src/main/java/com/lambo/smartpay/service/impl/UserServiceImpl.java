@@ -44,101 +44,6 @@ public class UserServiceImpl implements UserService {
         return userDao.findByUsername(username);
     }
 
-    /**
-     * Count number of T matching the search. Support ad hoc search on attributes of T.
-     *
-     * @param search     search keyword.
-     * @param activeFlag specify active or not.
-     * @return count of the result.
-     */
-    @Override
-    public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        return userDao.countByAdHocSearch(search, activeFlag);
-    }
-
-    /**
-     * Find all T matching the search. Support ad hoc search on attributes of T.
-     *
-     * @param search     search keyword.
-     * @param start      start position for pagination.
-     * @param length     result size fo pagination.
-     * @param order      ordered field.
-     * @param orderDir   ordered direction.
-     * @param activeFlag active or not.
-     * @return ordered list of the T.
-     */
-    @Override
-    public List<User> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-            return null;
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-            return null;
-        }
-
-        if (order == null) {
-            logger.info("Order is null.");
-            return null;
-        }
-        if (orderDir == null) {
-            logger.info("OrderDir is null.");
-            return null;
-        }
-        return userDao.findByAdHocSearch(search, start, length, order, orderDir, activeFlag);
-    }
-
-    /**
-     * Count T by criteria.
-     * Support attributes of T.
-     *
-     * @param user contains criteria if the field is not null or empty.
-     * @return number of the T matching search.
-     */
-    @Override
-    public Long countByAdvanceSearch(User user) {
-        if (user == null) {
-            logger.info("User is null.");
-            return null;
-        }
-        return userDao.countByAdvanceSearch(user);
-    }
-
-    /**
-     * Find T by criteria.
-     * Support attributes of T.
-     *
-     * @param user   contains criteria if the field is not null or empty.
-     * @param start
-     * @param length @return List of the T matching search ordered by id with pagination.
-     */
-    @Override
-    public List<User> findByAdvanceSearch(User user, Integer start, Integer length) {
-        if (user == null) {
-            logger.info("User is null.");
-            return null;
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-            return null;
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-            return null;
-        }
-        return userDao.findByAdvanceSearch(user, start, length);
-    }
-
     @Transactional
     @Override
     public User create(User user) throws MissingRequiredFieldException, NotUniqueException {
@@ -264,8 +169,6 @@ public class UserServiceImpl implements UserService {
         userDao.delete(id);
         return user;
     }
-
-    //TODO newly added methods
 
     /**
      * Dynamic search like grails findBy...

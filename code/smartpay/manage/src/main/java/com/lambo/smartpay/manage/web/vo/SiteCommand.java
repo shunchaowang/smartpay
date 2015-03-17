@@ -27,9 +27,13 @@ public class SiteCommand {
     private Long merchant;
 
     // set & get
-    public Long getId() {return id;}
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) {this.id = id;}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -87,7 +91,9 @@ public class SiteCommand {
         this.merchant = merchant;
     }
 
-    public Boolean getActive() {return active;}
+    public Boolean getActive() {
+        return active;
+    }
 
     public void setActive(Boolean active) {
         this.active = active;

@@ -75,283 +75,6 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
     }
 
     /**
-     * Count number of User matching the search. Support ad hoc search on attributes of User.
-     *
-     * @param search     search keyword.
-     * @param activeFlag specify active or not.
-     * @return count of the result.
-     */
-    @Override
-    public Long countByAdHocSearch(String search, Boolean activeFlag) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<User> root = query.from(User.class);
-        query.select(builder.count(root));
-
-        Predicate predicate = formulatePredicate(builder, root, search);
-
-        if (activeFlag != null) {
-            // set active Predicate
-            // literal true expression
-            Path<Boolean> activePath = root.get("active");
-            Predicate activePredicate = builder.equal(activePath, activeFlag);
-
-            predicate = builder.and(predicate, activePredicate);
-        }
-
-        query.where(predicate);
-        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByAdHocSearch query is " + typedQuery);
-        return super.countAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Find all User matching the search. Support ad hoc search on attributes of User.
-     *
-     * @param search     search keyword.
-     * @param start      start position for pagination.
-     * @param length     result size fo pagination.
-     * @param order      ordered field.
-     * @param orderDir   ordered direction.
-     * @param activeFlag active or not.
-     * @return ordered list of the User.
-     */
-    @Override
-    public List<User> findByAdHocSearch(String search, Integer start, Integer length, String
-            order, ResourceProperties.JpaOrderDir orderDir, Boolean activeFlag) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-        query.select(root);
-
-        Predicate predicate = formulatePredicate(builder, root, search);
-
-        if (activeFlag != null) {
-            // set active Predicate
-            // literal true expression
-            Path<Boolean> activePath = root.get("active");
-            Predicate activePredicate = builder.equal(activePath, activeFlag);
-
-            predicate = builder.and(predicate, activePredicate);
-        }
-
-        query.where(predicate);
-
-// formulate order by
-        Order orderBy = formulateOrderBy(builder, root, order, orderDir);
-        query.orderBy(orderBy);
-
-        TypedQuery<User> typedQuery = entityManager.createQuery(query);
-
-        typedQuery.setFirstResult(start);
-        typedQuery.setMaxResults(length);
-
-        logger.debug("findByAdHocSearch query is " + typedQuery);
-        return super.findAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Count User by criteria.
-     * Support attributes of User.
-     *
-     * @param user contains criteria if the field is not null or empty.
-     * @return number of the User matching search.
-     */
-    @Override
-    public Long countByAdvanceSearch(User user) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<User> root = query.from(User.class);
-        query.select(builder.count(root));
-
-        Predicate predicate = formulatePredicate(builder, root, user);
-
-        query.where(predicate);
-        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByAdHocSearch query is " + typedQuery);
-        return super.countAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Find User by criteria.
-     * Support attributes of User.
-     *
-     * @param user contains criteria if the field is not null or empty.
-     * @return List of the User matching search ordered by id without pagination.
-     */
-    @Override
-    public List<User> findByAdvanceSearch(User user) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-        query.select(root);
-
-        Predicate predicate = formulatePredicate(builder, root, user);
-
-        query.where(predicate);
-
-// default order is id DESC
-        query.orderBy(builder.desc(root.get("id")));
-
-        TypedQuery<User> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
-        return super.findAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Find T by criteria.
-     * Support attributes of T.
-     *
-     * @param user   contains criteria if the field is not null or empty.
-     * @param start
-     * @param length @return List of the T matching search ordered by id with pagination.
-     */
-    @Override
-    public List<User> findByAdvanceSearch(User user, Integer start, Integer length) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-        query.select(root);
-
-        Predicate predicate = formulatePredicate(builder, root, user);
-
-        query.where(predicate);
-
-// default order is id DESC
-        query.orderBy(builder.desc(root.get("id")));
-
-        TypedQuery<User> typedQuery = entityManager.createQuery(query);
-        typedQuery.setFirstResult(start);
-        typedQuery.setMaxResults(length);
-        logger.debug("countByAdHocSearch query is " + typedQuery.toString());
-        return super.findAllByCriteria(typedQuery);
-    }
-
-    /**
-     * Formulate JPA or Predicate for CriteriaQuery.
-     *
-     * @param builder is the JPA CriteriaBuilder.
-     * @param root    is the root of the CriteriaQuery.
-     * @param search  is the search keyword.
-     * @return JPA Predicate used by CriteriaQuery.
-     */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<User> root, String search) {
-        //TODO Add more search criteria
-        String likeSearch = "%" + search + "%";
-
-        // get all paths for the query
-        Path<String> usernamePath = root.get("username");
-
-        // create the predicate expression for all the path
-        Predicate usernamePredicate = builder.like(usernamePath, likeSearch);
-
-        Predicate predicate = builder.or(usernamePredicate);
-
-        // create the final Predicate and return
-        logger.debug("Formulated jpa predicate is " + predicate.toString());
-        return predicate;
-    }
-
-    /**
-     * Formulate JPA Predicate for CriteriaQuery.
-     * Supports id, UserStatus id, active.
-     *
-     * @param builder is the JPA CriteriaBuilder.
-     * @param root    is the root of the CriteriaQuery.
-     * @param user    is the search keyword.
-     * @return JPA Predicate used by CriteriaQuery.
-     */
-    private Predicate formulatePredicate(CriteriaBuilder builder, Root<User> root, User user) {
-
-        // neither of createdTime cannot be null
-        if (user.getId() == null && user.getActive() == null && user.getUserStatus() == null) {
-            return null;
-        }
-
-        Predicate predicate = null;
-        // check id, if id != null, query by id and return
-        if (user.getId() != null) {
-            predicate = builder.equal(root.<Long>get("id"), builder.literal(user.getId()));
-            return predicate;
-        }
-
-        if (user.getActive() != null) {
-            predicate = builder.equal(root.<Boolean>get("active"),
-                    builder.literal(user.getActive()));
-        }
-
-        // check User Status id
-        if (user.getUserStatus() != null && user.getUserStatus().getId() != null) {
-            Predicate userStatusPredicate = builder.equal(
-                    root.join("userStatus").<Long>get("id"),
-                    builder.literal(user.getUserStatus().getId()));
-            if (predicate == null) {
-                predicate = userStatusPredicate;
-            } else {
-                predicate = builder.and(predicate, userStatusPredicate);
-            }
-        }
-
-        logger.debug("Formulated predicate is " + predicate);
-        return predicate;
-    }
-
-    /**
-     * Formulate JPA Order for CriteriaQuery.
-     * Supports id, createdTime.
-     *
-     * @param builder  is the JPA CriteriaBuilder.
-     * @param root     is the root of the CriteriaQuery.
-     * @param order    is the field name for the order.
-     * @param orderDir is the order direction.
-     * @return JPA Order for the CriteriaQuery.
-     */
-    private Order formulateOrderBy(CriteriaBuilder builder, Root<User> root,
-                                   String order, ResourceProperties.JpaOrderDir orderDir) {
-
-        // get all supporting paths
-        Path<Long> idPath = root.get("id");
-        Path<Date> createdTimePath = root.get("createdTime");
-
-        // create Order instance, default would be ORDER BY id DESC, newest to oldest
-        Order orderBy = null;
-        switch (orderDir) {
-            case ASC:
-                switch (order) {
-                    case "id":
-                        orderBy = builder.asc(idPath);
-                        break;
-                    case "createdTime":
-                        orderBy = builder.asc(createdTimePath);
-                        break;
-                    default:
-                        orderBy = builder.asc(idPath);
-                }
-                break;
-            case DESC:
-                switch (order) {
-                    case "id":
-                        orderBy = builder.desc(idPath);
-                        break;
-                    case "createdTime":
-                        orderBy = builder.desc(createdTimePath);
-                        break;
-                    default:
-                        orderBy = builder.desc(idPath);
-                }
-                break;
-            default:
-                orderBy = builder.desc(idPath);
-                break;
-        }
-
-        logger.debug("Formulated order by clause is " + orderBy.toString());
-        return orderBy;
-    }
-
-    //TODO NEWLY METHODS
-
-    /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
      * There are two parts of the search to support grails criteria search with DataTables instant
@@ -392,7 +115,12 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         }
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
         logger.debug("countByCriteria query is " + typedQuery);
-        return super.countAllByCriteria(typedQuery);
+        try {
+            return super.countAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -441,6 +169,12 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         if (predicate != null) {
             query.where(predicate);
         }
+        if (StringUtils.isBlank(order)) {
+            order = "id";
+        }
+        if (orderDir == null) {
+            orderDir = ResourceProperties.JpaOrderDir.DESC;
+        }
         query.orderBy(orderBy(builder, root, order, orderDir));
         TypedQuery<User> typedQuery = entityManager.createQuery(query);
         // pagination
@@ -452,7 +186,12 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         }
 
         logger.debug("findByCriteria query is " + typedQuery);
-        return super.findAllByCriteria(typedQuery);
+        try {
+            return super.findAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
