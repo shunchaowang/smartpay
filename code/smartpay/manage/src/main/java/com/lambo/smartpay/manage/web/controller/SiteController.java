@@ -2,9 +2,16 @@ package com.lambo.smartpay.manage.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lambo.smartpay.exception.NotUniqueException;
+import com.lambo.smartpay.exception.NoSuchEntityException;
+import com.lambo.smartpay.exception.MissingRequiredFieldException;
+import com.lambo.smartpay.manage.web.vo.SiteCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
+import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.Site;
+import com.lambo.smartpay.persistence.entity.SiteStatus;
+import com.lambo.smartpay.service.MerchantService;
 import com.lambo.smartpay.service.SiteService;
 import com.lambo.smartpay.service.SiteStatusService;
 import com.lambo.smartpay.util.ResourceProperties;
@@ -13,15 +20,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.ui.Model;
+
+
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
 
 /**
  * Created by linly on 3/16/2015.
@@ -36,13 +49,27 @@ public class SiteController {
     private SiteService siteService;
     @Autowired
     private SiteStatusService siteStatusService;
+    @Autowired
+    private MerchantService merchantService;
+
+    // here goes all model across the whole controller
+    @ModelAttribute("controller")
+    public String controller() {
+        return "site";
+    }
+
+    @ModelAttribute("siteStatuses")
+    public List<SiteStatus> siteStatuses() {
+        return siteStatusService.getAll();
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ModelAndView index() {
-        ModelAndView view = new ModelAndView("main");
-        view.addObject("controller", "site");
-        return view;
+    public String index() {
+        return "main";
     }
+
+
+
 
     /*
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
@@ -127,5 +154,81 @@ public class SiteController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
     }
+
+
+
+    @RequestMapping(value = "/createSite", method = RequestMethod.GET)
+    @Secured({"ROLE_ADMIN"})
+    public String createSite(Model model) {
+        model.addAttribute("action", "createSite");
+        model.addAttribute("siteCommand", new SiteCommand());
+        return "main";
+    }
+
+    @RequestMapping(value = "/createSite", method = RequestMethod.POST)
+    @Secured({"ROLE_ADMIN"})
+    public String saveSite(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+        // get admin role
+        /*Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find role " + ResourceProperties.ROLE_ADMIN_CODE);
+            e.printStackTrace();
+        }
+        */
+
+        // create Site and set admin to site
+        Site site = createSite(siteCommand);
+        // set initial password
+        // persist site
+        try {
+            site = siteService.create(site);
+        } catch (MissingRequiredFieldException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        }
+        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE SITE
+        model.addAttribute("action", "index");
+        return "main";
+    }
+
+
+    // create a new Site from a SiteCommand
+    private Site createSite(SiteCommand siteCommand) {
+        Site site = new Site();
+        site.setName(siteCommand.getName());
+        site.setUrl(siteCommand.getUrl());
+        site.setRemark(siteCommand.getRemark());
+        // we set site to be active right now
+        site.setActive(true);
+
+        // set site merchant if site is not admin
+        if (siteCommand.getMerchant() != null) {
+            Merchant merchant = null;
+            try {
+                merchant = merchantService.get(siteCommand.getMerchant());
+            } catch (NoSuchEntityException e) {
+                logger.info("Cannot find merchant " + siteCommand.getMerchant());
+                e.printStackTrace();
+            }
+            site.setMerchant(merchant);
+        }
+
+        // set SiteStatus
+        SiteStatus siteStatus = null;
+        try {
+            siteStatus = siteStatusService.get(siteCommand.getSiteStatus());
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find site status " + siteCommand.getSiteStatus());
+            e.printStackTrace();
+        }
+        site.setSiteStatus(siteStatus);
+        return site;
+    }
+
 
 }

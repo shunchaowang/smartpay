@@ -5,11 +5,15 @@
         <h2><b><spring:message code="site.list.label"/></b></h2>
     </div>
     <!-- end of pull-left -->
+    <!-- <sec:authorize access="hasRole('ROLE_ADMIN')"> -->
     <div class="col-xs-2 pull-right">
-        <button type="button" class="btn btn-primary" id="new-button">
-            <spring:message code="site.new.label"/>
-        </button>
+        <a href="${rootURL}${controller}/createSite">
+            <button type="button" class="btn btn-primary" id="new-button">
+                <spring:message code="site.new.label"/>
+            </button>
+        </a>
     </div>
+    <!-- </sec:authorize> -->
     <!-- end of pull-right -->
 </div>
 <!-- end of class row -->

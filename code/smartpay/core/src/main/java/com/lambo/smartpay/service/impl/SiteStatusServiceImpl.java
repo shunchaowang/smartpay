@@ -348,6 +348,6 @@ public class SiteStatusServiceImpl implements SiteStatusService {
 
     @Override
     public List<SiteStatus> getAll() {
-        return null;
+        return siteStatusDao.getAll();
     }
 }
