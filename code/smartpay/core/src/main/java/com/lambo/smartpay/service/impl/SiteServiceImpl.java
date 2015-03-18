@@ -22,7 +22,7 @@ import java.util.List;
  * Modified by linly on 3/15/2015.
  */
 @Service("siteService")
-public class SiteServiceImpl implements SiteService {
+public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> implements SiteService {
 
     private static final Logger logger = LoggerFactory.getLogger(SiteServiceImpl.class);
 

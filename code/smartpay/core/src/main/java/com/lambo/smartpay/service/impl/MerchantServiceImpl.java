@@ -31,7 +31,8 @@ import java.util.List;
  * Modified by linly on 3/15/2015.
  */
 @Service("merchantService")
-public class MerchantServiceImpl implements MerchantService {
+public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
+        implements MerchantService {
     //TODO WE WANT TO MAKE CONTROLLER FILE ALL REQUIRED FIELDS, AND SERVICE CHECK ONLY
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
 

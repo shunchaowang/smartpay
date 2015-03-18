@@ -22,7 +22,7 @@ import java.util.List;
  * Modified by Linly on 3/15/2015.
  */
 @Service("userService")
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
