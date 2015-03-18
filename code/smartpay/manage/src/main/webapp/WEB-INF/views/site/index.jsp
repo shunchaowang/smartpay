@@ -28,6 +28,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#site-table').DataTable({
+            'language': {
+                'url': "${dataTablesLanguage}"
+            },
             'processing': true,
             'serverSide': true,
             'paging': true,

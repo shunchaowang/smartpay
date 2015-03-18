@@ -1,4 +1,3 @@
-<%@ page import="org.springframework.context.i18n.LocaleContextHolder" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
 
@@ -29,8 +28,7 @@
         src="${rootURL}assets/vendor/jquery-validation-1.13.1/jquery.validate.min.js"></script>
 <!-- jquery validation locale -->
 <script type="text/javascript"
-        src="${rootURL}assets/vendor/jquery-validation-1.13.1/localization/messages_<%=
-            LocaleContextHolder.getLocale().getLanguage()%>.min.js"></script>
+        src="${rootURL}assets/vendor/jquery-validation-1.13.1/localization/messages_${currentLocale}.min.js"></script>
 
 <!-- DataTables depending on jquery -->
 <link type="text/css" rel="stylesheet"

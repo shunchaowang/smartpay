@@ -30,6 +30,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#user-table').DataTable({
+            'language': {
+                'url': "${dataTablesLanguage}"
+            },
             'processing': true,
             'serverSide': true,
             'paging': true,

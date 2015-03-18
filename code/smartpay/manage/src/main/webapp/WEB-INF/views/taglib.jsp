@@ -1,3 +1,4 @@
+<%@ page import="org.springframework.context.i18n.LocaleContextHolder" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -7,6 +8,13 @@
 
 <!-- since taglib will be imported by all parts of page, we put rootURL here -->
 <c:url var="rootURL" value="/"/>
+<!-- some useful variables and paths -->
+
+<c:set var="currentLocale"
+       value="<%=LocaleContextHolder.getLocale().getLanguage()%>"/>
+<c:url var="dataTablesLanguage"
+       value="${rootURL}assets/vendor/DataTables-1.10.4/localization/messages_${currentLocale}.json"/>
+
 <c:set var="_view" value="index"/>
 <c:if test="${action != null}">
     <c:set var="_view" value="${action}"/>
