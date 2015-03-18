@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * Created by swang on 2/26/2015.
  */
 @Repository("credentialTypeDao")
-public class CredentialTypeDaoImpl extends LookupGenericDaoImpl<CredentialType, Long>
+public class CredentialTypeDaoImpl extends GenericLookupDaoImpl<CredentialType, Long>
         implements CredentialTypeDao {
 }

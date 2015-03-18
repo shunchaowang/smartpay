@@ -179,6 +179,11 @@ public class ShipmentStatusServiceImpl implements ShipmentStatusService {
 
     @Override
     public List<ShipmentStatus> getAll() {
-        return null;
+        return shipmentStatusDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return shipmentStatusDao.countAll();
     }
 }

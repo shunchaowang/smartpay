@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * Created by swang on 2/26/2015.
  */
 @Repository("accountTypeDao")
-public class AccountTypeDaoImpl extends LookupGenericDaoImpl<AccountType, Long>
+public class AccountTypeDaoImpl extends GenericLookupDaoImpl<AccountType, Long>
         implements AccountTypeDao {
 }

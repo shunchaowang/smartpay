@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 
@@ -113,12 +112,13 @@ public class UserController {
     public
     @ResponseBody
     String list(HttpServletRequest request) {
-        Enumeration<String> params = request.getParameterNames();
-        while (params.hasMoreElements()) {
-            String paramName = params.nextElement();
-            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
-                    (paramName));
-        }
+        // debugging info
+//        Enumeration<String> params = request.getParameterNames();
+//        while (params.hasMoreElements()) {
+//            String paramName = params.nextElement();
+//            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
+//                    (paramName));
+//        }
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
@@ -133,8 +133,6 @@ public class UserController {
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
 
-        logger.debug("Parsed Request: " + search + " " + start + " " + length
-                + " " + order + " " + orderDir);
         List<User> users = null;
 
         //TODO ADD ACCESS CONTROLL HERE, MERCHANT ADMIN SHOULD ONLY SEE USERS OF THE MERCHANT
@@ -145,7 +143,9 @@ public class UserController {
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records
-        Integer recordsTotal = userService.countByCriteria(search).intValue();
+        Integer recordsTotal = userService.countAll().intValue();
+        // count records filtered
+        Integer recordsFiltered = userService.countByCriteria(search).intValue();
 
         List<DataTablesUser> dataTablesUsers = new ArrayList<>();
 
@@ -158,7 +158,7 @@ public class UserController {
 
         DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
         result.setData(dataTablesUsers);
-        result.setRecordsFiltered(dataTablesUsers.size());
+        result.setRecordsFiltered(recordsFiltered);
         result.setRecordsTotal(recordsTotal);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

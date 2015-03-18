@@ -179,4 +179,9 @@ public class RoleServiceImpl implements RoleService {
     public List<Role> getAll() {
         return roleDao.getAll();
     }
+
+    @Override
+    public Long countAll() {
+        return roleDao.countAll();
+    }
 }

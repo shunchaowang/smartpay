@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
  * Created by swang on 2/26/2015.
  */
 @Repository("encryptionTypeDao")
-public class EncryptionTypeDaoImpl extends LookupGenericDaoImpl<EncryptionType, Long>
+public class EncryptionTypeDaoImpl extends GenericLookupDaoImpl<EncryptionType, Long>
         implements EncryptionTypeDao {
 }

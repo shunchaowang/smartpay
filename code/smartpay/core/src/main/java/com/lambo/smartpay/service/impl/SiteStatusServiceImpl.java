@@ -179,4 +179,9 @@ public class SiteStatusServiceImpl implements SiteStatusService {
     public List<SiteStatus> getAll() {
         return siteStatusDao.getAll();
     }
+
+    @Override
+    public Long countAll() {
+        return siteStatusDao.countAll();
+    }
 }

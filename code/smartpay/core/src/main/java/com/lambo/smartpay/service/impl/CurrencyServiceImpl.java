@@ -179,4 +179,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     public List<Currency> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return currencyDao.countAll();
+    }
 }

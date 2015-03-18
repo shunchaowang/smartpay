@@ -177,6 +177,11 @@ public class ReturnStatusServiceImpl implements ReturnStatusService {
 
     @Override
     public List<ReturnStatus> getAll() {
-        return null;
+        return returnStatusDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return returnStatusDao.countAll();
     }
 }

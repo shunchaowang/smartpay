@@ -179,4 +179,9 @@ public class FeeTypeServiceImpl implements FeeTypeService {
     public List<FeeType> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return feeTypeDao.countAll();
+    }
 }

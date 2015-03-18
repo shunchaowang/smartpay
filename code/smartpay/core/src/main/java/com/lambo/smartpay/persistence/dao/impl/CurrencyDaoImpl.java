@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * Created by swang on 2/26/2015.
  */
 @Repository("currencyDao")
-public class CurrencyDaoImpl extends LookupGenericDaoImpl<Currency, Long> implements CurrencyDao {
+public class CurrencyDaoImpl extends GenericLookupDaoImpl<Currency, Long> implements CurrencyDao {
 }

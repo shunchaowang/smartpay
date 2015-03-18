@@ -181,4 +181,9 @@ public class MerchantStatusServiceImpl implements MerchantStatusService {
     public List<MerchantStatus> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return merchantStatusDao.countAll();
+    }
 }

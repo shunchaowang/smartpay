@@ -181,4 +181,9 @@ public class EncryptionTypeServiceImpl implements EncryptionTypeService {
     public List<EncryptionType> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return encryptionTypeDao.countAll();
+    }
 }

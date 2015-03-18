@@ -8,7 +8,7 @@ import java.io.Serializable;
  * <p/>
  * Created by swang on 2/24/2015.
  */
-public interface LookupGenericDao<T, PK extends Serializable> extends GenericDao<T, PK> {
+public interface GenericLookupDao<T, PK extends Serializable> extends GenericDao<T, PK> {
 
     /**
      * Find object by name.

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * Created by swang on 2/25/2015.
  */
 @Repository("accountStatusDao")
-public class AccountStatusDaoImpl extends LookupGenericDaoImpl<AccountStatus, Long>
+public class AccountStatusDaoImpl extends GenericLookupDaoImpl<AccountStatus, Long>
         implements AccountStatusDao {
 
 }

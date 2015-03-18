@@ -36,7 +36,12 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public T create(T persistentObject) {
         entityManager.persist(persistentObject);
-        return persistentObject;
+        try {
+            return persistentObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -49,12 +54,39 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
         TypedQuery<T> typedQuery = entityManager.createQuery(query);
         LOG.debug("getAll query is " + query.toString());
-        return typedQuery.getResultList();
+        try {
+            return typedQuery.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Long countAll() {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<T> root = query.from(type);
+        query.select(builder.count(root));
+
+        TypedQuery<Long> typedQuery = entityManager.createQuery(query);
+        LOG.debug("getAll query is " + query.toString());
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
     public T update(T persistentObject) {
-        return entityManager.merge(persistentObject);
+        try {
+            return entityManager.merge(persistentObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
@@ -64,7 +96,12 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
     @Override
     public T get(PK id) {
-        return entityManager.find(type, id);
+        try {
+            return entityManager.find(type, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -240,7 +277,12 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public Long countAllByCriteria(TypedQuery<Long> typedQuery) {
 
-        return typedQuery.getSingleResult();
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -252,6 +294,11 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public List<T> findAllByCriteria(TypedQuery<T> typedQuery) {
 
-        return typedQuery.getResultList();
+        try {
+            return typedQuery.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -177,6 +177,11 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public List<Permission> getAll() {
-        return null;
+        return permissionDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return permissionDao.countAll();
     }
 }

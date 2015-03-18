@@ -21,4 +21,6 @@ public interface GenericService<T extends Serializable, PK> {
     T delete(PK id) throws NoSuchEntityException;
 
     List<T> getAll();
+
+    Long countAll();
 }

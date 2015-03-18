@@ -177,6 +177,11 @@ public class RefundStatusServiceImpl implements RefundStatusService {
 
     @Override
     public List<RefundStatus> getAll() {
-        return null;
+        return refundStatusDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return refundStatusDao.countAll();
     }
 }

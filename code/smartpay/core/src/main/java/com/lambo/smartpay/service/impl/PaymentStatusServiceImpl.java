@@ -177,6 +177,11 @@ public class PaymentStatusServiceImpl implements PaymentStatusService {
 
     @Override
     public List<PaymentStatus> getAll() {
-        return null;
+        return paymentStatusDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return paymentStatusDao.countAll();
     }
 }

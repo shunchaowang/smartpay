@@ -177,6 +177,11 @@ public class OrderStatusServiceImpl implements OrderStatusService {
 
     @Override
     public List<OrderStatus> getAll() {
-        return null;
+        return orderStatusDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return orderStatusDao.countAll();
     }
 }

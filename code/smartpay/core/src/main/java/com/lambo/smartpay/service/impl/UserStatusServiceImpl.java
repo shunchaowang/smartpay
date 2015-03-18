@@ -179,4 +179,9 @@ public class UserStatusServiceImpl implements UserStatusService {
     public List<UserStatus> getAll() {
         return userStatusDao.getAll();
     }
+
+    @Override
+    public Long countAll() {
+        return userStatusDao.countAll();
+    }
 }

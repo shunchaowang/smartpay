@@ -179,4 +179,9 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     public List<AccountType> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return accountTypeDao.countAll();
+    }
 }

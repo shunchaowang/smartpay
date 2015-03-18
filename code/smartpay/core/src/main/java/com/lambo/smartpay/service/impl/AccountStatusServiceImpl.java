@@ -179,4 +179,9 @@ public class AccountStatusServiceImpl implements AccountStatusService {
     public List<AccountStatus> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return accountStatusDao.countAll();
+    }
 }

@@ -1,6 +1,6 @@
 package com.lambo.smartpay.persistence.dao.impl;
 
-import com.lambo.smartpay.persistence.dao.LookupGenericDao;
+import com.lambo.smartpay.persistence.dao.GenericLookupDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,15 +20,15 @@ import java.lang.reflect.Type;
  * <p/>
  * Created by swang on 2/24/2015.
  */
-public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends GenericDaoImpl<T, PK>
-        implements LookupGenericDao<T, PK> {
+public abstract class GenericLookupDaoImpl<T, PK extends Serializable> extends GenericDaoImpl<T, PK>
+        implements GenericLookupDao<T, PK> {
 
-    private final static Logger LOG = LoggerFactory.getLogger(LookupGenericDaoImpl.class);
+    private final static Logger LOG = LoggerFactory.getLogger(GenericLookupDaoImpl.class);
 
     private Class<T> type;
 
     @SuppressWarnings("unchecked")
-    public LookupGenericDaoImpl() {
+    public GenericLookupDaoImpl() {
         Type t = getClass().getGenericSuperclass();
         ParameterizedType pt = (ParameterizedType) t;
         type = (Class<T>) pt.getActualTypeArguments()[0];
@@ -57,7 +57,12 @@ public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends G
 
         // create TypedQuery
         TypedQuery<T> typedQuery = entityManager.createQuery(query);
-        return typedQuery.getSingleResult();
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -82,6 +87,11 @@ public abstract class LookupGenericDaoImpl<T, PK extends Serializable> extends G
 
         // create TypedQuery
         TypedQuery<T> typedQuery = entityManager.createQuery(query);
-        return typedQuery.getSingleResult();
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

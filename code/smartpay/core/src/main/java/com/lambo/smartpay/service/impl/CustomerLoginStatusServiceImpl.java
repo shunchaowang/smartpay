@@ -188,4 +188,9 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
     public List<CustomerLoginStatus> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return customerLoginStatusDao.countAll();
+    }
 }

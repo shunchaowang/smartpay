@@ -181,4 +181,9 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
     public List<CustomerStatus> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return customerStatusDao.countAll();
+    }
 }

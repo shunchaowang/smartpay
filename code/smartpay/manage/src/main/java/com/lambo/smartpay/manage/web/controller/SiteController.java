@@ -101,14 +101,9 @@ public class SiteController {
     public
     @ResponseBody
     String list(HttpServletRequest request) {
-        Enumeration<String> params = request.getParameterNames();
-        while (params.hasMoreElements()) {
-            String paramName = params.nextElement();
-            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
-                    (paramName));
-        }
+
         // parse sorting column
-        Integer orderIndex = Integer.valueOf(request.getParameter("order[0][column]"));
+        String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
 
         // parse sorting direction
@@ -121,8 +116,6 @@ public class SiteController {
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
 
-        logger.debug("Parsed Request: " + search + " " + start + " " + length
-                + " " + order + " " + orderDir);
         List<Site> sites = null;
         if (StringUtils.isBlank(search)) {
             //sites = siteService.f
@@ -146,7 +139,6 @@ public class SiteController {
         result.setData(dataTablesSites);
         result.setRecordsFiltered(dataTablesSites.size());
         result.setRecordsTotal(recordsTotal);
-        logger.debug("Result before return: " + result.toString());
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
@@ -200,8 +192,9 @@ public class SiteController {
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
 
-        // count total records
-        Integer recordsTotal = siteService.countByCriteria(search).intValue();
+        // count total records and filtered records
+        Integer recordsTotal = siteService.countAll().intValue();
+        Integer recordsFiltered = siteService.countByCriteria(search).intValue();
 
         List<DataTablesSite> dataTablesSites = new ArrayList<>();
 
@@ -214,7 +207,7 @@ public class SiteController {
 
         DataTablesResultSet<DataTablesSite> result = new DataTablesResultSet<>();
         result.setData(dataTablesSites);
-        result.setRecordsFiltered(dataTablesSites.size());
+        result.setRecordsFiltered(recordsFiltered);
         result.setRecordsTotal(recordsTotal);
         logger.debug("Result before return: " + result.toString());
 

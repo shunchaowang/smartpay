@@ -187,4 +187,9 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
     public List<CredentialStatus> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return credentialStatusDao.countAll();
+    }
 }

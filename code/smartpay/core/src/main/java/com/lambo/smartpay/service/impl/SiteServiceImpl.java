@@ -174,10 +174,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
      */
     @Override
     public Long countByCriteria(Site site, String search) {
-        /*if (site == null) {
-            logger.info("Site is null.");
-            return null;
-        }*/
+
         return siteDao.countByCriteria(site, search);
     }
 
@@ -208,82 +205,13 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         return siteDao.findByCriteria(site, search, start, length, order, orderDir);
     }
 
-    /**
-     * Dynamic search like grails findBy...
-     * We create a dynamic criteria, like grails createCriteria() {}.
-     *
-     * @param site contains all criteria for equals, like name equals xx and active equals
-     *             true, etc.
-     *             it means no criteria on exact equals if t is null.
-     * @return number of the T matching criteria.
-     */
-    @Override
-    public Long countByCriteria(Site site) {
-
-        return siteDao.countByCriteria(site, null);
-    }
-
-    /**
-     * Dynamic search like grails findBy...
-     * We create a dynamic criteria, like grails createCriteria() {}.
-     * <p/>
-     * it means no criteria on exact equals if t is null.
-     *
-     * @param search instance wildcard search keyword, like name likes %xx%, etc.
-     *               it means no criteria with wildcard search if search is null.
-     * @return number of the T matching criteria.
-     */
-    @Override
-    public Long countByCriteria(String search) {
-
-        return siteDao.countByCriteria(null, search);
-    }
-
-    /**
-     * Dynamic search like grails findBy...
-     * We create a dynamic criteria, like grails createCriteria() {}.
-     * DataTables dynamic ordering is also supported.
-     * To support DataTables pagination we have the start for the offset of the search, and
-     * length for the max results we want to return.
-     *
-     * @param site     contains all criteria for equals, like name equals xx and active equals
-     *                 true, etc.
-     *                 it means no criteria on exact equals if t is null.
-     * @param start    first position of the result.
-     * @param length   max record of the result.
-     * @param order    order by field, default is id.
-     * @param orderDir order direction on the order field. default is DESC.
-     * @return
-     */
-    @Override
-    public List<Site> findByCriteria(Site site, Integer start, Integer length, String order,
-                                     ResourceProperties.JpaOrderDir orderDir) {
-        return siteDao.findByCriteria(site, null, start, length, order, orderDir);
-    }
-
-    /**
-     * Dynamic search like grails findBy...
-     * We create a dynamic criteria, like grails createCriteria() {}.
-     * DataTables dynamic ordering is also supported.
-     * To support DataTables pagination we have the start for the offset of the search, and
-     * length for the max results we want to return.
-     *
-     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
-     *                 it means no criteria with wildcard search if search is null.
-     * @param start    first position of the result.
-     * @param length   max record of the result.
-     * @param order    order by field, default is id.
-     * @param orderDir order direction on the order field. default is DESC.
-     * @return
-     */
-    @Override
-    public List<Site> findByCriteria(String search, Integer start, Integer length, String order,
-                                     ResourceProperties.JpaOrderDir orderDir) {
-        return siteDao.findByCriteria(null, search, start, length, order, orderDir);
-    }
-
     @Override
     public List<Site> getAll() {
-        return null;
+        return siteDao.getAll();
+    }
+
+    @Override
+    public Long countAll() {
+        return siteDao.countAll();
     }
 }

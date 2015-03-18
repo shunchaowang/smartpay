@@ -181,4 +181,9 @@ public class CredentialTypeServiceImpl implements CredentialTypeService {
     public List<CredentialType> getAll() {
         return null;
     }
+
+    @Override
+    public Long countAll() {
+        return credentialTypeDao.countAll();
+    }
 }

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * Created by swang on 2/26/2015.
  */
 @Repository("feeTypeDao")
-public class FeeTypeDaoImpl extends LookupGenericDaoImpl<FeeType, Long>
+public class FeeTypeDaoImpl extends GenericLookupDaoImpl<FeeType, Long>
         implements FeeTypeDao {
 }

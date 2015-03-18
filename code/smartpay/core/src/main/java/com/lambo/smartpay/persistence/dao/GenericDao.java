@@ -17,6 +17,8 @@ public interface GenericDao<T, PK extends Serializable> {
 
     void delete(PK id);
 
+    Long countAll();
+
     /**
      * Counts the record using positional parameters.
      */
