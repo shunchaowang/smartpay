@@ -2,8 +2,10 @@ package com.lambo.smartpay.manage.web.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +28,7 @@ public class GlobalExceptionHandler {
 //    }
 
     @ExceptionHandler(value = {Exception.class})
+    @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
     public String defaultErrorHandler(HttpServletRequest request, HttpServletResponse response) {
         return "error";
     }
