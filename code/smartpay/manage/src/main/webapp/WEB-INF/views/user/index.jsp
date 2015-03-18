@@ -60,8 +60,8 @@
                 {
                     'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' +
+                        return '<a href="' + "${rootURL}${controller}" + '/show/'
+                                + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="edit.label"/>'
                                 + '</button>' + '</a>';

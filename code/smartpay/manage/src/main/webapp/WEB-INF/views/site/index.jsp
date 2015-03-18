@@ -51,10 +51,10 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return "<a href=" + "${rootURL}${controller}/edit" + row['id'] +
-                                "><spring:message code="edit.label"/></a> " +
-                                "<a href=" + "${rootURL}${controller}/delete" + row['id'] +
-                                "><spring:message code="delete.label"/></a> "
+                        return '<a href="' + "${rootURL}${controller}/edit" + row['id'] +
+                                '">' + '<spring:message code="edit.label"/>' + '</a>' +
+                                '<a href="' + "${rootURL}${controller}/delete" + row['id'] +
+                                '">' + '<spring:message code="delete.label"/>' + '</a>';
                     }
                 }
             ]
