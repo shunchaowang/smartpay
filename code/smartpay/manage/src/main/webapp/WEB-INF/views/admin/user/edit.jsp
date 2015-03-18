@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@include file="../taglib.jsp" %>
+<%@include file="../../taglib.jsp" %>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">

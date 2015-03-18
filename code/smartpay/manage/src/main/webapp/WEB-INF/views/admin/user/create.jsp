@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@include file="../taglib.jsp" %>
+<%@include file="../../taglib.jsp" %>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -8,7 +8,7 @@
                 <span aria-hidden="true">&times;</span>
                 <span class="sr-only"><spring:message code="close.button.label"/> </span>
             </button>
-                ${message}
+            ${message}
         </div>
     </c:if>
 </div>
@@ -17,25 +17,23 @@
 
 <div class='row'>
     <div class='col-sm-4'>
-        <h2><b>
-            <spring:message code='user.edit.label' arguments="${userCommand.username}"/>
-        </b></h2>
+        <h2><b><spring:message code='user.new.admin.label'/></b></h2>
     </div>
 </div>
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/edit" method="POST"
-               commandName="userCommand" cssClass="form-horizontal" id="edit-user-form">
-        <form:input path="id" id="id" type="hidden" value="${userCommand.id}"/>
+    <form:form action="${rootURL}${controller}/createAdmin" method="POST"
+               commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">
                 <spring:message code="user.username.label"/>
+                <span class="required-indicator">*</span>
             </label>
 
             <div class="col-sm-6">
-                <form:input path="username" id="username" cssClass="form-control"
-                            value="${userCommand.username}" readonly="true"/>
+                <form:input path="username" id="username" cssClass="form-control" required=""
+                            placeholder="Username"/>
             </div>
         </div>
         <!-- first name -->
@@ -47,7 +45,7 @@
 
             <div class="col-sm-6">
                 <form:input path="firstName" id="firstName" cssClass="form-control" required=""
-                            value="${userCommand.firstName}"/>
+                            placeholder="First Name"/>
             </div>
         </div>
         <!-- last name -->
@@ -59,7 +57,7 @@
 
             <div class="col-sm-6">
                 <form:input path="lastName" id="lastName" cssClass="form-control" required=""
-                            value="${userCommand.lastName}"/>
+                            placeholder="Last Name"/>
             </div>
         </div>
         <!-- email -->
@@ -71,7 +69,7 @@
 
             <div class="col-sm-6">
                 <form:input path="email" id="email" cssClass="form-control" required=""
-                            value="${userCommand.email}"/>
+                            placeholder="Email"/>
             </div>
         </div>
         <!-- user status -->
@@ -83,7 +81,7 @@
 
             <div class="col-sm-6">
                 <form:select path="userStatus" id="userStatus" cssClass="form-control" required=""
-                             value="${userCommand.userStatus}">
+                             placeholder="Status">
                     <c:forEach items="${userStatuses}" var="status">
                         <form:option value="${status.id}">${status.name}</form:option>
                     </c:forEach>
@@ -97,8 +95,7 @@
             </label>
 
             <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"
-                            value="${userCommand.remark}"/>
+                <form:input path="remark" id="remark" cssClass="form-control"/>
             </div>
         </div>
         <div class='form-group'>
@@ -109,11 +106,6 @@
                 <button class='btn btn-default' id='reset-button' type="reset">
                     <spring:message code='reset.button.label'/>
                 </button>
-                <a href="${rootURL}${controller}">
-                    <button type="button" class="btn btn-default">
-                        <spring:message code="return.label"/>
-                    </button>
-                </a>
             </div>
         </div>
     </form:form>
@@ -121,8 +113,9 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#edit-user-form').validate({
+        $('#new-user-form').validate({
             rules: {
+                username: {required: true, minlength: 3, maxlength: 32},
                 firstName: {required: true, minlength: 3, maxlength: 32},
                 lastName: {required: true, minlength: 3, maxlength: 32},
                 email: {required: true, minlength: 3, maxlength: 32},

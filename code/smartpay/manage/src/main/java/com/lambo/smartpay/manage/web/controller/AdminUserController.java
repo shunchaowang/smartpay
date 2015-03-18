@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
-import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
@@ -43,14 +42,14 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by swang on 3/15/2015.
+ * Created by swang on 3/18/2015.
  */
 @Controller
-@RequestMapping("/user")
-@Secured({"MERCHANT_ROLE_ADMIN"})
-public class UserController {
+@RequestMapping("/admin/user")
+@Secured({"ROLE_ADMIN"})
+public class AdminUserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminUserController.class);
 
     @Autowired
     private UserService userService;
@@ -68,7 +67,7 @@ public class UserController {
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
-        return "user";
+        return "admin/user";
     }
 
     @ModelAttribute("roles")
@@ -87,46 +86,11 @@ public class UserController {
         return "main";
     }
 
-    /*
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public
-    @ResponseBody
-    String list(@RequestParam(value = "search[value]") String search,
-                @RequestParam(value = "start") int start,
-                @RequestParam(value = "length") int length,
-                @RequestParam(value = "order[0][column]") String order,
-                @RequestParam(value = "order[0][dir]") String orderDir) {
-
-        logger.debug("search: " + search);
-        logger.debug("start: " + start);
-        logger.debug("length: " + length);
-        logger.debug("order: " + order);
-        logger.debug("orderDir: " + orderDir);
-        logger.debug("OrderDir: " + StringUtils.upperCase(orderDir));
-
-        List<User> users = userService.findByCriteria(search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(StringUtils.upperCase(orderDir)));
-
-        DataTablesResultSet<User> result = new DataTablesResultSet<>();
-        result.setData(users);
-        result.setRecordsFiltered(1);
-        result.setRecordsTotal(1);
-        return result.toString();
-    }
-    */
-
-
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public
     @ResponseBody
     String list(HttpServletRequest request) {
-        // debugging info
-//        Enumeration<String> params = request.getParameterNames();
-//        while (params.hasMoreElements()) {
-//            String paramName = params.nextElement();
-//            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
-//                    (paramName));
-//        }
+
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
@@ -145,21 +109,13 @@ public class UserController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-
-        //Merchant admin can only view the users belonged to this merchant
-        SecurityUser principal = UserResource.getCurrentUser();
-        if (principal.getMerchant() == null) {
-            throw new BadRequestException("400", "User doesn't have merchant.");
-        }
-        User userCriteria = new User();
-        userCriteria.setMerchant(principal.getMerchant());
-        List<User> users = userService.findByCriteria(userCriteria, search, start, length, order,
+        List<User> users = userService.findByCriteria(search, start, length, order,
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records
-        Long recordsTotal = userService.countByCriteria(userCriteria);
+        Long recordsTotal = userService.countAll();
         // count records filtered
-        Long recordsFiltered = userService.countByCriteria(userCriteria, search);
+        Long recordsFiltered = userService.countByCriteria(search);
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -181,27 +137,21 @@ public class UserController {
         return gson.toJson(result);
     }
 
-    /**
-     * Merchant admin can only create merchant operator.
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(Model model) {
-        model.addAttribute("action", "create");
+    @RequestMapping(value = "/createAdmin", method = RequestMethod.GET)
+    public String createAdmin(Model model) {
+        model.addAttribute("action", "createAdmin");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String save(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
-        // get merchant operator role
+    @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
+    public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+        // get admin role
         Role role = null;
         try {
-            role = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find role " + ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+            logger.info("Cannot find role " + ResourceProperties.ROLE_ADMIN_CODE);
             e.printStackTrace();
         }
         Locale locale = LocaleContextHolder.getLocale();
@@ -214,7 +164,7 @@ public class UserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("action", "createAdmin");
             return "main";
         }
         // check if email already taken
@@ -225,7 +175,7 @@ public class UserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("action", "createAdmin");
             return "main";
         }
         //TODO check if all required fields filled
@@ -272,13 +222,6 @@ public class UserController {
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
 
-        // merchant admin can only view users from his merchant
-        SecurityUser securityUser = UserResource.getCurrentUser();
-
-        if (!user.getMerchant().equals(securityUser.getMerchant())) {
-            return "403"; // access denied
-        }
-
         return "main";
     }
 
@@ -304,11 +247,6 @@ public class UserController {
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
-
-        SecurityUser securityUser = UserResource.getCurrentUser();
-        if (!user.getMerchant().equals(securityUser.getMerchant())) {
-            return "403"; // not same merchant access denied
-        }
 
         return "main";
     }
@@ -351,11 +289,7 @@ public class UserController {
 
         // pass uniqueness check create the user
         editUser(user, userCommand);
-        SecurityUser securityUser = UserResource.getCurrentUser();
-        if (!user.getMerchant().equals(securityUser.getMerchant())) {
-            return "403";
-        }
-        // user is a user edited by merchant admin
+
         try {
             userService.update(user);
         } catch (MissingRequiredFieldException e) {
@@ -446,5 +380,4 @@ public class UserController {
         }
         user.setUserStatus(userStatus);
     }
-
 }

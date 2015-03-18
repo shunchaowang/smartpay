@@ -127,7 +127,8 @@
                 </li>
 
                 <!-- user management goes here -->
-                <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MERCHANT_ADMIN')">
+                <!-- admin menu goes here -->
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
                     <li class="dropdown">
                         <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                            data-target="#" href="#">
@@ -136,42 +137,52 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
-                                <a href="${rootURL}user">
+                                <a href="${rootURL}admin/user">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="user.list.label"/>
                                 </a>
                             </li>
-
-                            <!-- admin menu goes here -->
-                            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                                <li class="">
-                                    <a href="${rootURL}user/createAdmin">
-                                        <i class="glyphicon glyphicon-plus"></i>
-                                        <spring:message code="user.new.admin.label"/>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="${rootURL}user/createMerchantAdmin">
-                                        <i class="glyphicon glyphicon-plus"></i>
-                                        <spring:message code="user.new.merchant.admin.label"/>
-                                    </a>
-                                </li>
-                            </sec:authorize>
+                            <li class="">
+                                <a href="${rootURL}admin/user/createAdmin">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <spring:message code="user.new.admin.label"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/user/createMerchantAdmin">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <spring:message code="user.new.merchant.admin.label"/>
+                                </a>
+                            </li>
                             <!-- admin menu ends -->
-
-                            <!-- merchant admin menu goes here -->
-                            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                                <li class="">
-                                    <a href="${rootURL}user/createMerchantOperator">
-                                        <i class="glyphicon glyphicon-plus"></i>
-                                        <spring:message code="user.new.admin.label"/>
-                                    </a>
-                                </li>
-                            </sec:authorize>
-                            <!-- merchant admin menu ends -->
                         </ul>
                     </li>
                 </sec:authorize>
+                <!-- merchant admin menu goes here -->
+                <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                           data-target="#" href="#">
+                            <spring:message code="user.manage.label"/>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="">
+                                <a href="${rootURL}/user">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="user.list.label"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}user/create">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <spring:message code="user.new.label"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </sec:authorize>
+                <!-- merchant admin menu ends -->
                 <!-- user management ends -->
 
                 <li>

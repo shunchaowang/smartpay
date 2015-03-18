@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@include file="../taglib.jsp" %>
+<%@include file="../../taglib.jsp" %>
 <div class="row">
     <div class="col-sm-6">
         <h3><b><spring:message code="user.list.label"/></b></h3>
