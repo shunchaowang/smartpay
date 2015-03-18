@@ -19,7 +19,9 @@ public class UserCommand {
 
     // relationships
     private Long merchant;
+    private String merchantName;
     private Long userStatus;
+    private String userStatusName;
 
     public Long getId() {
         return id;
@@ -107,5 +109,21 @@ public class UserCommand {
 
     public void setUserStatus(Long userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public String getUserStatusName() {
+        return userStatusName;
+    }
+
+    public void setUserStatusName(String userStatusName) {
+        this.userStatusName = userStatusName;
     }
 }

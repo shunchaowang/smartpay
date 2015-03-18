@@ -30,7 +30,7 @@
                     <li class="dropdown">
                         <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                            data-target="#" href="#">
-                            <spring:message code="merchant.label"/>
+                            <spring:message code="merchant.manage.label"/>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu" role="menu">
@@ -71,7 +71,7 @@
                 <li class="dropdown">
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
                        href="#">
-                        <spring:message code="site.label"/>
+                        <spring:message code="site.manage.label"/>
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu" role="menu">
@@ -131,7 +131,7 @@
                     <li class="dropdown">
                         <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                            data-target="#" href="#">
-                            <spring:message code="user.label"/>
+                            <spring:message code="user.manage.label"/>
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu" role="menu">
@@ -176,12 +176,12 @@
 
                 <li>
                     <a href="${rootURL}order/list">
-                        <spring:message code="order.label"/>
+                        <spring:message code="order.manage.label"/>
                     </a>
                 </li>
                 <li>
                     <a href="${rootURL}payment/list">
-                        <spring:message code="payment.label"/>
+                        <spring:message code="payment.manage.label"/>
                     </a>
                 </li>
             </ul>

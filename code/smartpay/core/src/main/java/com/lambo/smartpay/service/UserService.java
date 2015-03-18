@@ -18,4 +18,6 @@ public interface UserService extends GenericQueryService<User, Long> {
      * @return
      */
     User findByUsername(String username);
+
+    User findByEmail(String email);
 }

@@ -44,6 +44,15 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
         return userDao.findByUsername(username);
     }
 
+    @Override
+    public User findByEmail(String email) {
+        if (StringUtils.isBlank(email)) {
+            logger.debug("Email is blank.");
+            return null;
+        }
+        return userDao.findByEmail(email);
+    }
+
     @Transactional
     @Override
     public User create(User user) throws MissingRequiredFieldException, NotUniqueException {

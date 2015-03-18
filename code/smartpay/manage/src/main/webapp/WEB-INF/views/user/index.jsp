@@ -63,14 +63,20 @@
                 {
                     'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/show/'
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="edit.label"/>'
+                                + '</button>' + '</a>'
+                                + '<a href="' + "${rootURL}${controller}" + '/delete/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="edit-button" class="btn btn-danger"'
+                                + '">' + '<spring:message code="delete.label"/>'
                                 + '</button>' + '</a>';
                     }
                 }
             ]
         });
+
     });
 </script>

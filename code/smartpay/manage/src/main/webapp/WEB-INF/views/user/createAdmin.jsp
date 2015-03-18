@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 
-<!-- end of class row -->
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
-        <div class="alert alert-warning alert-dismissable" role="alert">
+        <div class="alert alert-danger alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert">
                 <span aria-hidden="true">&times;</span>
                 <span class="sr-only"><spring:message code="close.button.label"/> </span>
-                    ${message}
             </button>
+                ${message}
         </div>
     </c:if>
 </div>
@@ -114,6 +113,15 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
+        $('#new-user-form').validate({
+            rules: {
+                username: {required: true, minlength: 3, maxlength: 32},
+                firstName: {required: true, minlength: 3, maxlength: 32},
+                lastName: {required: true, minlength: 3, maxlength: 32},
+                email: {required: true, minlength: 3, maxlength: 32},
+                userStatus: {required: true}
+            }
+        });
+        autoCloseAlert();
     });
 </script>
