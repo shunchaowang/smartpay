@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
+import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
@@ -133,6 +135,10 @@ public class UserController {
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
 
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
         List<User> users = null;
 
         //TODO ADD ACCESS CONTROLL HERE, MERCHANT ADMIN SHOULD ONLY SEE USERS OF THE MERCHANT
@@ -143,23 +149,25 @@ public class UserController {
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records
-        Integer recordsTotal = userService.countAll().intValue();
+        Long recordsTotal = userService.countAll();
         // count records filtered
-        Integer recordsFiltered = userService.countByCriteria(search).intValue();
+        Long recordsFiltered = userService.countByCriteria(search);
+
+        if (users == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
 
         List<DataTablesUser> dataTablesUsers = new ArrayList<>();
 
-        if (users != null) {
-            for (User user : users) {
-                DataTablesUser tableUser = new DataTablesUser(user);
-                dataTablesUsers.add(tableUser);
-            }
+        for (User user : users) {
+            DataTablesUser tableUser = new DataTablesUser(user);
+            dataTablesUsers.add(tableUser);
         }
 
         DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
         result.setData(dataTablesUsers);
-        result.setRecordsFiltered(recordsFiltered);
-        result.setRecordsTotal(recordsTotal);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
