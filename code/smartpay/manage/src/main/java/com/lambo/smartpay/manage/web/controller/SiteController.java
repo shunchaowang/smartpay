@@ -153,6 +153,7 @@ public class SiteController {
     }
 
 
+    @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/audit", method = RequestMethod.GET, produces = "application/json")
     public
     @ResponseBody
@@ -222,17 +223,17 @@ public class SiteController {
     }
 
 
-    @RequestMapping(value = "/createSite", method = RequestMethod.GET)
-    @Secured({"ROLE_ADMIN"})
-    public String createSite(Model model) {
-        model.addAttribute("action", "createSite");
+    @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
+    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    public String create(Model model) {
+        model.addAttribute("action", "create");
         model.addAttribute("siteCommand", new SiteCommand());
         return "main";
     }
 
-    @RequestMapping(value = "/createSite", method = RequestMethod.POST)
-    @Secured({"ROLE_ADMIN"})
-    public String saveSite(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+    @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public String save(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
         // get admin role
         /*Role role = null;
         try {
@@ -294,6 +295,4 @@ public class SiteController {
         site.setSiteStatus(siteStatus);
         return site;
     }
-
-
 }

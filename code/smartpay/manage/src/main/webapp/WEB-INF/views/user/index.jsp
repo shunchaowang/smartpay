@@ -46,8 +46,7 @@
                     'name': 'username', 'targets': 1, 'data': 'username',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row[0] + '>' + '<spring:message code="edit.label"/>'
-                                + '</a>';
+                                + row['id'] + '>' + data + '</a>';
                     }
                 },
                 {'name': 'firstName', 'targets': 2, 'data': 'firstName'},
@@ -61,10 +60,11 @@
                 {
                     'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<button type="button" name="edit-button" class="btn btn-default" '
-                                + ' value="' + "${rootURL}${controller}" + '/show/'
-                                + row[0] + '">' + '<spring:message code="operation.label"/>'
-                                + '</button>';
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                                + row['id'] + '>' +
+                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="edit.label"/>'
+                                + '</button>' + '</a>';
                     }
                 }
             ]

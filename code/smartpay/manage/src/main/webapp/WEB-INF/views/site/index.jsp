@@ -1,20 +1,10 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <div class="row">
-    <div class="col-xs-6 pull-left">
+    <div class="col-sm-6">
         <h2><b><spring:message code="site.list.label"/></b></h2>
     </div>
-    <!-- end of pull-left -->
-    <!-- <sec:authorize access="hasRole('ROLE_ADMIN')"> -->
-    <div class="col-xs-2 pull-right">
-        <a href="${rootURL}${controller}/createSite">
-            <button type="button" class="btn btn-primary" id="new-button">
-                <spring:message code="site.new.label"/>
-            </button>
-        </a>
-    </div>
-    <!-- </sec:authorize> -->
-    <!-- end of pull-right -->
+    <!-- end of label -->
 </div>
 <!-- end of class row -->
 <br/>
@@ -61,9 +51,9 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return "<a href=" + "${rootURL}${controller}/editSite?id=" + row[1] +
+                        return "<a href=" + "${rootURL}${controller}/edit" + row['id'] +
                                 "><spring:message code="edit.label"/></a> " +
-                                "<a href=" + "${rootURL}${controller}/deleteSite?id=" + row[1] +
+                                "<a href=" + "${rootURL}${controller}/delete" + row['id'] +
                                 "><spring:message code="delete.label"/></a> "
                     }
                 }
