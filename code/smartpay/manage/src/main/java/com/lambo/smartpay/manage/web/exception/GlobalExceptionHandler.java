@@ -1,8 +1,5 @@
-package com.lambo.smartpay.manage.web.controller;
+package com.lambo.smartpay.manage.web.exception;
 
-import com.lambo.smartpay.manage.web.exception.BadRequestException;
-import com.lambo.smartpay.manage.web.exception.IntervalServerException;
-import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

@@ -81,9 +81,10 @@
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="edit.label"/>'
                                 + '</button></a>' +
-                                '<button type="button" name="delete-button" class="btn btn-default"'
-                                + ' value="' + row['id'] + '">' + '<spring:message
-                                code="delete.label"/>' + '</button>';
+                                '<button type="button" name="delete-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="delete.label"/>' +
+                                '</button>';
                     }
                 }
             ]

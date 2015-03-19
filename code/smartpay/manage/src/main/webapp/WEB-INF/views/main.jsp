@@ -7,22 +7,27 @@
 </head>
 <body class="container">
 <jsp:include page="_header.jsp"/>
-<div class="row" id="breadcrumb">
-    <!--TODO ADD BREADCRUMB -->
-    <!--
-    <div class="col-sm-6">
+<c:if test="${!noBreadCrumb}">
+    <div class="row" id="breadcrumb">
+        <!--TODO ADD BREADCRUMB -->
         <ol class="breadcrumb">
             <c:if test="${controller != null}">
                 <li>
                     <a href="${rootURL}${controller}">
-                        <spring:message code="user.profile.label"/>
+                        <spring:message code="${controller}.manage.label"/>
+                    </a>
+                </li>
+            </c:if>
+            <c:if test="${action != null}">
+                <li>
+                    <a href="${rootURL}${controller}/${action}">
+                        <spring:message code="${controller}.${action}.label"/>
                     </a>
                 </li>
             </c:if>
         </ol>
     </div>
-    -->
-</div>
+</c:if>
 <!-- breadcrumb goes here -->
 <jsp:include page="${_view}.jsp"/>
 <jsp:include page="_footer.jsp"/>

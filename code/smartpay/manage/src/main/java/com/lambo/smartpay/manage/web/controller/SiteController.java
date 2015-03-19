@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 
@@ -62,7 +61,7 @@ public class SiteController {
         return siteStatusService.getAll();
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }

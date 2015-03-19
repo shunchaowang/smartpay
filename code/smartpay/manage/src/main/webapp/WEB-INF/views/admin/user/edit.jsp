@@ -18,7 +18,7 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='user.edit.label' arguments="${userCommand.username}"/>
+            <spring:message code='user.edit.label'/>
         </b></h2>
     </div>
 </div>

@@ -1,6 +1,7 @@
 package com.lambo.smartpay.manage.web.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,11 +12,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-    @RequestMapping("/")
+    // here goes all model across the whole controller
+    @ModelAttribute("noBreadCrumb")
+    public Boolean noBreadCrumb() {
+        return true;
+    }
+
+    @RequestMapping(value = {"/", "/index"})
     public ModelAndView home() {
-        ModelAndView view = new ModelAndView("main");
         //view.addObject("action", "index");
-        return view;
+        return new ModelAndView("main");
     }
 
     // for 403 access denied page

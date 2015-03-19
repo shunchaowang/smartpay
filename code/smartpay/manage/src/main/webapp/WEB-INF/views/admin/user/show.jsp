@@ -8,7 +8,7 @@
                 <span aria-hidden="true">&times;</span>
                 <span class="sr-only"><spring:message code="close.button.label"/> </span>
             </button>
-            ${message}
+                ${message}
         </div>
     </c:if>
 </div>
