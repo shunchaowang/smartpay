@@ -36,7 +36,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/audit",
+                'url': "${rootURL}${controller}/auditList",
                 'type': "GET",
                 'dataType': 'json'
             },

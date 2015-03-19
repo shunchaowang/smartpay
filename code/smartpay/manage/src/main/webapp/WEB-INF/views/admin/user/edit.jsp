@@ -129,6 +129,5 @@
                 userStatus: {required: true}
             }
         });
-        autoCloseAlert();
     });
 </script>

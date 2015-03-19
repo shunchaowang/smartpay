@@ -185,15 +185,9 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
      */
     @Override
     public Boolean isBlank(Site site) {
-        if (site == null) {
-            return true;
-        }
-        if (site.getId() == null && StringUtils.isBlank(site.getName())
-                && StringUtils.isBlank(site.getUrl()) && site.getSiteStatus() == null
-                && site.getMerchant() == null) {
-            return true;
-        }
-        return false;
+        return site == null || site.getId() == null && StringUtils.isBlank(site.getName()) &&
+                StringUtils.isBlank(site.getUrl()) && site.getSiteStatus() == null && site
+                .getMerchant() == null;
     }
 
     /**
@@ -251,8 +245,13 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         }
         // check url
         if (StringUtils.isNotBlank(site.getUrl())) {
-            predicate = builder.like(root.<String>get("url"),
+            Predicate urlPredicate = builder.like(root.<String>get("url"),
                     builder.literal("%" + site.getUrl() + "%"));
+            if (predicate == null) {
+                predicate = urlPredicate;
+            } else {
+                predicate = builder.and(predicate, urlPredicate);
+            }
         }
 
         if (site.getActive() != null) {
@@ -276,7 +275,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
                 predicate = builder.and(predicate, siteStatusPredicate);
             }
         }
-        // check Site Login id
+        // check Site merchant id
         if (site.getMerchant() != null && site.getMerchant().getId() != null) {
             Predicate merchantPredicate = builder.equal(
                     root.join("merchant").<Long>get("id"),

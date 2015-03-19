@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -53,53 +54,18 @@ public class SiteController {
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
-        logger.debug("controller-=111111238123812893789controller1273912");
         return "site";
     }
 
     @ModelAttribute("siteStatuses")
     public List<SiteStatus> siteStatuses() {
-        logger.debug("siteStatuses-=1111112381238128937891273912");
         return siteStatusService.getAll();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index() {
-        logger.debug("RequestMethod111111111111118127398173912793127983-=");
         return "main";
     }
-
-
-
-
-    /*
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public
-    @ResponseBody
-    String list(@RequestParam(value = "search[value]") String search,
-                @RequestParam(value = "start") int start,
-                @RequestParam(value = "length") int length,
-                @RequestParam(value = "order[0][column]") String order,
-                @RequestParam(value = "order[0][dir]") String orderDir) {
-
-        logger.debug("search: " + search);
-        logger.debug("start: " + start);
-        logger.debug("length: " + length);
-        logger.debug("order: " + order);
-        logger.debug("orderDir: " + orderDir);
-        logger.debug("OrderDir: " + StringUtils.upperCase(orderDir));
-
-        List<Site> sites = siteService.findByCriteria(search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(StringUtils.upperCase(orderDir)));
-
-        DataTablesResultSet<Site> result = new DataTablesResultSet<>();
-        result.setData(sites);
-        result.setRecordsFiltered(1);
-        result.setRecordsTotal(1);
-        return result.toString();
-    }
-    */
-
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public
@@ -119,17 +85,12 @@ public class SiteController {
         // parse pagination
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
-        logger.debug("start="+start+"length"+length);
 
         if (start == null || length == null || order == null || orderDir == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Site> sites = null;
-        if (StringUtils.isBlank(search)) {
-            //sites = siteService.f
-        }
-        sites = siteService.findByCriteria(search, start, length, order,
+        List<Site> sites = siteService.findByCriteria(search, start, length, order,
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records and filtered records
@@ -156,43 +117,36 @@ public class SiteController {
         return gson.toJson(result);
     }
 
+    @RequestMapping(value = "/audit", method = RequestMethod.GET)
+    public String audit(Model model) {
+        model.addAttribute("action", "audit");
+        return "main";
+    }
 
     @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/audit", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/auditList", method = RequestMethod.GET, produces = "application/json")
     public
     @ResponseBody
     String audit(HttpServletRequest request) {
-        logger.debug("1111111-=");
 
         String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
-        logger.debug("orderIndex-="+orderIndex);
-        logger.debug("order-="+order);
 
         // parse sorting direction
         String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-        logger.debug("orderDir-="+orderDir);
 
         // parse search keyword
         String search = request.getParameter("search[value]");
-        logger.debug("search[value]-"+search);
 
         // parse pagination
-        String start1 =  request.getParameter("start");
-        String length1 =  request.getParameter("length");
-        logger.debug("start1-="+start1+" --- length1"+length1);
-
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
 
-
-        List<Site> sites = null;
-        if (StringUtils.isBlank(search)) {
-            //sites = siteService.f
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
         }
-
         Site siteApproved = new Site();
-        SiteStatus approvedStatus;
+        SiteStatus approvedStatus = null;
         try {
             approvedStatus = siteStatusService.findByCode("400");
         } catch (NoSuchEntityException e) {
@@ -202,10 +156,13 @@ public class SiteController {
         }
         siteApproved.setSiteStatus(approvedStatus);
 
-        sites = siteService.findByCriteria(siteApproved, search, start, length, order,
+        List<Site> sites = siteService.findByCriteria(siteApproved, search, start, length, order,
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records and filtered records
+        //TODO SHOULD PASS sititeApproved here,
+        // eg countByCriteria(siteApproved)
+        // countByCriteria(siteApproved, search)
         Long recordsTotal = siteService.countAll();
         Long recordsFiltered = siteService.countByCriteria(search);
 
