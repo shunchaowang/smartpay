@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
+<c:set var="entity">
+    <spring:message code="${domain}.label"/>
+</c:set>
+
 <div class="row">
     <div class="col-sm-6">
-        <h3><b><spring:message code="user.list.label"/></b></h3>
+        <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
     </div>
     <!-- end of table title -->
 </div>
@@ -14,13 +18,13 @@
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
-            <th><spring:message code="user.username.label"/></th>
-            <th><spring:message code="user.firstName.label"/></th>
-            <th><spring:message code="user.lastName.label"/></th>
-            <th><spring:message code="user.email.label"/></th>
-            <th><spring:message code="user.createdTime.label"/></th>
-            <th><spring:message code="user.userStatus.label"/></th>
-            <th><spring:message code="operation.label"/></th>
+            <th><spring:message code="username.label"/></th>
+            <th><spring:message code="firstName.label"/></th>
+            <th><spring:message code="lastName.label"/></th>
+            <th><spring:message code="email.label"/></th>
+            <th><spring:message code="createdTime.label"/></th>
+            <th><spring:message code="status.label"/></th>
+            <th><spring:message code="action.operation.label"/></th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -66,12 +70,12 @@
                         return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="edit.label"/>'
+                                + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button>' + '</a>'
                                 + '<a href="' + "${rootURL}${controller}" + '/delete/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="delete.label"/>'
+                                + '">' + '<spring:message code="action.delete.label"/>'
                                 + '</button>' + '</a>';
                     }
                 }

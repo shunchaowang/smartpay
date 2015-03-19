@@ -56,6 +56,11 @@ public class SiteController {
         return "site";
     }
 
+    @ModelAttribute("domain")
+    public String domain() {
+        return "Site";
+    }
+
     @ModelAttribute("siteStatuses")
     public List<SiteStatus> siteStatuses() {
         return siteStatusService.getAll();

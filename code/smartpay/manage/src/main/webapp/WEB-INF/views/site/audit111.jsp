@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
+<c:set var="entity">
+    <spring:message code="${domain}.label"/>
+</c:set>
 <div class="row">
     <div class="col-xs-6 pull-left">
-        <h2><b><spring:message code="site.list.label"/></b></h2>
+        <h2><b><spring:message code="index.label" arguments="${entity}"/></b></h2>
     </div>
     <!-- end of pull-left -->
     <!-- <sec:authorize access="hasRole('ROLE_ADMIN')"> -->
     <div class="col-xs-2 pull-right">
         <a href="${rootURL}${controller}/createSite">
             <button type="button" class="btn btn-primary" id="new-button">
-                <spring:message code="site.new.label"/>
+                <spring:message code="create.label" arguments="${entity}"/>
             </button>
         </a>
     </div>
@@ -24,11 +27,11 @@
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
-            <th><spring:message code="site.name.label"/></th>
+            <th><spring:message code="name.label"/></th>
             <th><spring:message code="site.url.label"/></th>
-            <th><spring:message code="site.createdTime.label"/></th>
-            <th><spring:message code="site.status.label"/></th>
-            <th><spring:message code="operation.label"/></th>
+            <th><spring:message code="createdTime.label"/></th>
+            <th><spring:message code="status.label"/></th>
+            <th><spring:message code="action.operation.label"/></th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -62,7 +65,7 @@
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
                         return "<a href=" + "${rootURL}${controller}/audit/" + row['id'] +
-                                "><spring:message code="site.audit.label"/></a> "
+                                "><spring:message code="action.audit.label"/></a> "
                     }
                 }
             ]

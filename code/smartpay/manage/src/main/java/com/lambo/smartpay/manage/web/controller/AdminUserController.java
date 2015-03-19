@@ -72,6 +72,11 @@ public class AdminUserController {
         return "admin/user";
     }
 
+    @ModelAttribute("domain")
+    public String domain() {
+        return "AdminUser";
+    }
+
     @ModelAttribute("roles")
     public List<Role> roles() {
         return roleService.getAll();
@@ -161,7 +166,7 @@ public class AdminUserController {
         // check if username already taken
         if (userService.findByUsername(userCommand.getUsername()) != null) {
 
-            String fieldLabel = messageSource.getMessage("user.username.label", null, locale);
+            String fieldLabel = messageSource.getMessage("username.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
@@ -172,7 +177,7 @@ public class AdminUserController {
         // check if email already taken
         if (userService.findByEmail(userCommand.getEmail()) != null) {
 
-            String fieldLabel = messageSource.getMessage("user.email.label", null, locale);
+            String fieldLabel = messageSource.getMessage("email.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
@@ -279,7 +284,7 @@ public class AdminUserController {
             if (emailUser != null) {
                 // get locale and messages
                 Locale locale = LocaleContextHolder.getLocale();
-                String fieldLabel = messageSource.getMessage("user.email.label", null, locale);
+                String fieldLabel = messageSource.getMessage("email.label", null, locale);
                 model.addAttribute("message",
                         messageSource.getMessage("not.unique.message",
                                 new String[]{fieldLabel, userCommand.getEmail()}, locale));
@@ -320,12 +325,12 @@ public class AdminUserController {
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("user.label", null, locale);
+        String label = messageSource.getMessage("User.label", null, locale);
         try {
             user = userService.delete(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            String notDeleteMessage = messageSource.getMessage("not.delete.message",
+            String notDeleteMessage = messageSource.getMessage("not.deleted.message",
                     new String[]{label, id.toString()}, locale);
             response.setMessage(notDeleteMessage);
             throw new BadRequestException("400", e.getMessage());

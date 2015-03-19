@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
+<c:set var="entity">
+    <spring:message code="${domain}.label"/>
+</c:set>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
         <div class="alert alert-danger alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert">
                 <span aria-hidden="true">&times;</span>
-                <span class="sr-only"><spring:message code="close.button.label"/> </span>
+                <span class="sr-only"><spring:message code="action.close.label"/> </span>
             </button>
                 ${message}
         </div>
@@ -18,7 +21,7 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='user.edit.label'/>
+            <spring:message code='edit.label' arguments="${entity}"/>
         </b></h2>
     </div>
 </div>
@@ -30,7 +33,7 @@
         <form:input path="id" id="id" type="hidden" value="${userCommand.id}"/>
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">
-                <spring:message code="user.username.label"/>
+                <spring:message code="username.label"/>
             </label>
 
             <div class="col-sm-6">
@@ -41,7 +44,7 @@
         <!-- first name -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="firstName">
-                <spring:message code="user.firstName.label"/>
+                <spring:message code="firstName.label"/>
                 <span class="required-indicator">*</span>
             </label>
 
@@ -53,7 +56,7 @@
         <!-- last name -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="lastName">
-                <spring:message code="user.lastName.label"/>
+                <spring:message code="lastName.label"/>
                 <span class="required-indicator">*</span>
             </label>
 
@@ -65,7 +68,7 @@
         <!-- email -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="email">
-                <spring:message code="user.email.label"/>
+                <spring:message code="email.label"/>
                 <span class="required-indicator">*</span>
             </label>
 
@@ -77,7 +80,7 @@
         <!-- user status -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="userStatus">
-                <spring:message code="user.userStatus.label"/>
+                <spring:message code="status.label"/>
                 <span class="required-indicator">*</span>
             </label>
 
@@ -93,7 +96,7 @@
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">
-                <spring:message code="user.remark.label"/>
+                <spring:message code="remark.label"/>
             </label>
 
             <div class="col-sm-6">
@@ -104,14 +107,14 @@
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
                 <button class='btn btn-default' id='create-button' type="submit">
-                    <spring:message code='save.button.label'/>
+                    <spring:message code='action.save.label'/>
                 </button>
                 <button class='btn btn-default' id='reset-button' type="reset">
-                    <spring:message code='reset.button.label'/>
+                    <spring:message code='action.reset.label'/>
                 </button>
                 <a href="${rootURL}${controller}">
                     <button type="button" class="btn btn-default">
-                        <spring:message code="return.label"/>
+                        <spring:message code="action.return.label"/>
                     </button>
                 </a>
             </div>

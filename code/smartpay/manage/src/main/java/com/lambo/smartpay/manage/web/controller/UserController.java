@@ -71,6 +71,11 @@ public class UserController {
         return "user";
     }
 
+    @ModelAttribute("domain")
+    public String domain() {
+        return "User";
+    }
+
     @ModelAttribute("roles")
     public List<Role> roles() {
         return roleService.getAll();
@@ -209,7 +214,7 @@ public class UserController {
         // check if username already taken
         if (userService.findByUsername(userCommand.getUsername()) != null) {
 
-            String fieldLabel = messageSource.getMessage("user.username.label", null, locale);
+            String fieldLabel = messageSource.getMessage("username.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
@@ -220,7 +225,7 @@ public class UserController {
         // check if email already taken
         if (userService.findByEmail(userCommand.getEmail()) != null) {
 
-            String fieldLabel = messageSource.getMessage("user.email.label", null, locale);
+            String fieldLabel = messageSource.getMessage("email.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
@@ -339,7 +344,7 @@ public class UserController {
             if (emailUser != null) {
                 // get locale and messages
                 Locale locale = LocaleContextHolder.getLocale();
-                String fieldLabel = messageSource.getMessage("user.email.label", null, locale);
+                String fieldLabel = messageSource.getMessage("email.label", null, locale);
                 model.addAttribute("message",
                         messageSource.getMessage("not.unique.message",
                                 new String[]{fieldLabel, userCommand.getEmail()}, locale));

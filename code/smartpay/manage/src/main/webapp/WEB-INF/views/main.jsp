@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <%@include file="taglib.jsp" %>
+
 <html>
 <head>
     <jsp:include page="_import.jsp"/>
@@ -8,20 +9,22 @@
 <body class="container">
 <jsp:include page="_header.jsp"/>
 <c:if test="${!noBreadCrumb}">
+    <c:set var="entity">
+        <spring:message code="${domain}.label"/>
+    </c:set>
     <div class="row" id="breadcrumb">
-        <!--TODO ADD BREADCRUMB -->
         <ol class="breadcrumb">
             <c:if test="${controller != null}">
                 <li>
                     <a href="${rootURL}${controller}">
-                        <spring:message code="${controller}.manage.label"/>
+                        <spring:message code="manage.label" arguments="${entity}"/>
                     </a>
                 </li>
             </c:if>
             <c:if test="${action != null}">
                 <li>
                     <a href="${rootURL}${controller}/${action}">
-                        <spring:message code="${controller}.${action}.label"/>
+                        <spring:message code="${action}.label" arguments="${entity}"/>
                     </a>
                 </li>
             </c:if>
