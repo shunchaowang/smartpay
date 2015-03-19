@@ -9,9 +9,8 @@
 <body class="container">
 <jsp:include page="_header.jsp"/>
 <c:if test="${!noBreadCrumb}">
-    <c:set var="entity">
-        <spring:message code="${domain}.label"/>
-    </c:set>
+    <spring:message code="${domain}.label" var="entity"/>
+
     <div class="row" id="breadcrumb">
         <ol class="breadcrumb">
             <c:if test="${controller != null}">

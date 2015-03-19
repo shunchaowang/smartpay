@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:set var="entity">
-    <spring:message code="${domain}.label"/>
-</c:set>
+<spring:message code="${domain}.label" var="entity"/>
 
 <div class="row">
     <div class="col-sm-6">

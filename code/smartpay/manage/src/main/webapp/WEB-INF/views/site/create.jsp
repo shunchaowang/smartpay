@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:set var="entity">
-    <spring:message code="${domain}.label"/>
-</c:set>
+<spring:message code="${domain}.label" var="entity"/>
+
 <!-- end of class row -->
 <div class='row' id='notification'>
     <c:if test="${not empty message}">

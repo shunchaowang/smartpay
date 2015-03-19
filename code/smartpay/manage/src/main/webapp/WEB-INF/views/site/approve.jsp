@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:set var="entity">
-    <spring:message code="${domain}.label"/>
-</c:set>
+<spring:message code="${domain}.label" var="entity"/>
+
 <div class="row">
     <div class="col-xs-6 pull-left">
         <h2><b><spring:message code="index.label" arguments="${entity}"/></b></h2>

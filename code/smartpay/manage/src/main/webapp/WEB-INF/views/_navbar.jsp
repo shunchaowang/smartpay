@@ -19,27 +19,13 @@
         <!-- navbar -->
 
         <!-- define domain related vars -->
-        <c:set var="merchant">
-            <spring:message code='Merchant.label'/>
-        </c:set>
-        <c:set var="site">
-            <spring:message code='Site.label'/>
-        </c:set>
-        <c:set var="user">
-            <spring:message code='User.label'/>
-        </c:set>
-        <c:set var="adminUser">
-            <spring:message code='AdminUser.label'/>
-        </c:set>
-        <c:set var="merchantAdminUser">
-            <spring:message code='MerchantAdminUser.label'/>
-        </c:set>
-        <c:set var="order">
-            <spring:message code='Order.label'/>
-        </c:set>
-        <c:set var="payment">
-            <spring:message code='Payment.label'/>
-        </c:set>
+        <spring:message code='Merchant.label' var="merchant"/>
+        <spring:message code='Site.label' var="site"/>
+        <spring:message code='User.label' var="user"/>
+        <spring:message code='AdminUser.label' var="adminUser"/>
+        <spring:message code='MerchantAdminUser.label' var="merchantAdminUser"/>
+        <spring:message code='Order.label' var="order"/>
+        <spring:message code='Payment.label' var="payment"/>
 
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav">
