@@ -1,5 +1,18 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
+
+<div class='row' id='notification'>
+    <c:if test="${not empty message}">
+        <div class="alert alert-danger alert-dismissable" role="alert">
+            <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only"><spring:message code="close.button.label"/> </span>
+            </button>
+                ${message}
+        </div>
+    </c:if>
+</div>
+<!-- end of notification -->
 <div class="row">
     <div class="col-sm-6">
         <h3><b><spring:message code="user.list.label"/></b></h3>
@@ -29,7 +42,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#user-table').DataTable({
+        var userTable = $('#user-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -67,16 +80,39 @@
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="edit.label"/>'
-                                + '</button>' + '</a>'
-                                + '<a href="' + "${rootURL}${controller}" + '/delete/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="delete.label"/>'
-                                + '</button>' + '</a>';
+                                + '</button></a>' +
+                                '<button type="button" name="delete-button" class="btn btn-default"'
+                                + ' value="' + row['id'] + '">' + '<spring:message
+                                code="delete.label"/>' + '</button>';
                     }
                 }
             ]
         });
+
+        // add live handler for remove button
+        userTable.on('click', 'button[type=button][name=delete-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}" + '/delete',
+                data: {id: id},
+                dataType: 'JSON',
+                error: function (error) {
+                    alert('There was an error');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>Close</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    userTable.ajax.reload();
+                }
+            });
+        });
+
 
     });
 </script>

@@ -10,6 +10,7 @@ import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.Role;
 import com.lambo.smartpay.persistence.entity.User;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -298,6 +300,42 @@ public class AdminUserController {
             e.printStackTrace();
         }
         return "main";
+    }
+
+    /**
+     * ajax calls to delete a user by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String delete(@RequestParam(value = "id") Long id) {
+        logger.debug("in delete. id: " + id);
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+        User user;
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("user.label", null, locale);
+        try {
+            user = userService.delete(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.delete.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String deletedMessage = messageSource.getMessage("deleted.message",
+                new String[]{label, user.getUsername()}, locale);
+        response.setMessage(deletedMessage);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
     }
 
     // create a new User from a UserCommand
