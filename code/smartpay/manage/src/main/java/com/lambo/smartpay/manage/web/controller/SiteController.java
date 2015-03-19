@@ -53,16 +53,19 @@ public class SiteController {
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
+        logger.debug("controller-=111111238123812893789controller1273912");
         return "site";
     }
 
     @ModelAttribute("siteStatuses")
     public List<SiteStatus> siteStatuses() {
+        logger.debug("siteStatuses-=1111112381238128937891273912");
         return siteStatusService.getAll();
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index() {
+        logger.debug("RequestMethod111111111111118127398173912793127983-=");
         return "main";
     }
 
@@ -116,6 +119,7 @@ public class SiteController {
         // parse pagination
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
+        logger.debug("start="+start+"length"+length);
 
         if (start == null || length == null || order == null || orderDir == null) {
             throw new BadRequestException("400", "Bad Request.");
@@ -158,19 +162,29 @@ public class SiteController {
     public
     @ResponseBody
     String audit(HttpServletRequest request) {
+        logger.debug("1111111-=");
 
         String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
+        logger.debug("orderIndex-="+orderIndex);
+        logger.debug("order-="+order);
 
         // parse sorting direction
         String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+        logger.debug("orderDir-="+orderDir);
 
         // parse search keyword
         String search = request.getParameter("search[value]");
+        logger.debug("search[value]-"+search);
 
         // parse pagination
+        String start1 =  request.getParameter("start");
+        String length1 =  request.getParameter("length");
+        logger.debug("start1-="+start1+" --- length1"+length1);
+
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
+
 
         List<Site> sites = null;
         if (StringUtils.isBlank(search)) {

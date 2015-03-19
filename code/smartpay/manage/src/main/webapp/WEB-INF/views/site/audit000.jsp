@@ -2,7 +2,7 @@
 <%@include file="../taglib.jsp" %>
 <div class="row">
     <div class="col-sm-6">
-        <h2><b><spring:message code="site.list.label"/></b></h2>
+        <h2><b><spring:message code="site.audit.label"/></b></h2>
     </div>
     <!-- end of label -->
 </div>
@@ -10,7 +10,7 @@
 <br/>
 
 <div class="row">
-    <table class="display cell-border" id="audit-table">
+    <table class="display cell-border" id="site-table-audit">
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
@@ -27,10 +27,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#audit-table').DataTable({
-            'language': {
-                'url': "${dataTablesLanguage}"
-            },
+        $('#site-table-audit').DataTable({
             'processing': true,
             'serverSide': true,
             'paging': true,
@@ -54,10 +51,8 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/edit" + row['id'] +
-                                '">' + '<spring:message code="edit.label"/>' + '</a>' +
-                                '<a href="' + "${rootURL}${controller}/delete" + row['id'] +
-                                '">' + '<spring:message code="delete.label"/>' + '</a>';
+                        return "<a href=" + "${rootURL}${controller}/audit/" + row['id'] +
+                                "><spring:message code="edit.label"/></a> "
                     }
                 }
             ]

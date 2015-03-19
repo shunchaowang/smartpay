@@ -10,7 +10,7 @@
 <br/>
 
 <div class="row">
-    <table class="display cell-border" id="audit-table">
+    <table class="display cell-border" id="site-table">
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
@@ -27,16 +27,13 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#audit-table').DataTable({
-            'language': {
-                'url': "${dataTablesLanguage}"
-            },
+        $('#site-table').DataTable({
             'processing': true,
             'serverSide': true,
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/audit",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -54,10 +51,10 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/edit" + row['id'] +
-                                '">' + '<spring:message code="edit.label"/>' + '</a>' +
-                                '<a href="' + "${rootURL}${controller}/delete" + row['id'] +
-                                '">' + '<spring:message code="delete.label"/>' + '</a>';
+                        return "<a href=" + "${rootURL}${controller}/edit/" + row['id'] +
+                                "><spring:message code="edit.label"/></a> " +
+                                "<a href=" + "${rootURL}${controller}/delete/" + row['id'] +
+                                "><spring:message code="delete.label"/></a> "
                     }
                 }
             ]
