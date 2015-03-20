@@ -77,34 +77,34 @@ public class AdminUserController {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"{domain}", "/index{domain}"}, method = RequestMethod.GET)
-    public String index(@PathVariable("domain") String domain, Model model) {
+    @RequestMapping(value = {"{subDomain}", "/index{subDomain}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("subDomain") String subDomain, Model model) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
-        model.addAttribute("domain", domain);
+        model.addAttribute("subDomain", subDomain);
         return "main";
     }
 
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET,
             produces = "application/json")
     public
     @ResponseBody
-    String list(HttpServletRequest request, @PathVariable("domain") String domain) {
+    String list(HttpServletRequest request, @PathVariable("subDomain") String subDomain) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
         // form role code based on the role parameter
-        String roleCode = UserCommand.Role.valueOf(domain).getCode();
+        String roleCode = UserCommand.Role.valueOf(subDomain).getCode();
         // create Role object for query criteria
         Role criteriaRole;
         try {
             criteriaRole = roleService.findByCode(roleCode);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "No role " + domain + " found.");
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
         // create User criteria and attached the role
         User criteriaUser = new User();
@@ -157,33 +157,33 @@ public class AdminUserController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/create{domain}", method = RequestMethod.GET)
-    public String create(Model model, @PathVariable("domain") String domain) {
+    @RequestMapping(value = "/create{subDomain}", method = RequestMethod.GET)
+    public String create(Model model, @PathVariable("subDomain") String subDomain) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
-        model.addAttribute("domain", domain);
+        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "create");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
 
-    @RequestMapping(value = "/create{domain}", method = RequestMethod.POST)
-    public String save(Model model, @PathVariable("domain") String domain,
+    @RequestMapping(value = "/create{subDomain}", method = RequestMethod.POST)
+    public String save(Model model, @PathVariable("subDomain") String subDomain,
                        @ModelAttribute("userCommand") UserCommand userCommand) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
 
-        // set domain to model
-        model.addAttribute("domain", domain);
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         // form role code based on the role parameter
-        String roleCode = UserCommand.Role.valueOf(domain).getCode();
-        Role domainRole = null;
+        String roleCode = UserCommand.Role.valueOf(subDomain).getCode();
+        Role subDomainRole = null;
         try {
-            domainRole = roleService.findByCode(roleCode);
+            subDomainRole = roleService.findByCode(roleCode);
         } catch (NoSuchEntityException e) {
             logger.info("Cannot find role " + roleCode);
             e.printStackTrace();
@@ -215,7 +215,7 @@ public class AdminUserController {
         //TODO check if all required fields filled
 
         // create User and set admin to user
-        User user = createUser(userCommand, domainRole);
+        User user = createUser(userCommand, subDomainRole);
         // set initial password
         user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
         // persist user
@@ -239,16 +239,16 @@ public class AdminUserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Long id, @PathVariable("domain") String domain,
+    @RequestMapping(value = "/show{subDomain}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, @PathVariable("subDomain") String subDomain,
                        Model model) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
 
-        // set domain to model
-        model.addAttribute("domain", domain);
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "show");
         // get user by id
         User user = null;
@@ -272,16 +272,16 @@ public class AdminUserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/edit{domain}/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, @PathVariable("domain") String domain,
+    @RequestMapping(value = "/edit{subDomain}/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id, @PathVariable("subDomain") String subDomain,
                        Model model) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
 
-        // set domain to model
-        model.addAttribute("domain", domain);
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "edit");
         // get user by id
         User user;
@@ -305,16 +305,16 @@ public class AdminUserController {
      * @param userCommand
      * @return
      */
-    @RequestMapping(value = "/edit{domain}", method = RequestMethod.POST)
-    public String update(Model model, @PathVariable("domain") String domain,
+    @RequestMapping(value = "/edit{subDomain}", method = RequestMethod.POST)
+    public String update(Model model, @PathVariable("subDomain") String subDomain,
                          @ModelAttribute("userCommand") UserCommand userCommand) {
 
-        if (UserCommand.Role.valueOf(domain) == null) {
-            throw new BadRequestException("400", "No role " + domain + " found.");
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
 
-        // set domain to model
-        model.addAttribute("domain", domain);
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         // if the email is change we need to check uniqueness
         User user = null;
         try {

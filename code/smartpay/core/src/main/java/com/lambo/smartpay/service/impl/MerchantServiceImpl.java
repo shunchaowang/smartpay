@@ -426,10 +426,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
      */
     @Override
     public Long countByCriteria(Merchant merchant, String search) {
-        if (merchant == null) {
-            logger.info("Merchant is null.");
-            return null;
-        }
+
         return merchantDao.countByCriteria(merchant, search);
     }
 
@@ -456,30 +453,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
     public List<Merchant> findByCriteria(Merchant merchant, String search,
                                          Integer start, Integer length,
                                          String order, ResourceProperties.JpaOrderDir orderDir) {
-        if (merchant == null) {
-            logger.info("Merchant is null.");
-            return null;
-        }
-        if (StringUtils.isBlank(search)) {
-            logger.info("Search keyword is blank.");
-            return null;
-        }
-        if (start == null) {
-            logger.info("Start is null.");
-            return null;
-        }
-        if (length == null) {
-            logger.info("Length is null.");
-            return null;
-        }
-        if (order == null) {
-            logger.info("Order is null.");
-            return null;
-        }
-        if (orderDir == null) {
-            logger.info("OrderDir is null.");
-            return null;
-        }
+
         return merchantDao.findByCriteria(merchant, search, start, length, order, orderDir);
     }
 

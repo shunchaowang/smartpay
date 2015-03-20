@@ -16,19 +16,40 @@
                 <spring:message code="home.label"/>
             </a>
         </li>
-        <c:if test="${domain != null}">
-            <spring:message code="${domain}.label" var="entity"/>
+        <!-- if subDomain exists need to be action<subDomain> -->
+        <c:if test="${subDomain != null}">
+            <spring:message code="${subDomain}.label" var="entity"/>
 
             <c:if test="${controller != null}">
                 <li>
-                    <a href="${rootURL}${controller}/${domain}">
+                    <a href="${rootURL}${controller}/${subDomain}">
                         <spring:message code="manage.label" arguments="${entity}"/>
                     </a>
                 </li>
             </c:if>
             <c:if test="${action != null}">
                 <li>
-                    <a href="${rootURL}${controller}/${action}${domain}">
+                    <a href="${rootURL}${controller}/${action}${subDomain}">
+                        <spring:message code="${action}.label" arguments="${entity}"/>
+                    </a>
+                </li>
+            </c:if>
+        </c:if>
+
+        <!-- if no subDomain href should not have tails -->
+        <c:if test="${domain != null}">
+            <spring:message code="${domain}.label" var="entity"/>
+
+            <c:if test="${controller != null}">
+                <li>
+                    <a href="${rootURL}${controller}/">
+                        <spring:message code="manage.label" arguments="${entity}"/>
+                    </a>
+                </li>
+            </c:if>
+            <c:if test="${action != null}">
+                <li>
+                    <a href="${rootURL}${controller}/${action}">
                         <spring:message code="${action}.label" arguments="${entity}"/>
                     </a>
                 </li>

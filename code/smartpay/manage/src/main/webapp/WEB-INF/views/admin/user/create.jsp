@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<c:if test="${domain != null}">
+    <spring:message code="${domain}.label" var="entity"/>
+</c:if>
+<c:if test="${subDomain != null}">
+    <spring:message code="${subDomain}.label" var="entity"/>
+</c:if>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -24,7 +29,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/create${domain}" method="POST"
+    <form:form action="${rootURL}${controller}/create${subDomain}" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">

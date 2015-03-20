@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<c:if test="${domain != null}">
+    <spring:message code="${domain}.label" var="entity"/>
+</c:if>
+<c:if test="${subDomain != null}">
+    <spring:message code="${subDomain}.label" var="entity"/>
+</c:if>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -26,7 +31,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/edit${domain}" method="POST"
+    <form:form action="${rootURL}${controller}/edit${subDomain}" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="edit-user-form">
         <form:input path="id" id="id" type="hidden" value="${userCommand.id}"/>
         <div class="form-group">
@@ -110,7 +115,7 @@
                 <button class='btn btn-default' id='reset-button' type="reset">
                     <spring:message code='action.reset.label'/>
                 </button>
-                <a href="${rootURL}${controller}/${domain}">
+                <a href="${rootURL}${controller}/${subDomain}">
                     <button type="button" class="btn btn-default">
                         <spring:message code="action.return.label"/>
                     </button>

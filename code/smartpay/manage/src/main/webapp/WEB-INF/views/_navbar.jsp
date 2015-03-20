@@ -22,8 +22,8 @@
         <spring:message code='Merchant.label' var="merchant"/>
         <spring:message code='Site.label' var="site"/>
         <spring:message code='User.label' var="user"/>
-        <spring:message code='Admin.label' var="adminUser"/>
-        <spring:message code='MerchantAdmin.label' var="merchantAdminUser"/>
+        <spring:message code='Admin.label' var="admin"/>
+        <spring:message code='MerchantAdmin.label' var="merchantAdmin"/>
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
 
@@ -44,13 +44,13 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
-                                <a href="${rootURL}merchant">
+                                <a href="${rootURL}admin/merchant">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}merchant">
+                                <a href="${rootURL}admin/merchant">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <spring:message code="create.label" arguments="${merchant}"/>
                                 </a>
@@ -65,7 +65,7 @@
                     <c:set var="merchantId"
                            value="<%=UserResource.getCurrentUser().getMerchant().getId()%>"/>
                     <li>
-                        <a href="${rootURL}merchant/view/${merchantId}"> <!-- id here -->
+                        <a href="${rootURL}merchant/show/${merchantId}"> <!-- id here -->
                             <spring:message code="show.label" arguments="${merchant}"/>
                         </a>
                     </li>
@@ -148,27 +148,27 @@
                             <li class="">
                                 <a href="${rootURL}admin/user/indexAdmin">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label" arguments="${adminUser}"/>
+                                    <spring:message code="index.label" arguments="${admin}"/>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="${rootURL}admin/user/indexMerchantAdmin">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label"
-                                                    arguments="${merchantAdminUser}"/>
+                                                    arguments="${merchantAdmin}"/>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="${rootURL}admin/user/createAdmin">
                                     <i class="glyphicon glyphicon-plus"></i>
-                                    <spring:message code="create.label" arguments="${adminUser}"/>
+                                    <spring:message code="create.label" arguments="${admin}"/>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="${rootURL}admin/user/createMerchantAdmin">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <spring:message code="create.label"
-                                                    arguments="${merchantAdminUser}"/>
+                                                    arguments="${merchantAdmin}"/>
                                 </a>
                             </li>
                             <!-- admin menu ends -->
