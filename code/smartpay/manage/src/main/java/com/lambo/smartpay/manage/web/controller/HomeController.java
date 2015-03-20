@@ -12,12 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 
-    // here goes all model across the whole controller
-    @ModelAttribute("noBreadCrumb")
-    public Boolean noBreadCrumb() {
-        return true;
-    }
-
     @RequestMapping(value = {"/", "/index"})
     public ModelAndView home() {
         //view.addObject("action", "index");

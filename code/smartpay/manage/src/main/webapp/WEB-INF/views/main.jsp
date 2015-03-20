@@ -8,11 +8,17 @@
 </head>
 <body class="container">
 <jsp:include page="_header.jsp"/>
-<c:if test="${!noBreadCrumb}">
-    <spring:message code="${domain}.label" var="entity"/>
 
-    <div class="row" id="breadcrumb">
-        <ol class="breadcrumb">
+<div class="row" id="breadcrumb">
+    <ol class="breadcrumb">
+        <li>
+            <a href="${rootURL}">
+                <spring:message code="home.label"/>
+            </a>
+        </li>
+        <c:if test="${domain != null}">
+            <spring:message code="${domain}.label" var="entity"/>
+
             <c:if test="${controller != null}">
                 <li>
                     <a href="${rootURL}${controller}">
@@ -27,9 +33,10 @@
                     </a>
                 </li>
             </c:if>
-        </ol>
-    </div>
-</c:if>
+        </c:if>
+    </ol>
+</div>
+
 <!-- breadcrumb goes here -->
 <jsp:include page="${_view}.jsp"/>
 <jsp:include page="_footer.jsp"/>

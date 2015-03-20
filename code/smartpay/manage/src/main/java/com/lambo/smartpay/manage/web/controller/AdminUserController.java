@@ -144,8 +144,9 @@ public class AdminUserController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/createAdmin", method = RequestMethod.GET)
-    public String createAdmin(Model model) {
+    @RequestMapping(value = "/create{role}", method = RequestMethod.GET)
+    public String createAdmin(Model model, @PathVariable("role")String role) {
+        logger.debug("CreateAdmin: " + role);
         model.addAttribute("action", "createAdmin");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
