@@ -1,6 +1,7 @@
 package com.lambo.smartpay.persistence.dao.impl;
 
 import com.lambo.smartpay.persistence.dao.UserDao;
+import com.lambo.smartpay.persistence.entity.Role;
 import com.lambo.smartpay.persistence.entity.User;
 import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,9 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by swang on 3/9/2015.
@@ -253,7 +256,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
     /**
      * Formulate JPA and Predicate on fields with equal criteria for CriteriaQuery.
      * Supports id, username, firstName, lastName, email, UserStatus id,
-     * Merchant id, active.
+     * Merchant id, Role ids, active.
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
@@ -312,7 +315,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
                 predicate = builder.and(predicate, userStatusPredicate);
             }
         }
-        // check User Login id
+        // check user merchant id
         if (user.getMerchant() != null && user.getMerchant().getId() != null) {
             Predicate merchantPredicate = builder.equal(
                     root.join("merchant").<Long>get("id"),
@@ -321,6 +324,23 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
                 predicate = merchantPredicate;
             } else {
                 predicate = builder.and(predicate, merchantPredicate);
+            }
+        }
+
+        // check role ids
+        if (user.getRoles() != null && user.getRoles().size() > 0) {
+            // create set for role id
+            Set<Long> rolesIds = new HashSet<>();
+            for (Role role : user.getRoles()) {
+                rolesIds.add(role.getId());
+            }
+            // join roles from user and obtain id path
+            // create in clause for role id in role ids
+            Predicate rolePredicate = root.join("roles").get("id").in(rolesIds);
+            if (predicate == null) {
+                predicate = rolePredicate;
+            } else {
+                predicate = builder.and(predicate, rolePredicate);
             }
         }
 
