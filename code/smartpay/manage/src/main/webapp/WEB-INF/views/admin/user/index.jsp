@@ -52,7 +52,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/list${domain}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -62,7 +62,7 @@
                 {
                     'name': 'username', 'targets': 1, 'data': 'username',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -77,7 +77,7 @@
                 {
                     'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                        return '<a href="' + "${rootURL}${controller}" + '/edit${domain}/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'

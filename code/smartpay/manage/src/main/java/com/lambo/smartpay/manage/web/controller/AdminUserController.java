@@ -72,31 +72,44 @@ public class AdminUserController {
         return "admin/user";
     }
 
-    @ModelAttribute("domain")
-    public String domain() {
-        return "AdminUser";
-    }
-
-    @ModelAttribute("roles")
-    public List<Role> roles() {
-        return roleService.getAll();
-    }
-
     @ModelAttribute("userStatuses")
     public List<UserStatus> userStatuses() {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"{domain}", "/index{domain}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("domain") String domain, Model model) {
 
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+        model.addAttribute("domain", domain);
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+            produces = "application/json")
     public
     @ResponseBody
-    String list(HttpServletRequest request) {
+    String list(HttpServletRequest request, @PathVariable("domain") String domain) {
+
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+        // form role code based on the role parameter
+        String roleCode = UserCommand.Role.valueOf(domain).getCode();
+        // create Role object for query criteria
+        Role criteriaRole;
+        try {
+            criteriaRole = roleService.findByCode(roleCode);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+        // create User criteria and attached the role
+        User criteriaUser = new User();
+        criteriaUser.setRoles(new HashSet<Role>());
+        criteriaUser.getRoles().add(criteriaRole);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -116,13 +129,13 @@ public class AdminUserController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<User> users = userService.findByCriteria(search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records
-        Long recordsTotal = userService.countAll();
+        Long recordsTotal = userService.countByCriteria(criteriaUser);
         // count records filtered
-        Long recordsFiltered = userService.countByCriteria(search);
+        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -144,22 +157,35 @@ public class AdminUserController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/create{role}", method = RequestMethod.GET)
-    public String createAdmin(Model model, @PathVariable("role")String role) {
-        logger.debug("CreateAdmin: " + role);
-        model.addAttribute("action", "createAdmin");
+    @RequestMapping(value = "/create{domain}", method = RequestMethod.GET)
+    public String create(Model model, @PathVariable("domain") String domain) {
+
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+        model.addAttribute("domain", domain);
+        model.addAttribute("action", "create");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
 
-    @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
-    public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
-        // get admin role
-        Role role = null;
+    @RequestMapping(value = "/create{domain}", method = RequestMethod.POST)
+    public String save(Model model, @PathVariable("domain") String domain,
+                       @ModelAttribute("userCommand") UserCommand userCommand) {
+
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+
+        // set domain to model
+        model.addAttribute("domain", domain);
+        // form role code based on the role parameter
+        String roleCode = UserCommand.Role.valueOf(domain).getCode();
+        Role domainRole = null;
         try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+            domainRole = roleService.findByCode(roleCode);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find role " + ResourceProperties.ROLE_ADMIN_CODE);
+            logger.info("Cannot find role " + roleCode);
             e.printStackTrace();
         }
         Locale locale = LocaleContextHolder.getLocale();
@@ -172,7 +198,7 @@ public class AdminUserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "createAdmin");
+            model.addAttribute("action", "create");
             return "main";
         }
         // check if email already taken
@@ -183,13 +209,13 @@ public class AdminUserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "createAdmin");
+            model.addAttribute("action", "create");
             return "main";
         }
         //TODO check if all required fields filled
 
         // create User and set admin to user
-        User user = createUser(userCommand, role);
+        User user = createUser(userCommand, domainRole);
         // set initial password
         user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
         // persist user
@@ -213,9 +239,16 @@ public class AdminUserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, @PathVariable("domain") String domain,
+                       Model model) {
 
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+
+        // set domain to model
+        model.addAttribute("domain", domain);
         model.addAttribute("action", "show");
         // get user by id
         User user = null;
@@ -239,12 +272,19 @@ public class AdminUserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/edit{domain}/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id, @PathVariable("domain") String domain,
+                       Model model) {
 
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+
+        // set domain to model
+        model.addAttribute("domain", domain);
         model.addAttribute("action", "edit");
         // get user by id
-        User user = null;
+        User user;
         try {
             user = userService.get(id);
         } catch (NoSuchEntityException e) {
@@ -265,9 +305,16 @@ public class AdminUserController {
      * @param userCommand
      * @return
      */
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String update(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+    @RequestMapping(value = "/edit{domain}", method = RequestMethod.POST)
+    public String update(Model model, @PathVariable("domain") String domain,
+                         @ModelAttribute("userCommand") UserCommand userCommand) {
 
+        if (UserCommand.Role.valueOf(domain) == null) {
+            throw new BadRequestException("400", "No role " + domain + " found.");
+        }
+
+        // set domain to model
+        model.addAttribute("domain", domain);
         // if the email is change we need to check uniqueness
         User user = null;
         try {
@@ -295,6 +342,7 @@ public class AdminUserController {
             }
         }
 
+
         // pass uniqueness check create the user
         editUser(user, userCommand);
 
@@ -305,6 +353,7 @@ public class AdminUserController {
         } catch (NotUniqueException e) {
             e.printStackTrace();
         }
+
         return "main";
     }
 
@@ -318,10 +367,11 @@ public class AdminUserController {
     public
     @ResponseBody
     String delete(@RequestParam(value = "id") Long id) {
-        logger.debug("in delete. id: " + id);
+
         if (id == null) {
             throw new BadRequestException("400", "id is null.");
         }
+
         User user;
 
         JsonResponse response = new JsonResponse();

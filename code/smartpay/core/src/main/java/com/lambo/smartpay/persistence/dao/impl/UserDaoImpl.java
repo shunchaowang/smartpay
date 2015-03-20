@@ -5,6 +5,7 @@ import com.lambo.smartpay.persistence.entity.Role;
 import com.lambo.smartpay.persistence.entity.User;
 import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -188,7 +189,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
             typedQuery.setMaxResults(length);
         }
 
-        logger.debug("findByCriteria query is " + typedQuery);
+        logger.debug("findByCriteria query is " + typedQuery.unwrap(Query.class).getQueryString());
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
@@ -213,6 +214,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
                 && StringUtils.isBlank(user.getLastName())
                 && StringUtils.isBlank(user.getEmail())
                 && user.getUserStatus() == null && user.getMerchant() == null
+                && user.getRoles() == null
                 && user.getActive() == null) {
             return true;
         }

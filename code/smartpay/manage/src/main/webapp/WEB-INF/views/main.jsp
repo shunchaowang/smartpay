@@ -21,14 +21,14 @@
 
             <c:if test="${controller != null}">
                 <li>
-                    <a href="${rootURL}${controller}">
+                    <a href="${rootURL}${controller}/${domain}">
                         <spring:message code="manage.label" arguments="${entity}"/>
                     </a>
                 </li>
             </c:if>
             <c:if test="${action != null}">
                 <li>
-                    <a href="${rootURL}${controller}/${action}">
+                    <a href="${rootURL}${controller}/${action}${domain}">
                         <spring:message code="${action}.label" arguments="${entity}"/>
                     </a>
                 </li>

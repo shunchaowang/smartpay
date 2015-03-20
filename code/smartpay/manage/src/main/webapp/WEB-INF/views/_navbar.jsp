@@ -22,8 +22,8 @@
         <spring:message code='Merchant.label' var="merchant"/>
         <spring:message code='Site.label' var="site"/>
         <spring:message code='User.label' var="user"/>
-        <spring:message code='AdminUser.label' var="adminUser"/>
-        <spring:message code='MerchantAdminUser.label' var="merchantAdminUser"/>
+        <spring:message code='Admin.label' var="adminUser"/>
+        <spring:message code='MerchantAdmin.label' var="merchantAdminUser"/>
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
 
@@ -146,9 +146,16 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
-                                <a href="${rootURL}admin/user">
+                                <a href="${rootURL}admin/user/indexAdmin">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label" arguments="${user}"/>
+                                    <spring:message code="index.label" arguments="${adminUser}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/user/indexMerchantAdmin">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="index.label"
+                                                    arguments="${merchantAdminUser}"/>
                                 </a>
                             </li>
                             <li class="">

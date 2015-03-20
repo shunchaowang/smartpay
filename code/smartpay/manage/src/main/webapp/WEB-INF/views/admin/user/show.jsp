@@ -102,14 +102,14 @@
 
 <div class="row">
     <div class="col-sm-2 col-sm-offset-2">
-        <a href="${rootURL}${controller}">
+        <a href="${rootURL}${controller}/${domain}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.return.label"/>
             </button>
         </a>
     </div>
     <div class="col-sm-2">
-        <a href="${rootURL}${controller}/edit/${userCommand.id}">
+        <a href="${rootURL}${controller}/edit${domain}/${userCommand.id}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.edit.label"/>
             </button>

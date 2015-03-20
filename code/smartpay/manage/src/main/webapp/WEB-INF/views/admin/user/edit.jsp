@@ -26,7 +26,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/edit" method="POST"
+    <form:form action="${rootURL}${controller}/edit${domain}" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="edit-user-form">
         <form:input path="id" id="id" type="hidden" value="${userCommand.id}"/>
         <div class="form-group">
@@ -110,7 +110,7 @@
                 <button class='btn btn-default' id='reset-button' type="reset">
                     <spring:message code='action.reset.label'/>
                 </button>
-                <a href="${rootURL}${controller}">
+                <a href="${rootURL}${controller}/${domain}">
                     <button type="button" class="btn btn-default">
                         <spring:message code="action.return.label"/>
                     </button>
