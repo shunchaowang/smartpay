@@ -109,7 +109,7 @@ public class AdminMerchantController {
     }
 
     // index view
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
@@ -202,7 +202,6 @@ public class AdminMerchantController {
 
         return "main";
     }
-
 
     private Credential createCredential(MerchantCommand merchantCommand) {
         Credential credential = new Credential();

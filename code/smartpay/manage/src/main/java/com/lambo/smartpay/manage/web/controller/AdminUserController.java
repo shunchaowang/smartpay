@@ -77,7 +77,7 @@ public class AdminUserController {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"{subDomain}", "/index{subDomain}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/{subDomain}", "/index{subDomain}"}, method = RequestMethod.GET)
     public String index(@PathVariable("subDomain") String subDomain, Model model) {
 
         if (UserCommand.Role.valueOf(subDomain) == null) {

@@ -20,6 +20,8 @@
 
         <!-- define domain related vars -->
         <spring:message code='Merchant.label' var="merchant"/>
+        <spring:message code='Credential.label' var="merchantCredential"/>
+        <spring:message code='Transaction.label' var="merchantTransaction"/>
         <spring:message code='Site.label' var="site"/>
         <spring:message code='User.label' var="user"/>
         <spring:message code='Admin.label' var="admin"/>
@@ -44,9 +46,23 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
-                                <a href="${rootURL}admin/merchant">
+                                <a href="${rootURL}admin/merchant/">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label" arguments="${merchant}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/merchant/credential/">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="index.label"
+                                                    arguments="${merchantCredential}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/merchant/transaction/">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="index.label"
+                                                    arguments="${merchantTransaction}"/>
                                 </a>
                             </li>
                             <li class="">
