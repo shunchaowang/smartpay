@@ -177,7 +177,7 @@ public class AccountStatusServiceImpl implements AccountStatusService {
 
     @Override
     public List<AccountStatus> getAll() {
-        return null;
+        return accountStatusDao.getAll();
     }
 
     @Override

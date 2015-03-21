@@ -185,7 +185,7 @@ public class CredentialStatusServiceImpl implements CredentialStatusService {
 
     @Override
     public List<CredentialStatus> getAll() {
-        return null;
+        return credentialStatusDao.getAll();
     }
 
     @Override

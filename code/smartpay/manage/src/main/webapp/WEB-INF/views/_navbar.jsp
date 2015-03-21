@@ -50,7 +50,7 @@
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/merchant">
+                                <a href="${rootURL}admin/merchant/create">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <spring:message code="create.label" arguments="${merchant}"/>
                                 </a>

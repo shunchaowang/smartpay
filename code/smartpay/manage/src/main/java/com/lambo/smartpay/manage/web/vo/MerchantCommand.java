@@ -34,7 +34,6 @@ public class MerchantCommand {
 
     // Encryption
     private String encryptionKey;
-    private Date encryptionExpirationTime;
     private String encryptionRemark;
     private Long encryptionTypeId;
     private String encryptionTypeName;
@@ -193,14 +192,6 @@ public class MerchantCommand {
 
     public void setEncryptionKey(String encryptionKey) {
         this.encryptionKey = encryptionKey;
-    }
-
-    public Date getEncryptionExpirationTime() {
-        return encryptionExpirationTime;
-    }
-
-    public void setEncryptionExpirationTime(Date encryptionExpirationTime) {
-        this.encryptionExpirationTime = encryptionExpirationTime;
     }
 
     public String getEncryptionRemark() {

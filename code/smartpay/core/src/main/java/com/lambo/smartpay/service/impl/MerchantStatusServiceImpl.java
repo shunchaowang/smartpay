@@ -179,7 +179,7 @@ public class MerchantStatusServiceImpl implements MerchantStatusService {
 
     @Override
     public List<MerchantStatus> getAll() {
-        return null;
+        return merchantStatusDao.getAll();
     }
 
     @Override

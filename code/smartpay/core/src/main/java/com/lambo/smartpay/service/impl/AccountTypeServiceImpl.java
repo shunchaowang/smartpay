@@ -177,7 +177,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
 
     @Override
     public List<AccountType> getAll() {
-        return null;
+        return accountTypeDao.getAll();
     }
 
     @Override

@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
+<spring:message code="${domain}.label" var="entity"/>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -23,23 +18,25 @@
 
 <div class='row'>
     <div class='col-sm-4'>
-        <h2><b><spring:message code='create.label' arguments="${entity}"/></b></h2>
+        <h2><b>
+            <spring:message code='edit.label' arguments="${entity}"/>
+        </b></h2>
     </div>
 </div>
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/create${subDomain}" method="POST"
-               commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
+    <form:form action="${rootURL}${controller}/edit" method="POST"
+               commandName="merchantCommand" cssClass="form-horizontal" id="edit-merchant-form">
+        <form:input path="id" id="id" type="hidden" value="${merchantCommand.id}"/>
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="username">
-                <spring:message code="username.label"/>
-                <span class="required-indicator">*</span>
+            <label class="col-sm-3 control-label" for="merchantname">
+                <spring:message code="merchantname.label"/>
             </label>
 
             <div class="col-sm-6">
-                <form:input path="username" id="username" cssClass="form-control" required=""
-                            placeholder="Username"/>
+                <form:input path="merchantname" id="merchantname" cssClass="form-control"
+                            value="${merchantCommand.merchantname}" readonly="true"/>
             </div>
         </div>
         <!-- first name -->
@@ -51,7 +48,7 @@
 
             <div class="col-sm-6">
                 <form:input path="firstName" id="firstName" cssClass="form-control" required=""
-                            placeholder="First Name"/>
+                            value="${merchantCommand.firstName}"/>
             </div>
         </div>
         <!-- last name -->
@@ -63,7 +60,7 @@
 
             <div class="col-sm-6">
                 <form:input path="lastName" id="lastName" cssClass="form-control" required=""
-                            placeholder="Last Name"/>
+                            value="${merchantCommand.lastName}"/>
             </div>
         </div>
         <!-- email -->
@@ -75,20 +72,20 @@
 
             <div class="col-sm-6">
                 <form:input path="email" id="email" cssClass="form-control" required=""
-                            placeholder="Email"/>
+                            value="${merchantCommand.email}"/>
             </div>
         </div>
-        <!-- user status -->
+        <!-- merchant status -->
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="userStatus">
+            <label class="col-sm-3 control-label" for="merchantStatus">
                 <spring:message code="status.label"/>
                 <span class="required-indicator">*</span>
             </label>
 
             <div class="col-sm-6">
-                <form:select path="userStatus" id="userStatus" cssClass="form-control" required=""
-                             placeholder="Status">
-                    <c:forEach items="${userStatuses}" var="status">
+                <form:select path="merchantStatus" id="merchantStatus" cssClass="form-control" required=""
+                             value="${merchantCommand.merchantStatus}">
+                    <c:forEach items="${merchantStatuses}" var="status">
                         <form:option value="${status.id}">${status.name}</form:option>
                     </c:forEach>
                 </form:select>
@@ -101,7 +98,8 @@
             </label>
 
             <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"/>
+                <form:input path="remark" id="remark" cssClass="form-control"
+                            value="${merchantCommand.remark}"/>
             </div>
         </div>
         <div class='form-group'>
@@ -112,6 +110,11 @@
                 <button class='btn btn-default' id='reset-button' type="reset">
                     <spring:message code='action.reset.label'/>
                 </button>
+                <a href="${rootURL}${controller}/">
+                    <button type="button" class="btn btn-default">
+                        <spring:message code="action.return.label"/>
+                    </button>
+                </a>
             </div>
         </div>
     </form:form>
@@ -119,13 +122,12 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#new-user-form').validate({
+        $('#edit-merchant-form').validate({
             rules: {
-                username: {required: true, minlength: 3, maxlength: 32},
                 firstName: {required: true, minlength: 3, maxlength: 32},
                 lastName: {required: true, minlength: 3, maxlength: 32},
-                email: {required: true, email: true, minlength: 3, maxlength: 32},
-                userStatus: {required: true}
+                email: {required: true, minlength: 3, maxlength: 32},
+                merchantStatus: {required: true}
             }
         });
     });

@@ -177,7 +177,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public List<Currency> getAll() {
-        return null;
+        return currencyDao.getAll();
     }
 
     @Override

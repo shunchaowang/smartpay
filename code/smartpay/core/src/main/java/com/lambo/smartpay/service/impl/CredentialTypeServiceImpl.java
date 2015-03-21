@@ -179,7 +179,7 @@ public class CredentialTypeServiceImpl implements CredentialTypeService {
 
     @Override
     public List<CredentialType> getAll() {
-        return null;
+        return credentialTypeDao.getAll();
     }
 
     @Override

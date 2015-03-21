@@ -2,7 +2,7 @@ package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.persistence.entity.Merchant;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by swang on 3/20/2015.
@@ -15,7 +15,7 @@ public class DataTablesMerchant {
     private String contact;
     private String tel;
     private String email;
-    private Date createdTime;
+    private String createdTime;
     private String merchantStatus;
 
     public DataTablesMerchant(Merchant merchant) {
@@ -25,7 +25,8 @@ public class DataTablesMerchant {
         contact = merchant.getContact();
         tel = merchant.getTel();
         email = merchant.getEmail();
-        createdTime = merchant.getCreatedTime();
+        SimpleDateFormat format = new SimpleDateFormat("MMM/dd/yyyy");
+        createdTime = format.format(merchant.getCreatedTime());
         merchantStatus = merchant.getMerchantStatus().getName();
     }
 
@@ -77,11 +78,11 @@ public class DataTablesMerchant {
         this.email = email;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 

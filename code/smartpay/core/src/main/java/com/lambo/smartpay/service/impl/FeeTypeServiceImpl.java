@@ -177,7 +177,7 @@ public class FeeTypeServiceImpl implements FeeTypeService {
 
     @Override
     public List<FeeType> getAll() {
-        return null;
+        return feeTypeDao.getAll();
     }
 
     @Override

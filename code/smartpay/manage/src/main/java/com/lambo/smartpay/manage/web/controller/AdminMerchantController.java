@@ -93,6 +93,11 @@ public class AdminMerchantController {
         return credentialTypeService.getAll();
     }
 
+    @ModelAttribute("credentialStatuses")
+    public List<CredentialStatus> credentialStatuses() {
+        return credentialStatusService.getAll();
+    }
+
     @ModelAttribute("encryptionTypes")
     public List<EncryptionType> encryptionTypes() {
         return encryptionTypeService.getAll();
@@ -213,7 +218,7 @@ public class AdminMerchantController {
         }
         credential.setContent(merchantCommand.getCredentialContent());
         credential.setActive(true);
-
+        credential.setExpirationDate(merchantCommand.getCredentialExpirationTime());
         credential.setCredentialStatus(credentialStatus);
         credential.setCredentialType(credentialType);
         return credential;
@@ -276,7 +281,9 @@ public class AdminMerchantController {
         merchant.setActive(true);
         merchant.setAddress(merchantCommand.getAddress());
         merchant.setContact(merchantCommand.getContact());
+        merchant.setTel(merchantCommand.getTel());
         merchant.setEmail(merchantCommand.getEmail());
+        merchant.setRemark(merchantCommand.getRemark());
 
         // create all persisting relationships
         Credential credential = createCredential(merchantCommand);

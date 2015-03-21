@@ -226,7 +226,7 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
 
     @Override
     public List<User> getAll() {
-        return null;
+        return userDao.getAll();
     }
 
     @Override

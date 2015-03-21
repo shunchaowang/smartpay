@@ -3,7 +3,7 @@ package com.lambo.smartpay.manage.web.vo.table;
 import com.lambo.smartpay.persistence.entity.User;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by swang on 3/15/2015.
@@ -17,7 +17,7 @@ public class DataTablesUser implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
-    private Date createdTime;
+    private String createdTime;
     private String userStatus;
 
     public DataTablesUser(User user) {
@@ -26,7 +26,8 @@ public class DataTablesUser implements Serializable {
         firstName = user.getFirstName();
         lastName = user.getLastName();
         email = user.getEmail();
-        createdTime = user.getCreatedTime();
+        SimpleDateFormat format = new SimpleDateFormat("MMM/dd/yyyy");
+        createdTime = format.format(user.getCreatedTime());
         userStatus = user.getUserStatus().getName();
     }
 
@@ -70,11 +71,11 @@ public class DataTablesUser implements Serializable {
         this.email = email;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 

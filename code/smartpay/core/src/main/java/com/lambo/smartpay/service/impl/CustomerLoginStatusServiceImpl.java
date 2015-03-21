@@ -186,7 +186,7 @@ public class CustomerLoginStatusServiceImpl implements CustomerLoginStatusServic
 
     @Override
     public List<CustomerLoginStatus> getAll() {
-        return null;
+        return customerLoginStatusDao.getAll();
     }
 
     @Override

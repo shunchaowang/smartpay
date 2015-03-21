@@ -179,7 +179,7 @@ public class CustomerStatusServiceImpl implements CustomerStatusService {
 
     @Override
     public List<CustomerStatus> getAll() {
-        return null;
+        return customerStatusDao.getAll();
     }
 
     @Override

@@ -179,7 +179,7 @@ public class EncryptionTypeServiceImpl implements EncryptionTypeService {
 
     @Override
     public List<EncryptionType> getAll() {
-        return null;
+        return encryptionTypeDao.getAll();
     }
 
     @Override
