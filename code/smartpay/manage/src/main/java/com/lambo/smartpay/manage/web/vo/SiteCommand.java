@@ -23,8 +23,11 @@ public class SiteCommand {
 
     // relationships
     private Long siteStatus;
+    private String siteStatusName;
 
     private Long merchant;
+    private String merchantName;
+
 
     // set & get
     public Long getId() {
@@ -99,5 +102,38 @@ public class SiteCommand {
         this.active = active;
     }
 
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public String getSiteStatusName() {
+        return siteStatusName;
+    }
+
+    public void setSiteStatusName(String siteStatusName) {
+        this.siteStatusName = siteStatusName;
+    }
+
+
+    public enum Role {
+        Admin("100"),
+        MerchantAdmin("200"),
+        MerchantOperator("201");
+
+        private String code;
+
+        Role(String code) {
+            this.code = code;
+        }
+
+        public String getCode() {
+            return code;
+        }
+    }
 
 }

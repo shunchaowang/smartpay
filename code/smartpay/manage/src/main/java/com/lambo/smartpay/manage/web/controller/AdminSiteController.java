@@ -10,6 +10,8 @@ import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.SiteCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
+import org.springframework.context.i18n.LocaleContextHolder;
 import com.lambo.smartpay.persistence.entity.Merchant;
 import com.lambo.smartpay.persistence.entity.Site;
 import com.lambo.smartpay.persistence.entity.SiteStatus;
@@ -25,23 +27,28 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import org.springframework.context.MessageSource;
+
 
 
 /**
  * Created by linly on 3/16/2015.
  */
 @Controller
-@RequestMapping("/site")
-public class SiteController {
+@RequestMapping("/admin/site")
+public class AdminSiteController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SiteController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdminSiteController.class);
 
     @Autowired
     private SiteService siteService;
@@ -49,11 +56,13 @@ public class SiteController {
     private SiteStatusService siteStatusService;
     @Autowired
     private MerchantService merchantService;
+    @Autowired
+    private MessageSource messageSource;
 
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
-        return "site";
+        return "admin/site";
     }
 
     @ModelAttribute("domain")
@@ -68,10 +77,21 @@ public class SiteController {
 
     @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
     public String index() {
-
         logger.debug("I've been through here ~~~~~~~~~~ 1 ");
         return "main";
     }
+
+    /*
+    @RequestMapping(value = {"{subDomain}", "/index{subDomain}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("subDomain") String subDomain, Model model) {
+
+        if (SiteCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+        model.addAttribute("subDomain", subDomain);
+        return "main";
+    }
+    */
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public
@@ -79,7 +99,6 @@ public class SiteController {
     String list(HttpServletRequest request) {
 
         logger.debug("I've been through here ~~~~~~~~~~ 2 ");
-
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -126,11 +145,11 @@ public class SiteController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/audit", method = RequestMethod.GET)
+    @RequestMapping(value = "/auditList", method = RequestMethod.GET)
     public String audit(Model model) {
         logger.debug("I've been through here ~~~~~~~~~~ 3 ");
 
-        model.addAttribute("action", "audit");
+        model.addAttribute("action", "auditList");
         return "main";
     }
 
@@ -139,6 +158,7 @@ public class SiteController {
     public
     @ResponseBody
     String audit(HttpServletRequest request) {
+
         logger.debug("I've been through here ~~~~~~~~~~ 4 ");
 
 
@@ -199,6 +219,48 @@ public class SiteController {
         return gson.toJson(result);
     }
 
+    /*
+
+    @RequestMapping(value = "/auditSite", method = RequestMethod.GET)
+    public String auditSite(Model model) {
+        logger.debug("I've been through here ~~~~~~~~~~ 5 ");
+
+        model.addAttribute("action", "audit");
+        return "main";
+    }
+    */
+
+    @RequestMapping(value = "/auditSite/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id, Model model) {
+
+
+        logger.debug("I've been through here ~~~~~~~~~~ 555 ");
+
+        /*
+        if (SiteCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+        */
+
+        // set subDomain to model
+        //model.addAttribute("subDomain", subDomain);
+        model.addAttribute("action", "auditSite");
+        // get user by id
+        Site site;
+        SiteStatus siteStatus ;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User " + id + " not found.");
+        }
+
+        // Modified SiteCommand & add to model and view
+        SiteCommand siteCommand = createSiteCommand(site);
+        model.addAttribute("siteCommand", siteCommand);
+
+        return "main";
+    }
 
     @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -220,9 +282,9 @@ public class SiteController {
             e.printStackTrace();
         }
         */
-
+/*
         // create Site and set admin to site
-        Site site = createSite(siteCommand);
+        Site site = createSiteCommand(siteCommand);
         // set initial password
         // persist site
         try {
@@ -236,12 +298,41 @@ public class SiteController {
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE SITE
         model.addAttribute("action", "index");
+        */
         return "main";
+
     }
 
 
+
+    // create SiteCommand from User
+    private SiteCommand createSiteCommand(Site site) {
+        SiteCommand SiteCommand = new SiteCommand();
+        SiteCommand.setId(site.getId());
+        SiteCommand.setName(site.getName());
+        SiteCommand.setUrl(site.getUrl());
+        SiteCommand.setActive(site.getActive());
+        SiteCommand.setCreatedTime(site.getCreatedTime());
+        SiteCommand.setRemark(site.getRemark());
+        if (site.getMerchant() != null) {
+            SiteCommand.setMerchant(site.getMerchant().getId());
+            SiteCommand.setMerchantName(site.getMerchant().getName());
+            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchant());
+            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchantName());
+
+        }
+
+        if (site.getSiteStatus() != null) {
+            SiteCommand.setSiteStatus(site.getSiteStatus().getId());
+            SiteCommand.setSiteStatusName(site.getSiteStatus().getName());
+        }
+        return SiteCommand;
+    }
+
+    /*
+
     // create a new Site from a SiteCommand
-    private Site createSite(SiteCommand siteCommand) {
+    private Site createSiteCommand(SiteCommand siteCommand) {
         Site site = new Site();
         site.setName(siteCommand.getName());
         site.setUrl(siteCommand.getUrl());
@@ -272,4 +363,29 @@ public class SiteController {
         site.setSiteStatus(siteStatus);
         return site;
     }
+
+*/
+
+
+    // edit a User from a SiteCommand
+    private void auditSiteCommond(Site site,SiteCommand siteCommand) {
+
+        site.setName(siteCommand.getName());
+        site.setUrl(siteCommand.getUrl());
+        site.setRemark(site.getRemark());
+       // site.setSiteStatus(site.getSiteStatus());
+
+        // set SiteStatus
+        SiteStatus siteStatus = null;
+        try {
+            siteStatus = siteStatusService.get(siteCommand.getSiteStatus());
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find site status " + siteCommand.getSiteStatus());
+            e.printStackTrace();
+        }
+        site.setSiteStatus(siteStatus);
+
+        //return site;
+    }
+
 }
