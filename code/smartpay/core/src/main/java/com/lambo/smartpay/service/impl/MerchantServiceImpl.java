@@ -193,7 +193,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
      */
     @Transactional
     @Override
-    public Boolean freezeMerchant(Long id) throws NoSuchEntityException {
+    public Merchant freezeMerchant(Long id) throws NoSuchEntityException {
         if (id == null) {
             throw new NoSuchEntityException("Id is null.");
         }
@@ -205,7 +205,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_FROZEN_CODE);
         merchant.setMerchantStatus(merchantStatus);
-        return true;
+        return merchant;
     }
 
     /**
@@ -217,7 +217,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
      */
     @Transactional
     @Override
-    public Boolean unfreezeMerchant(Long id) throws NoSuchEntityException {
+    public Merchant unfreezeMerchant(Long id) throws NoSuchEntityException {
         if (id == null) {
             throw new NoSuchEntityException("Id is null.");
         }
@@ -229,7 +229,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_NORMAL_CODE);
         merchant.setMerchantStatus(merchantStatus);
-        return true;
+        return merchant;
     }
 
     /**

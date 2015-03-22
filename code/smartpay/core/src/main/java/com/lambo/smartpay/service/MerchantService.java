@@ -21,7 +21,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param id
      * @return
      */
-    Boolean freezeMerchant(Long id) throws NoSuchEntityException;
+    Merchant freezeMerchant(Long id) throws NoSuchEntityException;
 
     /**
      * Unfreeze a Merchant by updating the MerchantStatus from Frozen to Normal.
@@ -30,7 +30,7 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @param id
      * @return
      */
-    Boolean unfreezeMerchant(Long id) throws NoSuchEntityException;
+    Merchant unfreezeMerchant(Long id) throws NoSuchEntityException;
 
     /**
      * Update the credential/certificate of the Merchant.

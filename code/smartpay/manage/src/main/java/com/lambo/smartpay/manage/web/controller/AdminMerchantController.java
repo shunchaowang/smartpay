@@ -11,6 +11,7 @@ import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.MerchantCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import com.lambo.smartpay.persistence.entity.Credential;
 import com.lambo.smartpay.persistence.entity.CredentialStatus;
 import com.lambo.smartpay.persistence.entity.CredentialType;
@@ -39,6 +40,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -163,6 +165,235 @@ public class AdminMerchantController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(resultSet);
     }
+
+    /**
+     * freeze merchant list, only show merchant of status normal (code 200)
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/freeze"}, method = RequestMethod.GET)
+    public String freeze(Model model) {
+        model.addAttribute("action", "freeze");
+        return "main";
+    }
+
+    // ajax for DataTables
+    @RequestMapping(value = "/freezeList", method = RequestMethod.GET,
+            produces = "application/json")
+    @ResponseBody
+    public String freezeList(HttpServletRequest request) {
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        // normal merchant status
+        MerchantStatus normalStatus = null;
+        try {
+            normalStatus = merchantStatusService
+                    .findByCode(ResourceProperties.MERCHANT_STATUS_NORMAL_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        Merchant merchantCriteria = new Merchant();
+        merchantCriteria.setMerchantStatus(normalStatus);
+
+        List<Merchant> merchants = merchantService.findByCriteria(merchantCriteria, search, start,
+                length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total and filtered
+        Long recordsTotal = merchantService.countByCriteria(merchantCriteria);
+        Long recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
+
+        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
+        for (Merchant merchant : merchants) {
+            DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
+            dataTablesMerchants.add(tablesMerchant);
+        }
+
+        DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesMerchants);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(resultSet);
+    }
+
+    /**
+     * ajax calls to freeze a merchant by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/freeze", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String freeze(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        Merchant merchant;
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("Merchant.label", null, locale);
+        try {
+            merchant = merchantService.freezeMerchant(id);
+
+            //TODO freeze all sites and users of the merchant
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notFrozenMessage = messageSource.getMessage("not.frozen.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notFrozenMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String frozenMessage = messageSource.getMessage("frozen.message",
+                new String[]{label, merchant.getName()}, locale);
+        response.setMessage(frozenMessage);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
+    }
+
+    /**
+     * freeze merchant list, only show merchant of status normal (code 200)
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/unfreeze"}, method = RequestMethod.GET)
+    public String unfreeze(Model model) {
+        model.addAttribute("action", "unfreeze");
+        return "main";
+    }
+
+    // ajax for DataTables
+    @RequestMapping(value = "/unfreezeList", method = RequestMethod.GET,
+            produces = "application/json")
+    @ResponseBody
+    public String unfreezeList(HttpServletRequest request) {
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        // normal merchant status
+        MerchantStatus frozenStatus = null;
+        try {
+            frozenStatus = merchantStatusService
+                    .findByCode(ResourceProperties.MERCHANT_STATUS_FROZEN_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        Merchant merchantCriteria = new Merchant();
+        merchantCriteria.setMerchantStatus(frozenStatus);
+
+        List<Merchant> merchants = merchantService.findByCriteria(merchantCriteria, search, start,
+                length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total and filtered
+        Long recordsTotal = merchantService.countByCriteria(merchantCriteria);
+        Long recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
+
+        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
+        for (Merchant merchant : merchants) {
+            DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
+            dataTablesMerchants.add(tablesMerchant);
+        }
+
+        DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesMerchants);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(resultSet);
+    }
+
+    /**
+     * ajax calls to unfreeze a merchant by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/unfreeze", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String unfreeze(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        Merchant merchant;
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("Merchant.label", null, locale);
+        try {
+            merchant = merchantService.unfreezeMerchant(id);
+
+            //TODO unfreeze all sites and users of the merchant
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notUnfrozenMessage = messageSource.getMessage("not.unfrozen.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notUnfrozenMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String unfrozenMessage = messageSource.getMessage("unfrozen.message",
+                new String[]{label, merchant.getName()}, locale);
+        response.setMessage(unfrozenMessage);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
+    }
+
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {

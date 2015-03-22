@@ -52,6 +52,17 @@
                                 </a>
                             </li>
                             <li class="">
+                                <a href="${rootURL}admin/merchant/freeze">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="freeze.label" arguments="${merchant}"/>
+                                </a>
+                            </li> <li class="">
+                            <a href="${rootURL}admin/merchant/unfreeze">
+                                <i class="glyphicon glyphicon-th-list"></i>
+                                <spring:message code="unfreeze.label" arguments="${merchant}"/>
+                            </a>
+                        </li>
+                            <li class="">
                                 <a href="${rootURL}admin/merchant/credential/">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label"
