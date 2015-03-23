@@ -265,6 +265,7 @@ public class AdminMerchantController {
             merchant = merchantService.freezeMerchant(id);
 
             //TODO freeze all sites and users of the merchant
+
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             String notFrozenMessage = messageSource.getMessage("not.frozen.message",

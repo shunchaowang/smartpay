@@ -58,12 +58,12 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}/showInfo/" + row['id'] +
                                 '">'
-                                + '<spring:message code="show.label"/>'
+                                + '<spring:message code="action.show.label"/>'
                                 + '</a>'
                                 + ' ' +
                                 '<a href="' + "${rootURL}${controller}/editInfo/" + row['id'] +
                                 '">'
-                                + '<spring:message code="edit.label"/>'
+                                + '<spring:message code="action.edit.label"/>'
                                 + '</a>';
 
                     }
