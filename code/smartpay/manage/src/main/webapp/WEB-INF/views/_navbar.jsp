@@ -136,6 +136,12 @@
                                     <spring:message code="unfreeze.label" arguments="${site}"/>
                                 </a>
                             </li>
+                            <li class="">
+                                <a href="${rootURL}admin/site/create">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="create.label" arguments="${site}"/>
+                                </a>
+                            </li>
                         </sec:authorize>
                         <!-- admin menu ends -->
 
