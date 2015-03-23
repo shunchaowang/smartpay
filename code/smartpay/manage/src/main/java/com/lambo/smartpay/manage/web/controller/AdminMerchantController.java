@@ -27,6 +27,10 @@ import com.lambo.smartpay.service.EncryptionTypeService;
 import com.lambo.smartpay.service.FeeTypeService;
 import com.lambo.smartpay.service.MerchantService;
 import com.lambo.smartpay.service.MerchantStatusService;
+import com.lambo.smartpay.service.SiteService;
+import com.lambo.smartpay.service.SiteStatusService;
+import com.lambo.smartpay.service.UserService;
+import com.lambo.smartpay.service.UserStatusService;
 import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -62,6 +66,15 @@ public class AdminMerchantController {
     private MerchantService merchantService;
     @Autowired
     private MerchantStatusService merchantStatusService;
+
+    @Autowired
+    private SiteService siteService;
+    @Autowired
+    private SiteStatusService siteStatusService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserStatusService userStatusService;
 
     @Autowired
     private CredentialStatusService credentialStatusService;

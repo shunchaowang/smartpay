@@ -2,8 +2,6 @@ package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.persistence.entity.Merchant;
 
-import java.text.SimpleDateFormat;
-
 /**
  * Created by swang on 3/20/2015.
  */
@@ -11,23 +9,30 @@ public class DataTablesTransaction {
 
     private Long id;
     private String name;
-    private String address;
-    private String contact;
-    private String tel;
-    private String email;
-    private String createdTime;
-    private String merchantStatus;
+    private Long encryptionId;
+    private String encryptionType;
+    private String encryptionKey;
+    private Long commissionFeeId;
+    private String commissionFeeType;
+    private Float commissionFeeValue;
+    private Long returnFeeId;
+    private String returnFeeType;
+    private Float returnFeeValue;
 
     public DataTablesTransaction(Merchant merchant) {
         id = merchant.getId();
         name = merchant.getName();
-        address = merchant.getAddress();
-        contact = merchant.getContact();
-        tel = merchant.getTel();
-        email = merchant.getEmail();
-        SimpleDateFormat format = new SimpleDateFormat("MMM/dd/yyyy");
-        createdTime = format.format(merchant.getCreatedTime());
-        merchantStatus = merchant.getMerchantStatus().getName();
+        encryptionId = merchant.getEncryption().getId();
+        encryptionKey = merchant.getEncryption().getKey();
+        encryptionType = merchant.getEncryption().getEncryptionType().getName();
+
+        commissionFeeId = merchant.getCommissionFee().getId();
+        commissionFeeValue = merchant.getCommissionFee().getValue();
+        commissionFeeType = merchant.getCommissionFee().getFeeType().getName();
+
+        returnFeeId = merchant.getReturnFee().getId();
+        returnFeeValue = merchant.getReturnFee().getValue();
+        returnFeeType = merchant.getReturnFee().getFeeType().getName();
     }
 
     public Long getId() {
@@ -46,51 +51,75 @@ public class DataTablesTransaction {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public Long getEncryptionId() {
+        return encryptionId;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setEncryptionId(Long encryptionId) {
+        this.encryptionId = encryptionId;
     }
 
-    public String getContact() {
-        return contact;
+    public String getEncryptionType() {
+        return encryptionType;
     }
 
-    public void setContact(String contact) {
-        this.contact = contact;
+    public void setEncryptionType(String encryptionType) {
+        this.encryptionType = encryptionType;
     }
 
-    public String getTel() {
-        return tel;
+    public String getEncryptionKey() {
+        return encryptionKey;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setEncryptionKey(String encryptionKey) {
+        this.encryptionKey = encryptionKey;
     }
 
-    public String getEmail() {
-        return email;
+    public Long getCommissionFeeId() {
+        return commissionFeeId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCommissionFeeId(Long commissionFeeId) {
+        this.commissionFeeId = commissionFeeId;
     }
 
-    public String getCreatedTime() {
-        return createdTime;
+    public String getCommissionFeeType() {
+        return commissionFeeType;
     }
 
-    public void setCreatedTime(String createdTime) {
-        this.createdTime = createdTime;
+    public void setCommissionFeeType(String commissionFeeType) {
+        this.commissionFeeType = commissionFeeType;
     }
 
-    public String getMerchantStatus() {
-        return merchantStatus;
+    public Float getCommissionFeeValue() {
+        return commissionFeeValue;
     }
 
-    public void setMerchantStatus(String merchantStatus) {
-        this.merchantStatus = merchantStatus;
+    public void setCommissionFeeValue(Float commissionFeeValue) {
+        this.commissionFeeValue = commissionFeeValue;
+    }
+
+    public Long getReturnFeeId() {
+        return returnFeeId;
+    }
+
+    public void setReturnFeeId(Long returnFeeId) {
+        this.returnFeeId = returnFeeId;
+    }
+
+    public String getReturnFeeType() {
+        return returnFeeType;
+    }
+
+    public void setReturnFeeType(String returnFeeType) {
+        this.returnFeeType = returnFeeType;
+    }
+
+    public Float getReturnFeeValue() {
+        return returnFeeValue;
+    }
+
+    public void setReturnFeeValue(Float returnFeeValue) {
+        this.returnFeeValue = returnFeeValue;
     }
 }
