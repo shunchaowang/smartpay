@@ -28,6 +28,9 @@ public class SiteCommand {
     private Long merchant;
     private String merchantName;
 
+    //operation
+    private String siteOperation;
+
 
     // set & get
     public Long getId() {
@@ -119,21 +122,8 @@ public class SiteCommand {
         this.siteStatusName = siteStatusName;
     }
 
+    public String getSiteOperation() {return siteOperation;}
 
-    public enum Role {
-        Admin("100"),
-        MerchantAdmin("200"),
-        MerchantOperator("201");
-
-        private String code;
-
-        Role(String code) {
-            this.code = code;
-        }
-
-        public String getCode() {
-            return code;
-        }
-    }
+    public void setSiteOperation(String siteOperation) {this.siteOperation = siteOperation;}
 
 }

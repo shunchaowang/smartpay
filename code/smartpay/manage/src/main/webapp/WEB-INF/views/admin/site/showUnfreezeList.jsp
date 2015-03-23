@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<spring:message code="unfreeze.label" var="entity"/>
 
 <div class="row">
     <div class="col-sm-6">
@@ -12,7 +12,7 @@
 <br/>
 
 <div class="row">
-    <table class="display cell-border" id="site-table">
+    <table class="display cell-border" id="unfreezeList-table">
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
@@ -29,7 +29,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#site-table').DataTable({
+        $('#unfreezeList-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -38,7 +38,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/showUnfreezeList",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -56,9 +56,9 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/showInfo/" + row['id'] +
-                                '">'
-                                + '<spring:message code="show.label"/>'
+                        return '<a href="' + "${rootURL}${controller}/editSite/unfreeze/" +
+                                row['id'] + '">'
+                                + '<spring:message code="site.unfreeze.label"/>'
                                 + '</a>';
                     }
                 }

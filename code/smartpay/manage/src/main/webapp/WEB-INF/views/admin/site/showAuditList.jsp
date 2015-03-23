@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<spring:message code="site.audit.label" var="entity"/>
 
 <div class="row">
     <div class="col-sm-6">
@@ -38,7 +38,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/auditList",
+                'url': "${rootURL}${controller}/showAuditList",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -56,8 +56,8 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/auditSite/" + row['id'] +
-                                '">'
+                        return '<a href="' + "${rootURL}${controller}/editSite/audit/" +
+                                row['id'] + '">'
                                 + '<spring:message code="site.audit.label"/>'
                                 + '</a>';
                     }

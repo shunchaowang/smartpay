@@ -145,19 +145,22 @@ public class AdminSiteController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/auditList", method = RequestMethod.GET)
-    public String audit(Model model) {
+    //@RequestMapping(value = "/auditSite/{id}/{operation}", method = RequestMethod.GET)
+    //public String edit(@PathVariable("id") Long id,@PathVariable("operation") String operation,
+
+    @RequestMapping(value = "/showAuditList", method = RequestMethod.GET)
+    public String showAuditList(Model model) {
         logger.debug("I've been through here ~~~~~~~~~~ 3 ");
 
-        model.addAttribute("action", "auditList");
+        model.addAttribute("action", "showAuditList");
         return "main";
     }
 
     @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/auditList", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/showAuditList", method = RequestMethod.GET, produces = "application/json")
     public
     @ResponseBody
-    String audit(HttpServletRequest request) {
+    String showAuditList(HttpServletRequest request) {
 
         logger.debug("I've been through here ~~~~~~~~~~ 4 ");
 
@@ -219,6 +222,156 @@ public class AdminSiteController {
         return gson.toJson(result);
     }
 
+    @RequestMapping(value = "/showFreezeList", method = RequestMethod.GET)
+    public String showFreezeList(Model model) {
+        logger.debug("I've been through here ~~~~~~~~~~ 3 ");
+
+        model.addAttribute("action", "showFreezeList");
+        return "main";
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = "/showFreezeList", method = RequestMethod.GET, produces =
+            "application/json")
+    public
+    @ResponseBody
+    String showFreezeList(HttpServletRequest request) {
+
+        logger.debug("I've been through here ~~~~~~~~~~ 4 ");
+
+
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+        Site siteApproved = new Site();
+        SiteStatus approvedStatus = null;
+        try {
+            approvedStatus = siteStatusService.findByCode("500");
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find SiteStatus with Code 500");
+            e.printStackTrace();
+            return null;
+        }
+        siteApproved.setSiteStatus(approvedStatus);
+
+        List<Site> sites = siteService.findByCriteria(siteApproved, search, start, length, order,
+                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total records and filtered records
+        //TODO SHOULD PASS sititeApproved here,
+        // eg countByCriteria(siteApproved)
+        // countByCriteria(siteApproved, search)
+        Long recordsTotal = siteService.countAll();
+        Long recordsFiltered = siteService.countByCriteria(search);
+
+        if (sites == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesSite> dataTablesSites = new ArrayList<>();
+
+        for (Site site : sites) {
+            DataTablesSite tableSite = new DataTablesSite(site);
+            dataTablesSites.add(tableSite);
+        }
+
+        DataTablesResultSet<DataTablesSite> result = new DataTablesResultSet<>();
+        result.setData(dataTablesSites);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(result);
+    }
+
+    @RequestMapping(value = "/showUnfreezeList", method = RequestMethod.GET)
+    public String showUnfreezeList(Model model) {
+        logger.debug("I've been through here ~~~~~~~~~~ 3 ");
+
+        model.addAttribute("action", "showUnfreezeList");
+        return "main";
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = "/showUnfreezeList", method = RequestMethod.GET, produces =
+            "application/json")
+    public
+    @ResponseBody
+    String showUnfreezeList(HttpServletRequest request) {
+
+        logger.debug("I've been through here ~~~~~~~~~~ 4 ");
+
+
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+        Site siteApproved = new Site();
+        SiteStatus approvedStatus = null;
+        try {
+            approvedStatus = siteStatusService.findByCode("401");
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find SiteStatus with Code 401");
+            e.printStackTrace();
+            return null;
+        }
+        siteApproved.setSiteStatus(approvedStatus);
+
+        List<Site> sites = siteService.findByCriteria(siteApproved, search, start, length, order,
+                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total records and filtered records
+        //TODO SHOULD PASS sititeApproved here,
+        // eg countByCriteria(siteApproved)
+        // countByCriteria(siteApproved, search)
+        Long recordsTotal = siteService.countAll();
+        Long recordsFiltered = siteService.countByCriteria(search);
+
+        if (sites == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesSite> dataTablesSites = new ArrayList<>();
+
+        for (Site site : sites) {
+            DataTablesSite tableSite = new DataTablesSite(site);
+            dataTablesSites.add(tableSite);
+        }
+
+        DataTablesResultSet<DataTablesSite> result = new DataTablesResultSet<>();
+        result.setData(dataTablesSites);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(result);
+    }
+
     /*
 
     @RequestMapping(value = "/auditSite", method = RequestMethod.GET)
@@ -230,11 +383,134 @@ public class AdminSiteController {
     }
     */
 
-    @RequestMapping(value = "/auditSite/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    /*
+    @RequestMapping(value = "/editSite", method = RequestMethod.POST)
+    public String editSite(Model model,@ModelAttribute("siteCommand") SiteCommand siteCommand) {
+
+
+        String operation = siteCommand.getSiteOperation();
+        Long id  = siteCommand.getId();
+
+        logger.debug("I've been through here ~~~~~~~~~~ 555 ");
+        logger.debug("editSite operation == " + operation);
+        logger.debug("id == " + id);
+
+        Site site ;
+        //SiteStatus siteStatus ;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+
+        if(operation.equals("audit")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showAuditList");
+        }
+
+        if(operation.equals("freeze")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("3")));
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showFreezeList");
+        }
+
+        if(operation.equals("unfreeze")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showUnfreezeList");
+        }
+
+        try {
+            siteService.update(site);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+        }
+
+        return "main";
+    }
+
+*/
+
+    @RequestMapping(value = "/editSite/{operation}/{id}", method = RequestMethod.GET)
+    public String editSite(@PathVariable("id") Long id,@PathVariable("operation") String operation,
+                           Model model) {
+
+        logger.debug("editSite ========== ");
+
+        Site site ;
+        //SiteStatus siteStatus ;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+
+        if(operation.equals("audit")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showAuditList");
+        }
+
+        if(operation.equals("freeze")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("3")));
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showFreezeList");
+        }
+
+        if(operation.equals("unfreeze")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showUnfreezeList");
+        }
+
+        try {
+            siteService.update(site);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+        }
+
+        return "main";
+
+    }
+
+    @RequestMapping(value = "/showEditInfo/{operation}/{id}", method = RequestMethod.GET)
+    public String showEditInfo(@PathVariable("id") Long id,@PathVariable("operation") String operation,
+                       Model model) {
 
 
         logger.debug("I've been through here ~~~~~~~~~~ 555 ");
+        logger.debug("showEditInfo operation" + operation);
 
         /*
         if (SiteCommand.Role.valueOf(subDomain) == null) {
@@ -242,22 +518,48 @@ public class AdminSiteController {
         }
         */
 
-        // set subDomain to model
-        //model.addAttribute("subDomain", subDomain);
-        model.addAttribute("action", "auditSite");
-        // get user by id
+        if(operation.equals("auditsite"))
+            model.addAttribute("action", "showAuditInfo");
+        if(operation.equals("freezesite"))
+            model.addAttribute("action", "showFreezeInfo");
+        if(operation.equals("unfreezesite"))
+            model.addAttribute("action", "showUnfreezeInfo");
+
         Site site;
-        SiteStatus siteStatus ;
+        //SiteStatus siteStatus ;
         try {
             site = siteService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+            throw new BadRequestException("400", "Site  " + id + " not found.");
         }
 
         // Modified SiteCommand & add to model and view
         SiteCommand siteCommand = createSiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
+
+        return "main";
+    }
+
+    @RequestMapping(value = "/showInfo/{id}", method = RequestMethod.GET)
+    public String showInfo(@PathVariable("id") Long id, Model model) {
+
+
+        logger.debug("I've been through here ~~~~~~~~~~ 555 ");
+
+        Site site;
+        //SiteStatus siteStatus ;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+
+        // Modified SiteCommand & add to model and view
+        SiteCommand siteCommand = createSiteCommand(site);
+        model.addAttribute("siteCommand", siteCommand);
+        model.addAttribute("action", "showInfo");
 
         return "main";
     }
@@ -319,7 +621,6 @@ public class AdminSiteController {
             SiteCommand.setMerchantName(site.getMerchant().getName());
             logger.debug("SiteMerchant ---" +  SiteCommand.getMerchant());
             logger.debug("SiteMerchant ---" +  SiteCommand.getMerchantName());
-
         }
 
         if (site.getSiteStatus() != null) {

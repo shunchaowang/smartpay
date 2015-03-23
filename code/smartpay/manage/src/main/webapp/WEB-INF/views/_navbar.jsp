@@ -119,9 +119,21 @@
                         <sec:authorize
                                 access="hasAnyRole('ROLE_ADMIN', 'ROLE_MERCHANT_ADMIN')">
                             <li class="">
-                                <a href="${rootURL}admin/site/auditList">
+                                <a href="${rootURL}admin/site/showAuditList">
                                     <i class="glyphicon glyphicon-wrench"></i>
                                     <spring:message code="audit.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/site/showFreezeList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="freeze.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/site/showUnfreezeList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="unfreeze.label" arguments="${site}"/>
                                 </a>
                             </li>
                         </sec:authorize>
