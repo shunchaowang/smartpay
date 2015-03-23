@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
-<spring:message code="unfreeze.label" var="entity"/>
+<spring:message code="${domain}.label" var="preEntry"/>
+<spring:message code="unfreeze.label" arguments="${preEntry}" var="entity"/>
 
 <div class="row">
     <div class="col-sm-6">
@@ -58,7 +59,7 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}/editSite/unfreeze/" +
                                 row['id'] + '">'
-                                + '<spring:message code="site.unfreeze.label"/>'
+                                + '<spring:message code="action.unfreeze.label"/>'
                                 + '</a>';
                     }
                 }

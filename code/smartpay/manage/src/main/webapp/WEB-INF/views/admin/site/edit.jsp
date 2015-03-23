@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
 <c:if test="${domain != null}">
-    <spring:message code="showInfo.label" var="entity"/>
+    <spring:message code="${domain}.labe" var="entity"/>
 </c:if>
 
 <div class='row' id='notification'>
@@ -21,7 +21,7 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='showInfo.label' arguments="${entity}"/>
+            <spring:message code='edit.label' arguments="${entity}"/>
         </b></h2>
     </div>
 </div>
