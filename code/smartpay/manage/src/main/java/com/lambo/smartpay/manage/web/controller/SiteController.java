@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
+import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.SiteCommand;
@@ -99,7 +100,14 @@ public class SiteController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Site> sites = siteService.findByCriteria(search, start, length, order,
+        //Merchant admin can only view the users belonged to this merchant
+        SecurityUser principal = UserResource.getCurrentUser();
+        if (principal.getMerchant() == null) {
+            throw new BadRequestException("400", "User doesn't have merchant.");
+        }
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(principal.getMerchant());
+        List<Site> sites = siteService.findByCriteria(siteCriteria, search, start, length, order,
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records and filtered records

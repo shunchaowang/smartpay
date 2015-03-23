@@ -110,14 +110,14 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <!-- admin menu starts -->
-                        <li class="">
-                            <a href="${rootURL}admin/site">
-                                <i class="glyphicon glyphicon-th-list"></i>
-                                <spring:message code="index.label" arguments="${site}"/>
-                            </a>
-                        </li>
                         <sec:authorize
-                                access="hasAnyRole('ROLE_ADMIN', 'ROLE_MERCHANT_ADMIN')">
+                                access="hasAnyRole('ROLE_ADMIN')">
+                            <li class="">
+                                <a href="${rootURL}admin/site">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="index.label" arguments="${site}"/>
+                                </a>
+                            </li>
                             <li class="">
                                 <a href="${rootURL}admin/site/showAuditList">
                                     <i class="glyphicon glyphicon-wrench"></i>
@@ -152,12 +152,6 @@
                                 <a href="${rootURL}site">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}site/audit">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="audit.label" arguments="${site}"/>
                                 </a>
                             </li>
                             <li class="">

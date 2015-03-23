@@ -372,81 +372,6 @@ public class AdminSiteController {
         return gson.toJson(result);
     }
 
-    /*
-
-    @RequestMapping(value = "/auditSite", method = RequestMethod.GET)
-    public String auditSite(Model model) {
-        logger.debug("I've been through here ~~~~~~~~~~ 5 ");
-
-        model.addAttribute("action", "audit");
-        return "main";
-    }
-    */
-
-    /*
-    @RequestMapping(value = "/editSite", method = RequestMethod.POST)
-    public String editSite(Model model,@ModelAttribute("siteCommand") SiteCommand siteCommand) {
-
-
-        String operation = siteCommand.getSiteOperation();
-        Long id  = siteCommand.getId();
-
-        logger.debug("I've been through here ~~~~~~~~~~ 555 ");
-        logger.debug("editSite operation == " + operation);
-        logger.debug("id == " + id);
-
-        Site site ;
-        //SiteStatus siteStatus ;
-        try {
-            site = siteService.get(id);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "Site  " + id + " not found.");
-        }
-
-        if(operation.equals("audit")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
-            }catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
-            }
-            model.addAttribute("action", "showAuditList");
-        }
-
-        if(operation.equals("freeze")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("3")));
-            }catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
-            }
-            model.addAttribute("action", "showFreezeList");
-        }
-
-        if(operation.equals("unfreeze")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
-            }catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
-            }
-            model.addAttribute("action", "showUnfreezeList");
-        }
-
-        try {
-            siteService.update(site);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-        } catch (NotUniqueException e) {
-            e.printStackTrace();
-        }
-
-        return "main";
-    }
-
-*/
-
     @RequestMapping(value = "/editSite/{operation}/{id}", method = RequestMethod.GET)
     public String editSite(@PathVariable("id") Long id,@PathVariable("operation") String operation,
                            Model model) {
@@ -501,6 +426,18 @@ public class AdminSiteController {
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
             }
             model.addAttribute("action", "showUnfreezeList");
+        }
+
+        if(operation.equals("decline")){
+            try{
+                site.setSiteStatus(siteStatusService.get(Long.parseLong ("4")));
+                message = messageSource.getMessage("decline.message",
+                        new String[]{label, site.getName()}, locale);
+            }catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
+            }
+            model.addAttribute("action", "showAuditList");
         }
 
         try {

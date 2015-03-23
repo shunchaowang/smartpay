@@ -77,6 +77,11 @@
                         return '<a href="' + "${rootURL}${controller}/editSite/audit/" +
                                 row['id'] + '">'
                                 + '<spring:message code="action.audit.label"/>'
+                                + '</a>'
+                                +' ' +
+                                '<a href="' + "${rootURL}${controller}/editSite/decline/" +
+                                row['id'] + '">'
+                                + '<spring:message code="action.decline.label"/>'
                                 + '</a>';
                     }
                 }
