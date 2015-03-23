@@ -564,6 +564,29 @@ public class AdminSiteController {
         return "main";
     }
 
+    @RequestMapping(value = "/editInfo/{id}", method = RequestMethod.GET)
+    public String editInfo(@PathVariable("id") Long id, Model model) {
+
+
+        logger.debug("I've been through here ~~~~~~~~~~ 555 ");
+
+        Site site;
+        //SiteStatus siteStatus ;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+
+        // Modified SiteCommand & add to model and view
+        SiteCommand siteCommand = createSiteCommand(site);
+        model.addAttribute("siteCommand", siteCommand);
+        model.addAttribute("action", "edit");
+
+        return "main";
+    }
+
     @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
@@ -607,6 +630,46 @@ public class AdminSiteController {
 
 
 
+/*
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String save(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+
+        Locale locale = LocaleContextHolder.getLocale();
+
+        // check if username already taken
+        if (siteService.findByName(siteCommand.getName()) != null) {
+            String fieldLabel = messageSource.getMessage("name.label", null, locale);
+            model.addAttribute("message", messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, siteCommand.getName()}, locale));
+            model.addAttribute("siteCommand", siteCommand);
+            model.addAttribute("action", "create");
+            return "main";
+        }
+
+        //TODO check if all required fields filled
+
+        // create User and set admin to user
+        Site site = createSiteCommand(siteCommand)
+                user = createUser(userCommand, subDomainRole);
+        // set initial password
+        user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
+        // persist user
+        try {
+            user = userService.create(user);
+        } catch (MissingRequiredFieldException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        }
+        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
+        model.addAttribute("action", "index");
+        return "main";
+    }
+*/
+
     // create SiteCommand from User
     private SiteCommand createSiteCommand(Site site) {
         SiteCommand SiteCommand = new SiteCommand();
@@ -630,63 +693,37 @@ public class AdminSiteController {
         return SiteCommand;
     }
 
-    /*
+    // create SiteCommand from User
+    private Site creatSite(SiteCommand siteCommand) {
 
-    // create a new Site from a SiteCommand
-    private Site createSiteCommand(SiteCommand siteCommand) {
         Site site = new Site();
+        //site.setId() = siteCommand.getId();
         site.setName(siteCommand.getName());
-        site.setUrl(siteCommand.getUrl());
-        site.setRemark(siteCommand.getRemark());
-        // we set site to be active right now
-        site.setActive(true);
+        site.setUrl(site.getUrl());
+        //site.setActive(active);
+        //site.getRemark(siteCommand.getRemark());
 
-        // set site merchant if site is not admin
-        if (siteCommand.getMerchant() != null) {
-            Merchant merchant = null;
-            try {
-                merchant = merchantService.get(siteCommand.getMerchant());
-            } catch (NoSuchEntityException e) {
-                logger.info("Cannot find merchant " + siteCommand.getMerchant());
-                e.printStackTrace();
-            }
-            site.setMerchant(merchant);
+
+
+        SiteCommand SiteCommand = new SiteCommand();
+        SiteCommand.setId(site.getId());
+        SiteCommand.setName(site.getName());
+        SiteCommand.setUrl(site.getUrl());
+        SiteCommand.setActive(site.getActive());
+        SiteCommand.setCreatedTime(site.getCreatedTime());
+        SiteCommand.setRemark(site.getRemark());
+        if (site.getMerchant() != null) {
+            SiteCommand.setMerchant(site.getMerchant().getId());
+            SiteCommand.setMerchantName(site.getMerchant().getName());
+            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchant());
+            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchantName());
         }
 
-        // set SiteStatus
-        SiteStatus siteStatus = null;
-        try {
-            siteStatus = siteStatusService.get(siteCommand.getSiteStatus());
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find site status " + siteCommand.getSiteStatus());
-            e.printStackTrace();
+        if (site.getSiteStatus() != null) {
+            SiteCommand.setSiteStatus(site.getSiteStatus().getId());
+            SiteCommand.setSiteStatusName(site.getSiteStatus().getName());
         }
-        site.setSiteStatus(siteStatus);
         return site;
-    }
-
-*/
-
-
-    // edit a User from a SiteCommand
-    private void auditSiteCommond(Site site,SiteCommand siteCommand) {
-
-        site.setName(siteCommand.getName());
-        site.setUrl(siteCommand.getUrl());
-        site.setRemark(site.getRemark());
-       // site.setSiteStatus(site.getSiteStatus());
-
-        // set SiteStatus
-        SiteStatus siteStatus = null;
-        try {
-            siteStatus = siteStatusService.get(siteCommand.getSiteStatus());
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find site status " + siteCommand.getSiteStatus());
-            e.printStackTrace();
-        }
-        site.setSiteStatus(siteStatus);
-
-        //return site;
     }
 
 }

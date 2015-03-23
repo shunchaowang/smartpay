@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
 <c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
+    <spring:message code="showInfo.label" var="entity"/>
 </c:if>
 
 <div class='row' id='notification'>
@@ -21,7 +21,7 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='showAuditInfo.label' arguments="${entity}"/>
+            <spring:message code='showInfo.label' arguments="${entity}"/>
         </b></h2>
     </div>
 </div>
@@ -90,10 +90,7 @@
         </div>
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
-                <button class='btn btn-default' id='audit-button' type="submit">
-                    <spring:message code='action.audit.label'/>
-                </button>
-                <a href="${rootURL}${controller}/showAuditList">
+                <a href="${rootURL}${controller}">
                     <button type="button" class="btn btn-default">
                         <spring:message code="action.return.label"/>
                     </button>

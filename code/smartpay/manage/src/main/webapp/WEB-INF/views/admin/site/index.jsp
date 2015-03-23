@@ -59,7 +59,13 @@
                         return '<a href="' + "${rootURL}${controller}/showInfo/" + row['id'] +
                                 '">'
                                 + '<spring:message code="show.label"/>'
+                                + '</a>'
+                                + ' ' +
+                                '<a href="' + "${rootURL}${controller}/editInfo/" + row['id'] +
+                                '">'
+                                + '<spring:message code="edit.label"/>'
                                 + '</a>';
+
                     }
                 }
             ]
