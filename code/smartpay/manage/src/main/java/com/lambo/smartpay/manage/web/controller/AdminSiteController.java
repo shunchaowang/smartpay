@@ -454,6 +454,11 @@ public class AdminSiteController {
         logger.debug("editSite ========== ");
 
         Site site ;
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("Site.label", null, locale);
+        String message = "";
+
+
         //SiteStatus siteStatus ;
         try {
             site = siteService.get(id);
@@ -465,6 +470,8 @@ public class AdminSiteController {
         if(operation.equals("audit")){
             try{
                 site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+                message = messageSource.getMessage("audit.message",
+                        new String[]{label, site.getName()}, locale);
             }catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
@@ -475,6 +482,8 @@ public class AdminSiteController {
         if(operation.equals("freeze")){
             try{
                 site.setSiteStatus(siteStatusService.get(Long.parseLong ("3")));
+                message = messageSource.getMessage("frozen.message",
+                        new String[]{label, site.getName()}, locale);
             }catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
@@ -485,6 +494,8 @@ public class AdminSiteController {
         if(operation.equals("unfreeze")){
             try{
                 site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+                message = messageSource.getMessage("unfrozen.message",
+                        new String[]{label, site.getName()}, locale);
             }catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
@@ -500,6 +511,7 @@ public class AdminSiteController {
             e.printStackTrace();
         }
 
+        model.addAttribute("message", message);
         return "main";
 
     }
@@ -543,24 +555,62 @@ public class AdminSiteController {
 
     @RequestMapping(value = "/showInfo/{id}", method = RequestMethod.GET)
     public String showInfo(@PathVariable("id") Long id, Model model) {
-
-
-        logger.debug("I've been through here ~~~~~~~~~~ 555 ");
-
         Site site;
-        //SiteStatus siteStatus ;
         try {
             site = siteService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Site  " + id + " not found.");
         }
-
-        // Modified SiteCommand & add to model and view
         SiteCommand siteCommand = createSiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
         model.addAttribute("action", "showInfo");
+        return "main";
+    }
 
+
+    @RequestMapping(value = "/showAuditInfo/{id}", method = RequestMethod.GET)
+    public String showAuditInfo(@PathVariable("id") Long id, Model model) {
+        Site site;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+        SiteCommand siteCommand = createSiteCommand(site);
+        model.addAttribute("siteCommand", siteCommand);
+        model.addAttribute("action", "showAuditInfo");
+        return "main";
+    }
+
+    @RequestMapping(value = "/showFreezeInfo/{id}", method = RequestMethod.GET)
+    public String showFreezeInfo(@PathVariable("id") Long id, Model model) {
+        Site site;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+        SiteCommand siteCommand = createSiteCommand(site);
+        model.addAttribute("siteCommand", siteCommand);
+        model.addAttribute("action", "showFreezeInfo");
+        return "main";
+    }
+
+    @RequestMapping(value = "/showUnfreezeInfo/{id}", method = RequestMethod.GET)
+    public String showUnfreezeInfo(@PathVariable("id") Long id, Model model) {
+        Site site;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+        SiteCommand siteCommand = createSiteCommand(site);
+        model.addAttribute("siteCommand", siteCommand);
+        model.addAttribute("action", "showUnfreezeInfo");
         return "main";
     }
 
