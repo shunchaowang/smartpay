@@ -87,8 +87,7 @@ public class AdminUserController {
         return "main";
     }
 
-    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET,
-            produces = "application/json")
+    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET)
     public
     @ResponseBody
     String list(HttpServletRequest request, @PathVariable("subDomain") String subDomain) {
@@ -120,6 +119,7 @@ public class AdminUserController {
 
         // parse search keyword
         String search = request.getParameter("search[value]");
+        logger.debug("Search Cri: " + search);
 
         // parse pagination
         Integer start = Integer.valueOf(request.getParameter("start"));

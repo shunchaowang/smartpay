@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
@@ -48,6 +47,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
         var userTable = $('#user-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"

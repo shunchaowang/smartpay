@@ -131,8 +131,7 @@ public class AdminMerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
-            produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public String list(HttpServletRequest request) {
 
@@ -193,8 +192,7 @@ public class AdminMerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/freezeList", method = RequestMethod.GET,
-            produces = "application/json")
+    @RequestMapping(value = "/freezeList", method = RequestMethod.GET)
     @ResponseBody
     public String freezeList(HttpServletRequest request) {
 
@@ -308,8 +306,7 @@ public class AdminMerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/unfreezeList", method = RequestMethod.GET,
-            produces = "application/json")
+    @RequestMapping(value = "/unfreezeList", method = RequestMethod.GET)
     @ResponseBody
     public String unfreezeList(HttpServletRequest request) {
 

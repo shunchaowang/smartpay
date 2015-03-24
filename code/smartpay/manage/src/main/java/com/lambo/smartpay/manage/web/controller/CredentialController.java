@@ -76,8 +76,7 @@ public class CredentialController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
-            produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public String list(HttpServletRequest request) {
 

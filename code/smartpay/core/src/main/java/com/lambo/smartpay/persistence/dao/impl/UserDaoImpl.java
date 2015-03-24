@@ -149,6 +149,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
     @Override
     public List<User> findByCriteria(User user, String search, Integer start, Integer length,
                                      String order, ResourceProperties.JpaOrderDir orderDir) {
+        logger.debug("Search of dao: " + search);
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root<User> root = query.from(User.class);

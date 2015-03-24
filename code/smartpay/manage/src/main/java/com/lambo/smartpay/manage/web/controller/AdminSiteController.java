@@ -93,7 +93,7 @@ public class AdminSiteController {
     }
     */
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public
     @ResponseBody
     String list(HttpServletRequest request) {
@@ -156,8 +156,10 @@ public class AdminSiteController {
         return "main";
     }
 
+    //TODO NEED TO CHANGE METHOD NAME
     @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/showAuditList", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/showAuditList", method = RequestMethod.GET, produces =
+            "application/json")
     public
     @ResponseBody
     String showAuditList(HttpServletRequest request) {

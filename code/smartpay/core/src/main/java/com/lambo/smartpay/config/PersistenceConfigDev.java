@@ -98,6 +98,9 @@ public class PersistenceConfigDev {
         dataSource.setUrl(env.getProperty("jdbc.url"));
         dataSource.setUsername(env.getProperty("jdbc.username"));
         dataSource.setPassword(env.getProperty("jdbc.password"));
+        // requires utf 8 to support Chinese query
+        dataSource.addConnectionProperty("useUnicode", "yes");
+        dataSource.addConnectionProperty("characterEncoding", "UTF-8");
         return dataSource;
     }
 

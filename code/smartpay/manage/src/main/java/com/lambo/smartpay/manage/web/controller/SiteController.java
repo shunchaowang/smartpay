@@ -74,7 +74,7 @@ public class SiteController {
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public
     @ResponseBody
     String list(HttpServletRequest request) {
@@ -143,7 +143,7 @@ public class SiteController {
     }
 
     @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/auditList", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/auditList", method = RequestMethod.GET)
     public
     @ResponseBody
     String audit(HttpServletRequest request) {

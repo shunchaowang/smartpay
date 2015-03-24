@@ -121,7 +121,7 @@ public class UserController {
     */
 
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public
     @ResponseBody
     String list(HttpServletRequest request) {

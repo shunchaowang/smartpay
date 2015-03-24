@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <%@include file="../../taglib.jsp" %>
 <spring:message code="${domain}.label" var="entity"/>
 

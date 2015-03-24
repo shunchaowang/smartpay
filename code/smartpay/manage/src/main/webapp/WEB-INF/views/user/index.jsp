@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="${domain}.label" var="entity"/>
@@ -31,6 +32,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
         $('#user-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"

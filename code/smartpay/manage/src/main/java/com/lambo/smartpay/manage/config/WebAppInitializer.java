@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -44,7 +45,12 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Filter[] getServletFilters() {
-        return new Filter[]{
+        // if encoding has issues we need to add UTF-8 encoding filter
+        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+        encodingFilter.setForceEncoding(true);
+        encodingFilter.setEncoding("UTF-8");
+        // encoding filter must be the first one
+        return new Filter[]{encodingFilter,
                 new DelegatingFilterProxy("springSecurityFilterChain"),
                 new OpenEntityManagerInViewFilter()};
     }
@@ -59,4 +65,5 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
                 .setActiveProfiles(properties.getProperty("spring.profiles.active"));
         return context;
     }
+
 }
