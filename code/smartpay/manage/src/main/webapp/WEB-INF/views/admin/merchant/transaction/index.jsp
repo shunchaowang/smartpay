@@ -41,7 +41,7 @@
             <th><spring:message code="type.label"/></th>
             <th><spring:message code="return.fee.label"/></th>
             <th><spring:message code="type.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
+            <!--<th><spring:message code="action.operation.label"/></th>-->
         </tr>
         </thead>
         <tbody></tbody>
@@ -114,7 +114,7 @@
                 {
                     'name': 'returnFeeType', 'targets': 10, 'data': 'returnFeeType',
                     'searchable': false, 'orderable': false
-                },
+                }/*,
                 {
                     'name': 'operation', 'targets': 11, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
@@ -131,7 +131,7 @@
                                 + '<spring:message code="edit.label" arguments="${returnFeeEntity}"/>'
                                 + '</button>';
                     }
-                }
+                }*/
             ]
         });
 
