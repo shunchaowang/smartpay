@@ -3,7 +3,10 @@
 <%@include file="../../../taglib.jsp" %>
 
 <div id="edit-encryption-modal">
-    <form action="" method="POST" class="form-horizontal" id="editEncryptionForm">
+    <form method="POST"
+          class="form-horizontal" id="edit-encryption-form">
+        <input id="id" type="hidden" value="${encryptionCommand.id}"/>
+
         <div class="form-group">
             <label class="col-sm-3 control-label" for="encryptionKey">
                 <spring:message code="key.label"/>
@@ -11,7 +14,8 @@
             </label>
 
             <div class="col-sm-6">
-                <input id="encryptionKey" class="form-control" placeholder="Key"/>
+                <input id="encryptionKey"
+                       class="form-control" value="${encryptionCommand.encryptionKey}"/>
             </div>
         </div>
         <!-- merchant status -->
@@ -22,7 +26,9 @@
             </label>
 
             <div class="col-sm-6">
-                <select id="encryptionTypeId" class="form-control" required="">
+                <select id="encryptionTypeId"
+                        value="${encryptionCommand.encryptionTypeId}"
+                        class="form-control" required="">
                     <c:forEach items="${encryptionTypes}" var="type">
                         <option value="${type.id}">${type.name}</option>
                     </c:forEach>
@@ -42,3 +48,47 @@
     </form>
     <!-- end of form-control -->
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        // save encryption handler
+        $("#save-encryption-button").click(function (e) {
+            e.preventDefault();
+
+            /*
+             if (!editForm.valid()) {
+             return
+             }
+             */
+            var id = $("#id").val();
+            var encryptionKey = $("#encryptionKey").val();
+            var encryptionTypeId = $("#encryptionTypeId").val();
+
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}/editEncryption",
+                data: {
+                    id: id,
+                    encryptionKey: encryptionKey,
+                    encryptionTypeId: encryptionTypeId
+                },
+                error: function (data) {
+                    alert("There was an error.");
+                },
+                success: function (data) {
+                    $("#edit-encryption-modal").dialog("close");
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                }
+            });
+        });
+
+    });
+</script>

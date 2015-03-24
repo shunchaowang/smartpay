@@ -2,13 +2,20 @@ package com.lambo.smartpay.manage.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lambo.smartpay.exception.MissingRequiredFieldException;
+import com.lambo.smartpay.exception.NoSuchEntityException;
+import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.EncryptionCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesTransaction;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
+import com.lambo.smartpay.persistence.entity.Encryption;
 import com.lambo.smartpay.persistence.entity.EncryptionType;
 import com.lambo.smartpay.persistence.entity.FeeType;
 import com.lambo.smartpay.persistence.entity.Merchant;
+import com.lambo.smartpay.service.EncryptionService;
 import com.lambo.smartpay.service.EncryptionTypeService;
 import com.lambo.smartpay.service.FeeTypeService;
 import com.lambo.smartpay.service.MerchantService;
@@ -18,8 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by swang on 3/21/2015.
@@ -42,6 +52,8 @@ public class TransactionController {
 
     @Autowired
     private MerchantService merchantService;
+    @Autowired
+    private EncryptionService encryptionService;
     @Autowired
     private EncryptionTypeService encryptionTypeService;
     @Autowired
@@ -127,8 +139,71 @@ public class TransactionController {
     }
 
     @RequestMapping(value = "/editEncryption", method = RequestMethod.GET)
-    public String editEncryption(@RequestParam("id") Long id) {
+    public String editEncryption(@RequestParam("id") Long id, Model model) {
+        Encryption encryption = null;
+        try {
+            encryption = encryptionService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Bad Request.");
+        }
+        EncryptionCommand encryptionCommand = new EncryptionCommand(encryption);
+        model.addAttribute("encryptionCommand", encryptionCommand);
         return "admin/merchant/transaction/_encryptionModal";
     }
 
+    @RequestMapping(value = "/editEncryption", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateEncryption(HttpServletRequest request) {
+
+        logger.debug("in updateEncryption.");
+        Long id = Long.valueOf(request.getParameter("id"));
+        String key = request.getParameter("encryptionKey");
+        Long typeId = Long.valueOf(request.getParameter("encryptionTypeId"));
+        EncryptionCommand encryptionCommand = new EncryptionCommand();
+        encryptionCommand.setId(id);
+        encryptionCommand.setEncryptionKey(key);
+        encryptionCommand.setEncryptionTypeId(typeId);
+        Locale locale = LocaleContextHolder.getLocale();
+        String entity = messageSource.getMessage("encryption.label", null, locale);
+        String message = messageSource.getMessage("updated.message", new String[]{entity,
+                encryptionCommand.getId().toString()}, locale);
+
+        Encryption encryption = null;
+        try {
+            encryption = encryptionService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            message = messageSource.getMessage("not.updated.message", new String[]{entity,
+                    encryptionCommand.getId().toString()}, locale);
+        }
+        editEncryption(encryption, encryptionCommand);
+        try {
+            encryption = encryptionService.update(encryption);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            message = messageSource.getMessage("not.updated.message", new String[]{entity,
+                    encryptionCommand.getId().toString()}, locale);
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            message = messageSource.getMessage("not.updated.message", new String[]{entity,
+                    encryptionCommand.getId().toString()}, locale);
+        }
+
+        JsonResponse response = new JsonResponse();
+        response.setMessage(message);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
+    }
+
+    private void editEncryption(Encryption encryption, EncryptionCommand encryptionCommand) {
+        encryption.setKey(encryptionCommand.getEncryptionKey());
+        EncryptionType encryptionType = null;
+        try {
+            encryptionType = encryptionTypeService.get(encryptionCommand.getEncryptionTypeId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        encryption.setEncryptionType(encryptionType);
+    }
 }

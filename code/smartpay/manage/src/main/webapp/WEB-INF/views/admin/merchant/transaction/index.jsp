@@ -48,7 +48,6 @@
     </table>
 </div>
 
-
 <!-- modal dialog to edit -->
 <div id="modal-area">
 
@@ -158,7 +157,15 @@
                         width: 'auto',
                         resizable: true,
                         autoOpen: false,
+
+                        // horizontal scroll bar fix, not working now
+                        open: function (e, ui) {
+                            //$('body').css('overflow', 'hidden');
+                            //$('.ui-widget-overlay').css('width', '100%');
+                        },
                         close: function (e, ui) {
+                            // horizontal scroll bar fix, now working now
+                            // $('body').css('overflow', 'auto');
                             // destroy the dialog when closed
                             // remove the dialog from parent on closing
                             $('#edit-encryption-modal').dialog('destroy').remove();
