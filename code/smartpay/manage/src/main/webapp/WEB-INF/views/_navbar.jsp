@@ -46,9 +46,15 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
+                                <a href="${rootURL}admin/merchant/create">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <spring:message code="merchant.create.label" arguments="${merchant}"/>
+                                </a>
+                            </li>
+                            <li class="">
                                 <a href="${rootURL}admin/merchant/">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label" arguments="${merchant}"/>
+                                    <spring:message code="merchant.manage.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
@@ -56,12 +62,14 @@
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="freeze.label" arguments="${merchant}"/>
                                 </a>
-                            </li> <li class="">
-                            <a href="${rootURL}admin/merchant/unfreeze">
-                                <i class="glyphicon glyphicon-th-list"></i>
-                                <spring:message code="unfreeze.label" arguments="${merchant}"/>
-                            </a>
-                        </li>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}admin/merchant/unfreeze">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="unfreeze.label" arguments="${merchant}"/>
+                                </a>
+                            </li>
+                            <!--
                             <li class="">
                                 <a href="${rootURL}admin/merchant/credential/">
                                     <i class="glyphicon glyphicon-th-list"></i>
@@ -76,12 +84,7 @@
                                                     arguments="${merchantTransaction}"/>
                                 </a>
                             </li>
-                            <li class="">
-                                <a href="${rootURL}admin/merchant/create">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <spring:message code="create.label" arguments="${merchant}"/>
-                                </a>
-                            </li>
+                            -->
                         </ul>
                     </li>
                 </sec:authorize>

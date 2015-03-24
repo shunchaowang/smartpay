@@ -42,6 +42,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -448,6 +449,60 @@ public class AdminMerchantController {
         return "main";
     }
 
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id,Model model) {
+
+        Merchant merchant;
+        try {
+            merchant = merchantService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User " + id + " not found.");
+        }
+
+        MerchantCommand merchantCommand = createMerchantCommand(merchant);
+
+        model.addAttribute("merchantCommand", merchantCommand);
+        model.addAttribute("action", "edit");
+        return "main";
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String edit(Model model,
+                       @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
+
+
+        logger.debug("whether come to here ??? ");
+        model.addAttribute("merchantCommand", new MerchantCommand());
+
+        // message locale
+        Locale locale = LocaleContextHolder.getLocale();
+        //TODO verify required fields
+        // check uniqueness
+        if (merchantService.findByName(merchantCommand.getName()) != null) {
+            String fieldLabel = messageSource.getMessage("name.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, merchantCommand.getName()}, locale));
+            model.addAttribute("merchantCommand", merchantCommand);
+            model.addAttribute("action", "create");
+        }
+
+        Merchant merchant = createMerchant(merchantCommand);
+        //merchant.setId(merchantCommand.getId());
+        try {
+            merchantService.create(merchant);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+
+        return "main";
+    }
+
     private Credential createCredential(MerchantCommand merchantCommand) {
         Credential credential = new Credential();
         // default credential status would be Approved 500
@@ -520,6 +575,10 @@ public class AdminMerchantController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
+        if(merchantCommand.getId() != null){
+            logger.debug("merchantCoomand.getId is not null");
+            merchant.setId(merchantCommand.getId());
+        }
         merchant.setMerchantStatus(merchantStatus);
         merchant.setName(merchantCommand.getName());
         merchant.setActive(true);
@@ -540,5 +599,57 @@ public class AdminMerchantController {
         merchant.setCommissionFee(commissionFee);
         merchant.setReturnFee(returnFee);
         return merchant;
+    }
+
+    private MerchantCommand createMerchantCommand(Merchant merchant) {
+        MerchantCommand merchantCommand = new MerchantCommand();
+
+        /*
+        //MerchantStatus merchantStatus = null;
+        try {
+            merchantStatus = merchantStatusService.get(merchantCommand.getMerchantStatusId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        */
+        merchantCommand.setMerchantStatusId(merchant.getMerchantStatus().getId());
+        merchantCommand.setMerchantStatusName(merchant.getMerchantStatus().getName());
+        merchantCommand.setName(merchant.getName());merchant.setName(merchantCommand.getName());
+        merchantCommand.setActive(merchant.getActive());
+        merchantCommand.setAddress(merchant.getAddress());
+        merchantCommand.setContact(merchant.getContact());
+        merchantCommand.setTel(merchant.getTel());
+        merchantCommand.setEmail(merchant.getEmail());
+        merchantCommand.setRemark(merchant.getRemark());
+
+        // Credential info
+        merchantCommand.setCredentialContent(merchant.getCredential().getContent());
+        merchantCommand.setCredentialExpirationTime(merchant.getCredential().getExpirationDate());
+        merchantCommand.setCredentialRemark(merchant.getCredential().getRemark());
+        merchantCommand.setCredentialStatusId(merchant.getCredential().getCredentialStatus()
+                .getId());
+        merchantCommand.setCredentialStatusName(merchant.getCredential().getCredentialStatus().getName());
+        merchantCommand.setCredentialTypeId(merchant.getCredential().getCredentialType().getId());
+        merchantCommand.setCredentialTypeName(merchant.getCredential().getCredentialType().getName());
+
+        // Encryption info
+        merchantCommand.setEncryptionKey(merchant.getEncryption().getKey());
+        merchantCommand.setEncryptionRemark(merchant.getEncryption().getRemark());
+        merchantCommand.setEncryptionTypeId(merchant.getEncryption().getEncryptionType().getId());
+        merchantCommand.setEncryptionTypeName(merchant.getEncryption().getEncryptionType().getName());
+
+        // Commission Fee
+        merchantCommand.setCommissionFeeRemark(merchant.getCommissionFee().getRemark());
+        merchantCommand.setCommissionFeeTypeId(merchant.getCommissionFee().getFeeType().getId());
+        merchantCommand.setCommissionFeeTypeName(merchant.getCommissionFee().getFeeType().getName());
+        merchantCommand.setCommissionFeeValue(merchant.getCommissionFee().getValue());
+
+        // Return Fee
+        merchantCommand.setReturnFeeRemark(merchant.getReturnFee().getRemark());
+        merchantCommand.setReturnFeeTypeId(merchant.getReturnFee().getFeeType().getId());
+        merchantCommand.setReturnFeeTypeName(merchant.getReturnFee().getFeeType().getName());
+        merchantCommand.setReturnFeeValue(merchant.getReturnFee().getValue());
+
+        return merchantCommand;
     }
 }
