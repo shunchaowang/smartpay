@@ -50,47 +50,9 @@
 
 
 <!-- modal dialog to edit -->
-<spring:message code="edit.label" var="editEncryptionTitle"/>
-<div title="${editEncryptionTitle}" id="editEncryptionModal">
-    <form action="" method="POST" class="form-horizontal" id="editEncryptionForm" >
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="encryptionKey">
-                <spring:message code="key.label"/>
-                <span class="required-indicator">*</span>
-            </label>
+<div id="modal-area">
 
-            <div class="col-sm-6">
-                <input id="encryptionKey" class="form-control" placeholder="Key"/>
-            </div>
-        </div>
-        <!-- merchant status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="encryptionTypeId">
-                <spring:message code="type.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <select id="encryptionTypeId" class="form-control" required="">
-                    <c:forEach items="${encryptionTypes}" var="type">
-                        <option value="${type.id}">${type.name}</option>
-                    </c:forEach>
-                </select>
-            </div>
-        </div>
-        <div class='form-group'>
-            <div class='col-sm-offset-3 col-sm-10'>
-                <button class='btn btn-default' id='save-encryption-button' type="submit">
-                    <spring:message code='action.save.label'/>
-                </button>
-                <button class='btn btn-default' id='reset-button' type="reset">
-                    <spring:message code='action.reset.label'/>
-                </button>
-            </div>
-        </div>
-    </form> <!-- end of form-control -->
 </div>
-
 
 
 <script type="text/javascript">
@@ -175,22 +137,35 @@
         });
 
         // add edit button modal
-        transactionTable.on('click', '#edit-encryption-button', function(event) {
+        transactionTable.on('click', '#edit-encryption-button', function (event) {
             event.preventDefault();
             var id = this.value;
-            $('#editEncryptionModal').dialog({
-                modal: true,
-                height: 'auto',
-                width: '800',
-                resizable: true,
-                autoOpen: false,
-                close: function(e, ui) {
-                    // destroy the dialog when closed
-                    // remove the dialog from parent on closing
-                   //$('#editEncryptionModal').dialog('destroy').remove();
-                }
-            }).dialog('open');
 
+            $.ajax({
+                type: 'GET',
+                url: "${rootURL}${controller}/editEncryption",
+                data: {
+                    id: id
+                },
+                error: function (data) {
+                    alert("There was an error.");
+                },
+                success: function (data) {
+                    $('#modal-area').append(data);
+                    $("#edit-encryption-modal").dialog({
+                        modal: true,
+                        height: 'auto',
+                        width: 'auto',
+                        resizable: true,
+                        autoOpen: false,
+                        close: function (e, ui) {
+                            // destroy the dialog when closed
+                            // remove the dialog from parent on closing
+                            $('#edit-encryption-modal').dialog('destroy').remove();
+                        }
+                    }).dialog('open');
+                }
+            });
         });
     });
 </script>

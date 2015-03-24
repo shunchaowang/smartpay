@@ -23,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,6 +124,11 @@ public class TransactionController {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(resultSet);
+    }
+
+    @RequestMapping(value = "/editEncryption", method = RequestMethod.GET)
+    public String editEncryption(@RequestParam("id") Long id) {
+        return "admin/merchant/transaction/_encryptionModal";
     }
 
 }
