@@ -131,7 +131,8 @@ public class AdminMerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {
 
@@ -192,7 +193,8 @@ public class AdminMerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/freezeList", method = RequestMethod.GET)
+    @RequestMapping(value = "/freezeList", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String freezeList(HttpServletRequest request) {
 
@@ -259,7 +261,8 @@ public class AdminMerchantController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/freeze", method = RequestMethod.POST)
+    @RequestMapping(value = "/freeze", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
     String freeze(@RequestParam(value = "id") Long id) {
@@ -306,7 +309,8 @@ public class AdminMerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/unfreezeList", method = RequestMethod.GET)
+    @RequestMapping(value = "/unfreezeList", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String unfreezeList(HttpServletRequest request) {
 
@@ -373,7 +377,8 @@ public class AdminMerchantController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/unfreeze", method = RequestMethod.POST)
+    @RequestMapping(value = "/unfreeze", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
     String unfreeze(@RequestParam(value = "id") Long id) {
@@ -447,7 +452,7 @@ public class AdminMerchantController {
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id,Model model) {
+    public String edit(@PathVariable("id") Long id, Model model) {
 
         Merchant merchant;
         try {
@@ -572,7 +577,7 @@ public class AdminMerchantController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        if(merchantCommand.getId() != null){
+        if (merchantCommand.getId() != null) {
             logger.debug("merchantCoomand.getId is not null");
             merchant.setId(merchantCommand.getId());
         }
@@ -611,7 +616,8 @@ public class AdminMerchantController {
         */
         merchantCommand.setMerchantStatusId(merchant.getMerchantStatus().getId());
         merchantCommand.setMerchantStatusName(merchant.getMerchantStatus().getName());
-        merchantCommand.setName(merchant.getName());merchant.setName(merchantCommand.getName());
+        merchantCommand.setName(merchant.getName());
+        merchant.setName(merchantCommand.getName());
         merchantCommand.setActive(merchant.getActive());
         merchantCommand.setAddress(merchant.getAddress());
         merchantCommand.setContact(merchant.getContact());
@@ -625,20 +631,24 @@ public class AdminMerchantController {
         merchantCommand.setCredentialRemark(merchant.getCredential().getRemark());
         merchantCommand.setCredentialStatusId(merchant.getCredential().getCredentialStatus()
                 .getId());
-        merchantCommand.setCredentialStatusName(merchant.getCredential().getCredentialStatus().getName());
+        merchantCommand
+                .setCredentialStatusName(merchant.getCredential().getCredentialStatus().getName());
         merchantCommand.setCredentialTypeId(merchant.getCredential().getCredentialType().getId());
-        merchantCommand.setCredentialTypeName(merchant.getCredential().getCredentialType().getName());
+        merchantCommand
+                .setCredentialTypeName(merchant.getCredential().getCredentialType().getName());
 
         // Encryption info
         merchantCommand.setEncryptionKey(merchant.getEncryption().getKey());
         merchantCommand.setEncryptionRemark(merchant.getEncryption().getRemark());
         merchantCommand.setEncryptionTypeId(merchant.getEncryption().getEncryptionType().getId());
-        merchantCommand.setEncryptionTypeName(merchant.getEncryption().getEncryptionType().getName());
+        merchantCommand
+                .setEncryptionTypeName(merchant.getEncryption().getEncryptionType().getName());
 
         // Commission Fee
         merchantCommand.setCommissionFeeRemark(merchant.getCommissionFee().getRemark());
         merchantCommand.setCommissionFeeTypeId(merchant.getCommissionFee().getFeeType().getId());
-        merchantCommand.setCommissionFeeTypeName(merchant.getCommissionFee().getFeeType().getName());
+        merchantCommand
+                .setCommissionFeeTypeName(merchant.getCommissionFee().getFeeType().getName());
         merchantCommand.setCommissionFeeValue(merchant.getCommissionFee().getValue());
 
         // Return Fee

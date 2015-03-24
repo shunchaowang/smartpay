@@ -234,7 +234,7 @@ public class AdminSiteController {
 
     @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/showFreezeList", method = RequestMethod.GET, produces =
-            "application/json")
+            "application/json;charset=UTF-8")
     public
     @ResponseBody
     String showFreezeList(HttpServletRequest request) {
@@ -309,7 +309,7 @@ public class AdminSiteController {
 
     @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/showUnfreezeList", method = RequestMethod.GET, produces =
-            "application/json")
+            "application/json;charset=UTF-8")
     public
     @ResponseBody
     String showUnfreezeList(HttpServletRequest request) {

@@ -87,7 +87,8 @@ public class AdminUserController {
         return "main";
     }
 
-    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
     String list(HttpServletRequest request, @PathVariable("subDomain") String subDomain) {
@@ -363,7 +364,8 @@ public class AdminUserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
     String delete(@RequestParam(value = "id") Long id) {
