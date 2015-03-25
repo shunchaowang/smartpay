@@ -1,9 +1,12 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.persistence.entity.User;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by swang on 3/15/2015.
@@ -26,8 +29,9 @@ public class DataTablesUser implements Serializable {
         firstName = user.getFirstName();
         lastName = user.getLastName();
         email = user.getEmail();
-        SimpleDateFormat format = new SimpleDateFormat("MMM/dd/yyyy");
-        createdTime = format.format(user.getCreatedTime());
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        createdTime = dateFormat.format(user.getCreatedTime());
         userStatus = user.getUserStatus().getName();
     }
 

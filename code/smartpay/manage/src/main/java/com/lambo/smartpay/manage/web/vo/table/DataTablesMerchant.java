@@ -1,8 +1,10 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.persistence.entity.Merchant;
+import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Locale;
 
 /**
  * Created by swang on 3/20/2015.
@@ -25,8 +27,9 @@ public class DataTablesMerchant {
         contact = merchant.getContact();
         tel = merchant.getTel();
         email = merchant.getEmail();
-        SimpleDateFormat format = new SimpleDateFormat("MMM/dd/yyyy");
-        createdTime = format.format(merchant.getCreatedTime());
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        createdTime = dateFormat.format(merchant.getCreatedTime());
         merchantStatus = merchant.getMerchantStatus().getName();
     }
 

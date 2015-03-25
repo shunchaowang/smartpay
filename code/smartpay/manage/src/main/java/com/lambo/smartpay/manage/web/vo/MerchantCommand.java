@@ -13,8 +13,8 @@ public class MerchantCommand {
     private String contact;
     private String tel;
     private String email;
-    private Date createdTime;
-    private Date updatedTime;
+    private String createdTime;
+    private String updatedTime;
     private String remark;
     private Boolean active;
 
@@ -25,7 +25,7 @@ public class MerchantCommand {
     // owning relationships
     // Credential
     private String credentialContent;
-    private Date credentialExpirationTime;
+    private String credentialExpirationTime;
     private String credentialRemark;
     private Long credentialTypeId;
     private String credentialTypeName;
@@ -98,19 +98,19 @@ public class MerchantCommand {
         this.email = email;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Date getUpdatedTime() {
+    public String getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
+    public void setUpdatedTime(String updatedTime) {
         this.updatedTime = updatedTime;
     }
 
@@ -154,11 +154,11 @@ public class MerchantCommand {
         this.credentialContent = credentialContent;
     }
 
-    public Date getCredentialExpirationTime() {
+    public String getCredentialExpirationTime() {
         return credentialExpirationTime;
     }
 
-    public void setCredentialExpirationTime(Date credentialExpirationTime) {
+    public void setCredentialExpirationTime(String credentialExpirationTime) {
         this.credentialExpirationTime = credentialExpirationTime;
     }
 

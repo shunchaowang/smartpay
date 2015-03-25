@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -419,7 +420,9 @@ public class UserController {
         userCommand.setLastName(user.getLastName());
         userCommand.setEmail(user.getEmail());
         userCommand.setActive(user.getActive());
-        userCommand.setCreatedTime(user.getCreatedTime());
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
         userCommand.setRemark(user.getRemark());
         if (user.getMerchant() != null) {
             userCommand.setMerchant(user.getMerchant().getId());

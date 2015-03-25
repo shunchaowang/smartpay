@@ -1,7 +1,5 @@
 package com.lambo.smartpay.manage.web.vo;
 
-import java.util.Date;
-
 /**
  * Created by swang on 3/16/2015.
  */
@@ -14,8 +12,8 @@ public class UserCommand {
     private String email;
     private String remark;
     private Boolean active;
-    private Date createdTime;
-    private Date updatedTime;
+    private String createdTime;
+    private String updatedTime;
     // relationships
     private Long merchant;
     private String merchantName;
@@ -78,19 +76,19 @@ public class UserCommand {
         this.active = active;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Date getUpdatedTime() {
+    public String getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
+    public void setUpdatedTime(String updatedTime) {
         this.updatedTime = updatedTime;
     }
 

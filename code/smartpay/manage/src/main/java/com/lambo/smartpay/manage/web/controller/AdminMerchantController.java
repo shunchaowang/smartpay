@@ -49,7 +49,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -566,7 +570,17 @@ public class AdminMerchantController {
         }
         credential.setContent(merchantCommand.getCredentialContent());
         credential.setActive(true);
-        credential.setExpirationDate(merchantCommand.getCredentialExpirationTime());
+
+        //TODO HOW TO PARSE FROM STRING
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        Date date = Calendar.getInstance(locale).getTime();
+        try {
+            date = dateFormat.parse(merchantCommand.getCredentialExpirationTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        credential.setExpirationDate(date);
         credential.setCredentialStatus(credentialStatus);
         credential.setCredentialType(credentialType);
         return credential;
@@ -674,7 +688,10 @@ public class AdminMerchantController {
 
         // Credential info
         merchantCommand.setCredentialContent(merchant.getCredential().getContent());
-        merchantCommand.setCredentialExpirationTime(merchant.getCredential().getExpirationDate());
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        merchantCommand.setCredentialExpirationTime(
+                dateFormat.format(merchant.getCredential().getExpirationDate()));
         merchantCommand.setCredentialRemark(merchant.getCredential().getRemark());
         merchantCommand.setCredentialStatusId(merchant.getCredential().getCredentialStatus()
                 .getId());

@@ -452,7 +452,6 @@ public class AdminUserController {
         userCommand.setLastName(user.getLastName());
         userCommand.setEmail(user.getEmail());
         userCommand.setActive(user.getActive());
-        userCommand.setCreatedTime(user.getCreatedTime());
         userCommand.setRemark(user.getRemark());
         if (user.getMerchant() != null) {
             userCommand.setMerchant(user.getMerchant().getId());
