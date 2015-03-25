@@ -1,21 +1,21 @@
-package com.lambo.smartpay.service;
+package com.lambo.smartpay.service.impl;
 
+import com.lambo.smartpay.service.GenericDateQueryService;
 import com.lambo.smartpay.util.ResourceProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by swang on 3/10/2015.
- * 2 top categories here, with date range and without date range.
- * Under each category there are 3 scenarios: Both t and search, only t, only search, if only
- * search with an empty search that means neither t or search;
- * Under each scenario there are 4 conditions, with pagination and order, only pagination,
- * only order, neither pagination or order.
+ * Created by swang on 3/24/2015.
  */
-public interface GenericDateQueryService<T extends Serializable, PK>
-        extends GenericService<T, PK> {
+public abstract class GenericDateQueryServiceImpl<T extends Serializable, PK>
+        implements GenericDateQueryService<T, PK> {
+
+    private static final Logger logger = LoggerFactory.getLogger(GenericDateQueryServiceImpl.class);
 
     /**
      * Dynamic search like grails findBy...
@@ -31,7 +31,9 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return number of the T matching criteria.
      */
-    Long countByCriteria(T t, String search, Date createdTimeStart, Date createdTimeEnd);
+    @Override
+    public abstract Long countByCriteria(T t, String search,
+                                         Date createdTimeStart, Date createdTimeEnd);
 
     /**
      * Dynamic search like grails findBy...
@@ -44,17 +46,24 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return number of the T matching criteria.
      */
-    Long countByCriteria(T t, Date createdTimeStart, Date createdTimeEnd);
+    @Override
+    public Long countByCriteria(T t, Date createdTimeStart, Date createdTimeEnd) {
+        return countByCriteria(t, null, createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
      *
+     * @param search
      * @param createdTimeStart start of date range.
      * @param createdTimeEnd   end of date range.
      * @return number of the T matching criteria.
      */
-    Long countByCriteria(String search, Date createdTimeStart, Date createdTimeEnd);
+    @Override
+    public Long countByCriteria(String search, Date createdTimeStart, Date createdTimeEnd) {
+        return countByCriteria(null, search, createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -69,7 +78,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      *               it means no criteria with wildcard search if search is null.
      * @return number of the T matching criteria.
      */
-    Long countByCriteria(T t, String search);
+    @Override
+    public Long countByCriteria(T t, String search) {
+        return countByCriteria(t, search, null, null);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -82,7 +94,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      *          it means no criteria on exact equals if t is null.
      * @return number of the T matching criteria.
      */
-    Long countByCriteria(T t);
+    @Override
+    public Long countByCriteria(T t) {
+        return countByCriteria(t, null);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -94,14 +109,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      *               it means no criteria with wildcard search if search is null.
      * @return number of the T matching criteria.
      */
-    Long countByCriteria(String search);
-
-    // find starts here for 2 categories
-    // with date range
-
-    // // 1st scenario with both t and search
-
-    // // // 1st condition both pagination and order
+    @Override
+    public Long countByCriteria(String search) {
+        return countByCriteria(null, search);
+    }
 
     /**
      * This one will be the abstract function acting as a template.
@@ -125,11 +136,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, String search, Integer start, Integer length,
-                           String order, ResourceProperties.JpaOrderDir orderDir,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 2nd condition only pagination
+    @Override
+    public abstract List<T> findByCriteria(T t, String search, Integer start, Integer length,
+                                           String order, ResourceProperties.JpaOrderDir orderDir,
+                                           Date createdTimeStart, Date createdTimeEnd);
 
     /**
      * Dynamic search like grails findBy...
@@ -150,10 +160,12 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, String search, Integer start, Integer length,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 3rd only order
+    @Override
+    public List<T> findByCriteria(T t, String search, Integer start, Integer length,
+                                  Date createdTimeStart, Date createdTimeEnd) {
+        return findByCriteria(t, search, start, length, null, null,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -174,11 +186,13 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, String search,
-                           String order, ResourceProperties.JpaOrderDir orderDir,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 4th neither pagination or order
+    @Override
+    public List<T> findByCriteria(T t, String search, String order,
+                                  ResourceProperties.JpaOrderDir orderDir, Date createdTimeStart,
+                                  Date createdTimeEnd) {
+        return findByCriteria(t, search, null, null, order, orderDir, createdTimeStart,
+                createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -197,13 +211,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, String search,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-
-    // // 2nd scenario only t
-
-    // // // 1st condition both pagination and order
+    @Override
+    public List<T> findByCriteria(T t, String search, Date createdTimeStart, Date createdTimeEnd) {
+        return findByCriteria(t, search, null, null, null, null,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -224,11 +236,13 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, Integer start, Integer length,
-                           String order, ResourceProperties.JpaOrderDir orderDir,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 2nd condition only pagination
+    @Override
+    public List<T> findByCriteria(T t, Integer start, Integer length, String order,
+                                  ResourceProperties.JpaOrderDir orderDir, Date createdTimeStart,
+                                  Date createdTimeEnd) {
+        return findByCriteria(t, null, start, length, order, orderDir,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -247,10 +261,12 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, Integer start, Integer length,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 3rd only order
+    @Override
+    public List<T> findByCriteria(T t, Integer start, Integer length, Date createdTimeStart,
+                                  Date createdTimeEnd) {
+        return findByCriteria(t, null, start, length, null, null,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -269,11 +285,12 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t,
-                           String order, ResourceProperties.JpaOrderDir orderDir,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 4th neither pagination or order
+    @Override
+    public List<T> findByCriteria(T t, String order, ResourceProperties.JpaOrderDir orderDir,
+                                  Date createdTimeStart, Date createdTimeEnd) {
+        return findByCriteria(t, null, order, orderDir,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -290,11 +307,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(T t, Date createdTimeStart, Date createdTimeEnd);
-
-    // // 3rd only search including empty search
-
-    // // // 1st condition both pagination and order
+    @Override
+    public List<T> findByCriteria(T t, Date createdTimeStart, Date createdTimeEnd) {
+        return findByCriteria(t, null, createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -315,11 +331,13 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(String search, Integer start, Integer length,
-                           String order, ResourceProperties.JpaOrderDir orderDir,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 2nd condition only pagination
+    @Override
+    public List<T> findByCriteria(String search, Integer start, Integer length, String order,
+                                  ResourceProperties.JpaOrderDir orderDir, Date createdTimeStart,
+                                  Date createdTimeEnd) {
+        return findByCriteria(null, search, start, length, order, orderDir,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -338,10 +356,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(String search, Integer start, Integer length,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 3rd only order
+    @Override
+    public List<T> findByCriteria(String search, Integer start, Integer length,
+                                  Date createdTimeStart, Date createdTimeEnd) {
+        return findByCriteria(null, search, start, length, createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -360,11 +379,13 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(String search,
-                           String order, ResourceProperties.JpaOrderDir orderDir,
-                           Date createdTimeStart, Date createdTimeEnd);
-
-    // // // 4th neither pagination or order
+    @Override
+    public List<T> findByCriteria(String search, String order,
+                                  ResourceProperties.JpaOrderDir orderDir, Date createdTimeStart,
+                                  Date createdTimeEnd) {
+        return findByCriteria(null, search, order, orderDir,
+                createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -381,12 +402,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param createdTimeEnd   end of date range.
      * @return
      */
-    List<T> findByCriteria(String search, Date createdTimeStart, Date createdTimeEnd);
-
-    // without date range
-    // // 1st scenario with both t and search
-
-    // // // 1st condition both pagination and order
+    @Override
+    public List<T> findByCriteria(String search, Date createdTimeStart, Date createdTimeEnd) {
+        return findByCriteria(null, search, createdTimeStart, createdTimeEnd);
+    }
 
     /**
      * This one will be the abstract function acting as a template.
@@ -408,10 +427,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
-    List<T> findByCriteria(T t, String search, Integer start, Integer length,
-                           String order, ResourceProperties.JpaOrderDir orderDir);
-
-    // // // 2nd condition only pagination
+    @Override
+    public List<T> findByCriteria(T t, String search, Integer start, Integer length, String order,
+                                  ResourceProperties.JpaOrderDir orderDir) {
+        return findByCriteria(t, search, start, length, order, orderDir, null, null);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -430,9 +450,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param length max record of the result.
      * @return
      */
-    List<T> findByCriteria(T t, String search, Integer start, Integer length);
-
-    // // // 3rd only order
+    @Override
+    public List<T> findByCriteria(T t, String search, Integer start, Integer length) {
+        return findByCriteria(t, search, start, length, null, null, null, null);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -451,10 +472,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
-    List<T> findByCriteria(T t, String search,
-                           String order, ResourceProperties.JpaOrderDir orderDir);
-
-    // // // 4th neither pagination or order
+    @Override
+    public List<T> findByCriteria(T t, String search, String order,
+                                  ResourceProperties.JpaOrderDir orderDir) {
+        return findByCriteria(t, search, null, null, order, orderDir);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -471,11 +493,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      *               it means no criteria with wildcard search if search is null.
      * @return
      */
-    List<T> findByCriteria(T t, String search);
-
-    // // 2nd scenario only t
-
-    // // // 1st condition both pagination and order
+    @Override
+    public List<T> findByCriteria(T t, String search) {
+        return findByCriteria(t, search, null, null, null, null, null, null);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -494,10 +515,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
-    List<T> findByCriteria(T t, Integer start, Integer length,
-                           String order, ResourceProperties.JpaOrderDir orderDir);
-
-    // // // 2nd condition only pagination
+    @Override
+    public List<T> findByCriteria(T t, Integer start, Integer length, String order,
+                                  ResourceProperties.JpaOrderDir orderDir) {
+        return findByCriteria(t, null, start, length, order, orderDir);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -514,9 +536,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param length max record of the result.
      * @return
      */
-    List<T> findByCriteria(T t, Integer start, Integer length);
-
-    // // // 3rd only order
+    @Override
+    public List<T> findByCriteria(T t, Integer start, Integer length) {
+        return findByCriteria(t, null, start, length);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -533,10 +556,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
-    List<T> findByCriteria(T t,
-                           String order, ResourceProperties.JpaOrderDir orderDir);
-
-    // // // 4th neither pagination or order
+    @Override
+    public List<T> findByCriteria(T t, String order, ResourceProperties.JpaOrderDir orderDir) {
+        return findByCriteria(t, null, null, null, order, orderDir);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -551,11 +574,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      *          it means no criteria on exact equals if t is null.
      * @return
      */
-    List<T> findByCriteria(T t);
-
-    // // 3rd only search including empty search
-
-    // // // 1st condition both pagination and order
+    @Override
+    public List<T> findByCriteria(T t) {
+        return findByCriteria(t, null);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -574,10 +596,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
-    List<T> findByCriteria(String search, Integer start, Integer length,
-                           String order, ResourceProperties.JpaOrderDir orderDir);
-
-    // // // 2nd condition only pagination
+    @Override
+    public List<T> findByCriteria(String search, Integer start, Integer length, String order,
+                                  ResourceProperties.JpaOrderDir orderDir) {
+        return findByCriteria(null, search, start, length, order, orderDir);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -594,9 +617,10 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param length max record of the result.
      * @return
      */
-    List<T> findByCriteria(String search, Integer start, Integer length);
-
-    // // // 3rd only order
+    @Override
+    public List<T> findByCriteria(String search, Integer start, Integer length) {
+        return findByCriteria(null, search, start, length);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -613,10 +637,11 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
-    List<T> findByCriteria(String search,
-                           String order, ResourceProperties.JpaOrderDir orderDir);
-
-    // // // 4th neither pagination or order
+    @Override
+    public List<T> findByCriteria(String search, String order,
+                                  ResourceProperties.JpaOrderDir orderDir) {
+        return findByCriteria(null, search, null, null, order, orderDir);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -631,6 +656,8 @@ public interface GenericDateQueryService<T extends Serializable, PK>
      *               it means no criteria with wildcard search if search is null.
      * @return
      */
-    List<T> findByCriteria(String search);
-
+    @Override
+    public List<T> findByCriteria(String search) {
+        return findByCriteria(null, search);
+    }
 }
