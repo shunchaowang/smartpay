@@ -8,10 +8,12 @@ import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import com.lambo.smartpay.persistence.entity.Merchant;
+import com.lambo.smartpay.persistence.entity.MerchantStatus;
 import com.lambo.smartpay.persistence.entity.Role;
 import com.lambo.smartpay.persistence.entity.User;
 import com.lambo.smartpay.persistence.entity.UserStatus;
@@ -164,6 +166,12 @@ public class AdminUserController {
         if (UserCommand.Role.valueOf(subDomain) == null) {
             throw new BadRequestException("400", "No role " + subDomain + " found.");
         }
+
+        if (UserCommand.Role.valueOf(subDomain).equals("MerchantAdmin")){
+            List<Merchant> merchants = merchantService.getAll();
+        }
+
+        //model.addAttribute("mechants", merchants);
         model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "create");
         model.addAttribute("userCommand", new UserCommand());

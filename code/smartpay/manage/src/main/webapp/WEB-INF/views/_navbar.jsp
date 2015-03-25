@@ -48,13 +48,14 @@
                             <li class="">
                                 <a href="${rootURL}admin/merchant/create">
                                     <i class="glyphicon glyphicon-plus"></i>
-                                    <spring:message code="merchant.create.label" arguments="${merchant}"/>
+                                    <spring:message code="create.label"
+                                                    arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
                                 <a href="${rootURL}admin/merchant/">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="merchant.manage.label" arguments="${merchant}"/>
+                                    <spring:message code="manage.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">

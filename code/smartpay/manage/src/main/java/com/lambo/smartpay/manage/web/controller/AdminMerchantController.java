@@ -424,6 +424,8 @@ public class AdminMerchantController {
                        @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
         model.addAttribute("merchantCommand", new MerchantCommand());
 
+        logger.debug("create site here");
+
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
         //TODO verify required fields
@@ -479,6 +481,7 @@ public class AdminMerchantController {
 
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
+        /*
         //TODO verify required fields
         // check uniqueness
         if (merchantService.findByName(merchantCommand.getName()) != null) {
@@ -489,6 +492,7 @@ public class AdminMerchantController {
             model.addAttribute("merchantCommand", merchantCommand);
             model.addAttribute("action", "create");
         }
+        */
 
         Merchant merchant = createMerchant(merchantCommand);
         //merchant.setId(merchantCommand.getId());
@@ -504,6 +508,49 @@ public class AdminMerchantController {
 
         return "main";
     }
+
+    /**
+     * ajax calls to delete a user by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String delete(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        Merchant merchant;
+
+        logger.debug("here u r");
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("Merchant.label", null, locale);
+        try {
+            merchant = merchantService.delete(id);
+            logger.debug("here u r" + id);
+
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.deleted.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String deletedMessage = messageSource.getMessage("deleted.message",
+                new String[]{label, merchant.getName()}, locale);
+        response.setMessage(deletedMessage);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
+    }
+
 
     private Credential createCredential(MerchantCommand merchantCommand) {
         Credential credential = new Credential();

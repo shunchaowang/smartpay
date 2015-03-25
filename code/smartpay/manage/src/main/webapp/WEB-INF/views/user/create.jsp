@@ -26,6 +26,24 @@
 <div class="row">
     <form:form action="${rootURL}${controller}/createAdmin" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
+
+        <!-- user status -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="merchant">
+                <spring:message code="status.label"/>
+                <span class="required-indicator">*</span>
+            </label>
+
+            <div class="col-sm-6">
+                <form:select path="merchant" id="merchant" cssClass="form-control" required=""
+                             placeholder="Merchant">
+                    <c:forEach items="${merchantes}" var="merchant">
+                        <form:option value="${merchant.id}">${merchant.name}</form:option>
+                    </c:forEach>
+                </form:select>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">
                 <spring:message code="username.label"/>
