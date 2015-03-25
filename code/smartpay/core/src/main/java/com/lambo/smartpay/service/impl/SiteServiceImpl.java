@@ -4,7 +4,9 @@ import com.lambo.smartpay.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.exception.NoSuchEntityException;
 import com.lambo.smartpay.exception.NotUniqueException;
 import com.lambo.smartpay.persistence.dao.SiteDao;
+import com.lambo.smartpay.persistence.dao.SiteStatusDao;
 import com.lambo.smartpay.persistence.entity.Site;
+import com.lambo.smartpay.persistence.entity.SiteStatus;
 import com.lambo.smartpay.service.SiteService;
 import com.lambo.smartpay.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,8 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
 
     @Autowired
     private SiteDao siteDao;
+    @Autowired
+    private SiteStatusDao siteStatusDao;
 
     /**
      * Find site by the unique name.
@@ -213,5 +217,69 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
     @Override
     public Long countAll() {
         return siteDao.countAll();
+    }
+
+    @Override
+    public Site freezeSite(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Site site = siteDao.get(id);
+        if (site == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
+                .SITE_STATUS_FROZEN_CODE);
+        site.setSiteStatus(siteStatus);
+        return site;
+    }
+
+    @Override
+    public Site unfreezeSite(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Site site = siteDao.get(id);
+        if (site == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
+                .SITE_STATUS_APPROVED_CODE);
+        site.setSiteStatus(siteStatus);
+        return site;
+    }
+
+    @Override
+    public Site approveSite(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Site site = siteDao.get(id);
+        if (site == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
+                .SITE_STATUS_APPROVED_CODE);
+        site.setSiteStatus(siteStatus);
+        return site;
+    }
+
+    @Override
+    public Site declineSite(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Site site = siteDao.get(id);
+        if (site == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
+                .SITE_STATUS_DECLINED_CODE);
+        site.setSiteStatus(siteStatus);
+        return site;
     }
 }

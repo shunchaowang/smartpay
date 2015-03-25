@@ -158,7 +158,84 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
     @Override
     public Merchant update(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
-        return null;
+        Date date = Calendar.getInstance().getTime();
+        if (merchant == null) {
+            throw new MissingRequiredFieldException("Merchant is null.");
+        }
+        if (StringUtils.isBlank(merchant.getName())) {
+            throw new MissingRequiredFieldException("Merchant name is null.");
+        }
+
+        // check credential, commission fee and return fee
+        if (merchant.getCredential() == null) {
+            throw new MissingRequiredFieldException("Merchant credential is null.");
+        }
+        // check credential required fields
+        if (StringUtils.isBlank(merchant.getCredential().getContent())) {
+            throw new MissingRequiredFieldException("Merchant credential content is null.");
+        }
+        if (merchant.getCredential().getExpirationDate() == null) {
+            throw new MissingRequiredFieldException("Merchant credential expiration date is null.");
+        }
+        if (merchant.getCredential().getCredentialStatus() == null) {
+            throw new MissingRequiredFieldException("Merchant credential status is null.");
+        }
+        if (merchant.getCredential().getCredentialType() == null) {
+            throw new MissingRequiredFieldException("Merchant credential type is null.");
+        }
+        // set active default to be active and created time for credential
+        merchant.getCredential().setUpdatedTime(date);
+        merchant.getCredential().setActive(true);
+
+        // check commission fee
+        if (merchant.getCommissionFee() == null) {
+            throw new MissingRequiredFieldException("Merchant commission fee is null.");
+        }
+        if (merchant.getCommissionFee().getValue() == null) {
+            throw new MissingRequiredFieldException("Merchant commission fee value is null.");
+        }
+        if (merchant.getCommissionFee().getFeeType() == null) {
+            throw new MissingRequiredFieldException("Merchant commission fee type is null.");
+        }
+        // set active default to be active and created time
+        merchant.getCommissionFee().setActive(true);
+        merchant.getCommissionFee().setUpdatedTime(date);
+
+        // check return fee
+        if (merchant.getReturnFee() == null) {
+            throw new MissingRequiredFieldException("Merchant return fee is null.");
+        }
+        if (merchant.getReturnFee().getValue() == null) {
+            throw new MissingRequiredFieldException("Merchant return fee value is null.");
+        }
+        if (merchant.getReturnFee().getFeeType() == null) {
+            throw new MissingRequiredFieldException("Merchant return fee type is null.");
+        }
+        // set active default to be active and created time
+        merchant.getReturnFee().setActive(true);
+        merchant.getReturnFee().setUpdatedTime(date);
+
+        // set createdTime
+        merchant.setUpdatedTime(date);
+        // set merchant status to be normal when creating
+        merchant.setActive(true);
+
+        // generate encryption key for the merchant
+        if (merchant.getEncryption() == null) {
+            throw new MissingRequiredFieldException("Merchant encryption is null.");
+        }
+        if (merchant.getEncryption().getEncryptionType() == null) {
+            throw new MissingRequiredFieldException("Merchant encryption type is null.");
+        }
+        if (StringUtils.isBlank(merchant.getEncryption().getKey())) {
+            throw new MissingRequiredFieldException("Merchant encryption key is null.");
+        }
+        merchant.getEncryption().setUpdatedTime(date);
+        merchant.getEncryption().setActive(true);
+        // key generation should be done by web
+//        String key = RandomStringUtils.randomNumeric(ResourceProperties.ENCRYPTION_KEY_LENGTH);
+//        merchant.getEncryption().setKey(key);
+        return merchantDao.update(merchant);
     }
 
     @Transactional

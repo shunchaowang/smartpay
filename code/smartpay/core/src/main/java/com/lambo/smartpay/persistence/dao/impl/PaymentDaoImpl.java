@@ -225,13 +225,8 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         }
 
         if (payment.getActive() != null) {
-            Predicate activePredicate = builder.equal(root.<Boolean>get("active"),
+            predicate = builder.equal(root.<Boolean>get("active"),
                     builder.literal(payment.getActive()));
-            if (predicate == null) {
-                predicate = activePredicate;
-            } else {
-                predicate = builder.and(predicate, activePredicate);
-            }
         }
 
         // check Payment Status id
