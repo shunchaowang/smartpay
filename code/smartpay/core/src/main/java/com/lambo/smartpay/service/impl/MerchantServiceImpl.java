@@ -171,7 +171,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         if (merchant == null) {
             throw new NoSuchEntityException("Merchant with id " + id + " does not exist.");
         }
-        merchantDao.get(id);
+        merchantDao.delete(id);
         return merchant;
     }
 
