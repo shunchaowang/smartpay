@@ -25,4 +25,5 @@ public interface SiteService extends GenericQueryService<Site, Long> {
 
     Site declineSite(Long id) throws NoSuchEntityException;
 
+    Boolean canOperate(Long id) throws NoSuchEntityException;
 }

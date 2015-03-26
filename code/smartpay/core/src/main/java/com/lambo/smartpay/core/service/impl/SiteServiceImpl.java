@@ -282,4 +282,19 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         site.setSiteStatus(siteStatus);
         return site;
     }
+
+    @Override
+    public Boolean canOperate(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Site site = siteDao.get(id);
+        if (site == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
+                .SITE_STATUS_APPROVED_CODE);
+        return site.getSiteStatus().equals(siteStatus);
+    }
 }

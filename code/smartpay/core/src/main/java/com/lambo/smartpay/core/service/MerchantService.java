@@ -80,4 +80,6 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
      * @return
      */
     Fee updateReturnFee(Fee fee) throws MissingRequiredFieldException;
+
+    Boolean canOperate(Long id) throws NoSuchEntityException;
 }

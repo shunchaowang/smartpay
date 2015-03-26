@@ -543,4 +543,19 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
     public Long countAll() {
         return merchantDao.countAll();
     }
+
+    @Override
+    public Boolean canOperate(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Merchant merchant = merchantDao.get(id);
+        if (merchant == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
+                .MERCHANT_STATUS_NORMAL_CODE);
+        return merchant.getMerchantStatus().equals(merchantStatus);
+    }
 }
