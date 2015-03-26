@@ -1,4 +1,4 @@
-package com.lambo.smartpay.pay.util;
+package com.lambo.smartpay.manage.web.controller;
 
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.web.bind.WebDataBinder;
