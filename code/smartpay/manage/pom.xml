@@ -7,7 +7,6 @@
         <artifactId>smartpay</artifactId>
         <version>${com.lambo.smartpay.version}</version>
     </parent>
-    <groupId>com.lambo.smartpay</groupId>
     <artifactId>manage</artifactId>
     <packaging>war</packaging>
     <version>${com.lambo.smartpay.manage.version}</version>
