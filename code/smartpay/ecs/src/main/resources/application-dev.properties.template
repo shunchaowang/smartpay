@@ -2,8 +2,13 @@
 
 jdbc.driverClassName=com.mysql.jdbc.Driver
 jdbc.url=jdbc:mysql://localhost:3306/smartpay
-jdbc.username=admin
-jdbc.password=admin
+<<<<<<< Updated upstream:code/smartpay/manage/src/main/resources/application-dev.properties.template
+jdbc.username=
+jdbc.password=
+=======
+jdbc.username=smartpay
+jdbc.password=smartpay
+>>>>>>> Stashed changes:code/smartpay/core/src/test/resources/application-prod.properties
 
 init-db=false
 
