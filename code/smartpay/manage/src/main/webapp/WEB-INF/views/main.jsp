@@ -17,50 +17,23 @@
             </a>
         </li>
 
-        <!-- if subDomain exists use subDomain, otherwise use domain -->
-        <c:choose>
-            <c:when test="${subDomain != null}">
-                <spring:message code="${subDomain}.label" var="entity"/>
 
-                <c:if test="${controller != null}">
-                    <li>
-                        <a href="${rootURL}${controller}/${subDomain}">
-                            <spring:message code="manage.label" arguments="${entity}"/>
-                        </a>
-                    </li>
-                </c:if>
-                <c:if test="${action != null}">
-                    <li>
-                        <a href="${rootURL}${controller}/${action}${subDomain}">
-                            <spring:message code="${action}.label" arguments="${entity}"/>
-                        </a>
-                    </li>
-                </c:if>
-            </c:when>
+        <c:if test="${domain != null}">
+            <spring:message code="${domain}.label" var="entity"/>
 
-            <c:otherwise>
-                <c:if test="${domain != null}">
-                    <spring:message code="${domain}.label" var="entity"/>
-
-                    <c:if test="${controller != null}">
-                        <li>
-                            <a href="${rootURL}${controller}/">
-                                <spring:message code="manage.label" arguments="${entity}"/>
-                            </a>
-                        </li>
-                    </c:if>
-                    <c:if test="${action != null}">
-                        <li>
-                            <a href="${rootURL}${controller}/${action}">
-                                <spring:message code="${action}.label" arguments="${entity}"/>
-                            </a>
-                        </li>
-                    </c:if>
-                </c:if>
-            </c:otherwise>
-        </c:choose>
-
-
+            <c:if test="${controller != null}">
+                <li>
+                    <a href="${rootURL}${controller}/">
+                        <spring:message code="manage.label" arguments="${entity}"/>
+                    </a>
+                </li>
+            </c:if>
+            <c:if test="${action != null}">
+                <li>
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </li>
+            </c:if>
+        </c:if>
     </ol>
 </div>
 

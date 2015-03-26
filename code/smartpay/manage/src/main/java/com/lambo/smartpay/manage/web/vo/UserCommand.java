@@ -123,20 +123,4 @@ public class UserCommand {
     public void setUserStatusName(String userStatusName) {
         this.userStatusName = userStatusName;
     }
-
-    public enum Role {
-        Admin("100"),
-        MerchantAdmin("200"),
-        MerchantOperator("201");
-
-        private String code;
-
-        Role(String code) {
-            this.code = code;
-        }
-
-        public String getCode() {
-            return code;
-        }
-    }
 }

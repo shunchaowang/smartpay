@@ -2,9 +2,6 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -57,7 +54,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${subDomain}",
+                'url': "${rootURL}${controller}/list${domain}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -67,7 +64,7 @@
                 {
                     'name': 'username', 'targets': 1, 'data': 'username',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${subDomain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -82,7 +79,7 @@
                 {
                     'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit${subDomain}/'
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'

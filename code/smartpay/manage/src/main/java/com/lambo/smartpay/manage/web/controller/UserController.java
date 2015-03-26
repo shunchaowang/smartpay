@@ -5,12 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.manage.web.exception.BadRequestException;
-import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
-import com.lambo.smartpay.manage.web.vo.UserCommand;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
-import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
@@ -20,6 +14,12 @@ import com.lambo.smartpay.core.service.RoleService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.UserCommand;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,34 +77,31 @@ public class UserController {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"/{subDomain}", "/index{subDomain}"}, method = RequestMethod.GET)
-    public String index(@PathVariable("subDomain") String subDomain, Model model) {
-
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
-        }
-        model.addAttribute("subDomain", subDomain);
+    @RequestMapping(value = {"/", "/index", "/indexAdmin"}, method = RequestMethod.GET)
+    public String indexAdmin(Model model) {
+        model.addAttribute("domain", "Admin");
         return "main";
     }
 
-    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET,
+    @RequestMapping(value = {"/indexMerchantAdmin"}, method = RequestMethod.GET)
+    public String indexMerchantAdmin(Model model) {
+        model.addAttribute("domain", "MerchantAdmin");
+        return "main";
+    }
+
+    @RequestMapping(value = "/listAdmin", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
-    String list(HttpServletRequest request, @PathVariable("subDomain") String subDomain) {
+    String listAdmin(HttpServletRequest request) {
 
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
-        }
-        // form role code based on the role parameter
-        String roleCode = UserCommand.Role.valueOf(subDomain).getCode();
         // create Role object for query criteria
         Role criteriaRole;
         try {
-            criteriaRole = roleService.findByCode(roleCode);
+            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
+            throw new BadRequestException("400", "No role found.");
         }
         // create User criteria and attached the role
         User criteriaUser = new User();
@@ -120,7 +117,6 @@ public class UserController {
 
         // parse search keyword
         String search = request.getParameter("search[value]");
-        logger.debug("Search Cri: " + search);
 
         // parse pagination
         Integer start = Integer.valueOf(request.getParameter("start"));
@@ -158,41 +154,104 @@ public class UserController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/create{subDomain}", method = RequestMethod.GET)
-    public String create(Model model, @PathVariable("subDomain") String subDomain) {
+    @RequestMapping(value = "/listMerchantAdmin", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listMerchantAdmin(HttpServletRequest request) {
 
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        // create Role object for query criteria
+        Role criteriaRole;
+        try {
+            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role found.");
+        }
+        // create User criteria and attached the role
+        User criteriaUser = new User();
+        criteriaUser.setRoles(new HashSet<Role>());
+        criteriaUser.getRoles().add(criteriaRole);
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
         }
 
-        if (UserCommand.Role.valueOf(subDomain).equals("MerchantAdmin")){
-            List<Merchant> merchants = merchantService.getAll();
+        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total records
+        Long recordsTotal = userService.countByCriteria(criteriaUser);
+        // count records filtered
+        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
+
+        if (users == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        //model.addAttribute("mechants", merchants);
-        model.addAttribute("subDomain", subDomain);
+        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+
+        for (User user : users) {
+            DataTablesUser tableUser = new DataTablesUser(user);
+            dataTablesUsers.add(tableUser);
+        }
+
+        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
+        result.setData(dataTablesUsers);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(result);
+    }
+
+
+    @RequestMapping(value = "/createAdmin", method = RequestMethod.GET)
+    public String createAdmin(Model model) {
+
+        model.addAttribute("domain", "Admin");
         model.addAttribute("action", "create");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
 
-    @RequestMapping(value = "/create{subDomain}", method = RequestMethod.POST)
-    public String save(Model model, @PathVariable("subDomain") String subDomain,
-                       @ModelAttribute("userCommand") UserCommand userCommand) {
+    @RequestMapping(value = "/createMerchantAdmin", method = RequestMethod.GET)
+    public String createMerchantAdmin(Model model) {
 
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
-        }
+        List<Merchant> merchants = merchantService.getAll();
+        model.addAttribute("merchants", merchants);
+        model.addAttribute("domain", "MerchantAdmin");
+        model.addAttribute("action", "create");
+        model.addAttribute("userCommand", new UserCommand());
+        return "main";
+    }
+
+    @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
+    public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
 
         // set subDomain to model
-        model.addAttribute("subDomain", subDomain);
+        model.addAttribute("domain", "Admin");
         // form role code based on the role parameter
-        String roleCode = UserCommand.Role.valueOf(subDomain).getCode();
-        Role subDomainRole = null;
+
+        Role role = null;
         try {
-            subDomainRole = roleService.findByCode(roleCode);
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find role " + roleCode);
+            logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
         Locale locale = LocaleContextHolder.getLocale();
@@ -222,7 +281,7 @@ public class UserController {
         //TODO check if all required fields filled
 
         // create User and set admin to user
-        User user = createUser(userCommand, subDomainRole);
+        User user = createUser(userCommand, role);
         // set initial password
         user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
         // persist user
@@ -236,7 +295,68 @@ public class UserController {
             e.printStackTrace();
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
-        model.addAttribute("action", "index");
+        return "main";
+    }
+
+    @RequestMapping(value = "/createMerchantAdmin", method = RequestMethod.POST)
+    public String saveMerchantAdmin(Model model,
+                                    @ModelAttribute("userCommand") UserCommand userCommand) {
+
+        // set subDomain to model
+        model.addAttribute("domain", "MerchantAdmin");
+
+        List<Merchant> merchants = merchantService.getAll();
+        model.addAttribute("merchants", merchants);
+
+        Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find merchant admin role.");
+            e.printStackTrace();
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+
+        // check if username already taken
+        if (userService.findByUsername(userCommand.getUsername()) != null) {
+
+            String fieldLabel = messageSource.getMessage("username.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+            model.addAttribute("userCommand", userCommand);
+            model.addAttribute("action", "create");
+            return "main";
+        }
+        // check if email already taken
+        if (userService.findByEmail(userCommand.getEmail()) != null) {
+
+            String fieldLabel = messageSource.getMessage("email.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, userCommand.getEmail()}, locale));
+            model.addAttribute("userCommand", userCommand);
+            model.addAttribute("action", "create");
+            return "main";
+        }
+        //TODO check if all required fields filled
+
+        // create User and set admin to user
+        User user = createUser(userCommand, role);
+        // set initial password
+        user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
+        // persist user
+        try {
+            user = userService.create(user);
+        } catch (MissingRequiredFieldException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        }
+        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
+
         return "main";
     }
 
@@ -246,16 +366,10 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/show{subDomain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Long id, @PathVariable("subDomain") String subDomain,
-                       Model model) {
-
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
-        }
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, Model model) {
 
         // set subDomain to model
-        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "show");
         // get user by id
         User user = null;
@@ -266,6 +380,19 @@ public class UserController {
             throw new BadRequestException("400", "User " + id + " not found.");
         }
 
+        // set domain based on user's role
+        String domain = "MerchantAdmin";
+        Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find admin role.");
+            e.printStackTrace();
+        }
+        if (user.getRoles().contains(role)) {
+            domain = "Admin";
+        }
+        model.addAttribute("domain", domain);
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
@@ -279,16 +406,9 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/edit{subDomain}/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, @PathVariable("subDomain") String subDomain,
-                       Model model) {
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id, Model model) {
 
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
-        }
-
-        // set subDomain to model
-        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "edit");
         // get user by id
         User user;
@@ -298,7 +418,21 @@ public class UserController {
             e.printStackTrace();
             throw new BadRequestException("400", "User " + id + " not found.");
         }
-
+        // set domain based on user's role
+        String domain = "MerchantAdmin";
+        Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find admin role.");
+            e.printStackTrace();
+        }
+        if (user.getRoles().contains(role)) {
+            domain = "Admin";
+        } else {
+            model.addAttribute("merchants", merchantService.getAll());
+        }
+        model.addAttribute("domain", domain);
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
@@ -312,16 +446,9 @@ public class UserController {
      * @param userCommand
      * @return
      */
-    @RequestMapping(value = "/edit{subDomain}", method = RequestMethod.POST)
-    public String update(Model model, @PathVariable("subDomain") String subDomain,
-                         @ModelAttribute("userCommand") UserCommand userCommand) {
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String update(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
 
-        if (UserCommand.Role.valueOf(subDomain) == null) {
-            throw new BadRequestException("400", "No role " + subDomain + " found.");
-        }
-
-        // set subDomain to model
-        model.addAttribute("subDomain", subDomain);
         // if the email is change we need to check uniqueness
         User user = null;
         try {
@@ -332,6 +459,20 @@ public class UserController {
         if (user == null) {
             throw new BadRequestException("400", "User not found.");
         }
+
+        // set domain and action based on user's role
+        String domain = "MerchantAdmin";
+        Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find admin role.");
+            e.printStackTrace();
+        }
+        if (user.getRoles().contains(role)) {
+            domain = "Admin";
+        }
+        model.addAttribute("domain", domain);
 
         // create command user and add to model and view
         if (!userCommand.getEmail().equals(user.getEmail())) {

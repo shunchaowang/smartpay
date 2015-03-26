@@ -3,9 +3,6 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -29,7 +26,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/create${subDomain}" method="POST"
+    <form:form action="${rootURL}${controller}/create${domain}" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">
@@ -94,6 +91,24 @@
                 </form:select>
             </div>
         </div>
+        <!-- if create a merchant admin we need to have merchant selection -->
+        <c:if test="${domain == 'MerchantAdmin'}">
+            <!-- user status -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="userStatus">
+                    <spring:message code="Merchant.label"/>
+                    <span class="required-indicator">*</span>
+                </label>
+
+                <div class="col-sm-6">
+                    <form:select path="merchant" id="merchant" cssClass="form-control" required="">
+                        <c:forEach items="${merchants}" var="merchant">
+                            <form:option value="${merchant.id}">${merchant.name}</form:option>
+                        </c:forEach>
+                    </form:select>
+                </div>
+            </div>
+        </c:if>
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">

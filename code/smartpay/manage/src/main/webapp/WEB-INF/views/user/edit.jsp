@@ -3,9 +3,6 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -31,7 +28,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/edit${subDomain}" method="POST"
+    <form:form action="${rootURL}${controller}/edit" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="edit-user-form">
         <form:input path="id" id="id" type="hidden" value="${userCommand.id}"/>
         <div class="form-group">
@@ -96,6 +93,25 @@
                 </form:select>
             </div>
         </div>
+        <!-- if create a merchant admin we need to have merchant selection -->
+        <c:if test="${domain == 'MerchantAdmin'}">
+            <!-- user status -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label" for="userStatus">
+                    <spring:message code="Merchant.label"/>
+                    <span class="required-indicator">*</span>
+                </label>
+
+                <div class="col-sm-6">
+                    <form:select path="merchant" id="merchant" cssClass="form-control" required=""
+                                 value="${userCommand.merchant}">
+                        <c:forEach items="${merchants}" var="merchant">
+                            <form:option value="${merchant.id}">${merchant.name}</form:option>
+                        </c:forEach>
+                    </form:select>
+                </div>
+            </div>
+        </c:if>
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">
@@ -115,7 +131,7 @@
                 <button class='btn btn-default' id='reset-button' type="reset">
                     <spring:message code='action.reset.label'/>
                 </button>
-                <a href="${rootURL}${controller}/${subDomain}">
+                <a href="${rootURL}${controller}/index${domain}">
                     <button type="button" class="btn btn-default">
                         <spring:message code="action.return.label"/>
                     </button>
