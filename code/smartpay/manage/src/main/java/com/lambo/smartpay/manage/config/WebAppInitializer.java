@@ -1,8 +1,8 @@
 package com.lambo.smartpay.manage.config;
 
-import com.lambo.smartpay.config.CoreConfig;
-import com.lambo.smartpay.util.PropertiesLoader;
-import com.lambo.smartpay.util.ResourceProperties;
+import com.lambo.smartpay.core.config.CoreConfig;
+import com.lambo.smartpay.core.util.PropertiesLoader;
+import com.lambo.smartpay.core.util.ResourceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.ConfigurableEnvironment;

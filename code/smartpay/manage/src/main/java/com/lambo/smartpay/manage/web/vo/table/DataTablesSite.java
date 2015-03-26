@@ -1,6 +1,6 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
-import com.lambo.smartpay.persistence.entity.Site;
+import com.lambo.smartpay.core.persistence.entity.Site;
 
 import java.io.Serializable;
 import java.util.Date;

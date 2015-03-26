@@ -1,6 +1,6 @@
 package com.lambo.smartpay.manage.web.vo;
 
-import com.lambo.smartpay.persistence.entity.Encryption;
+import com.lambo.smartpay.core.persistence.entity.Encryption;
 
 /**
  * Created by swang on 3/23/2015.

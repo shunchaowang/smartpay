@@ -1,11 +1,10 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
-import com.lambo.smartpay.persistence.entity.User;
+import com.lambo.smartpay.core.persistence.entity.User;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.io.Serializable;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**

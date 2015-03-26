@@ -1,7 +1,7 @@
 package com.lambo.smartpay.manage.config;
 
-import com.lambo.smartpay.persistence.entity.User;
-import com.lambo.smartpay.service.UserService;
+import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

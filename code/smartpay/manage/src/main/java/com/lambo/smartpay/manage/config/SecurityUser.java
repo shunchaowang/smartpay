@@ -1,7 +1,7 @@
 package com.lambo.smartpay.manage.config;
 
-import com.lambo.smartpay.persistence.entity.Role;
-import com.lambo.smartpay.persistence.entity.User;
+import com.lambo.smartpay.core.persistence.entity.Role;
+import com.lambo.smartpay.core.persistence.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

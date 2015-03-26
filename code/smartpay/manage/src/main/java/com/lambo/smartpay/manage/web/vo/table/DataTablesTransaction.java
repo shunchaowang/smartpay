@@ -1,6 +1,6 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
-import com.lambo.smartpay.persistence.entity.Merchant;
+import com.lambo.smartpay.core.persistence.entity.Merchant;
 
 /**
  * Created by swang on 3/20/2015.
