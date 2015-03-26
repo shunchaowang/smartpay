@@ -14,7 +14,7 @@ public class HomeController {
     @RequestMapping(value = {"/", "/index"})
     public ModelAndView home() {
         //view.addObject("action", "index");
-        return new ModelAndView("main");
+        return new ModelAndView("index");
     }
 
     // for 403 access denied page
