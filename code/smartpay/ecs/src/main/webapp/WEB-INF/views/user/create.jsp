@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
+<spring:message code="${domain}.label" var="entity"/>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -29,8 +24,26 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/create${subDomain}" method="POST"
+    <form:form action="${rootURL}${controller}/createAdmin" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
+
+        <!-- user status -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="merchant">
+                <spring:message code="status.label"/>
+                <span class="required-indicator">*</span>
+            </label>
+
+            <div class="col-sm-6">
+                <form:select path="merchant" id="merchant" cssClass="form-control" required=""
+                             placeholder="Merchant">
+                    <c:forEach items="${merchantes}" var="merchant">
+                        <form:option value="${merchant.id}">${merchant.name}</form:option>
+                    </c:forEach>
+                </form:select>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">
                 <spring:message code="username.label"/>
@@ -124,7 +137,7 @@
                 username: {required: true, minlength: 3, maxlength: 32},
                 firstName: {required: true, minlength: 3, maxlength: 32},
                 lastName: {required: true, minlength: 3, maxlength: 32},
-                email: {required: true, email: true, minlength: 3, maxlength: 32},
+                email: {required: true, minlength: 3, maxlength: 32},
                 userStatus: {required: true}
             }
         });

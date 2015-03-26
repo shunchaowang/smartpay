@@ -1,23 +1,22 @@
-<%@ page import="com.lambo.smartpay.manage.web.controller.UserResource" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
 <div class="container-fluid">
-    <sec:authorize access="isAuthenticated()">
-        <div class='navbar-header'>
-            <button class="navbar-toggle" data-target=".navbar-responsive-collapse"
-                    data-toggle="collapse" type="button">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <!-- end collapse buttons -->
-            <a class="navbar-brand" href="${rootURL}">
-                <spring:message code="application.name"/>
-            </a>
-        </div>
-        <!-- end of navbar-header -->
-        <!-- navbar -->
+    <div class='navbar-header'>
+        <button class="navbar-toggle" data-target=".navbar-responsive-collapse"
+                data-toggle="collapse" type="button">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <!-- end collapse buttons -->
+        <a class="navbar-brand" href="${rootURL}">
+            <spring:message code="application.name"/>
+        </a>
+    </div>
+    <!-- end of navbar-header -->
+    <!-- navbar -->
 
+    <sec:authorize access="isAuthenticated()">
         <!-- define domain related vars -->
         <spring:message code='Merchant.label' var="merchant"/>
         <spring:message code='Credential.label' var="merchantCredential"/>
@@ -46,60 +45,34 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
-                                <a href="${rootURL}admin/merchant/create">
+                                <a href="${rootURL}merchant/create">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <spring:message code="create.label"
                                                     arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/merchant/">
+                                <a href="${rootURL}merchant/">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="manage.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/merchant/freeze">
+                                <a href="${rootURL}merchant/freeze">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="freeze.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/merchant/unfreeze">
+                                <a href="${rootURL}merchant/unfreeze">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="unfreeze.label" arguments="${merchant}"/>
                                 </a>
                             </li>
-                            <!--
-                            <li class="">
-                                <a href="${rootURL}admin/merchant/credential/">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label"
-                                                    arguments="${merchantCredential}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}admin/merchant/transaction/">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label"
-                                                    arguments="${merchantTransaction}"/>
-                                </a>
-                            </li>
-                            -->
                         </ul>
                     </li>
                 </sec:authorize>
                 <!-- admin menu ends -->
-
-                <!-- merchant admin menu starts -->
-                <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                    <li>
-                        <a href="${rootURL}merchant/show/${merchantId}"> <!-- id here -->
-                            <spring:message code="show.label" arguments="${merchant}"/>
-                        </a>
-                    </li>
-                </sec:authorize>
-                <!-- merchant admin menu ends -->
 
                 <!-- site management goes here -->
                 <!-- admin is able to view site list, approve site  -->
@@ -114,44 +87,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <!-- admin menu starts -->
-                        <sec:authorize
-                                access="hasAnyRole('ROLE_ADMIN')">
-                            <li class="">
-                                <a href="${rootURL}admin/site">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}admin/site/showAuditList">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="audit.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}admin/site/showFreezeList">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="freeze.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}admin/site/showUnfreezeList">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="unfreeze.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}admin/site/create">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="create.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                        </sec:authorize>
-                        <!-- admin menu ends -->
-
-                        <!-- merchant admin/operator starts -->
-                        <sec:authorize
-                                access="hasAnyRole('ROLE_MERCHANT_ADMIN', 'ROLE_MERCHANT_OPERATOR')">
+                        <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
                             <li class="">
                                 <a href="${rootURL}site">
                                     <i class="glyphicon glyphicon-th-list"></i>
@@ -159,20 +95,31 @@
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}site/create">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <spring:message code="create.label" arguments="${site}"/>
+                                <a href="${rootURL}site/showAuditList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="audit.label" arguments="${site}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}site/edit">
-                                    <i class="glyphicon glyphicon-pencil"></i>
-                                    <spring:message code="edit.label" arguments="${site}"/>
+                                <a href="${rootURL}site/showFreezeList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="freeze.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}site/showUnfreezeList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="unfreeze.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <!-- TODO this should be on ecs side -->
+                            <li class="">
+                                <a href="${rootURL}site/create">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="create.label" arguments="${site}"/>
                                 </a>
                             </li>
                         </sec:authorize>
-                        <!-- merchant admin/operator ends -->
-
                     </ul>
                 </li>
 
@@ -187,26 +134,26 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="">
-                                <a href="${rootURL}admin/user/indexAdmin">
+                                <a href="${rootURL}user/indexAdmin">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label" arguments="${admin}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/user/indexMerchantAdmin">
+                                <a href="${rootURL}user/indexMerchantAdmin">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label"
                                                     arguments="${merchantAdmin}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/user/createAdmin">
+                                <a href="${rootURL}user/createAdmin">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <spring:message code="create.label" arguments="${admin}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}admin/user/createMerchantAdmin">
+                                <a href="${rootURL}user/createMerchantAdmin">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <spring:message code="create.label"
                                                     arguments="${merchantAdmin}"/>
@@ -216,31 +163,6 @@
                         </ul>
                     </li>
                 </sec:authorize>
-                <!-- merchant admin menu goes here -->
-                <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                           data-target="#" href="#">
-                            <spring:message code="manage.label" arguments="${user}"/>
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li class="">
-                                <a href="${rootURL}/user">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label" arguments="${user}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}user/create">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <spring:message code="create.label" arguments="${user}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </sec:authorize>
-                <!-- merchant admin menu ends -->
                 <!-- user management ends -->
 
                 <li>

@@ -44,7 +44,7 @@ import java.util.Locale;
  * Created by swang on 3/21/2015.
  */
 @Controller
-@RequestMapping("/admin/merchant/transaction")
+@RequestMapping("/transaction")
 @Secured({"ROLE_ADMIN"})
 public class TransactionController {
 
@@ -64,7 +64,7 @@ public class TransactionController {
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
-        return "admin/merchant/transaction";
+        return "transaction";
     }
 
     @ModelAttribute("domain")

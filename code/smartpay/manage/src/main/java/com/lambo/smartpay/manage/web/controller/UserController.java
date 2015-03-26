@@ -5,12 +5,12 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
@@ -34,21 +34,21 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by swang on 3/15/2015.
+ * Created by swang on 3/18/2015.
  */
 @Controller
 @RequestMapping("/user")
-@Secured({"MERCHANT_ROLE_ADMIN"})
+@Secured({"ROLE_ADMIN"})
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -72,67 +72,45 @@ public class UserController {
         return "user";
     }
 
-    @ModelAttribute("domain")
-    public String domain() {
-        return "User";
-    }
-
-    @ModelAttribute("roles")
-    public List<Role> roles() {
-        return roleService.getAll();
-    }
-
     @ModelAttribute("userStatuses")
     public List<UserStatus> userStatuses() {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/{subDomain}", "/index{subDomain}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("subDomain") String subDomain, Model model) {
 
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+        model.addAttribute("subDomain", subDomain);
         return "main";
     }
 
-    /*
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/list{subDomain}", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
-    String list(@RequestParam(value = "search[value]") String search,
-                @RequestParam(value = "start") int start,
-                @RequestParam(value = "length") int length,
-                @RequestParam(value = "order[0][column]") String order,
-                @RequestParam(value = "order[0][dir]") String orderDir) {
+    String list(HttpServletRequest request, @PathVariable("subDomain") String subDomain) {
 
-        logger.debug("search: " + search);
-        logger.debug("start: " + start);
-        logger.debug("length: " + length);
-        logger.debug("order: " + order);
-        logger.debug("orderDir: " + orderDir);
-        logger.debug("OrderDir: " + StringUtils.upperCase(orderDir));
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+        // form role code based on the role parameter
+        String roleCode = UserCommand.Role.valueOf(subDomain).getCode();
+        // create Role object for query criteria
+        Role criteriaRole;
+        try {
+            criteriaRole = roleService.findByCode(roleCode);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+        // create User criteria and attached the role
+        User criteriaUser = new User();
+        criteriaUser.setRoles(new HashSet<Role>());
+        criteriaUser.getRoles().add(criteriaRole);
 
-        List<User> users = userService.findByCriteria(search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(StringUtils.upperCase(orderDir)));
-
-        DataTablesResultSet<User> result = new DataTablesResultSet<>();
-        result.setData(users);
-        result.setRecordsFiltered(1);
-        result.setRecordsTotal(1);
-        return result.toString();
-    }
-    */
-
-
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    String list(HttpServletRequest request) {
-        // debugging info
-//        Enumeration<String> params = request.getParameterNames();
-//        while (params.hasMoreElements()) {
-//            String paramName = params.nextElement();
-//            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
-//                    (paramName));
-//        }
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
@@ -142,6 +120,7 @@ public class UserController {
 
         // parse search keyword
         String search = request.getParameter("search[value]");
+        logger.debug("Search Cri: " + search);
 
         // parse pagination
         Integer start = Integer.valueOf(request.getParameter("start"));
@@ -151,21 +130,13 @@ public class UserController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-
-        //Merchant admin can only view the users belonged to this merchant
-        SecurityUser principal = UserResource.getCurrentUser();
-        if (principal.getMerchant() == null) {
-            throw new BadRequestException("400", "User doesn't have merchant.");
-        }
-        User userCriteria = new User();
-        userCriteria.setMerchant(principal.getMerchant());
-        List<User> users = userService.findByCriteria(userCriteria, search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records
-        Long recordsTotal = userService.countByCriteria(userCriteria);
+        Long recordsTotal = userService.countByCriteria(criteriaUser);
         // count records filtered
-        Long recordsFiltered = userService.countByCriteria(userCriteria, search);
+        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -187,27 +158,41 @@ public class UserController {
         return gson.toJson(result);
     }
 
-    /**
-     * Merchant admin can only create merchant operator.
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(Model model) {
+    @RequestMapping(value = "/create{subDomain}", method = RequestMethod.GET)
+    public String create(Model model, @PathVariable("subDomain") String subDomain) {
+
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+
+        if (UserCommand.Role.valueOf(subDomain).equals("MerchantAdmin")){
+            List<Merchant> merchants = merchantService.getAll();
+        }
+
+        //model.addAttribute("mechants", merchants);
+        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "create");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String save(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
-        // get merchant operator role
-        Role role = null;
+    @RequestMapping(value = "/create{subDomain}", method = RequestMethod.POST)
+    public String save(Model model, @PathVariable("subDomain") String subDomain,
+                       @ModelAttribute("userCommand") UserCommand userCommand) {
+
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
+        // form role code based on the role parameter
+        String roleCode = UserCommand.Role.valueOf(subDomain).getCode();
+        Role subDomainRole = null;
         try {
-            role = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+            subDomainRole = roleService.findByCode(roleCode);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find role " + ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+            logger.info("Cannot find role " + roleCode);
             e.printStackTrace();
         }
         Locale locale = LocaleContextHolder.getLocale();
@@ -237,7 +222,7 @@ public class UserController {
         //TODO check if all required fields filled
 
         // create User and set admin to user
-        User user = createUser(userCommand, role);
+        User user = createUser(userCommand, subDomainRole);
         // set initial password
         user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
         // persist user
@@ -261,9 +246,16 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/show{subDomain}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, @PathVariable("subDomain") String subDomain,
+                       Model model) {
 
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "show");
         // get user by id
         User user = null;
@@ -278,13 +270,6 @@ public class UserController {
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
 
-        // merchant admin can only view users from his merchant
-        SecurityUser securityUser = UserResource.getCurrentUser();
-
-        if (!user.getMerchant().equals(securityUser.getMerchant())) {
-            return "403"; // access denied
-        }
-
         return "main";
     }
 
@@ -294,12 +279,19 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/edit{subDomain}/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") Long id, @PathVariable("subDomain") String subDomain,
+                       Model model) {
 
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         model.addAttribute("action", "edit");
         // get user by id
-        User user = null;
+        User user;
         try {
             user = userService.get(id);
         } catch (NoSuchEntityException e) {
@@ -311,11 +303,6 @@ public class UserController {
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
 
-        SecurityUser securityUser = UserResource.getCurrentUser();
-        if (!user.getMerchant().equals(securityUser.getMerchant())) {
-            return "403"; // not same merchant access denied
-        }
-
         return "main";
     }
 
@@ -325,9 +312,16 @@ public class UserController {
      * @param userCommand
      * @return
      */
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String update(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+    @RequestMapping(value = "/edit{subDomain}", method = RequestMethod.POST)
+    public String update(Model model, @PathVariable("subDomain") String subDomain,
+                         @ModelAttribute("userCommand") UserCommand userCommand) {
 
+        if (UserCommand.Role.valueOf(subDomain) == null) {
+            throw new BadRequestException("400", "No role " + subDomain + " found.");
+        }
+
+        // set subDomain to model
+        model.addAttribute("subDomain", subDomain);
         // if the email is change we need to check uniqueness
         User user = null;
         try {
@@ -355,13 +349,10 @@ public class UserController {
             }
         }
 
+
         // pass uniqueness check create the user
         editUser(user, userCommand);
-        SecurityUser securityUser = UserResource.getCurrentUser();
-        if (!user.getMerchant().equals(securityUser.getMerchant())) {
-            return "403";
-        }
-        // user is a user edited by merchant admin
+
         try {
             userService.update(user);
         } catch (MissingRequiredFieldException e) {
@@ -369,7 +360,46 @@ public class UserController {
         } catch (NotUniqueException e) {
             e.printStackTrace();
         }
+
         return "main";
+    }
+
+    /**
+     * ajax calls to delete a user by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String delete(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        User user;
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("User.label", null, locale);
+        try {
+            user = userService.delete(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.deleted.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String deletedMessage = messageSource.getMessage("deleted.message",
+                new String[]{label, user.getUsername()}, locale);
+        response.setMessage(deletedMessage);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
     }
 
     // create a new User from a UserCommand
@@ -420,9 +450,6 @@ public class UserController {
         userCommand.setLastName(user.getLastName());
         userCommand.setEmail(user.getEmail());
         userCommand.setActive(user.getActive());
-        Locale locale = LocaleContextHolder.getLocale();
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-        userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
         userCommand.setRemark(user.getRemark());
         if (user.getMerchant() != null) {
             userCommand.setMerchant(user.getMerchant().getId());
@@ -454,5 +481,4 @@ public class UserController {
         }
         user.setUserStatus(userStatus);
     }
-
 }

@@ -1,10 +1,5 @@
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
+<spring:message code="${domain}.label" var="entity"/>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -28,13 +23,14 @@
 <br/>
 
 <div class="row">
-    <table class="display cell-border" id="user-table">
+    <table class="display cell-border" id="merchant-table">
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
-            <th><spring:message code="username.label"/></th>
-            <th><spring:message code="firstName.label"/></th>
-            <th><spring:message code="lastName.label"/></th>
+            <th><spring:message code="name.label"/></th>
+            <th><spring:message code="address.label"/></th>
+            <th><spring:message code="contact.label"/></th>
+            <th><spring:message code="tel.label"/></th>
             <th><spring:message code="email.label"/></th>
             <th><spring:message code="createdTime.label"/></th>
             <th><spring:message code="status.label"/></th>
@@ -47,8 +43,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
-        var userTable = $('#user-table').DataTable({
+        var merchantTable = $('#merchant-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -57,7 +52,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${subDomain}",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -65,24 +60,29 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'username', 'targets': 1, 'data': 'username',
+                    'name': 'name', 'targets': 1, 'data': 'name',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${subDomain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
-                {'name': 'firstName', 'targets': 2, 'data': 'firstName'},
-                {'name': 'lastName', 'targets': 3, 'data': 'lastName'},
-                {'name': 'email', 'targets': 4, 'data': 'email'},
-                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
+                {'name': 'address', 'targets': 2, 'searchable': false, 'orderable': false,
+                    'data': 'address'},
+                {'name': 'contact', 'targets': 3, 'searchable': false, 'orderable': false,
+                    'data': 'contact'},
+                {'name': 'tel', 'targets': 4, 'searchable': false, 'orderable': false,
+                    'data': 'tel'},
+                {'name': 'email', 'targets': 5, 'data': 'email'},
+                {'name': 'createdTime', 'targets': 6, 'searchable': false,
+                    'data': 'createdTime'},
                 {
-                    'name': 'userStatus', 'targets': 6, 'searchable': false,
-                    'orderable': false, 'data': 'userStatus'
+                    'name': 'merchantStatus', 'targets': 7, 'searchable': false,
+                    'orderable': false, 'data': 'merchantStatus'
                 },
                 {
-                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit${subDomain}/'
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
@@ -97,7 +97,7 @@
         });
 
         // add live handler for remove button
-        userTable.on('click', 'button[type=button][name=delete-button]', function (event) {
+        merchantTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
             var id = this.value;
             $.ajax({
@@ -117,7 +117,7 @@
                             + "</span></button>"
                             + data.message + "</div>";
                     $('#notification').append(alert);
-                    userTable.ajax.reload();
+                    merchantTable.ajax.reload();
                 }
             });
         });

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
+    <spring:message code="${domain}.labe" var="entity"/>
 </c:if>
 
 <div class='row' id='notification'>
@@ -21,7 +21,7 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='create.label' arguments="${entity}"/>
+            <spring:message code='edit.label' arguments="${entity}"/>
         </b></h2>
     </div>
 </div>
@@ -31,7 +31,17 @@
     <form:form action="${rootURL}${controller}/editSite" method="POST"
                commandName="siteCommand" cssClass="form-horizontal" id="auditSite-form">
         <form:input path="id" id="id" type="hidden" value="${siteCommand.id}"/>
+        <!-- site merchant -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="merchant">
+                <spring:message code="site.merchant.label"/>
+            </label>
 
+            <div class="col-sm-6">
+                <form:input path="merchant" id="merchant" cssClass="form-control"
+                            value="${siteCommand.merchantName}" readonly="true"/>
+            </div>
+        </div>
         <!-- name -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
@@ -66,17 +76,6 @@
                             value="${siteCommand.siteStatusName}"/>
             </div>
         </div>
-        <!-- site merchant -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="merchant">
-                <spring:message code="site.merchant.label"/>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="merchant" id="merchant" cssClass="form-control"
-                            value="${siteCommand.merchantName}"/>
-            </div>
-        </div>
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">
@@ -90,6 +89,9 @@
         </div>
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
+                <button class='btn btn-default' id='create-button' type="submit">
+                    <spring:message code='action.save.label'/>
+                </button>
                 <a href="${rootURL}${controller}">
                     <button type="button" class="btn btn-default">
                         <spring:message code="action.return.label"/>

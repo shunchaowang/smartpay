@@ -33,7 +33,7 @@ import java.util.List;
  * Created by swang on 3/21/2015.
  */
 @Controller
-@RequestMapping("/admin/merchant/credential")
+@RequestMapping("/credential")
 @Secured({"ROLE_ADMIN"})
 public class CredentialController {
 
@@ -51,7 +51,7 @@ public class CredentialController {
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
-        return "admin/merchant/credential";
+        return "credential";
     }
 
     @ModelAttribute("domain")

@@ -46,13 +46,7 @@
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {
-                    'name': 'name', 'targets': 1, 'data': 'name',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/showInfo/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
-                },
+                {'name': 'name', 'targets': 1, 'data': 'name'},
                 {'name': 'url', 'targets': 2, 'data': 'url'},
                 {'name': 'createdTime', 'targets': 3, 'searchable': false, 'data': 'createdTime'},
                 {
@@ -62,16 +56,14 @@
                 {
                     'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/showInfo/" + row['id'] +
-                                '">'
-                                + '<spring:message code="action.show.label"/>'
-                                + '</a>'
-                                + ' ' +
-                                '<a href="' + "${rootURL}${controller}/editInfo/" + row['id'] +
+                        return '<a href="' + "${rootURL}${controller}/edit" + row['id'] +
                                 '">'
                                 + '<spring:message code="action.edit.label"/>'
+                                + '</a>' +
+                                '<a href="' + "${rootURL}${controller}/delete" + row['id'] +
+                                '">'
+                                + '<spring:message code="action.delete.label"/>'
                                 + '</a>';
-
                     }
                 }
             ]

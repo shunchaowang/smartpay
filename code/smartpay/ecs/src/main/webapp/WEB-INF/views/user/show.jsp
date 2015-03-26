@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
-<c:if test="${subDomain != null}">
-    <spring:message code="${subDomain}.label" var="entity"/>
-</c:if>
+<spring:message code="${domain}.label" var="entity"/>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -107,14 +102,14 @@
 
 <div class="row">
     <div class="col-sm-2 col-sm-offset-2">
-        <a href="${rootURL}${controller}/${subDomain}">
+        <a href="${rootURL}${controller}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.return.label"/>
             </button>
         </a>
     </div>
     <div class="col-sm-2">
-        <a href="${rootURL}${controller}/edit${subDomain}/${userCommand.id}">
+        <a href="${rootURL}${controller}/edit/${userCommand.id}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.edit.label"/>
             </button>

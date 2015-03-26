@@ -21,7 +21,7 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='create.label' arguments="${entity}"/>
+            <spring:message code='show.label' arguments="${entity}"/>
         </b></h2>
     </div>
 </div>
@@ -40,7 +40,7 @@
 
             <div class="col-sm-6">
                 <form:input path="name" id="name" cssClass="form-control"
-                            value="${siteCommand.name}"/>
+                            value="${siteCommand.name}" readonly="true"/>
             </div>
         </div>
         <!-- url -->
@@ -52,7 +52,7 @@
 
             <div class="col-sm-6">
                 <form:input path="url" id="url" cssClass="form-control" required=""
-                            value="${siteCommand.url}"/>
+                            value="${siteCommand.url}" readonly="true"/>
             </div>
         </div>
         <!-- site status -->
@@ -63,7 +63,7 @@
 
             <div class="col-sm-6">
                 <form:input path="siteStatus" id="siteStatus" cssClass="form-control"
-                            value="${siteCommand.siteStatusName}"/>
+                            value="${siteCommand.siteStatusName}" readonly="true"/>
             </div>
         </div>
         <!-- site merchant -->
@@ -74,7 +74,7 @@
 
             <div class="col-sm-6">
                 <form:input path="merchant" id="merchant" cssClass="form-control"
-                            value="${siteCommand.merchantName}"/>
+                            value="${siteCommand.merchantName}" readonly="true"/>
             </div>
         </div>
         <!-- remark -->
@@ -85,7 +85,7 @@
 
             <div class="col-sm-6">
                 <form:input path="remark" id="remark" cssClass="form-control"
-                            value="${siteCommand.remark}"/>
+                            value="${siteCommand.remark}" readonly="true"/>
             </div>
         </div>
         <div class='form-group'>
