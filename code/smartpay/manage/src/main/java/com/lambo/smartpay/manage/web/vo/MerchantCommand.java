@@ -1,7 +1,5 @@
 package com.lambo.smartpay.manage.web.vo;
 
-import java.util.Date;
-
 /**
  * Created by swang on 3/16/2015.
  */

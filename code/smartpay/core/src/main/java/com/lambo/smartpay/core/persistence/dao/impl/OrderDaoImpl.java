@@ -334,7 +334,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
      */
     private javax.persistence.criteria.Order orderBy(CriteriaBuilder builder, Root<Order> root,
                                                      String order, ResourceProperties.JpaOrderDir
-            orderDir) {
+                                                             orderDir) {
 
         // get all supporting paths
         Path<Long> idPath = root.get("id");

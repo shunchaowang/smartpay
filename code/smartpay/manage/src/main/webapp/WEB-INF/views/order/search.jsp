@@ -173,7 +173,12 @@
                     'url': "${rootURL}${controller}/searchData",
                     'type': "GET",
                     'data': {
-                        'empty': true
+                        'id': $("#id").val(),
+                        'merchantNumber': $('#merchantNumber').val(),
+                        'orderStatus': $('#orderStatus').val(),
+                        'site': $('#site').val(),
+                        'timeBeginning': $('#begin-date').val(),
+                        'timeEnding': $('#end-date').val()
                     },
                     'dataType': 'json'
                 },

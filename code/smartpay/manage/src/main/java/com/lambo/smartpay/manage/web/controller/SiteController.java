@@ -5,22 +5,23 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.manage.web.exception.BadRequestException;
-import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
-import com.lambo.smartpay.manage.web.vo.SiteCommand;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
-import org.springframework.context.i18n.LocaleContextHolder;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.persistence.entity.SiteStatus;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.SiteCommand;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,8 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.springframework.context.MessageSource;
-
 
 
 /**
@@ -372,12 +371,12 @@ public class SiteController {
     }
 
     @RequestMapping(value = "/editSite/{operation}/{id}", method = RequestMethod.GET)
-    public String editSite(@PathVariable("id") Long id,@PathVariable("operation") String operation,
+    public String editSite(@PathVariable("id") Long id, @PathVariable("operation") String operation,
                            Model model) {
 
         logger.debug("editSite ========== ");
 
-        Site site ;
+        Site site;
         Locale locale = LocaleContextHolder.getLocale();
         String label = messageSource.getMessage("Site.label", null, locale);
         String message = "";
@@ -391,48 +390,48 @@ public class SiteController {
             throw new BadRequestException("400", "Site  " + id + " not found.");
         }
 
-        if(operation.equals("audit")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+        if (operation.equals("audit")) {
+            try {
+                site.setSiteStatus(siteStatusService.get(Long.parseLong("2")));
                 message = messageSource.getMessage("audit.message",
                         new String[]{label, site.getName()}, locale);
-            }catch (NoSuchEntityException e) {
+            } catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
             }
             model.addAttribute("action", "showAuditList");
         }
 
-        if(operation.equals("freeze")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("3")));
+        if (operation.equals("freeze")) {
+            try {
+                site.setSiteStatus(siteStatusService.get(Long.parseLong("3")));
                 message = messageSource.getMessage("frozen.message",
                         new String[]{label, site.getName()}, locale);
-            }catch (NoSuchEntityException e) {
+            } catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
             }
             model.addAttribute("action", "showFreezeList");
         }
 
-        if(operation.equals("unfreeze")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("2")));
+        if (operation.equals("unfreeze")) {
+            try {
+                site.setSiteStatus(siteStatusService.get(Long.parseLong("2")));
                 message = messageSource.getMessage("unfrozen.message",
                         new String[]{label, site.getName()}, locale);
-            }catch (NoSuchEntityException e) {
+            } catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
             }
             model.addAttribute("action", "showUnfreezeList");
         }
 
-        if(operation.equals("decline")){
-            try{
-                site.setSiteStatus(siteStatusService.get(Long.parseLong ("4")));
+        if (operation.equals("decline")) {
+            try {
+                site.setSiteStatus(siteStatusService.get(Long.parseLong("4")));
                 message = messageSource.getMessage("decline.message",
                         new String[]{label, site.getName()}, locale);
-            }catch (NoSuchEntityException e) {
+            } catch (NoSuchEntityException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", "SiteStatus  " + id + " not found.");
             }
@@ -453,8 +452,9 @@ public class SiteController {
     }
 
     @RequestMapping(value = "/showEditInfo/{operation}/{id}", method = RequestMethod.GET)
-    public String showEditInfo(@PathVariable("id") Long id,@PathVariable("operation") String operation,
-                       Model model) {
+    public String showEditInfo(@PathVariable("id") Long id,
+                               @PathVariable("operation") String operation,
+                               Model model) {
 
 
         logger.debug("I've been through here ~~~~~~~~~~ 555 ");
@@ -466,11 +466,11 @@ public class SiteController {
         }
         */
 
-        if(operation.equals("auditsite"))
+        if (operation.equals("auditsite"))
             model.addAttribute("action", "showAuditInfo");
-        if(operation.equals("freezesite"))
+        if (operation.equals("freezesite"))
             model.addAttribute("action", "showFreezeInfo");
-        if(operation.equals("unfreezesite"))
+        if (operation.equals("unfreezesite"))
             model.addAttribute("action", "showUnfreezeInfo");
 
         Site site;
@@ -668,8 +668,8 @@ public class SiteController {
         if (site.getMerchant() != null) {
             SiteCommand.setMerchant(site.getMerchant().getId());
             SiteCommand.setMerchantName(site.getMerchant().getName());
-            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchant());
-            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchantName());
+            logger.debug("SiteMerchant ---" + SiteCommand.getMerchant());
+            logger.debug("SiteMerchant ---" + SiteCommand.getMerchantName());
         }
 
         if (site.getSiteStatus() != null) {
@@ -690,7 +690,6 @@ public class SiteController {
         //site.getRemark(siteCommand.getRemark());
 
 
-
         SiteCommand SiteCommand = new SiteCommand();
         SiteCommand.setId(site.getId());
         SiteCommand.setName(site.getName());
@@ -701,8 +700,8 @@ public class SiteController {
         if (site.getMerchant() != null) {
             SiteCommand.setMerchant(site.getMerchant().getId());
             SiteCommand.setMerchantName(site.getMerchant().getName());
-            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchant());
-            logger.debug("SiteMerchant ---" +  SiteCommand.getMerchantName());
+            logger.debug("SiteMerchant ---" + SiteCommand.getMerchant());
+            logger.debug("SiteMerchant ---" + SiteCommand.getMerchantName());
         }
 
         if (site.getSiteStatus() != null) {

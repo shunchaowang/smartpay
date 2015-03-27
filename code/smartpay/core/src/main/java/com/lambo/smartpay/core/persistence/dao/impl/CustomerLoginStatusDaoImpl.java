@@ -1,7 +1,7 @@
 package com.lambo.smartpay.core.persistence.dao.impl;
 
-import com.lambo.smartpay.core.persistence.entity.CustomerLoginStatus;
 import com.lambo.smartpay.core.persistence.dao.CustomerLoginStatusDao;
+import com.lambo.smartpay.core.persistence.entity.CustomerLoginStatus;
 import org.springframework.stereotype.Repository;
 
 /**

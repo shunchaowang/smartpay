@@ -66,15 +66,23 @@
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
-                {'name': 'address', 'targets': 2, 'searchable': false, 'orderable': false,
-                    'data': 'address'},
-                {'name': 'contact', 'targets': 3, 'searchable': false, 'orderable': false,
-                    'data': 'contact'},
-                {'name': 'tel', 'targets': 4, 'searchable': false, 'orderable': false,
-                    'data': 'tel'},
+                {
+                    'name': 'address', 'targets': 2, 'searchable': false, 'orderable': false,
+                    'data': 'address'
+                },
+                {
+                    'name': 'contact', 'targets': 3, 'searchable': false, 'orderable': false,
+                    'data': 'contact'
+                },
+                {
+                    'name': 'tel', 'targets': 4, 'searchable': false, 'orderable': false,
+                    'data': 'tel'
+                },
                 {'name': 'email', 'targets': 5, 'data': 'email'},
-                {'name': 'createdTime', 'targets': 6, 'searchable': false,
-                    'data': 'createdTime'},
+                {
+                    'name': 'createdTime', 'targets': 6, 'searchable': false,
+                    'data': 'createdTime'
+                },
                 {
                     'name': 'merchantStatus', 'targets': 7, 'searchable': false,
                     'orderable': false, 'data': 'merchantStatus'

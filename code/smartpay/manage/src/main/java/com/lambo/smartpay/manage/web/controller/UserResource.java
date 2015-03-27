@@ -1,8 +1,8 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
+import com.lambo.smartpay.manage.config.SecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -32,7 +32,7 @@
         </h4>
 
         <form:hidden path="id" id="id" cssClass="form-control" required=""
-                    placeholder="Id" value="${merchantCommand.id}"/>
+                     placeholder="Id" value="${merchantCommand.id}"/>
 
         <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
@@ -146,7 +146,8 @@
             <div class="col-sm-6">
                 <form:input path="credentialExpirationTime" id="credentialExpirationTime"
                             cssClass="form-control datepicker" required="" readonly="true"
-                            style="background:white;" value="${merchantCommand.credentialExpirationTime}"/>
+                            style="background:white;"
+                            value="${merchantCommand.credentialExpirationTime}"/>
             </div>
         </div>
         <!-- credential type -->

@@ -122,8 +122,12 @@ public class SiteCommand {
         this.siteStatusName = siteStatusName;
     }
 
-    public String getSiteOperation() {return siteOperation;}
+    public String getSiteOperation() {
+        return siteOperation;
+    }
 
-    public void setSiteOperation(String siteOperation) {this.siteOperation = siteOperation;}
+    public void setSiteOperation(String siteOperation) {
+        this.siteOperation = siteOperation;
+    }
 
 }

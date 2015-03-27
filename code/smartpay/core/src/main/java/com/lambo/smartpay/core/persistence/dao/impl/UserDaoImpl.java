@@ -1,8 +1,8 @@
 package com.lambo.smartpay.core.persistence.dao.impl;
 
 import com.lambo.smartpay.core.persistence.dao.UserDao;
-import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.persistence.entity.Role;
+import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;

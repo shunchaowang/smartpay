@@ -1,7 +1,7 @@
 package com.lambo.smartpay.core.persistence.dao.impl;
 
-import com.lambo.smartpay.core.persistence.entity.Customer;
 import com.lambo.smartpay.core.persistence.dao.CustomerDao;
+import com.lambo.smartpay.core.persistence.entity.Customer;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

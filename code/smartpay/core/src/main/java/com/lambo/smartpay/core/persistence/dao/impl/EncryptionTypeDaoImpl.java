@@ -1,7 +1,7 @@
 package com.lambo.smartpay.core.persistence.dao.impl;
 
-import com.lambo.smartpay.core.persistence.entity.EncryptionType;
 import com.lambo.smartpay.core.persistence.dao.EncryptionTypeDao;
+import com.lambo.smartpay.core.persistence.entity.EncryptionType;
 import org.springframework.stereotype.Repository;
 
 /**

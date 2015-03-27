@@ -2,8 +2,10 @@ package com.lambo.smartpay.manage.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
+import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.SiteService;
@@ -24,7 +26,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -148,8 +154,54 @@ public class OrderController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Order> orders = orderService.findByCriteria(search, start, length,
-                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+        // parse my own query params
+        String id = request.getParameter("id");
+        String merchantNumber = request.getParameter("merchantNUmber");
+        String orderStatus = request.getParameter("orderStatus");
+        String site = request.getParameter("site");
+        String timeBeginning = request.getParameter("timeBeginning");
+        String timeEnding = request.getParameter("timeEnding");
+
+        Order orderCriteria = new Order();
+        if (!StringUtils.isBlank(id)) {
+            orderCriteria.setId(Long.valueOf(id));
+        }
+        if (!StringUtils.isBlank(merchantNumber)) {
+            orderCriteria.setMerchantNumber(merchantNumber);
+        }
+        if (!StringUtils.isBlank(orderStatus)) {
+            OrderStatus status = null;
+            try {
+                status = orderStatusService.get(Long.valueOf(orderStatus));
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+            orderCriteria.setOrderStatus(status);
+        }
+        if (!StringUtils.isBlank(site)) {
+            Site siteCriteria = null;
+            try {
+                siteCriteria = siteService.get(Long.valueOf(site));
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+            orderCriteria.setSite(siteCriteria);
+        }
+        Date beginning = null;
+        Date ending = null;
+        if ((!StringUtils.isBlank(timeBeginning)) && (!StringUtils.isBlank(timeEnding))) {
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            try {
+                beginning = dateFormat.parse(timeBeginning);
+                ending = dateFormat.parse(timeEnding);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Bad Request.");
+            }
+        }
+
+        List<Order> orders = orderService.findByCriteria(orderCriteria, search, start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir), beginning, ending);
 
         // count total records
         Long recordsTotal = orderService.countAll();
@@ -175,6 +227,4 @@ public class OrderController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
     }
-
-
 }

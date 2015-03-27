@@ -59,7 +59,8 @@
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {'name': 'name', 'targets': 1, 'data': 'name',
+                {
+                    'name': 'name', 'targets': 1, 'data': 'name',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/showAuditInfo/'
                                 + row['id'] + '>' + data + '</a>';
@@ -78,7 +79,7 @@
                                 row['id'] + '">'
                                 + '<spring:message code="action.audit.label"/>'
                                 + '</a>'
-                                +' ' +
+                                + ' ' +
                                 '<a href="' + "${rootURL}${controller}/editSite/decline/" +
                                 row['id'] + '">'
                                 + '<spring:message code="action.decline.label"/>'

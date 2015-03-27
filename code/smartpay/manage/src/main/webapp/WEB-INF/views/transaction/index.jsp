@@ -115,23 +115,23 @@
                     'name': 'returnFeeType', 'targets': 10, 'data': 'returnFeeType',
                     'searchable': false, 'orderable': false
                 }/*,
-                {
-                    'name': 'operation', 'targets': 11, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button type="button" id="edit-encryption-button" '
-                                + ' class="btn btn-default" value="' + row['encryptionId'] + '">'
-                                + '<spring:message code="edit.label" arguments="${encryptionEntity}"/>'
-                                + '</button>'
-                                + '<button type="button" id="edit-commission-fee-button" '
-                                + ' class="btn btn-default" value="' + row['commissionFeeId'] + '">'
-                                + '<spring:message code="edit.label" arguments="${commissionFeeEntity}"/>'
-                                + '</button>'
-                                + '<button type="button" id="edit-return-fee-button" '
-                                + ' class="btn btn-default" value="' + row['returnFeeId'] + '">'
-                                + '<spring:message code="edit.label" arguments="${returnFeeEntity}"/>'
-                                + '</button>';
-                    }
-                }*/
+                 {
+                 'name': 'operation', 'targets': 11, 'searchable': false, 'orderable': false,
+                 'render': function (data, type, row) {
+                 return '<button type="button" id="edit-encryption-button" '
+                 + ' class="btn btn-default" value="' + row['encryptionId'] + '">'
+                 + '<spring:message code="edit.label" arguments="${encryptionEntity}"/>'
+                 + '</button>'
+                 + '<button type="button" id="edit-commission-fee-button" '
+                 + ' class="btn btn-default" value="' + row['commissionFeeId'] + '">'
+                 + '<spring:message code="edit.label" arguments="${commissionFeeEntity}"/>'
+                 + '</button>'
+                 + '<button type="button" id="edit-return-fee-button" '
+                 + ' class="btn btn-default" value="' + row['returnFeeId'] + '">'
+                 + '<spring:message code="edit.label" arguments="${returnFeeEntity}"/>'
+                 + '</button>';
+                 }
+                 }*/
             ]
         });
 

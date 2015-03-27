@@ -59,7 +59,8 @@
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {'name': 'name', 'targets': 1, 'data': 'name',
+                {
+                    'name': 'name', 'targets': 1, 'data': 'name',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/showUnfreezeInfo/'
                                 + row['id'] + '>' + data + '</a>';

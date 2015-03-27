@@ -38,8 +38,7 @@ public class FormStringTrimmerTest {
     }
 
     @Test
-    public void stringFormatting ( ) throws Exception
-    {
+    public void stringFormatting() throws Exception {
         MockHttpServletRequestBuilder post = MockMvcRequestBuilders.post("/test");
         // this should be trimmed, but only start and end of string
         post.param("test", "     Hallo  Welt   ");
