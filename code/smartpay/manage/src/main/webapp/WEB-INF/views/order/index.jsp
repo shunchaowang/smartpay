@@ -20,6 +20,13 @@
         <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
     </div>
     <!-- end of table title -->
+    <div class="col-sm-4 pull-right">
+        <a href="${rootURL}${controller}/search">
+            <h3><button type="button" class="btn btn-default pull-right">
+                <spring:message code="action.advanceSearch.label"/>
+            </button></h3>
+        </a>
+    </div>
 </div>
 <!-- end of class row -->
 <br/>

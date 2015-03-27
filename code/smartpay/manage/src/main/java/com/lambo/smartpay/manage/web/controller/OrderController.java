@@ -6,6 +6,7 @@ import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
+import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
@@ -38,6 +39,8 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
     @Autowired
+    private SiteService siteService;
+    @Autowired
     private OrderStatusService orderStatusService;
 
     // here goes all model across the whole controller
@@ -53,6 +56,7 @@ public class OrderController {
 
     @ModelAttribute("orderStatuses")
     public List<OrderStatus> orderStatuses() {
+        logger.debug("order status: " + orderStatusService.countAll());
         return orderStatusService.getAll();
     }
 
@@ -112,5 +116,65 @@ public class OrderController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
     }
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String search(Model model) {
+        model.addAttribute("action", "search");
+        model.addAttribute("sites", siteService.getAll());
+        return "main";
+    }
+
+    @RequestMapping(value = "/searchData", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String searchData(HttpServletRequest request) {
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        List<Order> orders = orderService.findByCriteria(search, start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total records
+        Long recordsTotal = orderService.countAll();
+        // count records filtered
+        Long recordsFiltered = orderService.countByCriteria(search);
+
+        if (orders == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesOrder> dataTablesOrders = new ArrayList<>();
+
+        for (Order o : orders) {
+            DataTablesOrder tablesOrder = new DataTablesOrder(o);
+            dataTablesOrders.add(tablesOrder);
+        }
+
+        DataTablesResultSet<DataTablesOrder> result = new DataTablesResultSet<>();
+        result.setData(dataTablesOrders);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(result);
+    }
+
 
 }
