@@ -12,27 +12,17 @@
 <div class="row" id="breadcrumb">
     <ol class="breadcrumb">
         <li>
-            <a href="${rootURL}">
-                <spring:message code="home.label"/>
-            </a>
+            <spring:message code="home.label"/>
         </li>
-
-
         <c:if test="${domain != null}">
             <spring:message code="${domain}.label" var="entity"/>
 
-            <c:if test="${controller != null}">
-                <li>
-                    <a href="${rootURL}${controller}/">
-                        <spring:message code="manage.label" arguments="${entity}"/>
-                    </a>
-                </li>
-            </c:if>
-            <c:if test="${action != null}">
-                <li>
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </li>
-            </c:if>
+            <li>
+                <spring:message code="manage.label" arguments="${entity}"/>
+            </li>
+            <li>
+                <spring:message code="${action}.label" arguments="${entity}"/>
+            </li>
         </c:if>
     </ol>
 </div>

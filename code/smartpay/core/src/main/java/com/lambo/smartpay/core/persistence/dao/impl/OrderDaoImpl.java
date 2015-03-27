@@ -221,7 +221,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         String likeSearch = "%" + search + "%";
 
         // get all paths for the query
-        Path<String> merchantNumberPath = root.get("firstName");
+        Path<String> merchantNumberPath = root.get("merchantNumber");
 
         // create the predicate expression for all the path
         Predicate merchantNumberPredicate = builder.like(merchantNumberPath, likeSearch);

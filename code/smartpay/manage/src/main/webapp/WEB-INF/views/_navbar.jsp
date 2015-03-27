@@ -166,12 +166,12 @@
                 <!-- user management ends -->
 
                 <li>
-                    <a href="${rootURL}order/list">
+                    <a href="${rootURL}order">
                         <spring:message code="manage.label" arguments="${order}"/>
                     </a>
                 </li>
                 <li>
-                    <a href="${rootURL}payment/list">
+                    <a href="${rootURL}payment">
                         <spring:message code="manage.label" arguments="${payment}"/>
                     </a>
                 </li>
