@@ -167,8 +167,7 @@
                 'processing': true,
                 'serverSide': true,
                 'paging': true,
-                'searching': false,
-
+                
                 'ajax': {
                     'url': "${rootURL}${controller}/searchData",
                     'type': "GET",
