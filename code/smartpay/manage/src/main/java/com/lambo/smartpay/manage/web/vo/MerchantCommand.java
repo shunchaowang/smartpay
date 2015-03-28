@@ -6,6 +6,7 @@ package com.lambo.smartpay.manage.web.vo;
 public class MerchantCommand {
 
     private Long id;
+    private String identity;
     private String name;
     private String address;
     private String contact;
@@ -52,6 +53,12 @@ public class MerchantCommand {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getIdentity() { return identity; }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public String getName() {

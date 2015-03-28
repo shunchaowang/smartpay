@@ -29,6 +29,7 @@
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
+            <th><spring:message code="identity.label"/></th>
             <th><spring:message code="name.label"/></th>
             <th><spring:message code="address.label"/></th>
             <th><spring:message code="contact.label"/></th>
@@ -69,36 +70,40 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'name', 'targets': 1, 'data': 'name',
+                    'name': 'identity', 'targets': 1, 'searchable': false, 'orderable': false,
+                    'data': 'identity'
+                },
+                {
+                    'name': 'name', 'targets': 2, 'data': 'name',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
                 {
-                    'name': 'address', 'targets': 2, 'searchable': false, 'orderable': false,
+                    'name': 'address', 'targets': 3, 'searchable': false, 'orderable': false,
                     'data': 'address'
                 },
                 {
-                    'name': 'contact', 'targets': 3, 'searchable': false, 'orderable': false,
+                    'name': 'contact', 'targets': 4, 'searchable': false, 'orderable': false,
                     'data': 'contact'
                 },
                 {
-                    'name': 'tel', 'targets': 4, 'searchable': false, 'orderable': false,
+                    'name': 'tel', 'targets': 5, 'searchable': false, 'orderable': false,
                     'data': 'tel'
                 },
-                {'name': 'email', 'targets': 5, 'data': 'email'},
+                {'name': 'email', 'targets': 6, 'data': 'email'},
                 {
-                    'name': 'createdTime', 'targets': 6, 'searchable': false,
+                    'name': 'createdTime', 'targets': 7, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'merchantStatus', 'targets': 7, 'searchable': false,
+                    'name': 'merchantStatus', 'targets': 8, 'searchable': false,
                     'orderable': false, 'data': 'merchantStatus'
                 },
                 <c:if test="${domain.equals('MerchantEdit')}">
                 {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
@@ -114,7 +119,7 @@
                 </c:if>
                 <c:if test="${domain.equals('MerchantFee')}">
                 {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/setfee/'
                                 + row['id'] + '">' +

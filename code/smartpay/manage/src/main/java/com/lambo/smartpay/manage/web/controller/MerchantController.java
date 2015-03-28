@@ -842,6 +842,7 @@ public class MerchantController {
             logger.debug("merchantCoomand.getId is not null");
             merchant.setId(merchantCommand.getId());
         }
+        merchant.setIdentity(merchantCommand.getIdentity());
         merchant.setMerchantStatus(merchantStatus);
         merchant.setName(merchantCommand.getName());
         merchant.setActive(true);

@@ -32,6 +32,18 @@
         </h4>
 
         <div class="form-group">
+            <label class="col-sm-3 control-label" for="identity">
+                <spring:message code="identity.label"/>
+                <span class="required-indicator">*</span>
+            </label>
+
+            <div class="col-sm-6">
+                <form:input path="identity" id="identity" cssClass="form-control" required=""
+                            placeholder="Identity"/>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
                 <spring:message code="name.label"/>
                 <span class="required-indicator">*</span>
@@ -300,6 +312,7 @@
     $(document).ready(function () {
         $('#new-merchant-form').validate({
             rules: {
+                indentity: {required: true, minlength: 3, maxlength: 32},
                 name: {required: true, minlength: 3, maxlength: 32},
                 email: {email: true},
                 tel: {number: true},
