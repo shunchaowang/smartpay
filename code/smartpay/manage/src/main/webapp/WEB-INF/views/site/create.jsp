@@ -28,13 +28,27 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/editSite" method="POST"
+    <form:form action="${rootURL}${controller}/create" method="POST"
                commandName="siteCommand" cssClass="form-horizontal" id="auditSite-form">
         <form:input path="id" id="id" type="hidden" value="${siteCommand.id}"/>
+
+        <!-- identity -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="identity" >
+                <span class="required-indicator">*</span>
+                <spring:message code="identity.label"/>
+            </label>
+
+            <div class="col-sm-6">
+                <form:input path="identity" id="identity" cssClass="form-control"
+                            value="${siteCommand.identity}"/>
+            </div>
+        </div>
 
         <!-- name -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
+                <span class="required-indicator">*</span>
                 <spring:message code="name.label"/>
             </label>
 
@@ -46,8 +60,8 @@
         <!-- url -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="url">
-                <spring:message code="site.url.label"/>
                 <span class="required-indicator">*</span>
+                <spring:message code="site.url.label"/>
             </label>
 
             <div class="col-sm-6">
@@ -57,13 +71,16 @@
         </div>
         <!-- site status -->
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="siteStatus">
+            <label class="col-sm-3 control-label" for="siteStatusId">
                 <spring:message code="status.label"/>
             </label>
-
             <div class="col-sm-6">
-                <form:input path="siteStatus" id="siteStatus" cssClass="form-control"
-                            value="${siteCommand.siteStatusName}"/>
+                <form:select path="siteStatusId" id="siteStatusId" cssClass="form-control"
+                             required="" placeholder="Status">
+                    <c:forEach items="${siteStatuses}" var="status">
+                        <form:option value="${status.id}">${status.name}</form:option>
+                    </c:forEach>
+                </form:select>
             </div>
         </div>
         <!-- site merchant -->
@@ -90,11 +107,14 @@
         </div>
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
-                <a href="${rootURL}${controller}">
-                    <button type="button" class="btn btn-default">
-                        <spring:message code="action.return.label"/>
+                <div class='col-sm-offset-3 col-sm-10'>
+                    <button class='btn btn-default' id='create-button' type="submit">
+                        <spring:message code='action.save.label'/>
                     </button>
-                </a>
+                    <button class='btn btn-default' id='reset-button' type="reset">
+                        <spring:message code='action.reset.label'/>
+                    </button>
+                </div>
             </div>
         </div>
     </form:form>

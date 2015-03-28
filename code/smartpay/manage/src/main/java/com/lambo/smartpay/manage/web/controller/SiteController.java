@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.persistence.entity.SiteStatus;
 import com.lambo.smartpay.core.service.MerchantService;
@@ -576,6 +577,7 @@ public class SiteController {
     @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
+
         model.addAttribute("action", "create");
         model.addAttribute("siteCommand", new SiteCommand());
         return "main";
@@ -583,33 +585,34 @@ public class SiteController {
 
     @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String save(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
-        // get admin role
-        /*Role role = null;
-        try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find role " + ResourceProperties.ROLE_ADMIN_CODE);
-            e.printStackTrace();
+    public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+
+        logger.debug(" ~~~~~~~ create site here ~~~~~~~~ ");
+
+        // message locale
+        Locale locale = LocaleContextHolder.getLocale();
+        //TODO verify required fields
+        // check uniqueness
+        if (merchantService.findByName(siteCommand.getName()) != null) {
+            String fieldLabel = messageSource.getMessage("name.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, siteCommand.getName()}, locale));
+            model.addAttribute("siteCommand", siteCommand);
+            model.addAttribute("action", "create");
         }
-        */
-/*
-        // create Site and set admin to site
-        Site site = createSiteCommand(siteCommand);
-        // set initial password
-        // persist site
+
+        Site site = creatSite(siteCommand);
         try {
-            site = siteService.create(site);
+            siteService.create(site);
         } catch (MissingRequiredFieldException e) {
-            logger.info(e.getMessage());
             e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
         } catch (NotUniqueException e) {
-            logger.info(e.getMessage());
             e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
         }
-        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE SITE
-        model.addAttribute("action", "index");
-        */
+
         return "main";
 
     }
@@ -691,7 +694,10 @@ public class SiteController {
 
 
         SiteCommand SiteCommand = new SiteCommand();
-        SiteCommand.setId(site.getId());
+        if (site.getId() != null){
+            SiteCommand.setId(site.getId());
+        }
+        SiteCommand.setIdentity(site.getIdentity());
         SiteCommand.setName(site.getName());
         SiteCommand.setUrl(site.getUrl());
         SiteCommand.setActive(site.getActive());

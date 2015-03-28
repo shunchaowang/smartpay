@@ -12,6 +12,7 @@ import java.util.Locale;
 public class DataTablesMerchant {
 
     private Long id;
+    private String identity;
     private String name;
     private String address;
     private String contact;
@@ -22,6 +23,7 @@ public class DataTablesMerchant {
 
     public DataTablesMerchant(Merchant merchant) {
         id = merchant.getId();
+        identity = merchant.getIdentity();
         name = merchant.getName();
         address = merchant.getAddress();
         contact = merchant.getContact();
@@ -39,6 +41,14 @@ public class DataTablesMerchant {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String id) {
+        this.identity = identity;
     }
 
     public String getName() {

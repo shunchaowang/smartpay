@@ -880,6 +880,7 @@ public class MerchantController {
         }
 
         //set merchant basic info
+        merchant.setIdentity(merchantCommand.getIdentity());
         merchant.setMerchantStatus(merchantStatus);
         merchant.setName(merchantCommand.getName());
         merchant.setActive(true);
@@ -932,6 +933,8 @@ public class MerchantController {
         */
 
         if(merchant.getId() != null) {merchantCommand.setId(merchant.getId());}
+        if(merchant.getIdentity() != null) {merchantCommand.setIdentity(merchant.getIdentity());}
+
         merchantCommand.setMerchantStatusId(merchant.getMerchantStatus().getId());
         merchantCommand.setMerchantStatusName(merchant.getMerchantStatus().getName());
         merchantCommand.setName(merchant.getName());

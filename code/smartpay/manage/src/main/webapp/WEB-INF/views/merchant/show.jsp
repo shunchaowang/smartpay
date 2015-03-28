@@ -29,6 +29,15 @@
     <div class="col-sm-8">
 
         <table class="table table-bordered">
+            <tr>
+                <td colspan="2"><spring:message code="basic.info.label"/></td>
+            </tr>
+            <c:if test="${not empty merchantCommand.identity}">
+                <tr>
+                    <td><spring:message code="identity.label"/></td>
+                    <td>${merchantCommand.identity}</td>
+                </tr>
+            </c:if>
             <c:if test="${not empty merchantCommand.name}">
                 <tr>
                     <td><spring:message code="name.label"/></td>
@@ -79,6 +88,9 @@
     <!-- Credential -->
     <div class="col-sm-8">
         <table class="table table-bordered">
+            <tr>
+                <td colspan="2"><spring:message code="credential.label"/></td>
+            </tr>
             <c:if test="${not empty merchantCommand.credentialTypeName}">
                 <tr>
                     <td><spring:message code="type.label"/></td>
@@ -105,6 +117,73 @@
             </c:if>
         </table>
     </div>
+
+
+    <!-- Encryption -->
+    <div class="col-sm-8">
+        <table class="table table-bordered">
+            <tr>
+                <td colspan="2"><spring:message code="encryption.label"/></td>
+            </tr>
+            <c:if test="${not empty merchantCommand.encryptionTypeName}">
+                <tr>
+                    <td><spring:message code="type.label"/></td>
+                    <td>${merchantCommand.encryptionTypeName}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty merchantCommand.encryptionKey}">
+                <tr>
+                    <td><spring:message code="key.label"/></td>
+                    <td>${merchantCommand.encryptionKey}</td>
+                </tr>
+            </c:if>
+        </table>
+    </div>
+
+
+    <!-- Commission Fee -->
+    <div class="col-sm-8">
+        <table class="table table-bordered">
+            <tr>
+                <td colspan="2"><spring:message code="commission.fee.label"/></td>
+            </tr>
+            <c:if test="${not empty merchantCommand.commissionFeeTypeName}">
+                <tr>
+                    <td><spring:message code="type.label"/></td>
+                    <td>${merchantCommand.commissionFeeTypeName}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty merchantCommand.commissionFeeValue}">
+                <tr>
+                    <td><spring:message code="value.label"/></td>
+                    <td>${merchantCommand.commissionFeeValue}</td>
+                </tr>
+            </c:if>
+        </table>
+    </div>
+
+
+    <!-- Return Fee -->
+    <div class="col-sm-8">
+        <table class="table table-bordered">
+            <tr>
+                <td colspan="2"><spring:message code="return.fee.label"/></td>
+            </tr>
+            <c:if test="${not empty merchantCommand.returnFeeTypeName}">
+                <tr>
+                    <td><spring:message code="type.label"/></td>
+                    <td>${merchantCommand.returnFeeTypeName}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty merchantCommand.returnFeeValue}">
+                <tr>
+                    <td><spring:message code="value.label"/></td>
+                    <td>${merchantCommand.returnFeeValue}</td>
+                </tr>
+            </c:if>
+        </table>
+    </div>
+    </div>
 </div>
 <!-- button area -->
 
@@ -113,13 +192,6 @@
         <a href="${rootURL}${controller}/index${domain}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.return.label"/>
-            </button>
-        </a>
-    </div>
-    <div class="col-sm-2">
-        <a href="${rootURL}${controller}/edit/${merchantCommand.id}">
-            <button type="button" class="btn btn-default">
-                <spring:message code="action.edit.label"/>
             </button>
         </a>
     </div>

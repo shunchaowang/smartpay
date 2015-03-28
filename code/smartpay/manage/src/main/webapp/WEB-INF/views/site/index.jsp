@@ -16,6 +16,7 @@
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
+            <th><spring:message code="identity.label"/></th>
             <th><spring:message code="name.label"/></th>
             <th><spring:message code="site.url.label"/></th>
             <th><spring:message code="createdTime.label"/></th>
@@ -46,21 +47,22 @@
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
+                {'name': 'identity', 'targets': 1, 'data': 'identity'},
                 {
-                    'name': 'name', 'targets': 1, 'data': 'name',
+                    'name': 'name', 'targets': 2, 'data': 'name',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/showInfo/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
-                {'name': 'url', 'targets': 2, 'data': 'url'},
-                {'name': 'createdTime', 'targets': 3, 'searchable': false, 'data': 'createdTime'},
+                {'name': 'url', 'targets': 3, 'data': 'url'},
+                {'name': 'createdTime', 'targets': 4, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'siteStatus', 'targets': 4, 'searchable': false,
+                    'name': 'siteStatus', 'targets': 5, 'searchable': false,
                     'orderable': false, 'data': 'siteStatus'
                 },
                 {
-                    'name': 'operation', 'targets': 5, 'orderable': false, 'searchable': false,
+                    'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}/showInfo/" + row['id'] +
                                 '">'
