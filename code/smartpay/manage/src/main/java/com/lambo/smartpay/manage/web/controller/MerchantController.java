@@ -130,30 +130,10 @@ public class MerchantController {
     }
 
     // index view
-    @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/index", "/indexMerchant"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
-
-    /*
-    @RequestMapping(value = {"/", "/index", "/indexAdmin"}, method = RequestMethod.GET)
-    public String indexAdmin(Model model) {
-        model.addAttribute("domain", "Admin");
-        return "main";
-    }
-
-
-    @RequestMapping(value = {"/indexMerchantEdit"}, method = RequestMethod.GET)
-    public String indexMerchantEdit(Model model) {
-        model.addAttribute("domain", "MerchantEdit");
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexMerchantFee"}, method = RequestMethod.GET)
-    public String indexMerchantFee(Model model) {
-        model.addAttribute("domain", "MerchantFee");
-        return "main";
-    }*/
 
     @RequestMapping(value = {"/indexMerchantEdit"}, method = RequestMethod.GET)
     public String indexMerchantEdit(Model model) {
@@ -270,6 +250,28 @@ public class MerchantController {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(resultSet);
+    }
+
+    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
+            model) {
+
+        logger.debug("~~~~~~ whether come to here ??? " + "domain=" + domain + "id=" + id);
+
+        Merchant merchant ;
+        try {
+            merchant = merchantService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+        MerchantCommand merchantCommand = createMerchantCommand(merchant);
+        model.addAttribute("merchantCommand", merchantCommand);
+        if (domain != null) {
+            model.addAttribute("domain", domain);
+        }
+        model.addAttribute("action", "show");
+        return "main";
     }
 
     /**
@@ -563,6 +565,25 @@ public class MerchantController {
         return "main";
     }
 
+    @RequestMapping(value = "/setfee/{id}", method = RequestMethod.GET)
+    public String setfee(@PathVariable("id") Long id, Model model) {
+
+        Merchant merchant;
+        try {
+            merchant = merchantService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User " + id + " not found.");
+        }
+
+        MerchantCommand merchantCommand = createMerchantCommand(merchant);
+
+        model.addAttribute("merchantCommand", merchantCommand);
+        model.addAttribute("action", "setfee");
+        return "main";
+    }
+
+
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String edit(Model model,
                        @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
@@ -576,6 +597,32 @@ public class MerchantController {
         Locale locale = LocaleContextHolder.getLocale();
 
         Merchant merchant = setMerchant(merchantCommand);
+
+        try {
+            merchantService.update(merchant);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+
+        return "main";
+    }
+
+    @RequestMapping(value = "/setfee", method = RequestMethod.POST)
+    public String setfee(Model model,
+                       @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
+
+        model.addAttribute("merchantCommand", merchantCommand);
+
+        logger.debug("~~~~~~ whether come to here ??? " + merchantCommand.getId());
+
+        // message locale
+        Locale locale = LocaleContextHolder.getLocale();
+
+        Merchant merchant = setMerchantFee(merchantCommand);
 
         try {
             merchantService.update(merchant);
@@ -707,6 +754,21 @@ public class MerchantController {
         return encryption;
     }
 
+    //set encryption
+    private Encryption setEncryption(MerchantCommand merchantCommand, Merchant merchant) {
+        Encryption encryption = merchant.getEncryption();
+        EncryptionType encryptionType = null;
+        try {
+            encryptionType = encryptionTypeService.get(merchantCommand.getEncryptionTypeId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        encryption.setEncryptionType(encryptionType);
+        encryption.setKey(merchantCommand.getEncryptionKey());
+        //encryption.setActive(true);
+        return encryption;
+    }
+
     private Fee createCommissionFee(MerchantCommand merchantCommand) {
         Fee fee = new Fee();
         FeeType feeType = null;
@@ -722,8 +784,39 @@ public class MerchantController {
         return fee;
     }
 
+    //set commission fee
+    private Fee setCommissionFee(MerchantCommand merchantCommand, Merchant merchant) {
+        Fee fee = merchant.getCommissionFee();
+        FeeType feeType = null;
+        try {
+            feeType = feeTypeService.get(merchantCommand.getCommissionFeeTypeId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        //fee.setActive(true);
+        fee.setValue(merchantCommand.getCommissionFeeValue());
+        fee.setFeeType(feeType);
+
+        return fee;
+    }
+
     private Fee createReturnFee(MerchantCommand merchantCommand) {
         Fee fee = new Fee();
+        FeeType feeType = null;
+        try {
+            feeType = feeTypeService.get(merchantCommand.getReturnFeeTypeId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        fee.setActive(true);
+        fee.setValue(merchantCommand.getReturnFeeValue());
+        fee.setFeeType(feeType);
+
+        return fee;
+    }
+
+    private Fee setReturnFee(MerchantCommand merchantCommand,Merchant merchant) {
+        Fee fee = merchant.getReturnFee();
         FeeType feeType = null;
         try {
             feeType = feeTypeService.get(merchantCommand.getReturnFeeTypeId());
@@ -798,6 +891,28 @@ public class MerchantController {
         //set merchant credential
         Credential credential = setCredential(merchantCommand, merchant);
         merchant.setCredential(credential);
+
+        return merchant;
+
+    }
+
+    private Merchant setMerchantFee(MerchantCommand merchantCommand) {
+        Merchant merchant = null;
+        try {
+            merchant = merchantService.get(merchantCommand.getId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+
+        //set merchant encryption
+        Encryption encryption = setEncryption(merchantCommand, merchant);
+        merchant.setEncryption(encryption);
+
+        //set merchant commissionFee&returnFee
+        Fee commissionFee = setCommissionFee(merchantCommand, merchant);
+        Fee returnFee = setReturnFee(merchantCommand, merchant);
+        merchant.setCommissionFee(commissionFee);
+        merchant.setReturnFee(returnFee);
 
         return merchant;
 

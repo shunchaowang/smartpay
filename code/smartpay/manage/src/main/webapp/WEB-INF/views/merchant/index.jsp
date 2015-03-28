@@ -41,6 +41,9 @@
                 <th><spring:message code="action.operation.label"/></th>
             </c:if>
 
+            <c:if test="${domain.equals('MerchantFee')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
         </tr>
         </thead>
         <tbody></tbody>
@@ -68,7 +71,7 @@
                 {
                     'name': 'name', 'targets': 1, 'data': 'name',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
