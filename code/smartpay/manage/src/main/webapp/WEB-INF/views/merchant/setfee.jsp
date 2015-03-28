@@ -24,7 +24,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/edit" method="POST"
+    <form:form action="${rootURL}${controller}/setfee" method="POST"
                commandName="merchantCommand" cssClass="form-horizontal" id="new-merchant-form">
         <hr/>
         <h4>
@@ -32,7 +32,7 @@
         </h4>
 
         <form:hidden path="id" id="id" cssClass="form-control" required=""
-                    placeholder="Id" value="${merchantCommand.id}"/>
+                     placeholder="Id" value="${merchantCommand.id}"/>
 
         <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
@@ -43,147 +43,6 @@
             <div class="col-sm-6">
                 <form:input path="name" id="name" cssClass="form-control" required=""
                             placeholder="Name" value="${merchantCommand.name}"/>
-            </div>
-        </div>
-        <!-- first name -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="address">
-                <spring:message code="address.label"/>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="address" id="address" cssClass="form-control"
-                            placeholder="Address" value="${merchantCommand.address}"/>
-            </div>
-        </div>
-        <!-- last name -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="contact">
-                <spring:message code="contact.label"/>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="contact" id="contact" cssClass="form-control"
-                            placeholder="Contact" value="${merchantCommand.contact}"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="tel">
-                <spring:message code="tel.label"/>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="tel" id="tel" cssClass="form-control"
-                            placeholder="Telephone" value="${merchantCommand.tel}"/>
-            </div>
-        </div>
-        <!-- email -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="email">
-                <spring:message code="email.label"/>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="email" id="email" cssClass="form-control"
-                            placeholder="Email" value="${merchantCommand.email}"/>
-            </div>
-        </div>
-        <!-- merchant status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="merchantStatusId">
-                <spring:message code="status.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="merchantStatusId" id="merchantStatusId" cssClass="form-control"
-                             required="" placeholder="Status">
-                    <form:option
-                            value="${merchantCommand.merchantStatusId}">${merchantCommand.merchantStatusName}</form:option>
-                    <c:forEach items="${merchantStatuses}" var="status">
-                        <form:option value="${status.id}">${status.name}</form:option>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
-        <!-- remark -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="remark">
-                <spring:message code="remark.label"/>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"
-                            value="${merchantCommand.remark}"/>
-            </div>
-        </div>
-
-        <hr/>
-        <h4>
-            <spring:message code="credential.label"/>
-        </h4>
-        <!-- relationships -->
-        <!-- credential -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialContent">
-                <spring:message code="content.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="credentialContent" id="credentialContent"
-                            cssClass="form-control" required=""
-                            placeholder="Content" value="${merchantCommand.credentialContent}"/>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialExpirationTime">
-                <spring:message code="validation.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="credentialExpirationTime" id="credentialExpirationTime"
-                            cssClass="form-control datepicker" required="" readonly="true"
-                            style="background:white;" value="${merchantCommand.credentialExpirationTime}"/>
-            </div>
-        </div>
-        <!-- credential type -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialTypeId">
-                <spring:message code="type.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="credentialTypeId" id="credentialTypeId" cssClass="form-control"
-                             required="" placeholder="Type">
-                    <form:option
-                            value="${merchantCommand.credentialTypeId}">${merchantCommand.credentialTypeName}</form:option>
-                    <c:forEach items="${credentialTypes}" var="type">
-                        <form:option value="${type.id}">${type.name}</form:option>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
-        <!-- credential status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialStatusId">
-                <spring:message code="status.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="credentialStatusId" id="credentialStatusId"
-                             cssClass="form-control"
-                             required="" placeholder="Status">
-                    <form:option
-                            value="${merchantCommand.credentialStatusId}">${merchantCommand.credentialStatusName}</form:option>
-                    <c:forEach items="${credentialStatuses}" var="status">
-                        <form:option value="${status.id}">${status.name}</form:option>
-                    </c:forEach>
-                </form:select>
             </div>
         </div>
 
@@ -217,7 +76,9 @@
                     <form:option
                             value="${merchantCommand.encryptionTypeId}">${merchantCommand.encryptionTypeName}</form:option>
                     <c:forEach items="${encryptionTypes}" var="type">
-                        <form:option value="${type.id}">${type.name}</form:option>
+                        <c:if test="${!(merchantCommand.encryptionTypeId.equals(type.id))}">
+                            <form:option value="${type.id}">${type.name}</form:option>
+                        </c:if>
                     </c:forEach>
                 </form:select>
             </div>
@@ -255,7 +116,9 @@
                     <form:option
                             value="${merchantCommand.commissionFeeTypeId}">${merchantCommand.commissionFeeTypeName}</form:option>
                     <c:forEach items="${feeTypes}" var="type">
-                        <form:option value="${type.id}">${type.name}</form:option>
+                        <c:if test="${!(merchantCommand.commissionFeeTypeId.equals(type.id))}">
+                            <form:option value="${type.id}">${type.name}</form:option>
+                        </c:if>
                     </c:forEach>
                 </form:select>
             </div>
@@ -292,7 +155,9 @@
                     <form:option
                             value="${merchantCommand.returnFeeTypeId}">${merchantCommand.returnFeeTypeName}</form:option>
                     <c:forEach items="${feeTypes}" var="type">
-                        <form:option value="${type.id}">${type.name}</form:option>
+                        <c:if test="${!(merchantCommand.returnFeeTypeId.equals(type.id))}">
+                            <form:option value="${type.id}">${type.name}</form:option>
+                        </c:if>
                     </c:forEach>
                 </form:select>
             </div>
@@ -309,6 +174,7 @@
                 </button>
             </div>
         </div>
+
     </form:form>
 </div>
 

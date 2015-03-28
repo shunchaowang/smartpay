@@ -29,22 +29,28 @@
     <div class="col-sm-8">
 
         <table class="table table-bordered">
-            <c:if test="${not empty merchantCommand.merchantname}">
+            <c:if test="${not empty merchantCommand.name}">
                 <tr>
                     <td><spring:message code="name.label"/></td>
-                    <td>${merchantCommand.merchantname}</td>
+                    <td>${merchantCommand.name}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty merchantCommand.firstName}">
+            <c:if test="${not empty merchantCommand.address}">
                 <tr>
-                    <td><spring:message code="firstName.label"/></td>
-                    <td>${merchantCommand.firstName}</td>
+                    <td><spring:message code="address.label"/></td>
+                    <td>${merchantCommand.address}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty merchantCommand.lastName}">
+            <c:if test="${not empty merchantCommand.contact}">
                 <tr>
-                    <td><spring:message code="lastName.label"/></td>
-                    <td>${merchantCommand.lastName}</td>
+                    <td><spring:message code="contact.label"/></td>
+                    <td>${merchantCommand.contact}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty merchantCommand.tel}">
+                <tr>
+                    <td><spring:message code="tel.label"/></td>
+                    <td>${merchantCommand.tel}</td>
                 </tr>
             </c:if>
             <c:if test="${not empty merchantCommand.email}">
@@ -53,26 +59,11 @@
                     <td>${merchantCommand.email}</td>
                 </tr>
             </c:if>
+            <!--
             <c:if test="${not empty merchantCommand.merchantStatusName}">
                 <tr>
                     <td><spring:message code="status.label"/></td>
                     <td>${merchantCommand.merchantStatusName}</td>
-                </tr>
-            </c:if>
-            <!--
-            <c:if test="${not empty merchantCommand.active}">
-                <tr>
-                    <td><spring:message code="active.label"/></td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${merchantCommand.active}">
-                                <spring:message code="yes.label"/>
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="no.label"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
                 </tr>
             </c:if>
             -->
@@ -82,17 +73,34 @@
                     <td>${merchantCommand.remark}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty merchantCommand.merchantName}">
+        </table>
+    </div>
+
+    <!-- Credential -->
+    <div class="col-sm-8">
+        <table class="table table-bordered">
+            <c:if test="${not empty merchantCommand.credentialTypeName}">
                 <tr>
-                    <td><spring:message code="Merchant.label"/></td>
-                    <td>${merchantCommand.merchantName}</td>
+                    <td><spring:message code="type.label"/></td>
+                    <td>${merchantCommand.credentialTypeName}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty merchantCommand.createdTime}">
+            <c:if test="${not empty merchantCommand.credentialContent}">
                 <tr>
-                    <td><spring:message code="createdTime.label"/></td>
-                    <td><fmt:formatDate value="${merchantCommand.createdTime}"
-                                        pattern="MMM dd yyyy"/></td>
+                    <td><spring:message code="content.label"/></td>
+                    <td>${merchantCommand.credentialContent}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty merchantCommand.credentialExpirationTime}">
+                <tr>
+                    <td><spring:message code="validation.label"/></td>
+                    <td>${merchantCommand.credentialExpirationTime}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty merchantCommand.credentialStatusName}">
+                <tr>
+                    <td><spring:message code="status.label"/></td>
+                    <td>${merchantCommand.credentialStatusName}</td>
                 </tr>
             </c:if>
         </table>
@@ -102,7 +110,7 @@
 
 <div class="row">
     <div class="col-sm-2 col-sm-offset-2">
-        <a href="${rootURL}${controller}/">
+        <a href="${rootURL}${controller}/index${domain}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.return.label"/>
             </button>
