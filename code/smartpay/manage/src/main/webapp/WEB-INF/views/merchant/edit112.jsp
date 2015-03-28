@@ -6,7 +6,7 @@
     <c:if test="${not empty message}">
         <div class="alert alert-danger alert-dismissable" role="alert">
             <button type="button" class="close" data-dismiss="alert">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">&times;</sfpan>
                 <span class="sr-only"><spring:message code="action.close.label"/> </span>
             </button>
                 ${message}
@@ -32,7 +32,7 @@
         </h4>
 
         <form:hidden path="id" id="id" cssClass="form-control" required=""
-                     placeholder="Id" value="${merchantCommand.id}"/>
+                    placeholder="Id" value="${merchantCommand.id}"/>
 
         <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
@@ -101,9 +101,7 @@
                     <form:option
                             value="${merchantCommand.merchantStatusId}">${merchantCommand.merchantStatusName}</form:option>
                     <c:forEach items="${merchantStatuses}" var="status">
-                        <c:if test="${!(merchantCommand.merchantStatusId.equals(status.id))}">
-                            <form:option value="${status.id}">${status.name}</form:option>
-                        </c:if>
+                        <form:option value="${status.id}">${status.name}</form:option>
                     </c:forEach>
                 </form:select>
             </div>
@@ -120,82 +118,6 @@
             </div>
         </div>
 
-        <hr/>
-
-
-        <!-- relationships -->
-        <h4>
-            <spring:message code="credential.label"/>
-        </h4>
-        <!-- credential type -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialTypeId">
-                <spring:message code="type.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="credentialTypeId" id="credentialTypeId" cssClass="form-control"
-                             required="" placeholder="Type">
-                    <form:option
-                            value="${merchantCommand.credentialTypeId}">${merchantCommand.credentialTypeName}</form:option>
-                    <c:forEach items="${credentialTypes}" var="type">
-                        <c:if test="${!(merchantCommand.credentialTypeId.equals(type.id))}">
-                            <form:option value="${type.id}">${type.name}</form:option>
-                        </c:if>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
-        <!-- credential -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialContent">
-                <spring:message code="content.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="credentialContent" id="credentialContent"
-                            cssClass="form-control" required=""
-                            placeholder="Content" value="${merchantCommand.credentialContent}"/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialExpirationTime">
-                <spring:message code="validation.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:input path="credentialExpirationTime" id="credentialExpirationTime"
-                            cssClass="form-control datepicker" required="" readonly="true"
-                            style="background:white;" value="${merchantCommand.credentialExpirationTime}"/>
-            </div>
-        </div>
-
-        <!-- credential status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="credentialStatusId">
-                <spring:message code="status.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="credentialStatusId" id="credentialStatusId"
-                             cssClass="form-control"
-                             required="" placeholder="Status">
-                    <form:option
-                            value="${merchantCommand.credentialStatusId}">${merchantCommand.credentialStatusName}</form:option>
-                    <c:forEach items="${credentialStatuses}" var="status">
-                        <c:if test="${!(merchantCommand.credentialStatusId.equals(status.id))}">
-                            <form:option value="${status.id}">${status.name}</form:option>
-                        </c:if>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
-
-        <!-- ~~~~~~~~~~~~~~~~~~ Buttons ~~~~~~~~~~~~~~~~~~  -->
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
                 <button class='btn btn-default' id='create-button' type="submit">
@@ -206,7 +128,6 @@
                 </button>
             </div>
         </div>
-
     </form:form>
 </div>
 

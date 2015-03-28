@@ -58,6 +58,18 @@
                                 </a>
                             </li>
                             <li class="">
+                                <a href="${rootURL}merchant/indexEdit">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="manage.label" arguments="${merchant}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}merchant/indexFee">
+                                    <i class="glyphicon glyphicon-th-list"></i>
+                                    <spring:message code="manage.label" arguments="${merchant}"/>
+                                </a>
+                            </li>
+                            <li class="">
                                 <a href="${rootURL}merchant/freeze">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="freeze.label" arguments="${merchant}"/>

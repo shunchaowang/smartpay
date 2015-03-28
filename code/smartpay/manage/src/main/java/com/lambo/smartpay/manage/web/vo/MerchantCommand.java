@@ -48,9 +48,7 @@ public class MerchantCommand {
     private Long returnFeeTypeId;
     private String returnFeeTypeName;
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
     public void setId(Long id) {
         this.id = id;
