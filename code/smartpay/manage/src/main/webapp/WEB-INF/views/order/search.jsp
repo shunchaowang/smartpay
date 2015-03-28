@@ -15,6 +15,7 @@
     </c:if>
 </div>
 <!-- end of notification -->
+<!-- start of search form -->
 <div class="row">
     <form class="form-horizontal">
         <div class="row">
@@ -167,7 +168,7 @@
                 'processing': true,
                 'serverSide': true,
                 'paging': true,
-                
+
                 'ajax': {
                     'url': "${rootURL}${controller}/searchData",
                     'type': "GET",
