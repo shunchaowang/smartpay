@@ -48,6 +48,15 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         return siteDao.findByName(name);
     }
 
+    @Override
+    public Site findByIdentity(String identity) {
+        if (StringUtils.isBlank(identity)) {
+            logger.debug("Identity is blank.");
+            return null;
+        }
+        return siteDao.findByName(identity);
+    }
+
     /**
      * Finally we decide to put all timestamp in service layer.
      *

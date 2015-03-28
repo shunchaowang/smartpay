@@ -261,6 +261,15 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         return merchantDao.findByName(name);
     }
 
+    @Override
+    public Merchant findByIdentity(String identity) {
+        if (StringUtils.isBlank(identity)) {
+            logger.info("Identity is null.");
+            return null;
+        }
+        return merchantDao.findByName(identity);
+    }
+
     /**
      * Freeze a Merchant by updating the MerchantStatus from Normal to Frozen.
      * The Credential should have already been approved prior the call.

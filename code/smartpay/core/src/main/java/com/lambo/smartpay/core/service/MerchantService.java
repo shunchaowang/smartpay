@@ -14,6 +14,8 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
 
     Merchant findByName(String name);
 
+    Merchant findByIdentity(String identity);
+
     /**
      * Freeze a Merchant by updating the MerchantStatus from Normal to Frozen.
      * The Credential should have already been approved prior the call.
