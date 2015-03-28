@@ -57,6 +57,30 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         }
     }
 
+    @Override
+    public Site findByIdentity(String identity) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
+
+        Root<Site> root = query.from(Site.class);
+        query.select(root);
+
+        Path<String> path = root.get("identity");
+        Predicate predicate = builder.equal(path, identity);
+        query.where(predicate);
+
+        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
+
+        logger.debug("findByIdentity query is " + typedQuery);
+        try {
+            return typedQuery.getSingleResult();
+        } catch (NoResultException e) {
+            logger.info("Cannot find site with identity " + identity);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
@@ -185,14 +209,15 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
      */
     @Override
     public Boolean isBlank(Site site) {
-        return site == null || site.getId() == null && StringUtils.isBlank(site.getName()) &&
-                StringUtils.isBlank(site.getUrl()) && site.getSiteStatus() == null && site
+        return site == null || site.getId() == null && StringUtils.isBlank(site.getName())
+                && StringUtils.isBlank(site.getIdentity())
+                && StringUtils.isBlank(site.getUrl()) && site.getSiteStatus() == null && site
                 .getMerchant() == null;
     }
 
     /**
      * Formulate JPA or Predicate on primitive fields with like criteria for CriteriaQuery.
-     * Supports name, url.
+     * Supports name, url, identity.
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
@@ -206,13 +231,15 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
 
         // get all paths for the query
         Path<String> namePath = root.get("name");
+        Path<String> identityPath = root.get("identity");
         Path<String> urlPath = root.get("url");
 
         // create the predicate expression for all the path
         Predicate namePredicate = builder.like(namePath, likeSearch);
         Predicate urlPredicate = builder.like(urlPath, likeSearch);
+        Predicate identityPredicate = builder.like(identityPath, likeSearch);
 
-        Predicate predicate = builder.or(namePredicate, urlPredicate);
+        Predicate predicate = builder.or(namePredicate, urlPredicate, identityPredicate);
 
         // create the final Predicate and return
         logger.debug("Formulated jpa predicate is " + predicate.toString());
@@ -221,7 +248,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
 
     /**
      * Formulate JPA and Predicate on fields with equal criteria for CriteriaQuery.
-     * Supports id, name, url, SiteStatus id, Merchant id, active.
+     * Supports id, name, url, identity, SiteStatus id, Merchant id, active.
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
@@ -242,6 +269,16 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         if (StringUtils.isNotBlank(site.getName())) {
             predicate = builder.like(root.<String>get("name"),
                     builder.literal("%" + site.getName() + "%"));
+        }
+        // check identity
+        if (StringUtils.isNotBlank(site.getIdentity())) {
+            Predicate identityPredicate = builder.like(root.<String>get("identity"),
+                    builder.literal("%" + site.getIdentity() + "%"));
+            if (predicate == null) {
+                predicate = identityPredicate;
+            } else {
+                predicate = builder.and(predicate, identityPredicate);
+            }
         }
         // check url
         if (StringUtils.isNotBlank(site.getUrl())) {
@@ -293,7 +330,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
 
     /**
      * Formulate JPA Order on primitive field for CriteriaQuery.
-     * Supports id, name, url, createdTime.
+     * Supports id, name, url, identity, createdTime.
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.
@@ -308,6 +345,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         Path<Long> idPath = root.get("id");
         Path<String> namePath = root.get("name");
         Path<String> urlPath = root.get("url");
+        Path<String> identityPath = root.get("identity");
         Path<Date> createdTimePath = root.get("createdTime");
 
         // create Order instance, default would be ORDER BY id DESC, newest to oldest
@@ -320,6 +358,9 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
                         break;
                     case "name":
                         orderBy = builder.asc(namePath);
+                        break;
+                    case "identity":
+                        orderBy = builder.asc(identityPath);
                         break;
                     case "url":
                         orderBy = builder.asc(urlPath);
@@ -338,6 +379,9 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
                         break;
                     case "name":
                         orderBy = builder.desc(namePath);
+                        break;
+                    case "identity":
+                        orderBy = builder.desc(identityPath);
                         break;
                     case "url":
                         orderBy = builder.desc(urlPath);

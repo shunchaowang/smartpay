@@ -56,6 +56,29 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         }
     }
 
+    @Override
+    public Merchant findByIdentity(String identity) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
+
+        Root<Merchant> root = query.from(Merchant.class);
+        query.select(root);
+
+        Path<String> path = root.get("identity");
+        Predicate predicate = builder.equal(path, identity);
+        query.where(predicate);
+
+        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
+
+        logger.debug("findByIdentity query is " + typedQuery);
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
@@ -187,8 +210,10 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         if (merchant == null) {
             return true;
         }
-        if (merchant.getId() == null && merchant.getName() == null
-                && merchant.getEmail() == null && merchant.getMerchantStatus() == null) {
+        if (merchant.getId() == null && StringUtils.isBlank(merchant.getName())
+                && StringUtils.isBlank(merchant.getIdentity())
+                && StringUtils.isBlank(merchant.getEmail()) &&
+                merchant.getMerchantStatus() == null) {
             return true;
         }
         return false;
@@ -196,7 +221,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA or Predicate on primitive fields with like criteria for CriteriaQuery.
-     * Supports name, email.
+     * Supports name, email, identity
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
@@ -211,12 +236,14 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         // get all paths for the query
         Path<String> namePath = root.get("name");
         Path<String> emailPath = root.get("email");
+        Path<String> identityPath = root.get("identity");
 
         // create the predicate expression for all the path
         Predicate namePredicate = builder.like(namePath, likeSearch);
         Predicate emailPredicate = builder.like(emailPath, likeSearch);
+        Predicate identityPredicate = builder.like(identityPath, likeSearch);
 
-        Predicate predicate = builder.or(namePredicate, emailPredicate);
+        Predicate predicate = builder.or(namePredicate, emailPredicate, identityPredicate);
 
         // create the final Predicate and return
         logger.debug("Formulated jpa predicate is " + predicate.toString());
@@ -225,7 +252,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA and Predicate on fields with equal criteria for CriteriaQuery.
-     * Supports id, name, email, MerchantStatus id, active.
+     * Supports id, name, email, identity, MerchantStatus id, active.
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.
@@ -242,15 +269,31 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
             return predicate;
         }
 
+        // check identity
+        if (StringUtils.isNotBlank(merchant.getIdentity())) {
+            predicate = builder.like(root.<String>get("identity"),
+                    builder.literal("%" + merchant.getIdentity() + "%"));
+        }
+
         // check firstName
         if (StringUtils.isNotBlank(merchant.getName())) {
-            predicate = builder.like(root.<String>get("name"),
+            Predicate namePredicate = builder.like(root.<String>get("name"),
                     builder.literal("%" + merchant.getName() + "%"));
+            if (predicate == null) {
+                predicate = namePredicate;
+            } else {
+                predicate = builder.and(predicate, namePredicate);
+            }
         }
         // check email
         if (StringUtils.isNotBlank(merchant.getEmail())) {
-            predicate = builder.like(root.<String>get("email"),
+            Predicate emailPredicate = builder.like(root.<String>get("email"),
                     builder.literal("%" + merchant.getEmail() + "%"));
+            if (predicate == null) {
+                predicate = emailPredicate;
+            } else {
+                predicate = builder.and(predicate, emailPredicate);
+            }
         }
 
         if (merchant.getActive() != null) {
@@ -281,7 +324,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
 
     /**
      * Formulate JPA Order on primitive field for CriteriaQuery.
-     * Supports id, name, email, createdTime.
+     * Supports id, name, email, identity, createdTime.
      *
      * @param builder  is the JPA CriteriaBuilder.
      * @param root     is the root of the CriteriaQuery.
@@ -295,6 +338,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         // get all supporting paths
         Path<Long> idPath = root.get("id");
         Path<String> namePath = root.get("name");
+        Path<String> identityPath = root.get("identity");
         Path<String> emailPath = root.get("email");
         Path<Date> createdTimePath = root.get("createdTime");
 
@@ -308,6 +352,9 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
                         break;
                     case "name":
                         orderBy = builder.asc(namePath);
+                        break;
+                    case "identity":
+                        orderBy = builder.asc(identityPath);
                         break;
                     case "email":
                         orderBy = builder.asc(emailPath);
@@ -326,6 +373,9 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
                         break;
                     case "name":
                         orderBy = builder.desc(namePath);
+                        break;
+                    case "identity":
+                        orderBy = builder.desc(identityPath);
                         break;
                     case "email":
                         orderBy = builder.desc(emailPath);

@@ -267,7 +267,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
             logger.info("Identity is null.");
             return null;
         }
-        return merchantDao.findByName(identity);
+        return merchantDao.findByIdentity(identity);
     }
 
     /**

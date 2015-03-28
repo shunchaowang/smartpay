@@ -54,7 +54,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
             logger.debug("Identity is blank.");
             return null;
         }
-        return siteDao.findByName(identity);
+        return siteDao.findByIdentity(identity);
     }
 
     /**

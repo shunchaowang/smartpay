@@ -14,4 +14,6 @@ public interface MerchantDao extends GenericQueryDao<Merchant, Long> {
      * @return return the object if found, null if not found.
      */
     Merchant findByName(String name);
+
+    Merchant findByIdentity(String identity);
 }

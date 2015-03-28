@@ -10,4 +10,6 @@ public interface SiteDao extends GenericQueryDao<Site, Long> {
 
     Site findByName(String name);
 
+    Site findByIdentity(String identity);
+
 }
