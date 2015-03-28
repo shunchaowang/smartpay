@@ -1,5 +1,7 @@
 <%@include file="../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<c:if test="${domain != null}">
+    <spring:message code="${domain}.label" var="entity"/>
+</c:if>
 
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
@@ -34,7 +36,11 @@
             <th><spring:message code="email.label"/></th>
             <th><spring:message code="createdTime.label"/></th>
             <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
+
+            <c:if test="${domain.equals('MerchantEdit')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
+
         </tr>
         </thead>
         <tbody></tbody>
@@ -52,7 +58,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/list${domain}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -86,7 +92,35 @@
                 {
                     'name': 'merchantStatus', 'targets': 7, 'searchable': false,
                     'orderable': false, 'data': 'merchantStatus'
+                },
+                <c:if test="${domain.equals('MerchantEdit')}">
+                {
+                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="action.edit.label"/>'
+                                + '</button></a>' +
+                                '<button type="button" name="delete-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="action.delete.label"/>' +
+                                '</button>';
+                    }
                 }
+                </c:if>
+                <c:if test="${domain.equals('MerchantFee')}">
+                {
+                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return '<a href="' + "${rootURL}${controller}" + '/setfee/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="merchant.setfee.label"/>'
+                                + '</button></a>';
+                    }
+                }
+                </c:if>
             ]
         });
 

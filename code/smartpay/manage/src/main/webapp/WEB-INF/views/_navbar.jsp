@@ -54,19 +54,20 @@
                             <li class="">
                                 <a href="${rootURL}merchant/">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="manage.label" arguments="${merchant}"/>
+                                    <spring:message code="merchant.list.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}merchant/indexEdit">
+                                <a href="${rootURL}merchant/indexMerchantEdit">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="manage.label" arguments="${merchant}"/>
+                                    <spring:message code="merchant.manage.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}merchant/indexFee">
+                                <a href="${rootURL}merchant/indexMerchantFee">
                                     <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="manage.label" arguments="${merchant}"/>
+                                    <spring:message code="merchant.setfee.label"
+                                                    arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">

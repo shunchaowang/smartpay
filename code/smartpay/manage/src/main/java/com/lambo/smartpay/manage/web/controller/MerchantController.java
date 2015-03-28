@@ -135,11 +135,98 @@ public class MerchantController {
         return "main";
     }
 
+    /*
+    @RequestMapping(value = {"/", "/index", "/indexAdmin"}, method = RequestMethod.GET)
+    public String indexAdmin(Model model) {
+        model.addAttribute("domain", "Admin");
+        return "main";
+    }
+
+
+    @RequestMapping(value = {"/indexMerchantEdit"}, method = RequestMethod.GET)
+    public String indexMerchantEdit(Model model) {
+        model.addAttribute("domain", "MerchantEdit");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/indexMerchantFee"}, method = RequestMethod.GET)
+    public String indexMerchantFee(Model model) {
+        model.addAttribute("domain", "MerchantFee");
+        return "main";
+    }*/
+
+    @RequestMapping(value = {"/indexMerchantEdit"}, method = RequestMethod.GET)
+    public String indexMerchantEdit(Model model) {
+        logger.debug("~~~~~~~~~ indexMerchantEdit ~~~~~~~~~");
+        model.addAttribute("domain", "MerchantEdit");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/indexMerchantFee"}, method = RequestMethod.GET)
+    public String indexMerchantFee(Model model) {
+        logger.debug("~~~~~~~~~ indexMerchantFee ~~~~~~~~~");
+        model.addAttribute("domain", "MerchantFee");
+        return "main";
+    }
+
     // ajax for DataTables
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {
+        logger.debug("~~~~~~~~~ list ~~~~~~~~~");
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        List<Merchant> merchants = merchantService.findByCriteria(search, start,
+                length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total and filtered
+        Long recordsTotal = merchantService.countAll();
+        Long recordsFiltered = merchantService.countByCriteria(search);
+
+        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
+        for (Merchant merchant : merchants) {
+            DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
+            dataTablesMerchants.add(tablesMerchant);
+        }
+
+        DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesMerchants);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(resultSet);
+    }
+
+    // ajax for DataTables
+    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listDomain(@PathVariable("domain") String domain,HttpServletRequest request) {
+
+        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -709,7 +796,7 @@ public class MerchantController {
         merchant.setRemark(merchantCommand.getRemark());
 
         //set merchant credential
-        Credential credential = setCredential(merchantCommand,merchant);
+        Credential credential = setCredential(merchantCommand, merchant);
         merchant.setCredential(credential);
 
         return merchant;
