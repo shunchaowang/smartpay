@@ -35,6 +35,9 @@ public class Site implements Serializable {
     @Column(name = "SITE_NAME", length = 32, nullable = false)
     private String name;
 
+    @Column(name = "SITE_IDENTITY", length = 32, nullable = false)
+    private String identity;
+
     @Column(name = "SITE_URL", length = 128, nullable = false)
     private String url;
 
@@ -157,5 +160,13 @@ public class Site implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 }

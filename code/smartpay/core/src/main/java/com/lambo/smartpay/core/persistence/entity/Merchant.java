@@ -36,6 +36,9 @@ public class Merchant implements Serializable {
     @Column(name = "MCHT_NAME", length = 128, nullable = false)
     private String name;
 
+    @Column(name = "MCHT_IDENTITY", length = 32, nullable = false)
+    private String identity;
+
     @Column(name = "MCHT_ADDRESS", length = 128)
     private String address;
 
@@ -249,5 +252,13 @@ public class Merchant implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 }
