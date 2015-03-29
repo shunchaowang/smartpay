@@ -241,6 +241,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
                 .SITE_STATUS_FROZEN_CODE);
         site.setSiteStatus(siteStatus);
+        site = siteDao.update(site);
         return site;
     }
 
@@ -257,6 +258,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
                 .SITE_STATUS_APPROVED_CODE);
         site.setSiteStatus(siteStatus);
+        site = siteDao.update(site);
         return site;
     }
 
@@ -267,12 +269,13 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         }
         Site site = siteDao.get(id);
         if (site == null) {
-            throw new NoSuchEntityException("Merchant with id " + id +
+            throw new NoSuchEntityException("Site with id " + id +
                     " does not exist.");
         }
         SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
                 .SITE_STATUS_APPROVED_CODE);
         site.setSiteStatus(siteStatus);
+        site = siteDao.update(site);
         return site;
     }
 
@@ -289,6 +292,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
                 .SITE_STATUS_DECLINED_CODE);
         site.setSiteStatus(siteStatus);
+        site = siteDao.update(site);
         return site;
     }
 

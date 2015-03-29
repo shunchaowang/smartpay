@@ -291,6 +291,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_FROZEN_CODE);
         merchant.setMerchantStatus(merchantStatus);
+        merchant = merchantDao.update(merchant);
         return merchant;
     }
 
@@ -315,6 +316,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_NORMAL_CODE);
         merchant.setMerchantStatus(merchantStatus);
+        merchant = merchantDao.update(merchant);
         return merchant;
     }
 
@@ -493,9 +495,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         fee.setUpdatedTime(date);
         return feeDao.update(fee);
     }
-
-    //TODO newly added methods
-
 
     /**
      * Dynamic search like grails findBy...
