@@ -32,6 +32,21 @@
                commandName="siteCommand" cssClass="form-horizontal" id="auditSite-form">
         <form:input path="id" id="id" type="hidden" value="${siteCommand.id}"/>
 
+        <!-- site status -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="siteStatusId">
+                <spring:message code="site.merchant.label"/>
+            </label>
+            <div class="col-sm-6">
+                <form:select path="merchant" id="merchant" cssClass="form-control"
+                             required="" placeholder="Merchant">
+                    <c:forEach items="${allMerchants}" var="merchant">
+                        <form:option value="${merchant.id}">${merchant.name}</form:option>
+                    </c:forEach>
+                </form:select>
+            </div>
+        </div>
+
         <!-- identity -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="identity" >
@@ -83,17 +98,7 @@
                 </form:select>
             </div>
         </div>
-        <!-- site merchant -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="merchant">
-                <spring:message code="site.merchant.label"/>
-            </label>
 
-            <div class="col-sm-6">
-                <form:input path="merchant" id="merchant" cssClass="form-control"
-                            value="${siteCommand.merchantName}"/>
-            </div>
-        </div>
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">
