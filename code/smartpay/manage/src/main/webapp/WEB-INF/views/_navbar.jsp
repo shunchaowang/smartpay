@@ -71,13 +71,13 @@
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}merchant/freeze">
+                                <a href="${rootURL}merchant/indexFreezeList">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="freeze.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}merchant/unfreeze">
+                                <a href="${rootURL}merchant/indexUnfreezeList">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="unfreeze.label" arguments="${merchant}"/>
                                 </a>
@@ -108,9 +108,21 @@
                                 </a>
                             </li>
                             <li class="">
-                                <a href="${rootURL}site/showAuditList">
+                                <a href="${rootURL}site/indexAuditList">
                                     <i class="glyphicon glyphicon-wrench"></i>
                                     <spring:message code="audit.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}site/indexFreezeList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="freeze.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="${rootURL}site/indexUnfreezeList">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="unfreeze.label" arguments="${site}"/>
                                 </a>
                             </li>
                             <li class="">

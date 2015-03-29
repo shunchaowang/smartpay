@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
-
+<c:if test="${domain != null}">
+    <spring:message code="${domain}.label" var="entity"/>
+</c:if>
 <div class="row">
     <div class="col-sm-6">
         <h2><b><spring:message code="index.label" arguments="${entity}"/></b></h2>
@@ -21,7 +22,18 @@
             <th><spring:message code="site.url.label"/></th>
             <th><spring:message code="createdTime.label"/></th>
             <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
+            <c:if test="${domain.equals('Site')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
+            <c:if test="${domain.equals('AuditList')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
+            <c:if test="${domain.equals('FreezeList')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
+            <c:if test="${domain.equals('UnfreezeList')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
         </tr>
         </thead>
         <tbody></tbody>
@@ -30,7 +42,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#site-table').DataTable({
+        var siteTable = $('#site-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -39,7 +51,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/list${domain}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -51,7 +63,7 @@
                 {
                     'name': 'name', 'targets': 2, 'data': 'name',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/showInfo/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -60,11 +72,13 @@
                 {
                     'name': 'siteStatus', 'targets': 5, 'searchable': false,
                     'orderable': false, 'data': 'siteStatus'
-                },
+                }
+                <c:if test="${domain.equals('Site')}">
+                ,
                 {
                     'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/showInfo/" + row['id'] +
+                        return '<a href="' + "${rootURL}${controller}/show/" + row['id'] +
                                 '">'
                                 + '<spring:message code="action.show.label"/>'
                                 + '</a>'
@@ -76,6 +90,20 @@
 
                     }
                 }
+                </c:if>
+                <c:if test="${domain.equals('AuditList')}">
+                ,
+                {
+                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/audit/'
+                                + row['id'] + '">'
+                                +'<button type="button" name="audit-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="action.audit.label"/>'
+                                + '</button></a>';
+                    }
+                }
+                </c:if>
             ]
         });
     });
