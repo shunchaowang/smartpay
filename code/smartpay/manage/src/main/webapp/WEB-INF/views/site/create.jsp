@@ -125,3 +125,15 @@
     </form:form>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#new-merchant-form').validate({
+            rules: {
+                indentity: {required: true, minlength: 3, maxlength: 32},
+                name: {required: true, minlength: 3, maxlength: 32},
+            }
+        });
+
+        $('.datepicker').datepicker();
+    });
+</script>

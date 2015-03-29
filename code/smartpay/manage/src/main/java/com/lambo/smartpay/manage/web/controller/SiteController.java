@@ -791,7 +791,7 @@ public class SiteController {
             model.addAttribute("action", "create");
         }
 
-        Site site = creatSite(siteCommand);
+        Site site = createSite(siteCommand);
         try {
             siteService.create(site);
         } catch (MissingRequiredFieldException e) {
@@ -874,37 +874,33 @@ public class SiteController {
     }
 
     // create SiteCommand from User
-    private Site creatSite(SiteCommand siteCommand) {
-
+    private Site createSite(SiteCommand siteCommand) {
+        //
         Site site = new Site();
+        SiteStatus siteStatus = null;
+        Merchant merchant = null;
+
+        //
+        try {
+            merchant = merchantService.get(siteCommand.getMerchant());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        try {
+            siteStatus = siteStatusService.get(siteCommand.getSiteStatusId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+
         //site.setId() = siteCommand.getId();
+        site.setIdentity(siteCommand.getIdentity());
+        site.setMerchant(merchant);
         site.setName(siteCommand.getName());
-        site.setUrl(site.getUrl());
-        //site.setActive(active);
-        //site.getRemark(siteCommand.getRemark());
+        site.setUrl(siteCommand.getUrl());
+        site.setSiteStatus(siteStatus);
+        site.setActive(true);
+        site.setRemark(siteCommand.getRemark());
 
-
-        SiteCommand SiteCommand = new SiteCommand();
-        if (site.getId() != null){
-            SiteCommand.setId(site.getId());
-        }
-        SiteCommand.setIdentity(site.getIdentity());
-        SiteCommand.setName(site.getName());
-        SiteCommand.setUrl(site.getUrl());
-        SiteCommand.setActive(site.getActive());
-        SiteCommand.setCreatedTime(site.getCreatedTime());
-        SiteCommand.setRemark(site.getRemark());
-        if (site.getMerchant() != null) {
-            SiteCommand.setMerchant(site.getMerchant().getId());
-            SiteCommand.setMerchantName(site.getMerchant().getName());
-            logger.debug("SiteMerchant ---" + SiteCommand.getMerchant());
-            logger.debug("SiteMerchant ---" + SiteCommand.getMerchantName());
-        }
-
-        if (site.getSiteStatus() != null) {
-            SiteCommand.setSiteStatusId(site.getSiteStatus().getId());
-            SiteCommand.setSiteStatusName(site.getSiteStatus().getName());
-        }
         return site;
     }
 
