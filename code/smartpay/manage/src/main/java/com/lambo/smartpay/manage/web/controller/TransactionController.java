@@ -1,7 +1,5 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
@@ -14,6 +12,7 @@ import com.lambo.smartpay.core.service.EncryptionTypeService;
 import com.lambo.smartpay.core.service.FeeTypeService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.EncryptionCommand;
@@ -133,8 +132,7 @@ public class TransactionController {
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(resultSet);
+        return JsonUtil.toJson(resultSet);
     }
 
     @RequestMapping(value = "/editEncryption", method = RequestMethod.GET)
@@ -191,8 +189,7 @@ public class TransactionController {
 
         JsonResponse response = new JsonResponse();
         response.setMessage(message);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(response);
+        return JsonUtil.toJson(response);
     }
 
     private void editEncryption(Encryption encryption, EncryptionCommand encryptionCommand) {

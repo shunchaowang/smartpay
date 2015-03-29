@@ -1,7 +1,5 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.persistence.entity.CredentialStatus;
 import com.lambo.smartpay.core.persistence.entity.CredentialType;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
@@ -9,6 +7,7 @@ import com.lambo.smartpay.core.service.CredentialStatusService;
 import com.lambo.smartpay.core.service.CredentialTypeService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesCredential;
@@ -120,8 +119,7 @@ public class CredentialController {
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(resultSet);
+        return JsonUtil.toJson(resultSet);
     }
 
 }

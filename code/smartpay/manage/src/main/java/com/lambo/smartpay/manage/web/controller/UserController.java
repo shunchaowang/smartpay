@@ -1,7 +1,5 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
@@ -14,6 +12,7 @@ import com.lambo.smartpay.core.service.RoleService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
@@ -150,8 +149,7 @@ public class UserController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
     @RequestMapping(value = "/listMerchantAdmin", method = RequestMethod.GET,
@@ -215,8 +213,7 @@ public class UserController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
 
@@ -539,8 +536,7 @@ public class UserController {
         String deletedMessage = messageSource.getMessage("deleted.message",
                 new String[]{label, user.getUsername()}, locale);
         response.setMessage(deletedMessage);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(response);
+        return JsonUtil.toJson(response);
     }
 
     // create a new User from a UserCommand

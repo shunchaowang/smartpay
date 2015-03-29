@@ -3,18 +3,6 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class='row' id='notification'>
-    <c:if test="${not empty message}">
-        <div class="alert alert-danger alert-dismissable" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                <span aria-hidden="true">&times;</span>
-                <span class="sr-only"><spring:message code="action.close.label"/> </span>
-            </button>
-                ${message}
-        </div>
-    </c:if>
-</div>
-<!-- end of notification -->
 <!-- start of search form -->
 <div class="row">
     <form class="form-horizontal">

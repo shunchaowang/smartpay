@@ -228,6 +228,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         return siteDao.countAll();
     }
 
+    @Transactional
     @Override
     public Site freezeSite(Long id) throws NoSuchEntityException {
         if (id == null) {
@@ -245,6 +246,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         return site;
     }
 
+    @Transactional
     @Override
     public Site unfreezeSite(Long id) throws NoSuchEntityException {
         if (id == null) {
@@ -262,6 +264,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         return site;
     }
 
+    @Transactional
     @Override
     public Site approveSite(Long id) throws NoSuchEntityException {
         if (id == null) {
@@ -279,6 +282,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         return site;
     }
 
+    @Transactional
     @Override
     public Site declineSite(Long id) throws NoSuchEntityException {
         if (id == null) {

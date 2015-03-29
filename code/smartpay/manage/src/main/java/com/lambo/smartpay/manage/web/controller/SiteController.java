@@ -1,19 +1,18 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.persistence.entity.SiteStatus;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.SiteCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
@@ -108,7 +107,6 @@ public class SiteController {
     }
 
 
-
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -157,15 +155,14 @@ public class SiteController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
 
     @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain,HttpServletRequest request) {
+    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
 
         logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
@@ -193,14 +190,14 @@ public class SiteController {
         Long recordsTotal;
         Long recordsFiltered;
 
-        if(domain.equals("AuditList"))
+        if (domain.equals("AuditList"))
             codeString = ResourceProperties.SITE_STATUS_CREATED_CODE;
-        if(domain.equals("FreezeList"))
+        if (domain.equals("FreezeList"))
             codeString = ResourceProperties.SITE_STATUS_APPROVED_CODE;
-        if(domain.equals("UnfreezeList"))
+        if (domain.equals("UnfreezeList"))
             codeString = ResourceProperties.SITE_STATUS_FROZEN_CODE;
 
-        if(codeString.equals("")) {
+        if (codeString.equals("")) {
             logger.debug("~~~~~~~~~~ site list ~~~~~~~~~~" + "all codeString ！！！");
 
             sites = siteService.findByCriteria(search, start, length, order,
@@ -210,7 +207,7 @@ public class SiteController {
             recordsTotal = siteService.countAll();
             recordsFiltered = siteService.countByCriteria(search);
 
-        }else {
+        } else {
             logger.debug("~~~~~~~~~~ site list ~~~~~~~~~~" + "codeString = " + codeString);
             // normal merchant status
             Site siteCriteria = new Site();
@@ -219,7 +216,7 @@ public class SiteController {
                 status = siteStatusService.findByCode(codeString);
             } catch (NoSuchEntityException e) {
                 e.printStackTrace();
-                throw new BadRequestException("Cannot find SiteStatus with Code",  codeString);
+                throw new BadRequestException("Cannot find SiteStatus with Code", codeString);
             }
 
             siteCriteria.setSiteStatus(status);
@@ -230,7 +227,6 @@ public class SiteController {
             recordsTotal = siteService.countByCriteria(siteCriteria);
             recordsFiltered = siteService.countByCriteria(siteCriteria, search);
         }
-
 
 
         if (sites == null || recordsTotal == null || recordsFiltered == null) {
@@ -248,8 +244,7 @@ public class SiteController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
     //@RequestMapping(value = "/auditSite/{id}/{operation}", method = RequestMethod.GET)
@@ -327,8 +322,7 @@ public class SiteController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
     @RequestMapping(value = "/showFreezeList", method = RequestMethod.GET)
@@ -402,8 +396,7 @@ public class SiteController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
     @RequestMapping(value = "/showUnfreezeList", method = RequestMethod.GET)
@@ -477,17 +470,17 @@ public class SiteController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
-    @RequestMapping(value = "/audit", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/audit", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String audit(@RequestParam(value = "id") Long id) {
 
         logger.debug("~~~~~~~~~~ audit ~~~~~~~~~~" + "id= " + id);
         //Initiate
-        Site site ;
+        Site site;
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
         String label = messageSource.getMessage("Site.label", null, locale);
@@ -499,7 +492,8 @@ public class SiteController {
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            message = messageSource.getMessage("not.audit.message", new String[]{label, id.toString()}, locale);
+            message = messageSource
+                    .getMessage("not.audit.message", new String[]{label, id.toString()}, locale);
             response.setMessage(message);
             throw new BadRequestException("400", e.getMessage());
         }
@@ -509,17 +503,16 @@ public class SiteController {
         logger.debug("~~~~~~~~~~ site ~~~~~~~~~~" + "site= " + site.getSiteStatus().getName());
 
 
-        message = messageSource.getMessage("audit.message", new String[]{label, site.getName()}, locale);
+        message = messageSource
+                .getMessage("audit.message", new String[]{label, site.getName()}, locale);
         response.setMessage(message);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(response);
+        return JsonUtil.toJson(response);
     }
-
 
 
     @RequestMapping(value = "/edit/{operation}/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Long id, @PathVariable("operation") String operation,
-                           Model model) {
+                       Model model) {
 
         logger.debug("~~~~~~~~~~ edit ~~~~~~~~~~" + "id= " + id + " operation= " + operation);
 
@@ -528,7 +521,7 @@ public class SiteController {
         String label = messageSource.getMessage("Site.label", null, locale);
         String message = "";
 
-        if(operation.equals("audit")){
+        if (operation.equals("audit")) {
             logger.debug("~~~~~~~~~~ audit ~~~~~~~~~~" + "id= " + id + " operation= " + operation);
 
             try {

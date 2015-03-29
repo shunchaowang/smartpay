@@ -18,7 +18,7 @@ public class PayConfiguration {
     private PayConfiguration() {
         logger.info("Loading properties from " + ResourceProperties.PAY_PROPERTIES_FILE);
         PropertiesLoader loader = new PropertiesLoader();
-        Properties properties = loader.load(ResourceProperties.PAY_PROPERTIES_FILE);
+        properties = loader.load(ResourceProperties.PAY_PROPERTIES_FILE);
     }
 
     public static PayConfiguration getInstance() {

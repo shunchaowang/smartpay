@@ -25,10 +25,10 @@ public class DataTablesMerchant {
         id = merchant.getId();
         identity = merchant.getIdentity();
         name = merchant.getName();
-        address = merchant.getAddress() == null ? "" : merchant.getAddress();
-        contact = merchant.getContact() == null ? "" : merchant.getContact();
-        tel = merchant.getTel() == null ? "" : merchant.getTel();
-        email = merchant.getEmail() == null ? "" : merchant.getEmail();
+        address = merchant.getAddress();
+        contact = merchant.getContact();
+        tel = merchant.getTel();
+        email = merchant.getEmail();
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         createdTime = dateFormat.format(merchant.getCreatedTime());

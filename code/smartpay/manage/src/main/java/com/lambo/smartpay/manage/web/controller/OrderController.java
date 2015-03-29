@@ -10,6 +10,7 @@ import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesOrder;
@@ -224,7 +225,6 @@ public class OrderController {
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 }

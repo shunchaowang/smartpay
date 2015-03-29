@@ -3,15 +3,6 @@
 <spring:message code="${domain}.label" var="preEntry"/>
 <spring:message code="freeze.label" arguments="${preEntry}" var="entity"/>
 
-<div class="row">
-    <div class="col-sm-6">
-        <h2><b><spring:message code="index.label" arguments="${entity}"/></b></h2>
-    </div>
-    <!-- end of label -->
-</div>
-<!-- end of class row -->
-<br/>
-
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
         <div class="alert alert-danger alert-dismissable" role="alert">

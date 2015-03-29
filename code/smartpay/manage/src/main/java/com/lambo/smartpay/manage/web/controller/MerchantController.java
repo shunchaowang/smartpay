@@ -1,7 +1,5 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
@@ -25,6 +23,7 @@ import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
@@ -47,7 +46,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import sun.security.jgss.spi.MechanismFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
@@ -167,7 +165,7 @@ public class MerchantController {
     @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain,HttpServletRequest request) {
+    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
 
         logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
@@ -195,12 +193,12 @@ public class MerchantController {
         Long recordsTotal;
         Long recordsFiltered;
 
-        if(domain.equals("FreezeList"))
+        if (domain.equals("FreezeList"))
             codeString = ResourceProperties.MERCHANT_STATUS_NORMAL_CODE;
-        if(domain.equals("UnfreezeList"))
+        if (domain.equals("UnfreezeList"))
             codeString = ResourceProperties.MERCHANT_STATUS_FROZEN_CODE;
 
-        if(codeString.equals("")) {
+        if (codeString.equals("")) {
             logger.debug("~~~~~~~~~~ merchant list ~~~~~~~~~~" + "all codeString ！！！");
 
             merchants = merchantService.findByCriteria(search, start,
@@ -209,7 +207,7 @@ public class MerchantController {
             recordsTotal = merchantService.countAll();
             recordsFiltered = merchantService.countByCriteria(search);
 
-        }else {
+        } else {
             logger.debug("~~~~~~~~~~ merchant list ~~~~~~~~~~" + "codeString = " + codeString);
             // normal merchant status
             Merchant merchantCriteria = new Merchant();
@@ -219,11 +217,13 @@ public class MerchantController {
                         .findByCode(codeString);
             } catch (NoSuchEntityException e) {
                 e.printStackTrace();
-                throw new BadRequestException("Cannot find MerchantStatus with Code",  codeString);
+                throw new BadRequestException("Cannot find MerchantStatus with Code", codeString);
             }
 
             merchantCriteria.setMerchantStatus(status);
-            merchants = merchantService.findByCriteria(merchantCriteria, search, start, length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            merchants = merchantService
+                    .findByCriteria(merchantCriteria, search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
             // count total and filtered
             recordsTotal = merchantService.countByCriteria(merchantCriteria);
             recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
@@ -244,8 +244,7 @@ public class MerchantController {
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(resultSet);
+        return JsonUtil.toJson(resultSet);
     }
 
     @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
@@ -254,7 +253,7 @@ public class MerchantController {
 
         logger.debug("~~~~~~ whether come to here ??? " + "domain=" + domain + "id=" + id);
 
-        Merchant merchant ;
+        Merchant merchant;
         try {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
@@ -307,8 +306,7 @@ public class MerchantController {
         String frozenMessage = messageSource.getMessage("frozen.message",
                 new String[]{label, merchant.getName()}, locale);
         response.setMessage(frozenMessage);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(response);
+        return JsonUtil.toJson(response);
     }
 
     /**
@@ -347,8 +345,7 @@ public class MerchantController {
         String unfrozenMessage = messageSource.getMessage("unfrozen.message",
                 new String[]{label, merchant.getName()}, locale);
         response.setMessage(unfrozenMessage);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(response);
+        return JsonUtil.toJson(response);
     }
 
 
@@ -459,7 +456,7 @@ public class MerchantController {
 
     @RequestMapping(value = "/setfee", method = RequestMethod.POST)
     public String setfee(Model model,
-                       @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
+                         @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
 
         model.addAttribute("merchantCommand", merchantCommand);
 
@@ -521,8 +518,7 @@ public class MerchantController {
         String deletedMessage = messageSource.getMessage("deleted.message",
                 new String[]{label, merchant.getName()}, locale);
         response.setMessage(deletedMessage);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(response);
+        return JsonUtil.toJson(response);
     }
 
 
@@ -661,7 +657,7 @@ public class MerchantController {
         return fee;
     }
 
-    private Fee setReturnFee(MerchantCommand merchantCommand,Merchant merchant) {
+    private Fee setReturnFee(MerchantCommand merchantCommand, Merchant merchant) {
         Fee fee = merchant.getReturnFee();
         FeeType feeType = null;
         try {
@@ -778,8 +774,12 @@ public class MerchantController {
         }
         */
 
-        if(merchant.getId() != null) {merchantCommand.setId(merchant.getId());}
-        if(merchant.getIdentity() != null) {merchantCommand.setIdentity(merchant.getIdentity());}
+        if (merchant.getId() != null) {
+            merchantCommand.setId(merchant.getId());
+        }
+        if (merchant.getIdentity() != null) {
+            merchantCommand.setIdentity(merchant.getIdentity());
+        }
 
         merchantCommand.setMerchantStatusId(merchant.getMerchantStatus().getId());
         merchantCommand.setMerchantStatusName(merchant.getMerchantStatus().getName());
