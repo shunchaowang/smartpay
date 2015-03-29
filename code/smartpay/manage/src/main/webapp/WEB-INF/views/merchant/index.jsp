@@ -78,8 +78,11 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'identity', 'targets': 1, 'searchable': false, 'orderable': false,
-                    'data': 'identity'
+                    'name': 'identity', 'targets': 1, 'data': 'identity',
+                    'render': function (data, type, row) {
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                                + row['id'] + '>' + data + '</a>';
+                    }
                 },
                 {
                     'name': 'name', 'targets': 2, 'data': 'name',
