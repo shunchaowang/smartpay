@@ -80,6 +80,7 @@ public class MerchantDaoImplTest {
         Merchant merchant = new Merchant();
         merchant.setActive(true);
         merchant.setName("xyz");
+        merchant.setIdentity("xyz");
         merchant.setCreatedTime(todayDate);
 
         MerchantStatus normalMerchantStatus = merchantStatusDao.

@@ -81,6 +81,7 @@ public class SiteDaoImplTest {
         Merchant merchant = new Merchant();
         merchant.setActive(true);
         merchant.setName("xyz");
+        merchant.setIdentity("xyz");
         merchant.setCreatedTime(todayDate);
 
         MerchantStatus normalMerchantStatus = merchantStatusDao.
@@ -137,6 +138,7 @@ public class SiteDaoImplTest {
         site.setCreatedTime(todayDate);
         site.setActive(true);
         site.setName("xyz");
+        site.setIdentity("xyz");
         site.setMerchant(merchant);
         site.setSiteStatus(createdSiteStatus);
         site.setUrl("www.google.com");
