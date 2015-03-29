@@ -96,15 +96,40 @@
                 {
                     'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/audit/'
-                                + row['id'] + '">'
-                                +'<button type="button" name="audit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.audit.label"/>'
-                                + '</button></a>';
+                        return  '<button type="button" name="audit-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="action.audit.label"/>' +
+                                '</button>';
                     }
                 }
                 </c:if>
             ]
+        });
+
+        // add live handler for audit button
+        siteTable.on('click', 'button[type=button][name=audit-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}" + '/audit',
+                data: {id: id},
+                dataType: 'JSON',
+                error: function (error) {
+                    alert('There was an error');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    siteTable.ajax.reload();
+                }
+            });
         });
     });
 </script>

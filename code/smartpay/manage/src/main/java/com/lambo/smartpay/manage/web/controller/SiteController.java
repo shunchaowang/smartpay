@@ -18,6 +18,7 @@ import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.SiteCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -479,6 +481,42 @@ public class SiteController {
         return gson.toJson(result);
     }
 
+    @RequestMapping(value = "/audit", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String audit(@RequestParam(value = "id") Long id) {
+
+        logger.debug("~~~~~~~~~~ audit ~~~~~~~~~~" + "id= " + id);
+        //Initiate
+        Site site ;
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("Site.label", null, locale);
+        String message = "";
+        //Do approve
+        try {
+            site = siteService.approveSite(id);
+            logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id);
+
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            message = messageSource.getMessage("not.audit.message", new String[]{label, id.toString()}, locale);
+            response.setMessage(message);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        logger.debug("~~~~~~~~~~ site ~~~~~~~~~~" + "site= " + site.getId());
+        logger.debug("~~~~~~~~~~ site ~~~~~~~~~~" + "site= " + site.getName());
+        logger.debug("~~~~~~~~~~ site ~~~~~~~~~~" + "site= " + site.getSiteStatus().getName());
+
+
+        message = messageSource.getMessage("audit.message", new String[]{label, site.getName()}, locale);
+        response.setMessage(message);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(response);
+    }
+
+
+
     @RequestMapping(value = "/edit/{operation}/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Long id, @PathVariable("operation") String operation,
                            Model model) {
@@ -495,6 +533,8 @@ public class SiteController {
 
             try {
                 siteService.approveSite(id);
+                logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id + " operation= " +
+                        operation);
                 message = messageSource.getMessage("audit.message",
                         new String[]{label, site.getName()}, locale);
             } catch (NoSuchEntityException e) {

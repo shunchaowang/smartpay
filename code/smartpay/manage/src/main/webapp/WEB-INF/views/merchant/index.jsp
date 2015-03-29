@@ -152,11 +152,10 @@
                 {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/unfreeze/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="unfreeze-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.unfreeze.label"/>'
-                                + '</button></a>';
+                        return '<button type="button" name="unfreeze-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="action.unfreeze.label"/>' +
+                                '</button>';
                     }
                 }
                 </c:if>
