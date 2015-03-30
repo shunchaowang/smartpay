@@ -101,7 +101,7 @@
                     <div class="container-fluid table-bordered col-sm-8">
                         <h3>Payment Information</h3>
 
-                        <form name='pay' action='/hooppay' method='POST' class='form-horizontal'
+                        <form name='pay' action='/payByCard' method='POST' class='form-horizontal'
                               id='pay-form'>
                             <table class="table table-hover">
                                 <tr>

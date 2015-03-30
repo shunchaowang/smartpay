@@ -6,6 +6,11 @@ function autoCloseAlert() {
         });
     }, 5000);
 }
+
+function activeTab(tab) {
+    $('.nav-tabs a[href="#' + tab + '"]').trigger('shown.bs.tab');
+}
+
 $(document).ready(function () {
     autoCloseAlert();
 });
