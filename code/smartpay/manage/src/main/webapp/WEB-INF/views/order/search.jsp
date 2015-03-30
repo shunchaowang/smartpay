@@ -44,7 +44,7 @@
             <div class="col-sm-2">
                 <select id="site" class="form-control">
                     <c:forEach items="${sites}" var="site">
-                        <form:option value="${site.id}">${site.name}</form:option>
+                        <option value="${site.id}">${site.name}</option>
                     </c:forEach>
                 </select>
             </div>

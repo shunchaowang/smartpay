@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +28,15 @@ public class OrderServiceImpl extends GenericDateQueryServiceImpl<Order, Long>
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Autowired
     private OrderDao orderDao;
+
+    @Override
+    public Order findByMerchantNumber(String merchantNumber) {
+        if (StringUtils.isBlank(merchantNumber)) {
+            logger.debug("Merchant number is blank.");
+            return null;
+        }
+        return orderDao.findByMerchantNumber(merchantNumber);
+    }
 
     /**
      * Dynamic search like grails findBy...
@@ -75,6 +85,7 @@ public class OrderServiceImpl extends GenericDateQueryServiceImpl<Order, Long>
                 createdTimeStart, createdTimeEnd);
     }
 
+    @Transactional
     @Override
     public Order create(Order order) throws MissingRequiredFieldException, NotUniqueException {
 
@@ -126,6 +137,7 @@ public class OrderServiceImpl extends GenericDateQueryServiceImpl<Order, Long>
         return order;
     }
 
+    @Transactional
     @Override
     public Order update(Order order) throws MissingRequiredFieldException, NotUniqueException {
 
@@ -167,6 +179,7 @@ public class OrderServiceImpl extends GenericDateQueryServiceImpl<Order, Long>
         return orderDao.update(order);
     }
 
+    @Transactional
     @Override
     public Order delete(Long id) throws NoSuchEntityException {
         if (id == null) {

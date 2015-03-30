@@ -1,5 +1,7 @@
 package com.lambo.smartpay.pay.web.vo;
 
+import java.util.List;
+
 /**
  * Created by swang on 3/29/2015.
  */
@@ -13,8 +15,11 @@ public class OrderCommand {
     private String currency;
     private String productType;
     private String goodsName;
+    private List goodsNameArray;
     private String goodsNumber;
+    private List goodsNumberArray;
     private String goodsPrice;
+    private List goodsPriceArray;
     private String email;
     private String phone;
     private String shipFirstName;
@@ -184,5 +189,29 @@ public class OrderCommand {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public List getGoodsNameArray() {
+        return goodsNameArray;
+    }
+
+    public void setGoodsNameArray(List goodsNameArray) {
+        this.goodsNameArray = goodsNameArray;
+    }
+
+    public List getGoodsNumberArray() {
+        return goodsNumberArray;
+    }
+
+    public void setGoodsNumberArray(List goodsNumberArray) {
+        this.goodsNumberArray = goodsNumberArray;
+    }
+
+    public List getGoodsPriceArray() {
+        return goodsPriceArray;
+    }
+
+    public void setGoodsPriceArray(List goodsPriceArray) {
+        this.goodsPriceArray = goodsPriceArray;
     }
 }

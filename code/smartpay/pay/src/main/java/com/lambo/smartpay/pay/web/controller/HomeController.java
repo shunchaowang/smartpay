@@ -1,9 +1,14 @@
 package com.lambo.smartpay.pay.web.controller;
 
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
+import com.lambo.smartpay.core.persistence.entity.Customer;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Site;
+import com.lambo.smartpay.core.service.CustomerService;
+import com.lambo.smartpay.core.service.CustomerStatusService;
 import com.lambo.smartpay.core.service.MerchantService;
+import com.lambo.smartpay.core.service.OrderService;
+import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.PropertiesLoader;
 import com.lambo.smartpay.pay.util.PayConfiguration;
@@ -22,23 +27,33 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by swang on 3/11/2015.
+ * Pay home.
  */
 @Controller
 public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-    private static final PropertiesLoader propertiesLoader = new PropertiesLoader();
 
     @Autowired
     private MerchantService merchantService;
     @Autowired
     private SiteService siteService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private OrderStatusService orderStatusService;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private CustomerStatusService customerStatusService;
 
     @RequestMapping(value = {"", "/", "/index"})
     public ModelAndView home() {
@@ -87,6 +102,7 @@ public class HomeController {
         if (StringUtils.isBlank(goodsName)) {
             throw new BadRequestException("400", "Goods name is blank.");
         }
+
         String goodsNumber = formatString(request.getParameter("goodsNumber"));
         logger.debug("Goods number is " + goodsNumber);
         if (StringUtils.isBlank(goodsNumber)) {
@@ -175,6 +191,17 @@ public class HomeController {
         // create order command object and add to model
         OrderCommand orderCommand = createOrderCommand(request);
         model.addAttribute("orderCommand", orderCommand);
+
+        // Order and Customer should be created here
+        // if customer exists using current one
+        Customer customer = customerService.findByEmail(email);
+        if (customer == null) {
+            customer = new Customer();
+            customer.setFirstName(shipFirstName);
+            customer.setLastName(shipLastName);
+            customer.setEmail(email);
+        }
+
 
         return "pay";
     }
@@ -401,9 +428,23 @@ public class HomeController {
         orderCommand.setAmount(request.getParameter("amount"));
         orderCommand.setCurrency(request.getParameter("currency"));
         orderCommand.setProductType(request.getParameter("productType"));
-        orderCommand.setGoodsName(request.getParameter("goodsName"));
-        orderCommand.setGoodsNumber(request.getParameter("goodsNumber"));
-        orderCommand.setGoodsPrice(request.getParameter("goodsPrice"));
+        String goodsName = request.getParameter("goodsName");
+        if (StringUtils.length(goodsName) > 128) {
+            goodsName = StringUtils.substring(goodsName, 0, 125);
+        }
+        orderCommand.setGoodsName(goodsName);
+        String[] goodsNames = goodsName.split(",");
+        List goodsNameArray = Arrays.asList(goodsNames);
+        orderCommand.setGoodsNameArray(goodsNameArray);
+
+        String goodsNumber = request.getParameter("goodsNumber");
+        orderCommand.setGoodsNumber(goodsNumber);
+        String[] goodsNumbers = goodsNumber.split(",");
+        orderCommand.setGoodsNumberArray(Arrays.asList(goodsNumbers));
+        String goodsPrice = request.getParameter("goodsPrice");
+        orderCommand.setGoodsPrice(goodsPrice);
+        String[] goodsPrices = goodsPrice.split(",");
+        orderCommand.setGoodsPriceArray(Arrays.asList(goodsPrices));
         orderCommand.setEmail(request.getParameter("email"));
         orderCommand.setPhone(request.getParameter("phone"));
         orderCommand.setShipFirstName(request.getParameter("shipFirstName"));

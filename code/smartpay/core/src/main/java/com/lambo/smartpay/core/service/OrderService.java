@@ -7,4 +7,5 @@ import com.lambo.smartpay.core.persistence.entity.Order;
  */
 public interface OrderService extends GenericDateQueryService<Order, Long> {
 
+    Order findByMerchantNumber(String merchantNumber);
 }

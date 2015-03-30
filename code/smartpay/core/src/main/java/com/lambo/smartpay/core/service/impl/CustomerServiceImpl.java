@@ -6,10 +6,12 @@ import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.dao.CustomerDao;
 import com.lambo.smartpay.core.persistence.entity.Customer;
 import com.lambo.smartpay.core.service.CustomerService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +25,22 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private CustomerDao customerDao;
 
+    /**
+     * Find user by the unique email.
+     *
+     * @param email
+     * @return
+     */
+    @Override
+    public Customer findByEmail(String email) {
+        if (StringUtils.isBlank(email)) {
+            logger.debug("Email is blank.");
+            return null;
+        }
+        return customerDao.findByEmail(email);
+    }
+
+    @Transactional
     @Override
     public Customer create(Customer customer)
             throws MissingRequiredFieldException, NotUniqueException {
@@ -34,12 +52,14 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.get(id);
     }
 
+    @Transactional
     @Override
     public Customer update(Customer customer)
             throws MissingRequiredFieldException, NotUniqueException {
         return customerDao.update(customer);
     }
 
+    @Transactional
     @Override
     public Customer delete(Long id) throws NoSuchEntityException {
         Customer customer = customerDao.get(id);
