@@ -765,15 +765,6 @@ public class MerchantController {
     private MerchantCommand createMerchantCommand(Merchant merchant) {
         MerchantCommand merchantCommand = new MerchantCommand();
 
-        /*
-        //MerchantStatus merchantStatus = null;
-        try {
-            merchantStatus = merchantStatusService.get(merchantCommand.getMerchantStatusId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        */
-
         if (merchant.getId() != null) {
             merchantCommand.setId(merchant.getId());
         }

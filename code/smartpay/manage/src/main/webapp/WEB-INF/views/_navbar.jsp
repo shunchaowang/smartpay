@@ -102,6 +102,12 @@
                         <!-- admin menu starts -->
                         <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
                             <li class="">
+                                <a href="${rootURL}site/create">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                    <spring:message code="create.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="">
                                 <a href="${rootURL}site">
                                     <i class="glyphicon glyphicon-th-list"></i>
                                     <spring:message code="index.label" arguments="${site}"/>
@@ -123,25 +129,6 @@
                                 <a href="${rootURL}site/indexUnfreezeList">
                                     <i class="glyphicon glyphicon-wrench"></i>
                                     <spring:message code="unfreeze.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}site/showFreezeList">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="freeze.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}site/showUnfreezeList">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="unfreeze.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <!-- TODO this should be on ecs side -->
-                            <li class="">
-                                <a href="${rootURL}site/create">
-                                    <i class="glyphicon glyphicon-wrench"></i>
-                                    <spring:message code="create.label" arguments="${site}"/>
                                 </a>
                             </li>
                         </sec:authorize>

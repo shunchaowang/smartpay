@@ -63,7 +63,7 @@
                 {
                     'name': 'name', 'targets': 2, 'data': 'name',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -78,16 +78,15 @@
                 {
                     'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}/show/" + row['id'] +
-                                '">'
-                                + '<spring:message code="action.show.label"/>'
-                                + '</a>'
-                                + ' ' +
-                                '<a href="' + "${rootURL}${controller}/editInfo/" + row['id'] +
-                                '">'
-                                + '<spring:message code="action.edit.label"/>'
-                                + '</a>';
-
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="action.edit.label"/>'
+                                + '</button></a>' +
+                                '<button type="button" name="delete-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="action.delete.label"/>' +
+                                '</button>';
                     }
                 }
                 </c:if>
@@ -103,7 +102,58 @@
                     }
                 }
                 </c:if>
+                <c:if test="${domain.equals('FreezeList')}">
+                ,
+                {
+                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return  '<button type="button" name="freeze-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="action.freeze.label"/>' +
+                                '</button>';
+                    }
+                }
+                </c:if>
+                <c:if test="${domain.equals('UnfreezeList')}">
+                ,
+                {
+                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return  '<button type="button" name="unfreeze-button"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                '<spring:message code="action.unfreeze.label"/>' +
+                                '</button>';
+                    }
+                }
+                </c:if>
             ]
+        });
+
+
+        // add live handler for remove button
+        siteTable.on('click', 'button[type=button][name=delete-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}" + '/delete',
+                data: {id: id},
+                dataType: 'JSON',
+                error: function (error) {
+                    alert('There was an error');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    siteTable.ajax.reload();
+                }
+            });
         });
 
         // add live handler for audit button
@@ -113,6 +163,58 @@
             $.ajax({
                 type: 'POST',
                 url: "${rootURL}${controller}" + '/audit',
+                data: {id: id},
+                dataType: 'JSON',
+                error: function (error) {
+                    alert('There was an error');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    siteTable.ajax.reload();
+                }
+            });
+        });
+
+        // add live handler for freeze button
+        siteTable.on('click', 'button[type=button][name=freeze-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}" + '/freeze',
+                data: {id: id},
+                dataType: 'JSON',
+                error: function (error) {
+                    alert('There was an error');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    siteTable.ajax.reload();
+                }
+            });
+        });
+
+        // add live handler for unfreeze button
+        siteTable.on('click', 'button[type=button][name=unfreeze-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}" + '/unfreeze',
                 data: {id: id},
                 dataType: 'JSON',
                 error: function (error) {

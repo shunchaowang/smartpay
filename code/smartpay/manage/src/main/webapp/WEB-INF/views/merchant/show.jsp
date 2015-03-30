@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<c:if test="${domain != null}">
+    <spring:message code="${domain}.label" var="entity"/>
+</c:if>
 
 <div class='row'>
     <div class='col-sm-4'>

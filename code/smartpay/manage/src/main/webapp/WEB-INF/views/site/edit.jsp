@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <c:if test="${domain != null}">
-    <spring:message code="${domain}.labe" var="entity"/>
+    <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
 <div class='row'>
@@ -14,7 +14,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/editSite" method="POST"
+    <form:form action="${rootURL}${controller}/edit" method="POST"
                commandName="siteCommand" cssClass="form-horizontal" id="auditSite-form">
         <form:input path="id" id="id" type="hidden" value="${siteCommand.id}"/>
         <!-- site merchant -->
@@ -22,10 +22,23 @@
             <label class="col-sm-3 control-label" for="merchant">
                 <spring:message code="site.merchant.label"/>
             </label>
+            <div class="col-sm-6">
+                <form:select path="merchant" id="merchant" cssClass="form-control"
+                             required="" placeholder="Merchant">
+                        <form:option
+                                value="${siteCommand.merchant}">${siteCommand.merchantName}</form:option>
+                </form:select>
+            </div>
+        </div>
+        <!-- site identity -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="identity">
+                <spring:message code="identity.label"/>
+            </label>
 
             <div class="col-sm-6">
-                <form:input path="merchant" id="merchant" cssClass="form-control"
-                            value="${siteCommand.merchantName}" readonly="true"/>
+                <form:input path="identity" id="identity" cssClass="form-control"
+                            value="${siteCommand.identity}" readonly="true"/>
             </div>
         </div>
         <!-- name -->
@@ -53,13 +66,22 @@
         </div>
         <!-- site status -->
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="siteStatus">
+            <label class="col-sm-3 control-label" for="siteStatusId">
                 <spring:message code="status.label"/>
+                <span class="required-indicator">*</span>
             </label>
 
             <div class="col-sm-6">
-                <form:input path="siteStatus" id="siteStatus" cssClass="form-control"
-                            value="${siteCommand.siteStatusName}"/>
+                <form:select path="siteStatusId" id="siteStatusId" cssClass="form-control"
+                             required="" placeholder="Status">
+                    <form:option
+                            value="${siteCommand.siteStatusId}">${siteCommand.siteStatusName}</form:option>
+                    <c:forEach items="${siteStatuses}" var="status">
+                        <c:if test="${!(siteCommand.siteStatusId.equals(status.id))}">
+                            <form:option value="${status.id}">${status.name}</form:option>
+                        </c:if>
+                    </c:forEach>
+                </form:select>
             </div>
         </div>
         <!-- remark -->
