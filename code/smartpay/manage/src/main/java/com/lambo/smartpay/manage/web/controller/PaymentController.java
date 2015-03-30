@@ -12,6 +12,7 @@ import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.PaymentCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
@@ -70,7 +71,7 @@ public class PaymentController {
         return paymentStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/index", "/indexPayment"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
@@ -165,6 +166,27 @@ public class PaymentController {
         return JsonUtil.toJson(resultSet);
     }
 
+    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
+            model) {
+
+        logger.debug("~~~~~~ show " + "domain=" + domain + "id=" + id);
+
+        Payment payment;
+        try {
+            payment = paymentService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+        PaymentCommand paymentCommand = createPaymentCommand(payment);
+        model.addAttribute("paymentCommand", paymentCommand);
+        if (domain != null) {
+            model.addAttribute("domain", domain);
+        }
+        model.addAttribute("action", "show");
+        return "main";
+    }
 
 /*
     public
@@ -326,6 +348,48 @@ public class PaymentController {
         return gson.toJson(result);
     }
       */
+
+    private PaymentCommand createPaymentCommand(Payment payment) {
+        PaymentCommand PaymentCommand = new PaymentCommand();
+
+        if (payment.getId() != null) {
+            PaymentCommand.setId(payment.getId());
+        }
+
+        //
+        PaymentCommand.setAmount(payment.getAmount());
+        PaymentCommand.setCreatedTime(payment.getCreatedTime().toString());
+        PaymentCommand.setBankName(payment.getBankName());
+        PaymentCommand.setBankTransactionNumber(payment.getBankTransactionNumber());
+        PaymentCommand.setBankReturnCode(payment.getBankReturnCode());
+        PaymentCommand.setPaymentStatusId(payment.getPaymentStatus().getId());
+        PaymentCommand.setPaymentStatusName(payment.getPaymentStatus().getName());
+        PaymentCommand.setPaymentTypeId(payment.getPaymentType().getId());
+        PaymentCommand.setPaymentTypeName(payment.getPaymentType().getName());
+        PaymentCommand.setOrderId(payment.getOrder().getId());
+        PaymentCommand.setOrderNumber(payment.getOrder().getMerchantNumber());
+        PaymentCommand.setCurrencyId(payment.getCurrency().getId());
+        PaymentCommand.setCurrencyName(payment.getCurrency().getName());
+        PaymentCommand.setMerchantId(payment.getOrder().getSite().getMerchant().getId());
+        PaymentCommand.setMerchantName(payment.getOrder().getSite().getMerchant().getName());
+        PaymentCommand.setMerchantNumber(payment.getOrder().getMerchantNumber());
+        PaymentCommand.setSiteId(payment.getOrder().getSite().getId());
+        PaymentCommand.setSiteName(payment.getOrder().getSite().getName());
+
+        //
+        PaymentCommand.setSuccessTime(payment.getSuccessTime().toString());
+        PaymentCommand.setRemark(payment.getRemark());
+        PaymentCommand.setBillAddress1(payment.getBillAddress1());
+        PaymentCommand.setBillAddress2(payment.getBillAddress2());
+        PaymentCommand.setBillFirstName(payment.getBillFirstName());
+        PaymentCommand.setBillLastName(payment.getBillLastName());
+        PaymentCommand.setBillCity(payment.getBillCity());
+        PaymentCommand.setBillState(payment.getBillState());
+        PaymentCommand.setBillZipCode(payment.getBillZipCode());
+        PaymentCommand.setBillCountry(payment.getBillCountry());
+
+        return PaymentCommand;
+    }
 }
 
 
