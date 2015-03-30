@@ -775,7 +775,7 @@ public class MerchantController {
         merchantCommand.setMerchantStatusId(merchant.getMerchantStatus().getId());
         merchantCommand.setMerchantStatusName(merchant.getMerchantStatus().getName());
         merchantCommand.setName(merchant.getName());
-        merchant.setName(merchantCommand.getName());
+        merchantCommand.setName(merchant.getName());
         merchantCommand.setActive(merchant.getActive());
         merchantCommand.setAddress(merchant.getAddress());
         merchantCommand.setContact(merchant.getContact());

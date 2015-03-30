@@ -13,6 +13,7 @@ import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.OrderCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesOrder;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -67,16 +69,17 @@ public class OrderController {
         return orderStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/index", "/indexOrder"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
-    public
     @ResponseBody
-    String list(HttpServletRequest request) {
+    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
+
+        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -123,6 +126,29 @@ public class OrderController {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(result);
     }
+
+    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
+            model) {
+
+        logger.debug("~~~~~~ show " + "domain=" + domain + "id=" + id);
+
+        Order order;
+        try {
+            order = orderService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
+        }
+        OrderCommand orderCommand = createOrderCommand(order);
+        model.addAttribute("orderCommand", orderCommand);
+        if (domain != null) {
+            model.addAttribute("domain", domain);
+        }
+        model.addAttribute("action", "show");
+        return "main";
+    }
+
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(Model model) {
@@ -226,5 +252,30 @@ public class OrderController {
         result.setRecordsTotal(recordsTotal.intValue());
 
         return JsonUtil.toJson(result);
+    }
+
+
+    private OrderCommand createOrderCommand(Order order) {
+        OrderCommand orderCommand = new OrderCommand();
+
+        if (order.getId() != null) {
+            orderCommand.setId(order.getId());
+        }
+
+        orderCommand.setMerchantNumber(order.getMerchantNumber());
+        orderCommand.setAmount(order.getAmount());
+        orderCommand.setGoodsName(order.getGoodsName());
+        orderCommand.setGoodsAmount(order.getGoodsName());
+        orderCommand.setCurrencyId(order.getCurrency().getId());
+        orderCommand.setCurrencyName(order.getCurrency().getName());
+        orderCommand.setSiteId(order.getSite().getId());
+        orderCommand.setSiteName(order.getSite().getName());
+        orderCommand.setCustomerId(order.getCustomer().getId());
+        orderCommand.setCustomerName(order.getCustomer().getFirstName()+order.getCustomer().getLastName());
+        orderCommand.setCreatedTime(order.getCreatedTime().toString());
+        orderCommand.setOrderStatusId(order.getOrderStatus().getId());
+        orderCommand.setOrderStatusName(order.getOrderStatus().getName());
+
+        return orderCommand;
     }
 }

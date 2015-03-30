@@ -17,70 +17,64 @@
     <div class="col-sm-8">
 
         <table class="table table-bordered">
-            <c:if test="${not empty userCommand.username}">
+            <c:if test="${not empty orderCommand.merchantNumber}">
                 <tr>
-                    <td><spring:message code="username.label"/></td>
-                    <td>${userCommand.username}</td>
+                    <td><spring:message code="merchantNumber.label"/></td>
+                    <td>${orderCommand.merchantNumber}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty userCommand.firstName}">
+            <c:if test="${not empty orderCommand.amount}">
                 <tr>
-                    <td><spring:message code="firstName.label"/></td>
-                    <td>${userCommand.firstName}</td>
+                    <td><spring:message code="amount.label"/></td>
+                    <td>${orderCommand.amount}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty userCommand.lastName}">
+            <c:if test="${not empty orderCommand.goodsName}">
                 <tr>
-                    <td><spring:message code="lastName.label"/></td>
-                    <td>${userCommand.lastName}</td>
+                    <td><spring:message code="goodsName.label"/></td>
+                    <td>${orderCommand.goodsName}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty userCommand.email}">
+            <c:if test="${not empty orderCommand.goodsAmount}">
                 <tr>
-                    <td><spring:message code="email.label"/></td>
-                    <td>${userCommand.email}</td>
+                    <td><spring:message code="goodsAmount.label"/></td>
+                    <td>${orderCommand.goodsAmount}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty userCommand.userStatusName}">
+            <c:if test="${not empty orderCommand.currencyName}">
                 <tr>
-                    <td><spring:message code="status.label"/></td>
-                    <td>${userCommand.userStatusName}</td>
+                    <td><spring:message code="currency.label"/></td>
+                    <td>${orderCommand.currencyName}</td>
                 </tr>
             </c:if>
-            <!--
-            <c:if test="${not empty userCommand.active}">
-                <tr>
-                    <td><spring:message code="active.label"/></td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${userCommand.active}">
-                                <spring:message code="yes.label"/>
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="no.label"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
-                </tr>
-            </c:if>
-            -->
-            <c:if test="${not empty userCommand.remark}">
+            <c:if test="${not empty orderCommand.remark}">
                 <tr>
                     <td><spring:message code="remark.label"/></td>
-                    <td>${userCommand.remark}</td>
+                    <td>${orderCommand.remark}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty userCommand.merchantName}">
+            <c:if test="${not empty orderCommand.siteName}">
                 <tr>
-                    <td><spring:message code="Merchant.label"/></td>
-                    <td>${userCommand.merchantName}</td>
+                    <td><spring:message code="Site.label"/></td>
+                    <td>${orderCommand.siteName}</td>
                 </tr>
             </c:if>
-            <c:if test="${not empty userCommand.createdTime}">
+            <c:if test="${not empty orderCommand.createdTime}">
                 <tr>
                     <td><spring:message code="createdTime.label"/></td>
-                    <td><fmt:formatDate value="${userCommand.createdTime}"
-                                        pattern="MMM dd yyyy"/></td>
+                    <td>${orderCommand.createdTime}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty orderCommand.customerName}">
+                <tr>
+                    <td><spring:message code="Customer.label"/></td>
+                    <td>${orderCommand.customerName}</td>
+                </tr>
+            </c:if>
+            <c:if test="${not empty orderCommand.orderStatusName}">
+                <tr>
+                    <td><spring:message code="status.label"/></td>
+                    <td>${orderCommand.orderStatusName}</td>
                 </tr>
             </c:if>
         </table>
@@ -93,13 +87,6 @@
         <a href="${rootURL}${controller}/index${domain}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.return.label"/>
-            </button>
-        </a>
-    </div>
-    <div class="col-sm-2">
-        <a href="${rootURL}${controller}/edit/${userCommand.id}">
-            <button type="button" class="btn btn-default">
-                <spring:message code="action.edit.label"/>
             </button>
         </a>
     </div>

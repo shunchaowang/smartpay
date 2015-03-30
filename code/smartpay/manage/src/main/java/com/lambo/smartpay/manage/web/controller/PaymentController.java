@@ -12,8 +12,10 @@ import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,8 +75,98 @@ public class PaymentController {
         return "main";
     }
 
+    /*
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
+            */
+
+    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
+
+        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        //
+        String codeString = "";
+        List<Payment> payments = null;
+        Long recordsTotal;
+        Long recordsFiltered;
+
+        /*
+        if (domain.equals("FreezeList"))
+            codeString = ResourceProperties.MERCHANT_STATUS_NORMAL_CODE;
+        if (domain.equals("UnfreezeList"))
+            codeString = ResourceProperties.MERCHANT_STATUS_FROZEN_CODE;
+            */
+
+        if (codeString.equals("")) {
+            logger.debug("~~~~~~~~~~ payment list ~~~~~~~~~~" + "all codeString ！！！");
+
+            payments = paymentService.findByCriteria(search, start,
+                    length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            // count total and filtered
+            recordsTotal = paymentService.countAll();
+            recordsFiltered = paymentService.countByCriteria(search);
+
+        } else {
+            logger.debug("~~~~~~~~~~ payment list ~~~~~~~~~~" + "codeString = " + codeString);
+            // normal payment status
+            Payment paymentCriteria = new Payment();
+            PaymentStatus status =null;
+            try {
+                status = paymentStatusService.findByCode(codeString);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("Cannot find PaymentStatus with Code", codeString);
+            }
+
+            paymentCriteria.setPaymentStatus(status);
+            payments = paymentService.findByCriteria(paymentCriteria, search, start, length, order,
+                    ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            // count total and filtered
+            recordsTotal = paymentService.countByCriteria(paymentCriteria);
+            recordsFiltered = paymentService.countByCriteria(paymentCriteria, search);
+        }
+
+        if (payments == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
+        for (Payment payment: payments) {
+            DataTablesPayment tablesPayment = new DataTablesPayment(payment);
+            dataTablesPayments.add(tablesPayment);
+        }
+
+        DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesPayments);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
+
+/*
     public
     @ResponseBody
     String list(HttpServletRequest request) {

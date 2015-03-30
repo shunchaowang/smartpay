@@ -52,7 +52,7 @@
             'paging': true,
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/list${domain}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -62,7 +62,7 @@
                 {
                     'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -71,63 +71,34 @@
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'currency', 'targets': 3, 'data': 'currency',
+                    'name': 'currencyName', 'targets': 3, 'data': 'currencyName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'site', 'targets': 4, 'data': 'site',
+                    'name': 'siteName', 'targets': 4, 'data': 'siteName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'customer', 'targets': 5, 'data': 'customer',
+                    'name': 'customerName', 'targets': 5, 'data': 'customerName',
                     'searchable': false, 'orderable': false
                 },
                 {'name': 'createdTime', 'targets': 6, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'orderStatus', 'targets': 7, 'searchable': false,
-                    'orderable': false, 'data': 'orderStatus'
+                    'name': 'orderStatusName', 'targets': 7, 'searchable': false,
+                    'orderable': false, 'data': 'orderStatusName'
                 },
                 {
                     'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                        return '<a href="' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' +
-                                '<button type="button" name="delete-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
-                                '</button>';
+                                '<button type="button" name="show-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="action.show.label"/>'
+                                + '</button></a>'
                     }
                 }
             ]
         });
 
-        // add live handler for remove button
-        orderTable.on('click', 'button[type=button][name=delete-button]', function (event) {
-            event.preventDefault();
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}${controller}" + '/delete',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    orderTable.ajax.reload();
-                }
-            });
-        });
     });
 </script>

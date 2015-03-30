@@ -13,17 +13,23 @@
 <br/>
 
 <div class="row">
-    <table class="display cell-border" id="user-table">
+    <table class="display cell-border" id="payment-table">
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
-            <th><spring:message code="username.label"/></th>
-            <th><spring:message code="firstName.label"/></th>
-            <th><spring:message code="lastName.label"/></th>
-            <th><spring:message code="email.label"/></th>
+            <th><spring:message code="orderNumber.label"/></th>
+            <th><spring:message code="bankTransactionNumber.label"/></th>
+            <th><spring:message code="bankName.label"/></th>
+            <th><spring:message code="amount.label"/></th>
+            <th><spring:message code="currency.label"/></th>
             <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
+            <th><spring:message code="returnCode.label"/></th>
+            <th><spring:message code="paymentStatusName.label"/></th>
+            <th><spring:message code="paymentTypeName.label"/></th>
+
+            <c:if test="${domain.equals('paymentEdit')}">
+                <th><spring:message code="action.operation.label"/></th>
+            </c:if>
         </tr>
         </thead>
         <tbody></tbody>
@@ -32,8 +38,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
-        var userTable = $('#user-table').DataTable({
+        var paymentTable = $('#payment-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -50,61 +55,64 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'username', 'targets': 1, 'data': 'username',
+                    'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
-                {'name': 'firstName', 'targets': 2, 'data': 'firstName'},
-                {'name': 'lastName', 'targets': 3, 'data': 'lastName'},
-                {'name': 'email', 'targets': 4, 'data': 'email'},
-                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'userStatus', 'targets': 6, 'searchable': false,
-                    'orderable': false, 'data': 'userStatus'
+                    'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber',
+                    'render': function (data, type, row) {
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                                + row['id'] + '>' + data + '</a>';
+                    }
                 },
                 {
-                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'name': 'bankName', 'targets': 3, 'searchable': false, 'orderable': false,
+                    'data': 'bankName'
+                },
+                {
+                    'name': 'amount', 'targets': 4, 'data': 'amount',
+                    'render': function (data, type, row) {
+                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                                + row['id'] + '>' + data + '</a>';
+                    }
+                },
+                {
+                    'name': 'currencyName', 'targets': 5, 'searchable': false, 'orderable': false,
+                    'data': 'currencyName'
+                },
+                {
+                    'name': 'createdTime', 'targets': 6, 'searchable': false,
+                    'data': 'createdTime'
+                },
+                {
+                    'name': 'bankReturnCode', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'data': 'bankReturnCode'
+                },
+                {
+                    'name': 'paymentStatusName', 'targets': 8, 'searchable': false, 'orderable':
+                        false,
+                    'data': 'paymentStatusName'
+                },
+                {
+                    'name': 'paymentTypeName', 'targets': 9, 'searchable': false, 'orderable':
+                        false,
+                    'data': 'paymentTypeName'
+                },
+                <c:if test="${domain.equals('paymentEdit')}">
+                {
+                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' +
-                                '<button type="button" name="delete-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
-                                '</button>';
-                    }
+                                + '</button></a>'
                 }
+                </c:if>
             ]
-        });
-
-        // add live handler for remove button
-        userTable.on('click', 'button[type=button][name=delete-button]', function (event) {
-            event.preventDefault();
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}${controller}" + '/delete',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    userTable.ajax.reload();
-                }
-            });
         });
     });
 </script>
