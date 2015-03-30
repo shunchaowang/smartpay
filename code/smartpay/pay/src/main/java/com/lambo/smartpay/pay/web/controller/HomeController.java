@@ -1,32 +1,48 @@
 package com.lambo.smartpay.pay.web.controller;
 
+import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
+import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.Currency;
 import com.lambo.smartpay.core.persistence.entity.Customer;
+import com.lambo.smartpay.core.persistence.entity.CustomerStatus;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
+import com.lambo.smartpay.core.persistence.entity.Order;
+import com.lambo.smartpay.core.persistence.entity.OrderStatus;
+import com.lambo.smartpay.core.persistence.entity.Payment;
 import com.lambo.smartpay.core.persistence.entity.Site;
+import com.lambo.smartpay.core.service.CurrencyService;
 import com.lambo.smartpay.core.service.CustomerService;
 import com.lambo.smartpay.core.service.CustomerStatusService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.SiteService;
-import com.lambo.smartpay.core.util.PropertiesLoader;
+import com.lambo.smartpay.pay.util.MDUtil;
 import com.lambo.smartpay.pay.util.PayConfiguration;
 import com.lambo.smartpay.pay.util.ResourceProperties;
 import com.lambo.smartpay.pay.web.exception.BadRequestException;
 import com.lambo.smartpay.pay.web.vo.OrderCommand;
+import com.lambo.smartpay.pay.web.vo.PaymentCommand;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +54,7 @@ import java.util.Locale;
  * Pay home.
  */
 @Controller
+@SessionAttributes("orderCommand")
 public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -54,6 +71,8 @@ public class HomeController {
     private CustomerService customerService;
     @Autowired
     private CustomerStatusService customerStatusService;
+    @Autowired
+    private CurrencyService currencyService;
 
     @RequestMapping(value = {"", "/", "/index"})
     public ModelAndView home() {
@@ -62,7 +81,7 @@ public class HomeController {
     }
 
     @RequestMapping(value = {"/pay"}, method = RequestMethod.POST)
-    public String pay(HttpServletRequest request, Model model) {
+    public String pay(HttpServletRequest request, HttpServletResponse response, Model model) {
 
         // params passed from client
         // merchant and site number
@@ -92,6 +111,13 @@ public class HomeController {
         if (StringUtils.isBlank(currency)) {
             throw new BadRequestException("400", "Currency is blank.");
         }
+
+        String md5Info = formatString(request.getParameter("merMd5info"));
+        logger.debug("MD5 summary is " + md5Info);
+        if (StringUtils.isBlank(md5Info)) {
+            throw new BadRequestException("400", "MD5 summary is blank.");
+        }
+
         String productType = formatString(request.getParameter("productType"));
         logger.debug("Product type is " + productType);
         if (StringUtils.isBlank(productType)) {
@@ -172,6 +198,7 @@ public class HomeController {
         // we need to check if the merchant or the site is frozen
         // if so decline the payment request
         Merchant merchant = merchantService.findByIdentity(merNo);
+        String merchantKey = merchant.getEncryption().getKey();
         Site site = siteService.findByIdentity(siteNo);
         if (merchant == null || site == null) {
             return "403";
@@ -188,9 +215,24 @@ public class HomeController {
             return "403";
         }
 
-        // create order command object and add to model
+        // check md5info, md5 summary should be generated based merNo, merKey,
+        // siteNo and formatted amount
+        String calculatedMd5Info = MDUtil.getMD5Str(merNo + merchantKey + siteNo + amount);
+        if (!md5Info.equals(calculatedMd5Info)) {
+            String succeed = "0";
+            String errcode = "1002. MD5 Info Checking Error.";
+            String resultMd5Info = MDUtil.getMD5Str(merNo + siteNo + amount + succeed);
+            try {
+                response.sendRedirect(returnURL + "&succeed=" + succeed + "&amount=" +
+                        amount + "&orderNo=" + orderNo
+                        + "&currency=" + currency + "&errcode=" + errcode + "&md5info=" +
+                        resultMd5Info);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         OrderCommand orderCommand = createOrderCommand(request);
-        model.addAttribute("orderCommand", orderCommand);
 
         // Order and Customer should be created here
         // if customer exists using current one
@@ -200,17 +242,97 @@ public class HomeController {
             customer.setFirstName(shipFirstName);
             customer.setLastName(shipLastName);
             customer.setEmail(email);
+            customer.setAddress1(shipAddress);
+            customer.setCity(shipCity);
+            customer.setState(shipState);
+            customer.setZipCode(shipZipCode);
+            customer.setCountry(shipCountry);
+            CustomerStatus customerStatus = null;
+            try {
+                customerStatus = customerStatusService
+                        .findByCode(ResourceProperties.CUSTOMER_STATUS_NORMAL_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+            customer.setCustomerStatus(customerStatus);
+            try {
+                customer = customerService.create(customer);
+            } catch (MissingRequiredFieldException e) {
+                e.printStackTrace();
+            } catch (NotUniqueException e) {
+                e.printStackTrace();
+            }
         }
 
+        OrderStatus orderStatus = null;
+        try {
+            orderStatus = orderStatusService
+                    .findByCode(ResourceProperties.ORDER_STATUS_INITIATED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        // set currency
+        Currency domainCurrency = null;
+        try {
+            domainCurrency = currencyService.findByName(StringUtils.upperCase(currency));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        // create Order
+        Order order = new Order();
+        order.setMerchantNumber(merNo);
+        order.setAmount(Float.valueOf(amount));
+        order.setGoodsName(orderCommand.getGoodsName());
+        order.setGoodsAmount(orderCommand.getGoodsNumber());
+        order.setSite(site);
+        order.setOrderStatus(orderStatus);
+        order.setCurrency(domainCurrency);
+        order.setCustomer(customer);
+
+        try {
+            order = orderService.create(order);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+        }
+
+        // create order command object and add to model
+        orderCommand.setCustomerId(customer.getId());
+        orderCommand.setSiteId(site.getId());
+
+        if (orderStatus != null) {
+            orderCommand.setOrderStatusId(orderStatus.getId());
+        }
+        if (domainCurrency != null) {
+            orderCommand.setCurrencyId(domainCurrency.getId());
+        }
+        orderCommand.setOrderId(order.getId());
+
+        model.addAttribute("orderCommand", orderCommand);
 
         return "pay";
     }
 
     @RequestMapping(value = {"/payByCard"}, method = RequestMethod.POST)
-    public String payByCard(HttpServletRequest request) {
+    public String payByCard(@ModelAttribute("paymentCommand") PaymentCommand paymentCommand,
+                            Model model, HttpServletRequest request) {
 
         Date date = Calendar.getInstance().getTime();
         DecimalFormat decimalFormat = new DecimalFormat("###.##");
+
+        // formulate params sending to hooppay
+
+        HttpSession session = request.getSession();
+        OrderCommand orderCommand = (OrderCommand) session.getAttribute("orderCommand");
+        logger.debug("orderCommand: " + orderCommand.getMerNo());
+
+        //TODO CODING HERE
+        // save payment object
+
+        // create hooppay params
+        List<BasicNameValuePair> params = formulateHooppayParams(paymentCommand, orderCommand,
+                request);
 
         // params passed from client
         // merchant and site number
@@ -227,11 +349,6 @@ public class HomeController {
         logger.debug("Order number is " + orderNo);
         if (StringUtils.isBlank(orderNo)) {
             throw new BadRequestException("400", "Order number is blank.");
-        }
-        String md5Info = formatString(request.getParameter("merMd5info"));
-        logger.debug("MD5 summary is " + md5Info);
-        if (StringUtils.isBlank(md5Info)) {
-            throw new BadRequestException("400", "MD5 summary is blank.");
         }
         String amount = formatString(request.getParameter("amount"));
         logger.debug("Amount is " + amount);
@@ -456,5 +573,99 @@ public class HomeController {
         orderCommand.setShipCountry(request.getParameter("shipCountry"));
         orderCommand.setRemark(request.getParameter("remark"));
         return orderCommand;
+    }
+
+    Payment createPayment(PaymentCommand paymentCommand) {
+        Payment payment = new Payment();
+        return payment;
+    }
+
+    List<BasicNameValuePair> formulateHooppayParams(PaymentCommand paymentCommand, OrderCommand
+            orderCommand, HttpServletRequest request) {
+        List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
+
+        // Parse all parameters from request object
+        String acceptLanguage = request.getHeader("Accept-Language");
+        logger.debug("Accept language is " + acceptLanguage);
+        String userAgent = request.getHeader("User-Agent");
+        logger.debug("User agent is " + userAgent);
+        Locale locale = request.getLocale();
+        String language = locale.getLanguage();
+        logger.debug("Language is " + language);
+        //is client behind something?
+        String clientIp = request.getHeader("X-FORWARDED-FOR");
+        if (clientIp == null) {
+            clientIp = request.getRemoteAddr();
+        }
+        logger.debug("Client ip is " + clientIp);
+
+        pairs.add(new BasicNameValuePair("acceptLanguage", acceptLanguage));
+        pairs.add(new BasicNameValuePair("userAgent", userAgent));
+        pairs.add(new BasicNameValuePair("clientIp", clientIp));
+        pairs.add(new BasicNameValuePair("language", language));
+
+        // params obtained from properties
+        String payUrl = PayConfiguration.getInstance()
+                .getValue(ResourceProperties.HOOPPAY_URL_KEY);
+        logger.debug("Pay url is " + payUrl);
+        String merchantId = PayConfiguration.getInstance()
+                .getValue(ResourceProperties.MERCHANT_ID_KEY);
+        logger.debug("Merchant id is " + merchantId);
+        String merKey = PayConfiguration.getInstance().getValue(ResourceProperties.MER_KEY_KEY);
+        logger.debug("Merchant key is " + merKey);
+        String referer = PayConfiguration.getInstance().getValue(ResourceProperties.REFERER_KEY);
+        logger.debug("Merchant referer is " + referer);
+        String shopName = PayConfiguration.getInstance()
+                .getValue(ResourceProperties.SHOP_NAME_KEY);
+        logger.debug("Merchant shop name is " + shopName);
+
+        pairs.add(new BasicNameValuePair("shopName", shopName));
+        pairs.add(new BasicNameValuePair("referer", referer));
+        pairs.add(new BasicNameValuePair("merNo", merchantId));
+
+        // calcuate hooppay md5
+        String md5Info = MDUtil.getMD5Str(merchantId + orderCommand.getOrderId()
+                + orderCommand.getAmount() + orderCommand.getCurrency()
+                + merKey + orderCommand.getEmail());
+        pairs.add(new BasicNameValuePair("md5Info", md5Info));
+
+        // parse payment command and add those to pairs
+        pairs.add(new BasicNameValuePair("orderNo", paymentCommand.getId().toString()));
+        pairs.add(new BasicNameValuePair("amount", paymentCommand.getAmount().toString()));
+        pairs.add(new BasicNameValuePair("currency", paymentCommand.getCurrencyName()));
+        pairs.add(new BasicNameValuePair("payMethod", "0")); // means credit card
+        pairs.add(new BasicNameValuePair("cardNo", paymentCommand.getBankAccountNumber()));
+        pairs.add(new BasicNameValuePair("cvv", paymentCommand.getCvv()));
+        pairs.add(new BasicNameValuePair("expireMonth", paymentCommand.getExpireMonth()));
+        pairs.add(new BasicNameValuePair("expireYear", paymentCommand.getExpireYear()));
+        pairs.add(new BasicNameValuePair("issuingBank", paymentCommand.getBankName()));
+        pairs.add(new BasicNameValuePair("billFirstName", paymentCommand.getBillFirstName()));
+        pairs.add(new BasicNameValuePair("billLastName", paymentCommand.getBillLastName()));
+        pairs.add(new BasicNameValuePair("billAddress", paymentCommand.getBillAddress1()));
+        pairs.add(new BasicNameValuePair("billCity", paymentCommand.getBillCity()));
+        pairs.add(new BasicNameValuePair("billState", paymentCommand.getBillState()));
+        pairs.add(new BasicNameValuePair("billCountry", paymentCommand.getBillCountry()));
+        pairs.add(new BasicNameValuePair("billZipCode", paymentCommand.getBillZipCode()));
+        pairs.add(new BasicNameValuePair("repayment", paymentCommand.getRepayment()));
+
+
+        // parse order command and add those to pairs
+        pairs.add(new BasicNameValuePair("email", orderCommand.getEmail()));
+        pairs.add(new BasicNameValuePair("phone", orderCommand.getPhone()));
+        pairs.add(new BasicNameValuePair("merNo", orderCommand.getMerNo()));
+        pairs.add(new BasicNameValuePair("returnURL", orderCommand.getReturnUrl()));
+        pairs.add(new BasicNameValuePair("productType", orderCommand.getProductType()));
+        pairs.add(new BasicNameValuePair("goodsName", orderCommand.getGoodsName()));
+        pairs.add(new BasicNameValuePair("goodsNumber", orderCommand.getGoodsNumber()));
+        pairs.add(new BasicNameValuePair("goodsPrice", orderCommand.getGoodsPrice()));
+        pairs.add(new BasicNameValuePair("shipFirstName", orderCommand.getShipFirstName()));
+        pairs.add(new BasicNameValuePair("shipLastName", orderCommand.getShipLastName()));
+        pairs.add(new BasicNameValuePair("shipAddress", orderCommand.getShipAddress()));
+        pairs.add(new BasicNameValuePair("shipCity", orderCommand.getShipCity()));
+        pairs.add(new BasicNameValuePair("shipState", orderCommand.getShipState()));
+        pairs.add(new BasicNameValuePair("shipCountry", orderCommand.getShipCountry()));
+        pairs.add(new BasicNameValuePair("shipZipCode", orderCommand.getShipZipCode()));
+
+        return pairs;
     }
 }
