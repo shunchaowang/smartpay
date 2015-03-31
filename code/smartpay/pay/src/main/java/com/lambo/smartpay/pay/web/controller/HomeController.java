@@ -309,6 +309,22 @@ public class HomeController {
             } catch (NotUniqueException e) {
                 e.printStackTrace();
             }
+        } else {
+            customer.setFirstName(shipFirstName);
+            customer.setLastName(shipLastName);
+            customer.setEmail(email);
+            customer.setAddress1(shipAddress);
+            customer.setCity(shipCity);
+            customer.setState(shipState);
+            customer.setZipCode(shipZipCode);
+            customer.setCountry(shipCountry);
+            try {
+                customer = customerService.update(customer);
+            } catch (MissingRequiredFieldException e) {
+                e.printStackTrace();
+            } catch (NotUniqueException e) {
+                e.printStackTrace();
+            }
         }
 
         OrderStatus orderStatus = null;
@@ -578,6 +594,7 @@ public class HomeController {
         payment.setBankAccountExpDate(date);
         payment.setBankTransactionNumber(paymentCommand.getBankTransactionNumber());
         payment.setBankName(paymentCommand.getBankName());
+        payment.setBankAccountNumber(paymentCommand.getBankAccountNumber());
         payment.setRemark(paymentCommand.getRemark());
         payment.setBillFirstName(paymentCommand.getBillFirstName());
         payment.setBillLastName(paymentCommand.getBillLastName());
@@ -585,16 +602,16 @@ public class HomeController {
         payment.setBillAddress2(paymentCommand.getBillAddress1());
         payment.setBillCity(paymentCommand.getBillCity());
         payment.setBillState(paymentCommand.getBillState());
-        payment.setBillCountry(payment.getBillCountry());
-        payment.setBillZipCode(payment.getBillZipCode());
+        payment.setBillCountry(paymentCommand.getBillCountry());
+        payment.setBillZipCode(paymentCommand.getBillZipCode());
 
         PaymentType paymentType;
-        Long paymentTypeId = new Long(100);
-        if (paymentCommand.getPayMethod().equals("0")) {
-            paymentTypeId = new Long(101); // 1 means debit card
+        String paymentTypeCode = "100";
+        if (paymentCommand.getPayMethod().equals("1")) {
+            paymentTypeCode = "101"; // 1 means debit card
         }
         try {
-            paymentType = paymentTypeService.get(paymentTypeId);
+            paymentType = paymentTypeService.findByCode(paymentTypeCode);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Payment type does not exist.");
@@ -704,7 +721,6 @@ public class HomeController {
         pairs.add(new BasicNameValuePair("md5Info", md5Info));
 
         // parse payment command and add those to pairs
-        pairs.add(new BasicNameValuePair("orderNo", paymentCommand.getId().toString()));
 
         pairs.add(new BasicNameValuePair("payMethod", "0")); // means credit card
         pairs.add(new BasicNameValuePair("cardNo", paymentCommand.getBankAccountNumber()));
@@ -723,6 +739,7 @@ public class HomeController {
 
 
         // parse order command and add those to pairs
+        pairs.add(new BasicNameValuePair("orderNo", orderCommand.getOrderNo()));
         pairs.add(new BasicNameValuePair("email", orderCommand.getEmail()));
         pairs.add(new BasicNameValuePair("phone", orderCommand.getPhone()));
         pairs.add(new BasicNameValuePair("merNo", orderCommand.getMerNo()));

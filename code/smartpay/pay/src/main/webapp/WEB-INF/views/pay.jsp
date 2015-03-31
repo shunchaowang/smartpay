@@ -344,7 +344,7 @@
                             </table>
 
                             <form:input type="hidden" path="amount" value="${orderCommand.amount}"/>
-                            <form:input type="hidden" path="currency"
+                            <form:input type="hidden" path="currencyName"
                                         value="${orderCommand.currency}"/>
                             <form:input type="hidden" path="orderId"
                                         value="${orderCommand.orderId}"/>

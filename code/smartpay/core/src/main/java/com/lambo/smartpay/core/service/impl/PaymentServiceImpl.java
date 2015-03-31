@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -79,6 +80,7 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
                 order, orderDir, createdTimeStart, createdTimeEnd);
     }
 
+    @Transactional
     @Override
     public Payment create(Payment payment)
             throws MissingRequiredFieldException, NotUniqueException {
@@ -154,6 +156,7 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
         return payment;
     }
 
+    @Transactional
     @Override
     public Payment update(Payment payment)
             throws MissingRequiredFieldException, NotUniqueException {
@@ -219,6 +222,7 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
         return paymentDao.update(payment);
     }
 
+    @Transactional
     @Override
     public Payment delete(Long id) throws NoSuchEntityException {
         if (id == null) {
