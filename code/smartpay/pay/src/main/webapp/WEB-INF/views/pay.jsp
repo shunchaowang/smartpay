@@ -35,7 +35,7 @@
         <li>
             <a href="#bitcoin-tab" data-toggle="tab">
                 <i class="glyphicon glyphicon-briefcase"></i>
-                <spring:message code="payByBitcoin.label"/>
+                <spring:message code="payByBitCoin.label"/>
             </a>
         </li>
     </ul>
@@ -74,24 +74,29 @@
 
 
                     <div class="container-fluid table-bordered col-sm-4">
-                        <h3>Details Of Your Order</h3>
+                        <h3>
+                            <spring:message code="detailOfOrder.label"/>
+                        </h3>
 
                         <table class="table table-striped">
                             <tr>
-                                <td>Merchant's website: ${orderCommand.referer}</td>
+                                <td>
+                                    <spring:message code="orderNumber.label"/>
+                                    ${orderCommand.orderNo}
+                                </td>
                             </tr>
                             <tr>
-                                <td>Order Number: ${orderCommand.orderNo}</td>
-                            </tr>
-                            <tr>
-                                <td>Your order summary:<p></p>
+                                <td>
+                                    <spring:message code="orderSummary.label"/>
+                                    <p></p>
                                     ${orderCommand.goodsName}
                                     ${orderCommand.goodsNumber}
                                     ${orderCommand.goodsPrice}
                                 </td>
                             </tr>
                             <tr>
-                                <td>Total Payment Amount:
+                                <td>
+                                    <spring:message code="totalAmount.label"/>
                                     ${orderCommand.currency}${orderCommand.amount}
                                 </td>
                             </tr>
@@ -99,75 +104,64 @@
                     </div>
 
                     <div class="container-fluid table-bordered col-sm-8">
-                        <h3>Payment Information</h3>
+                        <h3><spring:message code="paymentInfo.label"/></h3>
 
-                        <form name='pay' action='/payByCard' method='POST' class='form-horizontal'
-                              id='pay-form'>
+                        <form:form action="/payByCard" method="POST" commandName="paymentCommand"
+                                   cssClass="form-horizontal" id="pay-form">
                             <table class="table table-hover">
                                 <tr>
                                     <td>
                                         <div class='form-group'>
-                                            <label for='payMethod' class='col-sm-4 control-label'>*
-                                                Pay
-                                                Method </label>
+                                            <label for='payMethod' class='col-sm-4 control-label'>
+                                                *<spring:message code="payMethod.label"/>
+                                            </label>
 
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="payMethod"
-                                                           id="payMethod"
-                                                           value="0" checked>
-                                                    Credit Card </label>
+                                            <div class="col-sm-6 form-control">
 
-                                                <label>
-                                                    <input type="radio" name="payMethod"
-                                                           id="payMethod2"
-                                                           value="1">
-                                                    Debit Card </label>
-                                            </div>
+                                                <form:radiobutton path="payMethod"
+                                                                  id="payMethod"
+                                                                  value="0"
+                                                                  checked="checked"/>
+                                                <spring:message code="creditCard.label"/>
 
+                                                <form:radiobutton path="payMethod"
+                                                                  id="payMethod2"
+                                                                  value="1"/>
+                                                <spring:message code="debitCard.label"/>
 
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for='cardNo' class='col-sm-4 control-label'>*
-                                                Card
-                                                Number</label>
-
-                                            <div class='col-sm-8'>
-                                                <input type="text" name='cardNo' id='cardNo'
-                                                       placeholder='Card Number' value=''>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <td>
                                         <div class='form-group'>
-                                            <label for='cvv' class='col-sm-4 control-label'>*
-                                                CVV/CVV2</label>
+                                            <label for='cardNo' class='col-sm-4 control-label'>
+                                                *<spring:message code="cardNumber.label"/>
+                                            </label>
 
                                             <div class='col-sm-8'>
-                                                <input type="text" name='cvv' id='cvv'
-                                                       placeholder='Card CVV'
-                                                       value=''>
+                                                <form:input path="bankAccountNumber" type="text"
+                                                            name='cardNo' id='cardNo'
+                                                            placeholder='Card Number' value=''/>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <td>
                                         <div class='form-group'>
-                                            <label for='expireMonth' class='col-sm-4 control-label'>*
-                                                Expire
-                                                Month </label>
+                                            <label for='cvv' class='col-sm-4 control-label'>
+                                                *<spring:message code="cvv.label"/>
+                                            </label>
 
                                             <div class='col-sm-8'>
-                                                <input type="text" name='expireMonth'
-                                                       id='expirationMonth'
-                                                       placeholder='Month' value=''>
+                                                <form:input path="cvv" type="text"
+                                                            name='cvv' id='cvv'
+                                                            placeholder='Card CVV'
+                                                            value=''/>
                                             </div>
                                         </div>
                                     </td>
@@ -175,13 +169,15 @@
                                 <tr>
                                     <td>
                                         <div class='form-group'>
-                                            <label for=expireYear class='col-sm-4 control-label'>*
-                                                Expiration
-                                                Year </label>
+                                            <label for='expireMonth' class='col-sm-4 control-label'>
+                                                *<spring:message code="expireMonth.label"/>
+                                            </label>
 
                                             <div class='col-sm-8'>
-                                                <input type="text" name='expireYear' id='expireYear'
-                                                       placeholder='Year' value=''>
+                                                <form:input path="expireMonth" type="text"
+                                                            name='expireMonth'
+                                                            id='expireMonth'
+                                                            placeholder='Month' value=''/>
                                             </div>
                                         </div>
                                     </td>
@@ -189,28 +185,171 @@
                                 <tr>
                                     <td>
                                         <div class='form-group'>
-                                            <label for=issuingBank class='col-sm-4 control-label'>*
-                                                Issuing
-                                                Bank</label>
+                                            <label for=expireYear class='col-sm-4 control-label'>
+                                                *<spring:message code="expireYear.label"/>
+                                            </label>
 
                                             <div class='col-sm-8'>
-                                                <input type="text" name='issuingBank'
-                                                       id='issuingBank'
-                                                       placeholder='VISA/MASTER/OTHERS' value=''>
+                                                <form:input path="expireYear" type="text"
+                                                            name='expireYear'
+                                                            id='expireYear'
+                                                            placeholder='Year' value=''/>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <div class='row' align="center">
-                                            <input type='submit' value='Submit'/>
-                                            <input type='reset' value='Reset'/>
+                                        <div class='form-group'>
+                                            <label for=issuingBank class='col-sm-4 control-label'>
+                                                *<spring:message code="bankName.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="bankName" type="text"
+                                                            name='issuingBank'
+                                                            id='issuingBank'
+                                                            placeholder='VISA/MASTER/OTHERS'
+                                                            value=''/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billFirstName'
+                                                   class='col-sm-4 control-label'>
+                                                *<spring:message code="firstName.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billFirstName" type="text"
+                                                            name='billFirstName' id='billFirstName'
+                                                            value='${orderCommand.shipFirstName}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billLastName'
+                                                   class='col-sm-4 control-label'>
+                                                *<spring:message code="lastName.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billLastName" type="text"
+                                                            name='billLastName' id='billLastName'
+                                                            value='${orderCommand.shipLastName}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billAddress1'
+                                                   class='col-sm-4 control-label'>
+                                                *<spring:message code="address.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billAddress1" type="text"
+                                                            name='billAddress1' id='billAddress1'
+                                                            value='${orderCommand.shipAddress}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billCity' class='col-sm-4 control-label'>
+                                                *<spring:message code="city.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billCity" type="text"
+                                                            name='billCity' id='billCity'
+                                                            value='${orderCommand.shipCity}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billState' class='col-sm-4 control-label'>
+                                                *<spring:message code="state.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billState" type="text"
+                                                            name='billState' id='billState'
+                                                            value='${orderCommand.shipState}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billZipCode' class='col-sm-4 control-label'>
+                                                *<spring:message code="zipCode.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billZipCode" type="text"
+                                                            name='billZipCode' id='billZipCode'
+                                                            value='${orderCommand.shipZipCode}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <label for='billCountry' class='col-sm-4 control-label'>
+                                                *<spring:message code="country.label"/>
+                                            </label>
+
+                                            <div class='col-sm-8'>
+                                                <form:input path="billCountry" type="text"
+                                                            name='billCountry' id='billCountry'
+                                                            value='${orderCommand.shipCountry}'/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class='form-group'>
+                                            <div class='col-sm-offset-3 col-sm-10'>
+                                                <button class='btn btn-default' id='submit-button'
+                                                        type="submit">
+                                                    <spring:message code='action.submit.label'/>
+                                                </button>
+                                                <button class='btn btn-default' id='reset-button'
+                                                        type="reset">
+                                                    <spring:message code='action.reset.label'/>
+                                                </button>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
                             </table>
-                        </form>
+
+                            <form:input type="hidden" path="amount" value="${orderCommand.amount}"/>
+                            <form:input type="hidden" path="currency"
+                                        value="${orderCommand.currency}"/>
+                            <form:input type="hidden" path="orderId"
+                                        value="${orderCommand.orderId}"/>
+                        </form:form>
+
                     </div>
                 </div>
             </div>
@@ -231,6 +370,66 @@
 <script type="text/javascript">
     $(document).ready(function () {
         activeTab('card-tab');
+
+        $('#pay-form').validate({
+            rules: {
+                payMethod: 'required',
+                bankAccountNumber: {
+                    required: true,
+                    minlength: 15,
+                    maxlength: 20
+                },
+                cvv: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 3
+                },
+                expireMonth: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 2
+                },
+                expireYear: {
+
+                    required: true,
+                    minlength: 4,
+                    maxlength: 4
+                },
+                bankName: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 32
+                }
+            },
+            messages: {
+                payMethod: 'Please select pay method',
+                bankAccountNumber: {
+                    required: 'Please input card number',
+                    minlength: 'Card number must be at least 15 characters',
+                    maxlength: 'Card number must be at most 20 characters'
+                },
+                cvv: {
+                    required: 'Please input CVV',
+                    minlength: 'CVV must be 3 characters',
+                    maxlength: 'CVV must be 3 characters'
+                },
+                expireMonth: {
+                    required: 'Please input expiration month',
+                    minlength: 'Month must be 2 characters',
+                    maxlength: 'Month must be 2 characters'
+                },
+                expireYear: {
+                    required: 'Please input expiration year',
+                    minlength: 'Month must be 4 characters',
+                    maxlength: 'Month must be 4 characters'
+                },
+                bankName: {
+                    required: 'Please input issuing bank',
+                    minlength: 'Bank must be at least 3 characters',
+                    maxlength: 'Bank must be at most 32 characters'
+                }
+            }
+        });
     });
 </script>
 

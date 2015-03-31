@@ -94,8 +94,35 @@ public class HomeController {
     private PaymentService paymentService;
 
     @RequestMapping(value = {"", "/", "/index"})
-    public ModelAndView home() {
+    public ModelAndView home(Model model) {
         //view.addObject("action", "index");
+        OrderCommand orderCommand = new OrderCommand();
+        orderCommand.setMerNo("merchant");
+        orderCommand.setSiteNo("Site12345");
+        orderCommand.setOrderNo("O1111111");
+        orderCommand.setAmount("12.34");
+        orderCommand.setReturnUrl("www.google.com");
+        orderCommand.setCurrency("USD");
+        orderCommand.setProductType("1");
+        orderCommand.setGoodsName("Mac, iPhone, iPad, iWatch");
+        orderCommand.setGoodsNumber("1, 2, 3, 4");
+        orderCommand.setGoodsPrice("10.00, 120.00, 200, 400");
+        orderCommand.setEmail("customer@me.com");
+        orderCommand.setPhone("2883659999");
+        orderCommand.setShipFirstName("First Name");
+        orderCommand.setShipLastName("Last Name");
+        orderCommand.setShipAddress("100 Paradise Rd");
+        orderCommand.setShipCity("Los Angles");
+        orderCommand.setShipState("CA");
+        orderCommand.setShipZipCode("98765");
+        orderCommand.setShipCountry("US");
+
+        model.addAttribute("orderCommand", orderCommand);
+        // check md5info, md5 summary should be generated based merNo, merKey,
+        // siteNo and formatted amount
+        String calculatedMd5Info = MDUtil.getMD5Str("merchant" + "12345"
+                + "Site12345" + "12.34");
+        model.addAttribute("md5Info", calculatedMd5Info);
         return new ModelAndView("index");
     }
 
@@ -118,12 +145,13 @@ public class HomeController {
         if (StringUtils.isBlank(orderNo)) {
             throw new BadRequestException("400", "Order number is blank.");
         }
-        DecimalFormat decimalFormat = new DecimalFormat("###.##");
-        String amount = formatString(decimalFormat.format(request.getParameter("amount")));
+        String amount = formatString(request.getParameter("amount"));
         logger.debug("Amount is " + amount);
         if (StringUtils.isBlank(amount)) {
             throw new BadRequestException("400", "Amount is blank.");
         }
+        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+        amount = decimalFormat.format(Float.parseFloat(amount));
 
         String currency = formatString(request.getParameter("currency"));
         logger.debug("Currency is " + currency);
@@ -290,6 +318,7 @@ public class HomeController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
+
         // set currency
         Currency domainCurrency = null;
         try {
@@ -297,24 +326,46 @@ public class HomeController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        // create Order
-        Order order = new Order();
-        order.setMerchantNumber(merNo);
-        order.setAmount(Float.valueOf(amount));
-        order.setGoodsName(orderCommand.getGoodsName());
-        order.setGoodsAmount(orderCommand.getGoodsNumber());
-        order.setSite(site);
-        order.setOrderStatus(orderStatus);
-        order.setCurrency(domainCurrency);
-        order.setCustomer(customer);
+        Order order = orderService.findByMerchantNumber(merNo);
 
-        try {
-            order = orderService.create(order);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-        } catch (NotUniqueException e) {
-            e.printStackTrace();
+        // if order does not exist create new
+        if (order == null) {
+            // create Order
+            order = new Order();
+            order.setMerchantNumber(merNo);
+            order.setAmount(Float.valueOf(amount));
+            order.setGoodsName(orderCommand.getGoodsName());
+            order.setGoodsAmount(orderCommand.getGoodsNumber());
+            order.setSite(site);
+            order.setOrderStatus(orderStatus);
+            order.setCurrency(domainCurrency);
+            order.setCustomer(customer);
+
+            try {
+                order = orderService.create(order);
+            } catch (MissingRequiredFieldException e) {
+                e.printStackTrace();
+            } catch (NotUniqueException e) {
+                e.printStackTrace();
+            }
+        } else { // i order already existed update
+            order.setAmount(Float.valueOf(amount));
+            order.setGoodsName(orderCommand.getGoodsName());
+            order.setGoodsAmount(orderCommand.getGoodsNumber());
+            order.setSite(site);
+            order.setOrderStatus(orderStatus);
+            order.setCurrency(domainCurrency);
+            order.setCustomer(customer);
+
+            try {
+                order = orderService.update(order);
+            } catch (MissingRequiredFieldException e) {
+                e.printStackTrace();
+            } catch (NotUniqueException e) {
+                e.printStackTrace();
+            }
         }
+
 
         // create order command object and add to model
         orderCommand.setCustomerId(customer.getId());
@@ -329,6 +380,7 @@ public class HomeController {
         orderCommand.setOrderId(order.getId());
 
         model.addAttribute("orderCommand", orderCommand);
+        model.addAttribute("paymentCommand", new PaymentCommand());
 
         return "pay";
     }
@@ -455,7 +507,7 @@ public class HomeController {
         orderCommand.setReturnUrl(request.getParameter("returnURL"));
         DecimalFormat decimalFormat = new DecimalFormat("###.##");
         String amount = request.getParameter("amount");
-        orderCommand.setAmount(decimalFormat.format(amount));
+        orderCommand.setAmount(decimalFormat.format(Float.parseFloat(amount)));
         orderCommand.setCurrency(request.getParameter("currency"));
         orderCommand.setProductType(request.getParameter("productType"));
         String goodsName = request.getParameter("goodsName");
@@ -505,7 +557,10 @@ public class HomeController {
         payment.setAmount(paymentCommand.getAmount());
         Currency currency;
         try {
-            currency = currencyService.get(paymentCommand.getCurrencyId());
+            currency = currencyService.findByName(paymentCommand.getCurrencyName());
+            if (currency == null) {
+                currency = currencyService.findByName(ResourceProperties.CURRENCY_USD_NAME);
+            }
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Currency format is not right.");
@@ -534,8 +589,12 @@ public class HomeController {
         payment.setBillZipCode(payment.getBillZipCode());
 
         PaymentType paymentType;
+        Long paymentTypeId = new Long(100);
+        if (paymentCommand.getPayMethod().equals("0")) {
+            paymentTypeId = new Long(101); // 1 means debit card
+        }
         try {
-            paymentType = paymentTypeService.get(paymentCommand.getPaymentTypeId());
+            paymentType = paymentTypeService.get(paymentTypeId);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Payment type does not exist.");
@@ -660,7 +719,7 @@ public class HomeController {
         pairs.add(new BasicNameValuePair("billState", paymentCommand.getBillState()));
         pairs.add(new BasicNameValuePair("billCountry", paymentCommand.getBillCountry()));
         pairs.add(new BasicNameValuePair("billZipCode", paymentCommand.getBillZipCode()));
-        pairs.add(new BasicNameValuePair("repayment", paymentCommand.getRepayment()));
+        pairs.add(new BasicNameValuePair("repayment", "N"));
 
 
         // parse order command and add those to pairs

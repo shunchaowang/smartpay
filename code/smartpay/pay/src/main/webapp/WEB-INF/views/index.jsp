@@ -22,216 +22,247 @@
     </c:if>
 </div>
 <!-- end of notification -->
-<br/>
 
-<div class="row">
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a href="#card-tab" data-toggle="tab">
-                <i class="glyphicon glyphicon-usd"></i>
-                <spring:message code="payByCard.label"/>
-            </a>
-        </li>
-        <li>
-            <a href="#bitcoin-tab" data-toggle="tab">
-                <i class="glyphicon glyphicon-briefcase"></i>
-                <spring:message code="payByBitcoin.label"/>
-            </a>
-        </li>
-    </ul>
-</div>
-<!-- end of nav-tabs div -->
-<br/>
+<div class='container'>
+    <form action="/pay" method="POST" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="merNo">
+                <span class="required-indicator">*</span>Merchant No:
+            </label>
 
-<div id="content" class="tab-content">
-    <div class="tab-pane fade active in" id="card-tab">
-        <div class="row">
-            <p>Credit Card Form</p>
-
-            <div class="row">
-                <div class='container'>
-                    <div class=row>
-                        <div class='col-sm-4'><img src="${rootURL}assets/images/logo-nowipay.jpg">
-                        </div>
-                        <div class='col-sm-2'></div>
-                        <div class='col-sm-6' align='right'><p>&nbsp;</p>
-                            <img src="${rootURL}assets/images/payimages-secure.jpg"
-                                 class="img-circle"
-                                 alt="Responsive image">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container">
-                    <table class='table table-banner2 text-justify '>
-                        <tr>
-                            <td><h3> SSL ONLINE CREDIT CARD PAYMENT</h3></td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="container">
-
-
-                    <div class="container-fluid table-bordered col-sm-4">
-                        <h3>Details Of Your Order</h3>
-
-                        <table class="table table-striped">
-                            <tr>
-                                <td>Merchant's website: ${orderCommand.referer}</td>
-                            </tr>
-                            <tr>
-                                <td>Order Number: ${orderCommand.orderNo}</td>
-                            </tr>
-                            <tr>
-                                <td>Your order summary:<p></p>
-                                    ${orderCommand.goodsName}
-                                    ${orderCommand.goodsNumber}
-                                    ${orderCommand.goodsPrice}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Total Payment Amount:
-                                    ${orderCommand.currency}${orderCommand.amount}
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div class="container-fluid table-bordered col-sm-8">
-                        <h3>Payment Information</h3>
-
-                        <form name='pay' action='/hooppay' method='POST' class='form-horizontal'
-                              id='pay-form'>
-                            <table class="table table-hover">
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for='payMethod' class='col-sm-4 control-label'>*
-                                                Pay
-                                                Method </label>
-
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="payMethod"
-                                                           id="payMethod"
-                                                           value="0" checked>
-                                                    Credit Card </label>
-
-                                                <label>
-                                                    <input type="radio" name="payMethod"
-                                                           id="payMethod2"
-                                                           value="1">
-                                                    Debit Card </label>
-                                            </div>
-
-
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for='cardNo' class='col-sm-4 control-label'>*
-                                                Card
-                                                Number</label>
-
-                                            <div class='col-sm-8'>
-                                                <input type="text" name='cardNo' id='cardNo'
-                                                       placeholder='Card Number' value=''>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for='cvv' class='col-sm-4 control-label'>*
-                                                CVV/CVV2</label>
-
-                                            <div class='col-sm-8'>
-                                                <input type="text" name='cvv' id='cvv'
-                                                       placeholder='Card CVV'
-                                                       value=''>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for='expireMonth' class='col-sm-4 control-label'>*
-                                                Expire
-                                                Month </label>
-
-                                            <div class='col-sm-8'>
-                                                <input type="text" name='expireMonth'
-                                                       id='expirationMonth'
-                                                       placeholder='Month' value=''>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for=expireYear class='col-sm-4 control-label'>*
-                                                Expiration
-                                                Year </label>
-
-                                            <div class='col-sm-8'>
-                                                <input type="text" name='expireYear' id='expireYear'
-                                                       placeholder='Year' value=''>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='form-group'>
-                                            <label for=issuingBank class='col-sm-4 control-label'>*
-                                                Issuing
-                                                Bank</label>
-
-                                            <div class='col-sm-8'>
-                                                <input type="text" name='issuingBank'
-                                                       id='issuingBank'
-                                                       placeholder='VISA/MASTER/OTHERS' value=''>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class='row' align="center">
-                                            <input type='submit' value='Submit'/>
-                                            <input type='reset' value='Reset'/>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
-                    </div>
-                </div>
+            <div class="col-sm-6">
+                <input name="merNo" id="merNo" class="form-control"
+                       value="${orderCommand.merNo}"/>
             </div>
         </div>
-        <!-- end of class row -->
-        <br/>
-    </div>
-    <!-- end of bundleTab -->
-    <div class="tab-pane fade" id="bitcoin-tab">
-        <p>Bitcoin Link</p>
-    </div>
-    <!-- end of connectionTab -->
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="merNo">
+                <span class="required-indicator">*</span>Site No:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="siteNo" id="siteNo" class="form-control"
+                       value="${orderCommand.siteNo}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="orderNo">
+                <span class="required-indicator">*</span>order No:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="orderNo" id="orderNo" class="form-control"
+                       value="${orderCommand.orderNo}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="returnURL">
+                <span class="required-indicator">*</span>return URL:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="returnURL" id="returnURL" class="form-control"
+                       value="${orderCommand.returnUrl}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="amount">
+                <span class="required-indicator">*</span>Amount:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="amount" id="amount" class="form-control"
+                       value="${orderCommand.amount}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="currency">
+                <span class="required-indicator">*</span>Currency:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="currency" id="currency" class="form-control"
+                       value="${orderCommand.currency}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="productType">
+                <span class="required-indicator">*</span>productType:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="productType" id="productType" class="form-control"
+                       value="${orderCommand.productType}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="goodsName">
+                <span class="required-indicator">*</span>goodsName:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="goodsName" id="goodsName" class="form-control"
+                       value="${orderCommand.goodsName}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="goodsNumber">
+                <span class="required-indicator">*</span>goodsNumber:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="goodsNumber" id="goodsNumber" class="form-control"
+                       value="${orderCommand.goodsNumber}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="goodsPrice">
+                <span class="required-indicator">*</span>goodsPrice:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="goodsPrice" id="goodsPrice" class="form-control"
+                       value="${orderCommand.goodsPrice}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="email">
+                <span class="required-indicator">*</span>email:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="email" id="email" class="form-control"
+                       value="${orderCommand.email}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="phone">
+                <span class="required-indicator">*</span>phone:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="phone" id="phone" class="form-control"
+                       value="${orderCommand.phone}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipFirstName">
+                <span class="required-indicator">*</span>shipFirstName:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipFirstName" id="shipFirstName" class="form-control"
+                       value="${orderCommand.shipFirstName}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipLastName">
+                <span class="required-indicator">*</span>shipLastName:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipLastName" id="shipLastName" class="form-control"
+                       value="${orderCommand.shipLastName}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipAddress">
+                <span class="required-indicator">*</span>shipAddress:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipAddress" id="shipAddress" class="form-control"
+                       value="${orderCommand.shipAddress}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipCity">
+                <span class="required-indicator">*</span>shipCity:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipCity" id="shipCity" class="form-control"
+                       value="${orderCommand.shipCity}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipState">
+                <span class="required-indicator">*</span>shipState:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipState" id="shipState" class="form-control"
+                       value="${orderCommand.shipState}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipCountry">
+                <span class="required-indicator">*</span>shipCountry:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipCountry" id="shipCountry" class="form-control"
+                       value="${orderCommand.shipCountry}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="shipZipCode">
+                <span class="required-indicator">*</span>shipZipCode:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="shipZipCode" id="shipZipCode" class="form-control"
+                       value="${orderCommand.shipZipCode}"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="merMd5info">
+                <span class="required-indicator">*</span>md5Info:
+            </label>
+
+            <div class="col-sm-6">
+                <input name="merMd5info" id="merMd5info" class="form-control"
+                       value="${md5Info}"/>
+            </div>
+        </div>
+
+        <div class='form-group'>
+            <div class='col-sm-offset-3 col-sm-10'>
+                <button class='btn btn-default' id='submit-button'
+                        type="submit">
+                    <spring:message code='action.submit.label'/>
+                </button>
+                <button class='btn btn-default' id='reset-button'
+                        type="reset">
+                    <spring:message code='action.reset.label'/>
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
+
 <!-- end of homeContent -->
 
 <jsp:include page="_footer.jsp"/>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        activeTab('card-tab');
-    });
+
 </script>
 
 </body>

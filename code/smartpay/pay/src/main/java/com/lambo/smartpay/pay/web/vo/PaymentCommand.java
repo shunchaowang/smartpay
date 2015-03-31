@@ -10,6 +10,7 @@ public class PaymentCommand {
     private String createdTime;
     private String successTime;
     private String bankTransactionNumber;
+    private String payMethod;
     private String cvv;
     private String expireMonth;
     private String expireYear;
@@ -265,5 +266,13 @@ public class PaymentCommand {
 
     public void setRepayment(String repayment) {
         this.repayment = repayment;
+    }
+
+    public String getPayMethod() {
+        return payMethod;
+    }
+
+    public void setPayMethod(String payMethod) {
+        this.payMethod = payMethod;
     }
 }

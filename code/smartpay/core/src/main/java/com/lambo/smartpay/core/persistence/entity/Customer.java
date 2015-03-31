@@ -44,7 +44,7 @@ public class Customer implements Serializable {
     @Column(name = "CSTM_ADDRESS_1", length = 128, nullable = false)
     private String address1;
 
-    @Column(name = "CSTM_ADDRESS_2", length = 128, nullable = false)
+    @Column(name = "CSTM_ADDRESS_2", length = 128)
     private String address2;
 
     @Column(name = "CSTM_CITY", length = 32, nullable = false)
@@ -59,7 +59,7 @@ public class Customer implements Serializable {
     @Column(name = "CSTM_COUNTRY", length = 32, nullable = false)
     private String country;
 
-    @Column(name = "CSTM_TEL", length = 32, nullable = false)
+    @Column(name = "CSTM_TEL", length = 32)
     private String tel;
 
     @Column(name = "CSTM_CREATED_TIME", nullable = false)
