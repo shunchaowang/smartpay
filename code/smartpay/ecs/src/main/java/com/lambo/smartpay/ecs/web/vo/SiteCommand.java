@@ -9,6 +9,8 @@ public class SiteCommand {
 
     private Long id;
 
+    private String identity;
+
     private String name;
 
     private String url;
@@ -22,7 +24,7 @@ public class SiteCommand {
     private Boolean active;
 
     // relationships
-    private Long siteStatus;
+    private Long siteStatusId;
     private String siteStatusName;
 
     private Long merchant;
@@ -39,6 +41,12 @@ public class SiteCommand {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getIdentity() { return identity; }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public String getName() {
@@ -81,13 +89,11 @@ public class SiteCommand {
         this.remark = remark;
     }
 
-    public Long getSiteStatus() {
-        return siteStatus;
+    public Long getSiteStatusId() {
+        return siteStatusId;
     }
 
-    public void setSiteStatus(long siteStatus) {
-        this.siteStatus = siteStatus;
-    }
+    public void setSiteStatusId(long siteStatusId) {this.siteStatusId = siteStatusId;}
 
     public Long getMerchant() {
         return merchant;

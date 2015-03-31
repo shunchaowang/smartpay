@@ -7,34 +7,31 @@
 <div class='row'>
     <div class='col-sm-4'>
         <h2><b>
-            <spring:message code='create.label' arguments="${entity}"/>
+            <spring:message code='edit.label' arguments="${entity}"/>
         </b></h2>
     </div>
 </div>
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/create" method="POST"
+    <form:form action="${rootURL}${controller}/edit" method="POST"
                commandName="siteCommand" cssClass="form-horizontal" id="auditSite-form">
         <form:input path="id" id="id" type="hidden" value="${siteCommand.id}"/>
 
-        <!-- identity -->
+        <!-- site identity -->
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="identity" >
-                <span class="required-indicator">*</span>
+            <label class="col-sm-3 control-label" for="identity">
                 <spring:message code="identity.label"/>
             </label>
 
             <div class="col-sm-6">
                 <form:input path="identity" id="identity" cssClass="form-control"
-                            value="${siteCommand.identity}"/>
+                            value="${siteCommand.identity}" readonly="true"/>
             </div>
         </div>
-
         <!-- name -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="name">
-                <span class="required-indicator">*</span>
                 <spring:message code="name.label"/>
             </label>
 
@@ -46,8 +43,8 @@
         <!-- url -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="url">
-                <span class="required-indicator">*</span>
                 <spring:message code="site.url.label"/>
+                <span class="required-indicator">*</span>
             </label>
 
             <div class="col-sm-6">
@@ -68,28 +65,16 @@
         </div>
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
-                <div class='col-sm-offset-3 col-sm-10'>
-                    <button class='btn btn-default' id='create-button' type="submit">
-                        <spring:message code='action.save.label'/>
+                <button class='btn btn-default' id='create-button' type="submit">
+                    <spring:message code='action.save.label'/>
+                </button>
+                <a href="${rootURL}${controller}">
+                    <button type="button" class="btn btn-default">
+                        <spring:message code="action.return.label"/>
                     </button>
-                    <button class='btn btn-default' id='reset-button' type="reset">
-                        <spring:message code='action.reset.label'/>
-                    </button>
-                </div>
+                </a>
             </div>
         </div>
     </form:form>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#new-merchant-form').validate({
-            rules: {
-                indentity: {required: true, minlength: 3, maxlength: 32},
-                name: {required: true, minlength: 3, maxlength: 32},
-            }
-        });
-
-        $('.datepicker').datepicker();
-    });
-</script>

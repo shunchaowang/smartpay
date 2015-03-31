@@ -63,6 +63,12 @@
                                 <spring:message code="create.label" arguments="${site}"/>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="${rootURL}site/indexDeclineList">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <spring:message code="action.decline.label" arguments="${site}"/>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
