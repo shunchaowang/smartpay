@@ -10,6 +10,11 @@ public class OrderCommand {
     private String orderNo;
     private String merNo;
     private String siteNo;
+    private Long orderId;
+    private Long siteId;
+    private Long orderStatusId;
+    private Long currencyId;
+    private Long customerId;
     private String returnUrl;
     private String amount;
     private String currency;
@@ -213,5 +218,45 @@ public class OrderCommand {
 
     public void setGoodsPriceArray(List goodsPriceArray) {
         this.goodsPriceArray = goodsPriceArray;
+    }
+
+    public Long getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
+    }
+
+    public Long getOrderStatusId() {
+        return orderStatusId;
+    }
+
+    public void setOrderStatusId(Long orderStatusId) {
+        this.orderStatusId = orderStatusId;
+    }
+
+    public Long getCurrencyId() {
+        return currencyId;
+    }
+
+    public void setCurrencyId(Long currencyId) {
+        this.currencyId = currencyId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }

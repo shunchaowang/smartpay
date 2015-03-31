@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -44,6 +45,20 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer create(Customer customer)
             throws MissingRequiredFieldException, NotUniqueException {
+
+        if (customer == null) {
+            throw new MissingRequiredFieldException("User is null.");
+        }
+        // TODO other checks
+
+        // check uniqueness on username and email
+        if (customerDao.findByEmail(customer.getEmail()) != null) {
+            throw new NotUniqueException("Customer with email " + customer.getEmail()
+                    + " already exists.");
+        }
+
+        customer.setCreatedTime(Calendar.getInstance().getTime());
+        customer.setActive(true);
         return customerDao.create(customer);
     }
 
@@ -56,6 +71,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer update(Customer customer)
             throws MissingRequiredFieldException, NotUniqueException {
+        customer.setUpdatedTime(Calendar.getInstance().getTime());
         return customerDao.update(customer);
     }
 
