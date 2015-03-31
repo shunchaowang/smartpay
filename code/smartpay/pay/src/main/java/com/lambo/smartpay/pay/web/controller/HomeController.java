@@ -10,6 +10,8 @@ import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
 import com.lambo.smartpay.core.persistence.entity.Payment;
+import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
+import com.lambo.smartpay.core.persistence.entity.PaymentType;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.CurrencyService;
 import com.lambo.smartpay.core.service.CustomerService;
@@ -17,6 +19,9 @@ import com.lambo.smartpay.core.service.CustomerStatusService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
+import com.lambo.smartpay.core.service.PaymentService;
+import com.lambo.smartpay.core.service.PaymentStatusService;
+import com.lambo.smartpay.core.service.PaymentTypeService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.pay.util.MDUtil;
 import com.lambo.smartpay.pay.util.PayConfiguration;
@@ -24,8 +29,15 @@ import com.lambo.smartpay.pay.util.ResourceProperties;
 import com.lambo.smartpay.pay.web.exception.BadRequestException;
 import com.lambo.smartpay.pay.web.vo.OrderCommand;
 import com.lambo.smartpay.pay.web.vo.PaymentCommand;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +86,12 @@ public class HomeController {
     private CustomerStatusService customerStatusService;
     @Autowired
     private CurrencyService currencyService;
+    @Autowired
+    private PaymentTypeService paymentTypeService;
+    @Autowired
+    private PaymentStatusService paymentStatusService;
+    @Autowired
+    private PaymentService paymentService;
 
     @RequestMapping(value = {"", "/", "/index"})
     public ModelAndView home() {
@@ -99,8 +118,8 @@ public class HomeController {
         if (StringUtils.isBlank(orderNo)) {
             throw new BadRequestException("400", "Order number is blank.");
         }
-
-        String amount = formatString(request.getParameter("amount"));
+        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+        String amount = formatString(decimalFormat.format(request.getParameter("amount")));
         logger.debug("Amount is " + amount);
         if (StringUtils.isBlank(amount)) {
             throw new BadRequestException("400", "Amount is blank.");
@@ -315,204 +334,96 @@ public class HomeController {
     }
 
     @RequestMapping(value = {"/payByCard"}, method = RequestMethod.POST)
-    public String payByCard(@ModelAttribute("paymentCommand") PaymentCommand paymentCommand,
-                            Model model, HttpServletRequest request) {
-
-        Date date = Calendar.getInstance().getTime();
-        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+    public void payByCard(@ModelAttribute("paymentCommand") PaymentCommand paymentCommand,
+                          Model model,
+                          HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
         // formulate params sending to hooppay
 
         HttpSession session = request.getSession();
         OrderCommand orderCommand = (OrderCommand) session.getAttribute("orderCommand");
         logger.debug("orderCommand: " + orderCommand.getMerNo());
+        // we need to check if the merchant or the site is frozen
+        // if so decline the payment request
+        Merchant merchant = merchantService.findByIdentity(orderCommand.getMerNo());
+        String merchantKey = merchant.getEncryption().getKey();
 
-        //TODO CODING HERE
-        // save payment object
+        // create payment object
+        Payment payment = createPayment(paymentCommand);
 
-        // create hooppay params
+        // create hooppay params and make the pay request
         List<BasicNameValuePair> params = formulateHooppayParams(paymentCommand, orderCommand,
                 request);
 
-        // params passed from client
-        // merchant and site number
-        String merNo = formatString(request.getParameter("merNo"));
-        // merchant need to pass a site number for site check
-        String siteNo = formatString(request.getParameter("siteNo"));
-        logger.debug("Merchant number is " + merNo);
-        logger.debug("Site number is " + siteNo);
-        if (StringUtils.isBlank(merNo) || StringUtils.isBlank(siteNo)) {
-            throw new BadRequestException("400", "Merchant number or site number is blank.");
-        }
-        // transaction info
-        String orderNo = formatString(request.getParameter("orderNo"));
-        logger.debug("Order number is " + orderNo);
-        if (StringUtils.isBlank(orderNo)) {
-            throw new BadRequestException("400", "Order number is blank.");
-        }
-        String amount = formatString(request.getParameter("amount"));
-        logger.debug("Amount is " + amount);
-        if (StringUtils.isBlank(amount)) {
-            throw new BadRequestException("400", "Amount is blank.");
-        }
-        // format amount
-        amount = decimalFormat.format(Float.parseFloat(amount));
-        String currency = formatString(request.getParameter("currency"));
-        logger.debug("Currency is " + currency);
-        if (StringUtils.isBlank(currency)) {
-            throw new BadRequestException("400", "Currency is blank.");
-        }
-        String productType = formatString(request.getParameter("productType"));
-        logger.debug("Product type is " + productType);
-        if (StringUtils.isBlank(productType)) {
-            throw new BadRequestException("400", "Product type is blank.");
-        }
-        String goodsName = formatString(request.getParameter("goodsName"));
-        logger.debug("Goods name is " + goodsName);
-        if (StringUtils.isBlank(goodsName)) {
-            throw new BadRequestException("400", "Goods name is blank.");
-        }
-        String goodsNumber = formatString(request.getParameter("goodsNumber"));
-        logger.debug("Goods number is " + goodsNumber);
-        if (StringUtils.isBlank(goodsNumber)) {
-            throw new BadRequestException("400", "Goods number is blank.");
-        }
-        String goodsPrice = formatString(request.getParameter("goodsPrice"));
-        logger.debug("Goods price is " + goodsPrice);
-        if (StringUtils.isBlank(goodsPrice)) {
-            throw new BadRequestException("400", "Goods price is blank.");
-        }
-        // format price
-        String[] goodsPriceArray = goodsPrice.split(",");
-        String goodsPriceString = "";
-        for (int i = 0; i < goodsPriceArray.length; i++) {
-            goodsPriceString = goodsPriceString
-                    + decimalFormat.format(Float.parseFloat(goodsPriceArray[i]));
-            if (i < (goodsPriceArray.length - 1))
-                goodsPriceString = goodsPriceString + ",";
-        }
-        goodsPrice = goodsPriceString;
+        String result = hooppay(params);
+        logger.debug("Hooppay return result: " + result);
 
+        // base64 decoding
+        String stringFromBase = new String(Base64.decodeBase64(result));
+        logger.info("Decoded Base64 String: " + stringFromBase);
 
-        // shipping and customer info
-        String email = formatString(request.getParameter("email"));
-        logger.debug("Shipping email is " + email);
-        if (StringUtils.isBlank(email)) {
-            throw new BadRequestException("400", "Shipping email is blank.");
-        }
-        String shipFirstName = formatString(request.getParameter("shipFirstName"));
-        logger.debug("Shipping last name is " + shipFirstName);
-        if (StringUtils.isBlank(shipFirstName)) {
-            throw new BadRequestException("400", "Shipping last name is blank.");
-        }
-        String shipLastName = formatString(request.getParameter("shipLastName"));
-        logger.debug("Shipping last name is " + shipLastName);
-        if (StringUtils.isBlank(shipLastName)) {
-            throw new BadRequestException("400", "Shipping last name is blank.");
-        }
-        String shipAddress = formatString(request.getParameter("shipAddress"));
-        logger.debug("Shipping address is " + shipAddress);
-        if (StringUtils.isBlank(shipAddress)) {
-            throw new BadRequestException("400", "Shipping address is blank.");
-        }
-        String shipCity = formatString(request.getParameter("shipCity"));
-        logger.debug("Shipping city is " + shipCity);
-        if (StringUtils.isBlank(shipCity)) {
-            throw new BadRequestException("400", "Shipping city is blank.");
-        }
-        String shipState = formatString(request.getParameter("shipState"));
-        logger.debug("Shipping state is " + shipState);
-        if (StringUtils.isBlank(shipState)) {
-            throw new BadRequestException("400", "Shipping state is blank.");
-        }
-        String shipCountry = formatString(request.getParameter("shipCountry"));
-        logger.debug("Shipping country is " + shipCountry);
-        if (StringUtils.isBlank(shipCountry)) {
-            throw new BadRequestException("400", "Shipping country is blank.");
-        }
-        String shipZipCode = formatString(request.getParameter("shipZipCode"));
-        logger.debug("Ship zip code is " + shipZipCode);
-        if (StringUtils.isBlank(shipZipCode)) {
-            throw new BadRequestException("400", "Shipping zip code is blank.");
+        // initial return parameter
+        String[] strReturn = stringFromBase.split("&");
+        String[] returnTradeNo = strReturn[0].split("=");
+        String[] returnOrderNo = strReturn[1].split("=");
+        String[] returnSucceed = strReturn[2].split("=");
+        String[] returnBankInfo = strReturn[3].split("=");
+        String[] returnMd5Info = strReturn[4].split("=");
+        String[] returnCurrency = strReturn[5].split("=");
+        String[] returnLanguage = strReturn[6].split("=");
+        String[] returnReturnURL = strReturn[7].split("=");
+        String[] returnAmount = strReturn[8].split("=");
+        String returnStringMd5Info = formatString(MDUtil.getHashEncryption(returnMd5Info[1]));
+
+        // SUCCEED CHECK
+        String payTranNo = returnTradeNo[1]; // this will be bank transaction number
+        logger.info("Pay gateway transaction number " + payTranNo);
+        payment.setBankTransactionNumber(payTranNo);
+        String bankCode = returnBankInfo[1];
+        payment.setBankReturnCode(bankCode);
+
+        String succeed = "0";
+        String orderStatus = "2"; // 交易失败
+        String paymentStatusCode = "501";
+
+        if (returnSucceed[1].equals("1")) {
+            succeed = "1";
+            orderStatus = "20"; // 交易成功
+            paymentStatusCode = "500";
+            payment.setSuccessTime(Calendar.getInstance().getTime());
         }
 
-        // customer optional info
-        String phone = formatString(request.getParameter("phone"));
-        logger.debug("Optional shipping phone is " + phone);
-        String remark = formatString(request.getParameter("remark"));
-        logger.debug("Optional shipping remark is " + remark);
-
-        // notification url
-        String returnURL = formatString(request.getParameter("returnURL"));
-        logger.debug("Merchant return URL is " + returnURL);
-        if (StringUtils.isBlank(returnURL)) {
-            throw new BadRequestException("400", "Merchant return URL is blank.");
-        }
-
-        // format decimal digit
-
-        // Parse all parameters from request object
-        String acceptLanguage = request.getHeader("Accept-Language");
-        logger.debug("Accept language is " + acceptLanguage);
-        String userAgent = request.getHeader("User-Agent");
-        logger.debug("User agent is " + userAgent);
-        Locale locale = request.getLocale();
-        String language = locale.getLanguage();
-        logger.debug("Language is " + language);
-        //is client behind something?
-        String clientIp = request.getHeader("X-FORWARDED-FOR");
-        if (clientIp == null) {
-            clientIp = request.getRemoteAddr();
-        }
-        logger.debug("Client ip is " + clientIp);
-
-        // params obtained from properties
-        String payUrl = PayConfiguration.getInstance()
-                .getValue(ResourceProperties.HOOPPAY_URL_KEY);
-        logger.debug("Pay url is " + payUrl);
-        String merchantId = PayConfiguration.getInstance()
-                .getValue(ResourceProperties.MERCHANT_ID_KEY);
-        logger.debug("Merchant id is " + merchantId);
-        String merKey = PayConfiguration.getInstance().getValue(ResourceProperties.MER_KEY_KEY);
-        logger.debug("Merchant key is " + merKey);
-        String referer = PayConfiguration.getInstance().getValue(ResourceProperties.REFERER_KEY);
-        logger.debug("Merchant referer is " + referer);
-        String shopName = PayConfiguration.getInstance()
-                .getValue(ResourceProperties.SHOP_NAME_KEY);
-        logger.debug("Merchant shop name is " + shopName);
-
-        // repayment flag needs to be set on UI form
-
-
-        // params obtained from container or browser
-        // del String acceptLanguage = formatString(request.getParameter("acceptLanguage"));
-        // del String userAgent = formatString(request.getParameter("userAgent"));
-
-        // del String clientIp = formatString(request.getParameter("clientIp"));
-        // del String language = formatString(request.getParameter("language"));
-
-        // we need to check if the merchant or the site is frozen
-        // if so decline the payment request
-        Merchant merchant = merchantService.findByIdentity(merNo);
-        Site site = siteService.findByIdentity(siteNo);
-        if (merchant == null || site == null) {
-            return "403";
-        }
-        Boolean canOperate;
+        PaymentStatus paymentStatus = null;
         try {
-            canOperate = merchantService.canOperate(merchant.getId())
-                    && siteService.canOperate(site.getId());
+            paymentStatus = paymentStatusService.findByCode(paymentStatusCode);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            return "404";
+            throw new BadRequestException("400", e.getMessage());
         }
-        if (!canOperate) {
-            return "403";
-        }
-        // calculate the md5 of the request based on merchant number and key
-        // if not correct decline the payment request
+        payment.setPaymentStatus(paymentStatus);
 
-        return "index";
+        // save payment object
+        try {
+            payment = paymentService.create(payment);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        // return string
+        // check md5info, md5 summary should be generated based merNo, merKey,
+        // siteNo and formatted amount
+        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
+                + merchantKey + orderCommand.getSiteNo() + orderCommand.getAmount());
+
+        result = "?succeed=" + succeed + "&amount=" + orderCommand.getAmount()
+                + "&orderNo=" + orderCommand.getOrderNo()
+                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
+                + "&md5info=" + calculatedMd5Info;
+        response.sendRedirect(orderCommand.getReturnUrl() + result);
     }
 
     @RequestMapping(value = {"/payByBitCoin"}, method = RequestMethod.POST)
@@ -542,7 +453,9 @@ public class HomeController {
         orderCommand.setMerNo(request.getParameter("merNo"));
         orderCommand.setSiteNo(request.getParameter("siteNo"));
         orderCommand.setReturnUrl(request.getParameter("returnURL"));
-        orderCommand.setAmount(request.getParameter("amount"));
+        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+        String amount = request.getParameter("amount");
+        orderCommand.setAmount(decimalFormat.format(amount));
         orderCommand.setCurrency(request.getParameter("currency"));
         orderCommand.setProductType(request.getParameter("productType"));
         String goodsName = request.getParameter("goodsName");
@@ -559,8 +472,17 @@ public class HomeController {
         String[] goodsNumbers = goodsNumber.split(",");
         orderCommand.setGoodsNumberArray(Arrays.asList(goodsNumbers));
         String goodsPrice = request.getParameter("goodsPrice");
-        orderCommand.setGoodsPrice(goodsPrice);
+        // format price
         String[] goodsPrices = goodsPrice.split(",");
+        String goodsPriceString = "";
+        for (int i = 0; i < goodsPrices.length; i++) {
+            goodsPriceString = goodsPriceString
+                    + decimalFormat.format(Float.parseFloat(goodsPrices[i]));
+            if (i < (goodsPrices.length - 1))
+                goodsPriceString = goodsPriceString + ",";
+        }
+        goodsPrice = goodsPriceString;
+        orderCommand.setGoodsPrice(goodsPrice);
         orderCommand.setGoodsPriceArray(Arrays.asList(goodsPrices));
         orderCommand.setEmail(request.getParameter("email"));
         orderCommand.setPhone(request.getParameter("phone"));
@@ -576,12 +498,105 @@ public class HomeController {
     }
 
     Payment createPayment(PaymentCommand paymentCommand) {
+
+        // bank return code, success time and payment status need to be set after payment
+        Date date = Calendar.getInstance().getTime();
         Payment payment = new Payment();
+        payment.setAmount(paymentCommand.getAmount());
+        Currency currency;
+        try {
+            currency = currencyService.get(paymentCommand.getCurrencyId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Currency format is not right.");
+        }
+        Order order;
+        try {
+            order = orderService.get(paymentCommand.getOrderId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Order doesn't exist.");
+        }
+        payment.setOrder(order);
+
+        payment.setCurrency(currency);
+        payment.setBankAccountExpDate(date);
+        payment.setBankTransactionNumber(paymentCommand.getBankTransactionNumber());
+        payment.setBankName(paymentCommand.getBankName());
+        payment.setRemark(paymentCommand.getRemark());
+        payment.setBillFirstName(paymentCommand.getBillFirstName());
+        payment.setBillLastName(paymentCommand.getBillLastName());
+        payment.setBillAddress1(paymentCommand.getBillAddress1());
+        payment.setBillAddress2(paymentCommand.getBillAddress1());
+        payment.setBillCity(paymentCommand.getBillCity());
+        payment.setBillState(paymentCommand.getBillState());
+        payment.setBillCountry(payment.getBillCountry());
+        payment.setBillZipCode(payment.getBillZipCode());
+
+        PaymentType paymentType;
+        try {
+            paymentType = paymentTypeService.get(paymentCommand.getPaymentTypeId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Payment type does not exist.");
+        }
+        payment.setPaymentType(paymentType);
+
         return payment;
     }
 
-    List<BasicNameValuePair> formulateHooppayParams(PaymentCommand paymentCommand, OrderCommand
-            orderCommand, HttpServletRequest request) {
+    private String hooppay(List<BasicNameValuePair> params) {
+
+        String result = "";
+        // properties params
+        // params obtained from properties
+        String payUrl = PayConfiguration.getInstance()
+                .getValue(ResourceProperties.HOOPPAY_URL_KEY);
+        logger.debug("Pay url is " + payUrl);
+        String merchantId = PayConfiguration.getInstance()
+                .getValue(ResourceProperties.MERCHANT_ID_KEY);
+        logger.debug("Merchant id is " + merchantId);
+        String merKey = PayConfiguration.getInstance().getValue(ResourceProperties.MER_KEY_KEY);
+        logger.debug("Merchant key is " + merKey);
+        String referer = PayConfiguration.getInstance().getValue(ResourceProperties.REFERER_KEY);
+        logger.debug("Merchant referer is " + referer);
+        String shopName = PayConfiguration.getInstance()
+                .getValue(ResourceProperties.SHOP_NAME_KEY);
+        logger.debug("Merchant shop name is " + shopName);
+
+        HttpPost httpPost = new HttpPost(payUrl);
+        try {
+            httpPost.setEntity(new UrlEncodedFormEntity(params));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse httpResponse = null;
+        try {
+            httpResponse = httpClient.execute(httpPost);
+            logger.info("Hooppay return " + httpResponse.getStatusLine());
+            result = EntityUtils.toString(httpResponse.getEntity());
+            EntityUtils.consume(httpResponse.getEntity());
+            httpResponse.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        try {
+            httpResponse.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        return result;
+    }
+
+    private List<BasicNameValuePair> formulateHooppayParams(PaymentCommand paymentCommand,
+                                                            OrderCommand orderCommand,
+                                                            HttpServletRequest request) {
         List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
 
         // Parse all parameters from request object
@@ -631,8 +646,7 @@ public class HomeController {
 
         // parse payment command and add those to pairs
         pairs.add(new BasicNameValuePair("orderNo", paymentCommand.getId().toString()));
-        pairs.add(new BasicNameValuePair("amount", paymentCommand.getAmount().toString()));
-        pairs.add(new BasicNameValuePair("currency", paymentCommand.getCurrencyName()));
+
         pairs.add(new BasicNameValuePair("payMethod", "0")); // means credit card
         pairs.add(new BasicNameValuePair("cardNo", paymentCommand.getBankAccountNumber()));
         pairs.add(new BasicNameValuePair("cvv", paymentCommand.getCvv()));
@@ -655,6 +669,8 @@ public class HomeController {
         pairs.add(new BasicNameValuePair("merNo", orderCommand.getMerNo()));
         pairs.add(new BasicNameValuePair("returnURL", orderCommand.getReturnUrl()));
         pairs.add(new BasicNameValuePair("productType", orderCommand.getProductType()));
+        pairs.add(new BasicNameValuePair("amount", orderCommand.getAmount()));
+        pairs.add(new BasicNameValuePair("currency", orderCommand.getCurrency()));
         pairs.add(new BasicNameValuePair("goodsName", orderCommand.getGoodsName()));
         pairs.add(new BasicNameValuePair("goodsNumber", orderCommand.getGoodsNumber()));
         pairs.add(new BasicNameValuePair("goodsPrice", orderCommand.getGoodsPrice()));

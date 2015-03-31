@@ -6,7 +6,7 @@ package com.lambo.smartpay.pay.web.vo;
 public class PaymentCommand {
 
     private Long id;
-    private Long amount;
+    private Float amount;
     private String createdTime;
     private String successTime;
     private String bankTransactionNumber;
@@ -43,11 +43,11 @@ public class PaymentCommand {
         this.id = id;
     }
 
-    public Long getAmount() {
+    public Float getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(Float amount) {
         this.amount = amount;
     }
 

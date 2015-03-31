@@ -20,5 +20,7 @@ public abstract class ResourceProperties {
     public static final String ORDER_STATUS_SHIPPED_CODE = "502";
     public static final String ORDER_STATUS_PAID_CODE = "401";
     public static final String CUSTOMER_STATUS_NORMAL_CODE = "200";
+    public static final String CURRENCY_USD_NAME ="USD";
+    public static final String CURRENCY_RMB_NAME ="RMB";
 
 }
