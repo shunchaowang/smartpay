@@ -62,7 +62,7 @@
             </label>
 
             <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"
+                <form:textarea rows="5" path="remark" id="remark" cssClass="form-control"
                             value="${siteCommand.remark}"/>
             </div>
         </div>
@@ -87,6 +87,8 @@
             rules: {
                 indentity: {required: true, minlength: 3, maxlength: 32},
                 name: {required: true, minlength: 3, maxlength: 32},
+                url: {required: true, minlength: 3, maxlength: 128},
+                remank: {required: false, minlength: 3, maxlength: 512}
             }
         });
 

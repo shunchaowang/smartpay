@@ -19,7 +19,6 @@
             <th><spring:message code="id.label"/></th>
             <th><spring:message code="orderNumber.label"/></th>
             <th><spring:message code="bankTransactionNumber.label"/></th>
-            <th><spring:message code="bankName.label"/></th>
             <th><spring:message code="amount.label"/></th>
             <th><spring:message code="currency.label"/></th>
             <th><spring:message code="createdTime.label"/></th>
@@ -69,41 +68,37 @@
                     }
                 },
                 {
-                    'name': 'bankName', 'targets': 3, 'searchable': false, 'orderable': false,
-                    'data': 'bankName'
-                },
-                {
-                    'name': 'amount', 'targets': 4, 'data': 'amount',
+                    'name': 'amount', 'targets': 3, 'data': 'amount',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
                 {
-                    'name': 'currencyName', 'targets': 5, 'searchable': false, 'orderable': false,
+                    'name': 'currencyName', 'targets': 4, 'searchable': false, 'orderable': false,
                     'data': 'currencyName'
                 },
                 {
-                    'name': 'createdTime', 'targets': 6, 'searchable': false,
+                    'name': 'createdTime', 'targets': 5, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'bankReturnCode', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'name': 'bankReturnCode', 'targets': 6, 'searchable': false, 'orderable': false,
                     'data': 'bankReturnCode'
                 },
                 {
-                    'name': 'paymentStatusName', 'targets': 8, 'searchable': false, 'orderable':
+                    'name': 'paymentStatusName', 'targets': 7, 'searchable': false, 'orderable':
                         false,
                     'data': 'paymentStatusName'
                 },
                 {
-                    'name': 'paymentTypeName', 'targets': 9, 'searchable': false, 'orderable':
+                    'name': 'paymentTypeName', 'targets': 8, 'searchable': false, 'orderable':
                         false,
                     'data': 'paymentTypeName'
                 },
                 <c:if test="${domain.equals('paymentEdit')}">
                 {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +

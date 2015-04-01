@@ -17,12 +17,6 @@
     <div class="col-sm-8">
 
         <table class="table table-bordered">
-            <c:if test="${not empty paymentCommand.merchantName}">
-                <tr>
-                    <td><spring:message code="Merchant.label"/></td>
-                    <td>${paymentCommand.merchantName}</td>
-                </tr>
-            </c:if>
             <c:if test="${not empty paymentCommand.merchantNumber}">
                 <tr>
                     <td><spring:message code="merchantNumber.label"/></td>
@@ -57,12 +51,6 @@
                 <tr>
                     <td><spring:message code="currency.label"/></td>
                     <td>${paymentCommand.currencyName}</td>
-                </tr>
-            </c:if>
-            <c:if test="${not empty paymentCommand.bankName}">
-                <tr>
-                    <td><spring:message code="bankName.label"/></td>
-                    <td>${paymentCommand.bankName}</td>
                 </tr>
             </c:if>
             <c:if test="${not empty paymentCommand.bankReturnCode}">

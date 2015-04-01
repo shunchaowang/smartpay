@@ -23,6 +23,8 @@
         <spring:message code='User.label' var="user"/>
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
+        <spring:message code='operator.label' var="operator"/>
+
 
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav">
@@ -32,13 +34,59 @@
                 <!-- merchant operator cannot see merchant nav -->
                 <!-- merchant admin menu starts -->
                 <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                    <li>
-                        <a href="${rootURL}merchant">
-                            <spring:message code="show.label" arguments="${merchant}"/>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                           href="#">
+                            <spring:message code="manage.label" arguments="${merchant}"/>
+                            <b class="caret"></b>
                         </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="">
+                                <a href="${rootURL}merchant">
+                                    <spring:message code="show.label" arguments="${merchant}"/>
+                                </a>
+                                <a href="${rootURL}user">
+                                    <spring:message code="show.label" arguments="${operator}"/>
+                                </a>
+                                <a href="${rootURL}site">
+                                    <spring:message code="show.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                        </ul>
+
                     </li>
                 </sec:authorize>
                 <!-- merchant admin menu ends -->
+
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                       href="#">
+                        <spring:message code="manage.label" arguments="${merchant}"/>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}user/create">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <spring:message code="create.label" arguments="${operator}"/>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}user/index">
+                                <i class="glyphicon glyphicon-th-list"></i>
+                                <spring:message code="manage.label" arguments="${operator}"/>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}merchant/edit">
+                                <i class="glyphicon glyphicon-th-list"></i>
+                                <spring:message code="manage.label" arguments="${merchant}"/>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
 
                 <!-- site management goes here -->
                 <!-- merchant admin/operator is able to view site list of the merchant,
@@ -52,55 +100,20 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li class="">
-                            <a href="${rootURL}site">
-                                <i class="glyphicon glyphicon-th-list"></i>
-                                <spring:message code="index.label" arguments="${site}"/>
-                            </a>
-                        </li>
-                        <li class="">
                             <a href="${rootURL}site/create">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <spring:message code="create.label" arguments="${site}"/>
                             </a>
                         </li>
                         <li class="">
-                            <a href="${rootURL}site/indexDeclineList">
-                                <i class="glyphicon glyphicon-plus"></i>
-                                <spring:message code="action.decline.label" arguments="${site}"/>
+                            <a href="${rootURL}site/index">
+                                <i class="glyphicon glyphicon-th-list"></i>
+                                <spring:message code="manage.label" arguments="${site}"/>
                             </a>
                         </li>
                     </ul>
                 </li>
 
-                <!-- user management goes here -->
-                <!-- merchant admin can add merchant operator and edit, and delete -->
-                <!-- merchant operator cannot see this nav -->
-                <!-- merchant admin menu goes here -->
-                <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                           data-target="#" href="#">
-                            <spring:message code="manage.label" arguments="${user}"/>
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li class="">
-                                <a href="${rootURL}/user">
-                                    <i class="glyphicon glyphicon-th-list"></i>
-                                    <spring:message code="index.label" arguments="${user}"/>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="${rootURL}user/create">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <spring:message code="create.label" arguments="${user}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </sec:authorize>
-                <!-- merchant admin menu ends -->
-                <!-- user management ends -->
 
                 <li>
                     <a href="${rootURL}order">

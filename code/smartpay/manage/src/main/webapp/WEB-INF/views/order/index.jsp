@@ -95,6 +95,11 @@
                                 '<button type="button" name="show-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>'
+                                + '<a href="' + "${rootURL}${controller}" + '/ship${domain}/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="ship-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="action.ship.label"/>'
+                                + '</button></a>'
                     }
                 }
             ]

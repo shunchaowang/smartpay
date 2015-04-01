@@ -61,22 +61,6 @@
                             value="${userCommand.email}"/>
             </div>
         </div>
-        <!-- user status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="userStatus">
-                <spring:message code="status.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="userStatus" id="userStatus" cssClass="form-control" required=""
-                             value="${userCommand.userStatus}">
-                    <c:forEach items="${userStatuses}" var="status">
-                        <form:option value="${status.id}">${status.name}</form:option>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">
@@ -84,7 +68,7 @@
             </label>
 
             <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"
+                <form:textarea rows="5" path="remark" id="remark" cssClass="form-control"
                             value="${userCommand.remark}"/>
             </div>
         </div>

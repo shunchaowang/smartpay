@@ -71,6 +71,11 @@
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
+                                + '</button>' + '</a>';
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button>' + '</a>'
                                 + '<a href="' + "${rootURL}${controller}" + '/delete/'
                                 + row['id'] + '">' +

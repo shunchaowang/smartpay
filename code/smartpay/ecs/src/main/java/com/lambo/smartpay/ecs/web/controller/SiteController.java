@@ -86,27 +86,6 @@ public class SiteController {
         return "main";
     }
 
-    @RequestMapping(value = {"/indexAuditList"}, method = RequestMethod.GET)
-    public String indexAuditList(Model model) {
-        logger.debug("~~~~~~~~~ indexAuditList ~~~~~~~~~");
-        model.addAttribute("domain", "AuditList");
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexFreezeList"}, method = RequestMethod.GET)
-    public String indexFreezeList(Model model) {
-        logger.debug("~~~~~~~~~ indexFreezeList ~~~~~~~~~");
-        model.addAttribute("domain", "FreezeList");
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexUnfreezeList"}, method = RequestMethod.GET)
-    public String indexUnfreezeList(Model model) {
-        logger.debug("~~~~~~~~~ indexUnfreezeList ~~~~~~~~~");
-        model.addAttribute("domain", "UnfreezeList");
-        return "main";
-    }
-
     @RequestMapping(value = {"/indexDeclineList"}, method = RequestMethod.GET)
     public String indexDeclineList(Model model) {
         logger.debug("~~~~~~~~~ indexDeclineList ~~~~~~~~~");
@@ -145,50 +124,16 @@ public class SiteController {
         Long recordsTotal;
         Long recordsFiltered;
 
-        if (domain.equals("AuditList"))
-            codeString = ResourceProperties.SITE_STATUS_CREATED_CODE;
-        if (domain.equals("FreezeList"))
-            codeString = ResourceProperties.SITE_STATUS_APPROVED_CODE;
-        if (domain.equals("UnfreezeList"))
-            codeString = ResourceProperties.SITE_STATUS_FROZEN_CODE;
-        if (domain.equals("DeclineList"))
-            codeString = ResourceProperties.SITE_STATUS_DECLINED_CODE;
+        Site siteCriteria = new Site();
+        User currentUser = UserResource.getCurrentUser();
+        siteCriteria.setMerchant(currentUser.getMerchant());
 
-        if (codeString.equals("")) {
-            logger.debug("~~~~~~~~~~ site list ~~~~~~~~~~" + "all codeString ！！！");
+        sites = siteService.findByCriteria(siteCriteria, search, start, length, order,
+                ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
-            Site siteCriteria = new Site();
-            User currentUser = UserResource.getCurrentUser();
-            siteCriteria.setMerchant(currentUser.getMerchant());
-
-            sites = siteService.findByCriteria(siteCriteria, search, start, length, order,
-                    ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
-            // count total records and filtered records
-            recordsTotal = siteService.countAll();
-            recordsFiltered = siteService.countByCriteria(search);
-
-        } else {
-            logger.debug("~~~~~~~~~~ site list ~~~~~~~~~~" + "codeString = " + codeString);
-            // normal merchant status
-            Site siteCriteria = new Site();
-            SiteStatus status = null;
-            try {
-                status = siteStatusService.findByCode(codeString);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("Cannot find SiteStatus with Code", codeString);
-            }
-
-            siteCriteria.setSiteStatus(status);
-            sites = siteService.findByCriteria(siteCriteria, search, start, length, order,
-                    ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
-            // count total and filtered
-            recordsTotal = siteService.countByCriteria(siteCriteria);
-            recordsFiltered = siteService.countByCriteria(siteCriteria, search);
-        }
-
+        // count total records and filtered records
+        recordsTotal = siteService.countByCriteria(siteCriteria);
+        recordsFiltered = siteService.countByCriteria(siteCriteria,search);
 
         if (sites == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -240,11 +185,23 @@ public class SiteController {
         Site site = createSite(siteCommand);
         try {
             siteService.create(site);
+            String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("created.message",
+                            new String[]{fieldLabel, site.getName()+site.getUrl()}, locale));
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("created.message",
+                            new String[]{fieldLabel, site.getName()+site.getUrl()}, locale));
             throw new IntervalServerException("500", e.getMessage());
         } catch (NotUniqueException e) {
             e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("created.message",
+                            new String[]{fieldLabel, site.getName()+site.getUrl()}, locale));
             throw new IntervalServerException("500", e.getMessage());
         }
 
@@ -329,107 +286,12 @@ public class SiteController {
         return JsonUtil.toJson(response);
     }
 
-    @RequestMapping(value = "/audit", method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String audit(@RequestParam(value = "id") Long id) {
-
-        logger.debug("~~~~~~~~~~ audit ~~~~~~~~~~" + "id= " + id);
-        //Initiate
-        Site site;
-        JsonResponse response = new JsonResponse();
-        Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
-        String message = "";
-        //Do approve
-        try {
-            site = siteService.approveSite(id);
-            logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id);
-
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            message = messageSource
-                    .getMessage("not.audit.message", new String[]{label, id.toString()}, locale);
-            response.setMessage(message);
-            throw new BadRequestException("400", e.getMessage());
-        }
-
-        message = messageSource
-                .getMessage("audit.message", new String[]{label, site.getName()}, locale);
-        response.setMessage(message);
-        return JsonUtil.toJson(response);
-    }
-
-
-    @RequestMapping(value = "/freeze", method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String freeze(@RequestParam(value = "id") Long id) {
-
-        logger.debug("~~~~~~~~~~ freeze ~~~~~~~~~~" + "id= " + id);
-        //Initiate
-        Site site;
-        JsonResponse response = new JsonResponse();
-        Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
-        String message = "";
-        //Do approve
-        try {
-            site = siteService.freezeSite(id);
-            logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id);
-
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            message = messageSource
-                    .getMessage("not.frozen.message", new String[]{label, id.toString()}, locale);
-            response.setMessage(message);
-            throw new BadRequestException("400", e.getMessage());
-        }
-
-        message = messageSource
-                .getMessage("frozen.message", new String[]{label, site.getName()}, locale);
-        response.setMessage(message);
-        return JsonUtil.toJson(response);
-    }
-
-
-    @RequestMapping(value = "/unfreeze", method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String unfreeze(@RequestParam(value = "id") Long id) {
-
-        logger.debug("~~~~~~~~~~ unfreeze ~~~~~~~~~~" + "id= " + id);
-        //Initiate
-        Site site;
-        JsonResponse response = new JsonResponse();
-        Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
-        String message = "";
-        //Do approve
-        try {
-            site = siteService.unfreezeSite(id);
-            logger.debug("~~~~~~~~~~ unfreeze ~~~~~~~~~~" + "id= " + id);
-
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            message = messageSource
-                    .getMessage("not.unfrozen.message", new String[]{label, id.toString()}, locale);
-            response.setMessage(message);
-            throw new BadRequestException("400", e.getMessage());
-        }
-
-        message = messageSource
-                .getMessage("unfrozen.message", new String[]{label, site.getName()}, locale);
-        response.setMessage(message);
-        return JsonUtil.toJson(response);
-    }
-
     @RequestMapping(value = "/approve", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String approve(@RequestParam(value = "id") Long id) {
 
-        logger.debug("~~~~~~~~~~ unfreeze ~~~~~~~~~~" + "id= " + id);
+        logger.debug("~~~~~~~~~~ approve ~~~~~~~~~~" + "id= " + id);
         //Initiate
         Site site;
         JsonResponse response = new JsonResponse();
@@ -522,7 +384,7 @@ public class SiteController {
             }
         }
 
-        //
+        //Set site status as "1-created"
         try {
             siteStatus = siteStatusService.get(Long.parseLong("1"));
         } catch (NoSuchEntityException e) {

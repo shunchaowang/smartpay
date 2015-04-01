@@ -126,14 +126,7 @@ public class UserController {
     public
     @ResponseBody
     String list(HttpServletRequest request) {
-        // debugging info
-//        Enumeration<String> params = request.getParameterNames();
-//        while (params.hasMoreElements()) {
-//            String paramName = params.nextElement();
-//            logger.debug("Parameter Name - " + paramName + ", Value - " + request.getParameter
-//                    (paramName));
-//        }
-        // parse sorting column
+
         String orderIndex = request.getParameter("order[0][column]");
         String order = request.getParameter("columns[" + orderIndex + "][name]");
 
@@ -243,11 +236,23 @@ public class UserController {
         // persist user
         try {
             user = userService.create(user);
+            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("created.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (MissingRequiredFieldException e) {
             logger.info(e.getMessage());
+            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.created.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
             e.printStackTrace();
         } catch (NotUniqueException e) {
             logger.info(e.getMessage());
+            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.created.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
             e.printStackTrace();
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
@@ -327,6 +332,7 @@ public class UserController {
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String update(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+        Locale locale = LocaleContextHolder.getLocale();
 
         // if the email is change we need to check uniqueness
         User user = null;
@@ -344,7 +350,6 @@ public class UserController {
             User emailUser = userService.findByEmail(userCommand.getEmail());
             if (emailUser != null) {
                 // get locale and messages
-                Locale locale = LocaleContextHolder.getLocale();
                 String fieldLabel = messageSource.getMessage("email.label", null, locale);
                 model.addAttribute("message",
                         messageSource.getMessage("not.unique.message",
@@ -364,10 +369,22 @@ public class UserController {
         // user is a user edited by merchant admin
         try {
             userService.update(user);
+            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (NotUniqueException e) {
             e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
         }
         return "main";
     }
@@ -378,6 +395,7 @@ public class UserController {
         if (userCommand.getId() != null) {
             user.setId(userCommand.getId());
         }
+
         user.setUsername(userCommand.getUsername());
         user.setFirstName(userCommand.getFirstName());
         user.setLastName(userCommand.getLastName());
@@ -387,22 +405,12 @@ public class UserController {
         user.setActive(true);
         user.setRoles(new HashSet<Role>());
         user.getRoles().add(role);
-        // set user merchant if user is not admin
-        if (userCommand.getMerchant() != null) {
-            Merchant merchant = null;
-            try {
-                merchant = merchantService.get(userCommand.getMerchant());
-            } catch (NoSuchEntityException e) {
-                logger.info("Cannot find merchant " + userCommand.getMerchant());
-                e.printStackTrace();
-            }
-            user.setMerchant(merchant);
-        }
-
-        // set UserStatus
+        //Set user's merchant as Current SecureUser's Merchant;
+        user.setMerchant(UserResource.getCurrentUser().getMerchant());
+        // set UserStatus as Status:'1-Normal'
         UserStatus userStatus = null;
         try {
-            userStatus = userStatusService.get(userCommand.getUserStatus());
+            userStatus = userStatusService.get(Long.parseLong("1"));
         } catch (NoSuchEntityException e) {
             logger.info("Cannot find user status " + userCommand.getUserStatus());
             e.printStackTrace();
@@ -438,21 +446,10 @@ public class UserController {
 
     // edit a User from a UserCommand
     private void editUser(User user, UserCommand userCommand) {
-
         user.setFirstName(userCommand.getFirstName());
         user.setLastName(userCommand.getLastName());
         user.setEmail(userCommand.getEmail());
         user.setRemark(userCommand.getRemark());
-
-        // set UserStatus
-        UserStatus userStatus = null;
-        try {
-            userStatus = userStatusService.get(userCommand.getUserStatus());
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find user status " + userCommand.getUserStatus());
-            e.printStackTrace();
-        }
-        user.setUserStatus(userStatus);
     }
 
 }

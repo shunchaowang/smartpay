@@ -10,26 +10,10 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/createAdmin" method="POST"
+    <form:form action="${rootURL}${controller}/create" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
 
         <!-- user status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="merchant">
-                <spring:message code="status.label"/>
-                <span class="required-indicator">*</span>
-            </label>
-
-            <div class="col-sm-6">
-                <form:select path="merchant" id="merchant" cssClass="form-control" required=""
-                             placeholder="Merchant">
-                    <c:forEach items="${merchantes}" var="merchant">
-                        <form:option value="${merchant.id}">${merchant.name}</form:option>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
-
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">
                 <spring:message code="username.label"/>
@@ -77,22 +61,7 @@
                             placeholder="Email"/>
             </div>
         </div>
-        <!-- user status -->
-        <div class="form-group">
-            <label class="col-sm-3 control-label" for="userStatus">
-                <spring:message code="status.label"/>
-                <span class="required-indicator">*</span>
-            </label>
 
-            <div class="col-sm-6">
-                <form:select path="userStatus" id="userStatus" cssClass="form-control" required=""
-                             placeholder="Status">
-                    <c:forEach items="${userStatuses}" var="status">
-                        <form:option value="${status.id}">${status.name}</form:option>
-                    </c:forEach>
-                </form:select>
-            </div>
-        </div>
         <!-- remark -->
         <div class="form-group">
             <label class="col-sm-3 control-label" for="remark">
@@ -100,9 +69,11 @@
             </label>
 
             <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"/>
+                <form:textarea rows="5" path="remark" id="remark" cssClass="form-control"/>
             </div>
         </div>
+
+        <!-- buttons -->
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
                 <button class='btn btn-default' id='create-button' type="submit">
@@ -124,7 +95,7 @@
                 firstName: {required: true, minlength: 3, maxlength: 32},
                 lastName: {required: true, minlength: 3, maxlength: 32},
                 email: {required: true, minlength: 3, maxlength: 32},
-                userStatus: {required: true}
+                remark:{required: false, minlength: 0, maxlength: 512},
             }
         });
     });

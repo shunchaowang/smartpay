@@ -59,7 +59,7 @@
             </label>
 
             <div class="col-sm-6">
-                <form:input path="remark" id="remark" cssClass="form-control"
+                <form:textarea rows="5" path="remark" id="remark" cssClass="form-control"
                             value="${siteCommand.remark}"/>
             </div>
         </div>

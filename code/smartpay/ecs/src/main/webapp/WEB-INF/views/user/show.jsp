@@ -45,40 +45,16 @@
                     <td>${userCommand.userStatusName}</td>
                 </tr>
             </c:if>
-            <!--
-            <c:if test="${not empty userCommand.active}">
+            <c:if test="${not empty userCommand.createdTime}">
                 <tr>
-                    <td><spring:message code="active.label"/></td>
-                    <td>
-                        <c:choose>
-                            <c:when test="${userCommand.active}">
-                                <spring:message code="yes.label"/>
-                            </c:when>
-                            <c:otherwise>
-                                <spring:message code="no.label"/>
-                            </c:otherwise>
-                        </c:choose>
-                    </td>
+                    <td><spring:message code="createdTime.label"/></td>
+                    <td>${userCommand.createdTime}</td>
                 </tr>
             </c:if>
-            -->
             <c:if test="${not empty userCommand.remark}">
                 <tr>
                     <td><spring:message code="remark.label"/></td>
                     <td>${userCommand.remark}</td>
-                </tr>
-            </c:if>
-            <c:if test="${not empty userCommand.merchantName}">
-                <tr>
-                    <td><spring:message code="Merchant.label"/></td>
-                    <td>${userCommand.merchantName}</td>
-                </tr>
-            </c:if>
-            <c:if test="${not empty userCommand.createdTime}">
-                <tr>
-                    <td><spring:message code="createdTime.label"/></td>
-                    <td><fmt:formatDate value="${userCommand.createdTime}"
-                                        pattern="MMM dd yyyy"/></td>
                 </tr>
             </c:if>
         </table>
@@ -91,13 +67,6 @@
         <a href="${rootURL}${controller}">
             <button type="button" class="btn btn-default">
                 <spring:message code="action.return.label"/>
-            </button>
-        </a>
-    </div>
-    <div class="col-sm-2">
-        <a href="${rootURL}${controller}/edit/${userCommand.id}">
-            <button type="button" class="btn btn-default">
-                <spring:message code="action.edit.label"/>
             </button>
         </a>
     </div>
