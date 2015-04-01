@@ -2,6 +2,7 @@ package com.lambo.smartpay.ecs.config;
 
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.util.ResourceProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +18,7 @@ import java.util.Set;
 public class SecurityUser extends User implements UserDetails {
 
     private static final long serialVersionUID = 1L;
+    private Boolean nonLocked = false;
 
     public SecurityUser(User user) {
         if (user != null) {
@@ -29,7 +31,16 @@ public class SecurityUser extends User implements UserDetails {
             this.setMerchant(user.getMerchant());
             this.setActive(user.getActive());
             this.setRoles(user.getRoles());
-            this.setMerchant(user.getMerchant());
+
+            if (user.getMerchant() != null) {
+                this.setMerchant(user.getMerchant());
+                // if the user's merchant is frozen, then the user should be locked,
+                // and not allowed to login
+                if (!user.getMerchant().getMerchantStatus().getCode()
+                        .equals(ResourceProperties.MERCHANT_STATUS_FROZEN_CODE)) {
+                    nonLocked = true;
+                }
+            }
         }
     }
 
@@ -65,7 +76,8 @@ public class SecurityUser extends User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+
+        return nonLocked;
     }
 
     @Override
