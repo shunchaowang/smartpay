@@ -7,9 +7,7 @@
     <jsp:include page="_import.jsp"/>
 </head>
 <body class="container">
-<nav class="navbar navbar-default" role="navigation" id="nav-header">
-    <jsp:include page="_navbar.jsp"/>
-</nav>
+
 <div class='row' id='notification'>
     <c:if test="${not empty message}">
         <div class="alert alert-danger alert-dismissable" role="alert">
@@ -24,6 +22,7 @@
 <!-- end of notification -->
 <br/>
 
+<!-- not supported right now
 <div class="row">
     <ul class="nav nav-tabs">
         <li class="active">
@@ -40,13 +39,13 @@
         </li>
     </ul>
 </div>
+-->
 <!-- end of nav-tabs div -->
 <br/>
 
 <div id="content" class="tab-content">
     <div class="tab-pane fade active in" id="card-tab">
         <div class="row">
-            <p>Credit Card Form</p>
 
             <div class="row">
                 <div class='container'>
@@ -358,9 +357,11 @@
         <br/>
     </div>
     <!-- end of bundleTab -->
+    <!-- not supported right now
     <div class="tab-pane fade" id="bitcoin-tab">
         <p>Bitcoin Link</p>
     </div>
+    -->
     <!-- end of connectionTab -->
 </div>
 <!-- end of homeContent -->
@@ -369,7 +370,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        activeTab('card-tab');
+        //activeTab('card-tab');
 
         $('#pay-form').validate({
             rules: {

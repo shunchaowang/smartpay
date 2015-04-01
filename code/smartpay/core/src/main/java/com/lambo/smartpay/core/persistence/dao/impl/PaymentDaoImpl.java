@@ -207,7 +207,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
 
     /**
      * Formulate JPA and Predicate on fields with equal criteria for CriteriaQuery.
-     * Supports id, PaymentStatus id, Currency id, active.
+     * Supports id, PaymentStatus id, Currency id, active, site id, merchant id.
      *
      * @param builder is the JPA CriteriaBuilder.
      * @param root    is the root of the CriteriaQuery.
@@ -249,6 +249,39 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
                 predicate = currencyPredicate;
             } else {
                 predicate = builder.and(predicate, currencyPredicate);
+            }
+        }
+
+        // based on site
+        if (payment.getOrder() != null) {
+            // if payment has site
+            if (payment.getOrder().getSite() != null) {
+                // site id
+                if (payment.getOrder().getSite().getId() != null) {
+                    Predicate sitePredicate = builder.equal(root.join("order")
+                                    .join("site").<Long>get("id"),
+                            builder.literal(payment.getOrder().getSite().getId()));
+                    if (predicate == null) {
+                        predicate = sitePredicate;
+                    } else {
+                        predicate = builder.and(predicate, sitePredicate);
+                    }
+                }
+
+                // if has merchant id
+                if (payment.getOrder().getSite().getMerchant() != null) {
+                    if (payment.getOrder().getSite().getMerchant().getId() != null) {
+                        Predicate merchantPredicate = builder.equal(root.join("order")
+                                        .join("site").join("merchant").<Long>get("id"),
+                                builder.literal(
+                                        payment.getOrder().getSite().getMerchant().getId()));
+                        if (predicate == null) {
+                            predicate = merchantPredicate;
+                        } else {
+                            predicate = builder.and(predicate, merchantPredicate);
+                        }
+                    }
+                }
             }
         }
 
