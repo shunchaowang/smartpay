@@ -1,9 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
 <%@include file="taglib.jsp" %>
+<!DOCTYPE html>
 <html>
+
 <head>
-    <jsp:include page="_import.jsp"/>
+    <c:url var="marutiUrl" value="${rootURL}assets/vendor/maruti/"/>
+    <title>
+        <spring:message code="system.title"/>
+    </title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="${marutiUrl}css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="${marutiUrl}css/bootstrap-responsive.min.css"/>
+    <link rel="stylesheet" href="${marutiUrl}css/maruti-login.css"/>
 </head>
 <body>
 <div class="col-md-6 col-md-offset-2">
@@ -18,36 +27,67 @@
         </div>
     </c:if>
 </div>
-
-<div class="row">
-    <div class="col-md-6 col-md-offset-2">
-        <h2>User Login Form</h2>
-        <form:form id="loginForm" method="post" action="${rootURL}login" modelAttribute="user"
-                   class="form-horizontal" role="form" cssStyle="width: 800px; margin: 0 auto;">
-            <div class="form-group">
-                <label for="username" class="col-sm-2 control-label">UserName*</label>
-
-                <div class="col-sm-4">
-                    <input type="text" id="username" name="username" class="form-control"
-                           placeholder="UserName"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="password" class="col-sm-2 control-label">Password*</label>
-
-                <div class="col-sm-4">
-                    <input type="password" id="password" name="password" class="form-control"
-                           placeholder="Password"/>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-4">
-                    <input type="submit" class="btn btn-primary" value="Login">
-                </div>
-            </div>
-
-        </form:form>
-    </div>
+<div id="logo">
+    <img src="${marutiUrl}img/login-logo.png" alt=""/>
 </div>
+
+<div id="loginbox">
+    <form id="loginform" class="form-vertical" action="${rootURL}login" method="post">
+        <div class="control-group normal_text">
+            <h3>
+                <spring:message code="login.title"/>
+            </h3>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <div class="main_input_box">
+                    <span class="add-on"><i class="icon-user"></i></span>
+                    <input type="text" name="username" placeholder="Username"/>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <div class="main_input_box">
+                    <span class="add-on"><i class="icon-lock"></i></span>
+                    <input type="password" name="password" placeholder="Password"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <!--
+            <span class="pull-left"><a href="#" class="flip-link btn btn-warning" id="to-recover">Lost
+                password?</a></span>  -->
+            <span class="pull-right"><input type="submit" class="btn btn-success"
+                                            value="Login"/></span>
+        </div>
+
+    </form>
+    <!--
+    <form id="recoverform" action="#" class="form-vertical">
+        <p class="normal_text">Enter your e-mail address below and we will send you instructions
+            <br/><font color="#FF6633">how to recover a password.</font></p>
+
+        <div class="controls">
+            <div class="main_input_box">
+                <span class="add-on"><i class="icon-envelope"></i></span><input type="text"
+                                                                                placeholder="E-mail address"/>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <span class="pull-left"><a href="#" class="flip-link btn btn-warning"
+                                       id="to-login">&laquo; Back to login</a></span>
+            <span class="pull-right"><input type="submit" class="btn btn-info"
+                                            value="Recover"/></span>
+        </div>
+    </form>
+    -->
+</div>
+
+<script src="${marutiUrl}js/jquery.min.js"></script>
+<script src="${marutiUrl}js/maruti.login.js"></script>
 </body>
+
 </html>
