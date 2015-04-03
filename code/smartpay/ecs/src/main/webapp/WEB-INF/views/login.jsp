@@ -1,18 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@include file="taglib.jsp" %>
 <!DOCTYPE html>
+<%@include file="taglib.jsp" %>
 <html>
-
 <head>
-    <c:url var="marutiUrl" value="${rootURL}assets/vendor/maruti/"/>
-    <title>
-        <spring:message code="system.title"/>
-    </title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="${marutiUrl}css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="${marutiUrl}css/bootstrap-responsive.min.css"/>
-    <link rel="stylesheet" href="${marutiUrl}css/maruti-login.css"/>
+    <jsp:include page="_import.jsp"/>
+    <link rel="stylesheet" href="${rootURL}assets/css/login.css"/>
 </head>
 <body>
 <div class="col-md-6 col-md-offset-2">
@@ -27,8 +19,9 @@
         </div>
     </c:if>
 </div>
+
 <div id="logo">
-    <img src="${marutiUrl}img/login-logo.png" alt=""/>
+    <img src="${rootURL}assets/images/login-logo.png" alt=""/>
 </div>
 
 <div id="loginbox">
@@ -41,7 +34,7 @@
         <div class="control-group">
             <div class="controls">
                 <div class="main_input_box">
-                    <span class="add-on"><i class="icon-user"></i></span>
+                    <span class="add-on"><i class="glyphicon glyphicon-user"></i></span>
                     <input type="text" name="username" placeholder="Username"/>
                 </div>
             </div>
@@ -49,45 +42,44 @@
         <div class="control-group">
             <div class="controls">
                 <div class="main_input_box">
-                    <span class="add-on"><i class="icon-lock"></i></span>
+                    <span class="add-on"><i class="glyphicon glyphicon-lock"></i></span>
                     <input type="password" name="password" placeholder="Password"/>
                 </div>
             </div>
         </div>
 
         <div class="form-actions">
-            <!--
-            <span class="pull-left"><a href="#" class="flip-link btn btn-warning" id="to-recover">Lost
-                password?</a></span>  -->
             <span class="pull-right"><input type="submit" class="btn btn-success"
                                             value="Login"/></span>
         </div>
 
     </form>
-    <!--
-    <form id="recoverform" action="#" class="form-vertical">
-        <p class="normal_text">Enter your e-mail address below and we will send you instructions
-            <br/><font color="#FF6633">how to recover a password.</font></p>
-
-        <div class="controls">
-            <div class="main_input_box">
-                <span class="add-on"><i class="icon-envelope"></i></span><input type="text"
-                                                                                placeholder="E-mail address"/>
-            </div>
-        </div>
-
-        <div class="form-actions">
-            <span class="pull-left"><a href="#" class="flip-link btn btn-warning"
-                                       id="to-login">&laquo; Back to login</a></span>
-            <span class="pull-right"><input type="submit" class="btn btn-info"
-                                            value="Recover"/></span>
-        </div>
-    </form>
-    -->
 </div>
 
-<script src="${marutiUrl}js/jquery.min.js"></script>
-<script src="${marutiUrl}js/maruti.login.js"></script>
-</body>
+<script type="text/javascript">
+    $(document).ready(function () {
 
+        var login = $('#loginform');
+        var recover = $('#recoverform');
+        var speed = 400;
+
+        $('#to-recover').click(function () {
+
+            $("#loginform").slideUp();
+            $("#recoverform").fadeIn();
+        });
+        $('#to-login').click(function () {
+
+            $("#recoverform").hide();
+            $("#loginform").fadeIn();
+        });
+
+
+        $('#to-login').click(function () {
+
+        });
+    });
+</script>
+
+</body>
 </html>
