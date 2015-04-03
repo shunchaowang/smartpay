@@ -6,8 +6,9 @@
 <head>
     <jsp:include page="_import.jsp"/>
 </head>
-<body class="container">
+<body class="container-fluid">
 <jsp:include page="_header.jsp"/>
+<jsp:include page="_navbar.jsp"/>
 
 <div class="row" id="breadcrumb">
     <ol class="breadcrumb">

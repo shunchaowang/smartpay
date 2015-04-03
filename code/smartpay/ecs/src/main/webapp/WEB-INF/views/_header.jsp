@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
-<c:if test="${!noNavBar}">
-    <nav class="navbar navbar-default" role="navigation" id="nav-header">
-        <jsp:include page="_navbar.jsp"/>
-    </nav>
-    <!-- end navbar -->
-</c:if>
+    <div id="header" class="row">
+        <div class="col-sm-6">
+            <a href="${rootURL}"><spring:message code="application.name"/> </a>
+        </div>
+        <div class="col-sm-6">
+            <jsp:include page="_profile.jsp"/>
+        </div>
+    </div>
