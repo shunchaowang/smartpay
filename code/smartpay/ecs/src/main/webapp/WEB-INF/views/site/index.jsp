@@ -50,8 +50,6 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
-            /*"pagingType": "full_numbers",
-            "dom": '<""l>t<"F"fp>',*/
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",
