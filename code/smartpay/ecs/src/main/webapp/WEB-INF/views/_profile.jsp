@@ -6,7 +6,7 @@
         <li class="">
             <a href="${rootURL}logout">
                 <i class="glyphicon glyphicon-off"></i>
-                            <span class="test">
+                            <span class="text">
                 <spring:message code="user.logout.label"/>
                             </span>
             </a>

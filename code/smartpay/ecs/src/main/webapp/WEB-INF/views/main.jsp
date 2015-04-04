@@ -6,7 +6,7 @@
 <head>
     <jsp:include page="_import.jsp"/>
 </head>
-<body class="container-fluid">
+<body>
 <jsp:include page="_header.jsp"/>
 <jsp:include page="_navbar.jsp"/>
 
@@ -41,9 +41,11 @@
     </div>
     <!-- close of content-header -->
     <div class="container-fluid">
-
-        <jsp:include page="${_view}.jsp"/>
-
+        <div class="row-fluid">
+            <div class="span12">
+                <jsp:include page="${_view}.jsp"/>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row-fluid">
