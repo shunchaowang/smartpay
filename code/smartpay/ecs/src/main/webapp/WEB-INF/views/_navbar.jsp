@@ -14,7 +14,18 @@
 
 
         <ul>
-
+            <!--    HOME    -->
+            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                       href="#">
+                            <span><i class="glyphicon glyphicon-home"></i>
+                            11111<spring:message code="manage.label" arguments="${merchant}"/>
+                            <b class="caret"></b>
+                            </span>
+                    </a>
+                </li>
+            </sec:authorize>
             <!-- merchant management goes here -->
             <!-- merchant admin can view merchant detail -->
             <!-- merchant operator cannot see merchant nav -->

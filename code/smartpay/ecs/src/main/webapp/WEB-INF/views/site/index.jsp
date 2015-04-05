@@ -28,6 +28,7 @@
                 <c:if test="${domain.equals('FreezeList')}">
                     <th><spring:message code="action.operation.label"/></th>
                 </c:if>
+
                 <c:if test="${domain.equals('UnfreezeList')}">
                     <th><spring:message code="action.operation.label"/></th>
                 </c:if>
