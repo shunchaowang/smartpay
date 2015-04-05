@@ -10,7 +10,7 @@
         <h5><spring:message code="index.label" arguments="${entity}"/></h5>
     </div>
     <div class="widget-content nopadding">
-        <table class="table table-bordered data-table" id="site-table">
+        <table class="table table-bordered data-table">
             <thead>
             <tr>
                 <th><spring:message code="id.label"/></th>
@@ -44,13 +44,14 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var siteTable = $('#site-table').DataTable({
+        var siteTable = $('.data-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
             'processing': true,
             'serverSide': true,
             'paging': true,
+            'dom': '<"top"f>rt<"bottom"lip>',
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",
@@ -143,6 +144,7 @@
             ]
         });
 
+        $('select').select2();
 
         // add live handler for remove button
         siteTable.on('click', 'button[type=button][name=delete-button]', function (event) {

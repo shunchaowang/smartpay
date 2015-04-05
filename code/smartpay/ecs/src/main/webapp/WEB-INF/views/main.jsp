@@ -26,6 +26,7 @@
     <div id="content-header">
         <div id="breadcrumb">
             <a href="${rootURL}">
+                <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
             <c:if test="${domain != null}">
