@@ -6,7 +6,7 @@
 
 <div class="widget-box">
     <div class="widget-title">
-        <span class="icon"><i class="icon-th"></i> </span>
+        <span class="icon"><i class="icon icon-th"></i> </span>
         <h5><spring:message code="index.label" arguments="${entity}"/></h5>
     </div>
     <div class="widget-content nopadding">
@@ -51,7 +51,9 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
-            'dom': '<"top"f>rt<"bottom"lip>',
+            "paginationType": "full_numbers",
+            "jQueryUI": true,
+            'dom': '<""f>rt<""lp>',
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",
