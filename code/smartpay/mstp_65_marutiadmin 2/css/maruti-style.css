@@ -197,8 +197,8 @@ a:hover {
 	background-image: url('../img/breadcrumb.png');
 	background-position: center right;
 	background-repeat: no-repeat;
-	font-size: 11px;
-	color: #666666;
+	font-size: 14px;
+	color: #000000;
 }
 #breadcrumb a:hover {
 	color: #333333;

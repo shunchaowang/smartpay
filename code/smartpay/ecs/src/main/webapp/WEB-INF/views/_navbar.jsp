@@ -16,8 +16,8 @@
         <ul>
             <!--    HOME    -->
             <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                <li class="submenu">
+                    <a role="button" data-toggle="dropdown" data-target="#"
                        href="#">
                             <span><i class="glyphicon glyphicon-home"></i>
                             11111<spring:message code="manage.label" arguments="${merchant}"/>

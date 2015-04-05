@@ -14,7 +14,7 @@ a:hover {
 
 /* Header */
 #header {
-    height: 60px;
+    height: 64px;
     position: relative;
     width: 100%;
     z-index: -9;
@@ -38,17 +38,17 @@ a:hover {
 .fr{ float:right}
 
 /* Top user navigation */
-#sidebar{ width:100%; background:none;  position:absolute; clear:both; top:65px;}
+#sidebar{ width:100%; background:none;  position:absolute; clear:both; top:65px; letter-spacing: 1px;height: 40px}
 #sidebar > ul{ margin:0px; padding:0px; width:100%; display:block; z-index:999;} 
 #sidebar > ul > li { list-style-type:none; float:left; display:block; margin:0px; border-right:1px dotted #6b6b6b; position:relative; padding:10px; cursor:pointer} 
 #sidebar > ul > li:hover ul { display:block; } 
-#sidebar > ul > li:hover { background-color:#2b2b2b;} 
+#sidebar > ul > li:hover { background-color:#2b2b2b;}
 #sidebar > ul > li:hover a{ background:none;}
 #sidebar > ul li ul { margin:0px; padding:0px; display:none; z-index:999;  position:absolute; border-radius:3px; left:0px; top:40px;  background:#2b2b2b; min-width:200px;} 
 #sidebar > ul li ul li { list-style-type:none; margin:0px; font-size:11px;line-height:30px;  }
 #sidebar > ul li ul li a { display:block; padding:5px 10px; color:#fff; text-decoration:none; font-weight:bold; } 
 #sidebar > ul li ul li:hover a{ background-color:#606060; border-radius:3px;} 
-#sidebar > ul li span { cursor:pointer; margin:0px 2px 0 5px; font-weight:bold; color:#fff; font-size:11px; }
+#sidebar > ul li span { cursor:pointer; margin:0px 2px 0 5px; font-weight:lighter; color:#fff; font-size:14px; }
 #sidebar > ul li a i{ background-image: url("../images/glyphicons-halflings-white.png");     margin-top:4px;    vertical-align: top;}
 #my_menu_input{ display:none;}
 #user-nav {
@@ -163,21 +163,23 @@ a:hover {
 }
 /* Breadcrumb */
 #breadcrumb {
+    height: 38px;
 	background-color: #e5e5e5;
 	border-bottom: 1px solid #d6d6d6;
 	padding-left: 10px;
 }
 #breadcrumb a {
-	padding: 8px 20px 8px 10px;
+	padding: 11px 20px 10px 10px;
 	display: inline-block;
 	background-image: url('../images/breadcrumb.png');
 	background-position: center right;
 	background-repeat: no-repeat;
-	font-size: 11px;
+	font-size: 13px;
 	color: #666666;
 }
 #breadcrumb a:hover {
 	color: #333333;
+    text-decoration: underline;
 }
 #breadcrumb a:last-child {
 	background-image:none;
@@ -511,7 +513,8 @@ form {
 		margin-right: 0;
 		left: 30%;
 	}
-	
+
+/*
 #sidebar { float: none; width: 100% !important;	display:block; position:relative; top:0px;}
 #sidebar > ul{ margin:0px; padding:0px; width:100%; display:block; z-index:999; position:relative} 
 #sidebar > ul > li { list-style-type:none; display:block; border-bottom:1px solid #333; border-top:1px solid #5d5d5d; float:none !important; margin:0px; border-left:1px dotted #6b6b6b; position:relative; padding:10px; cursor:pointer} 
@@ -526,6 +529,8 @@ form {
 #sidebar > ul li a i{ background-image: url("../images/glyphicons-halflings-white.png");  margin-top:4px;  vertical-align: top;}
 #sidebar > a { padding: 9px 20px 9px 15px; display: block !important; text-transform: uppercase; color: #eeeeee; float:none !important;	font-size:11px;	}
 #sidebar > ul > li > a { padding:5px;	display:block; 	color: #AAAAAA;}
+*/
+
 .widget-title .buttons > .btn {
 		width: 11px;
 		white-space: nowrap;
