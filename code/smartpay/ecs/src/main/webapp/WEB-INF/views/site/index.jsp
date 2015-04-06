@@ -10,7 +10,7 @@
         <h5><spring:message code="index.label" arguments="${entity}"/></h5>
     </div>
     <div class="widget-content nopadding">
-        <table class="table table-bordered data-table">
+        <table class="table display table-bordered data-table">
             <thead>
             <tr>
                 <th><spring:message code="id.label"/></th>

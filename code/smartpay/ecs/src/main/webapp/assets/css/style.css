@@ -996,6 +996,20 @@ table.dataTable th.sorting_asc,
 table.dataTable th.sorting_desc {
     background: none;
 }
+/*
+ * Sort arrow icon positioning
+ */
+table.display thead th div.DataTables_sort_wrapper {
+    position: relative;
+    padding-right: 20px;
+}
+
+table.display thead th div.DataTables_sort_wrapper span {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+    right: 0;
+}
 
 .table.with-check tr th:first-child, .table.with-check tr td:first-child {
     width: 10px;
