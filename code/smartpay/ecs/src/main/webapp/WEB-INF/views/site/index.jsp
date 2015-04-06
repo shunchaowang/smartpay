@@ -85,11 +85,11 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
-                                '<button class="mybuttons" type="button" name="edit-button" class="btn btn-default"'
+                                '<button type="button" name="edit-button" '
                                 + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button></a>' + ' '
-                                + '<button class="mybuttons" type="button" name="delete-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                + '<button type="button" name="delete-button"'
+                                + ' value="' + row['id'] + '">' +
                                 '<spring:message code="action.delete.label"/>' +
                                 '</button>';
                     }
