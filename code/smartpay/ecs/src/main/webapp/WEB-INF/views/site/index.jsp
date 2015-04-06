@@ -53,7 +53,7 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""f>rt<"F"lp>',
+            'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",

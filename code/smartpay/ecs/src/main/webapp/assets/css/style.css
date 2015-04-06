@@ -884,9 +884,8 @@ span.icon .checker {
 .dataTables_length {
 	color: #878787;
 	margin: 7px 5px 0;
-	/*position: absolute;
-	right: 200px;
-	top: -35px;*/
+	position: relative;
+	bottom: 5px;
 }
 .dataTables_length div {
 	vertical-align: middle;
@@ -897,7 +896,7 @@ span.icon .checker {
     margin: 7px 5px 0;
     position: absolute;
     right: 200px;
-    top: -35px;
+    top: -45px;
 }
 .dataTables_info div {
     vertical-align: middle;
@@ -925,6 +924,7 @@ span.icon .checker {
 }
 
 .dataTables_paginate .ui-button, .pagination.alternate li a {
+
     font-size: 12px;
     padding: 4px 10px !important;
     border-style: solid;
@@ -937,6 +937,8 @@ span.icon .checker {
 
     color: #333333;
     text-shadow: 0 1px 0 #ffffff;
+    position: relative;
+    bottom: 10px;
 }
 
 .dataTables_paginate .ui-button:hover, .pagination.alternate li a:hover {
