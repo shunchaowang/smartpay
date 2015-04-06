@@ -224,12 +224,24 @@ public interface GenericQueryService<T extends Serializable, PK>
      *                 it means no criteria on exact equals if t is null.
      * @param search   instance wildcard search keyword, like name likes %xx%, etc.
      *                 it means no criteria with wildcard search if search is null.
-     * @param start    first position of the result.
-     * @param length   max record of the result.
      * @param order    order by field, default is id.
      * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
     List<T> findByCriteria(String search,
                            String order, ResourceProperties.JpaOrderDir orderDir);
+
+    /**
+     * Dynamic search like grails findBy... without pagination.
+     * We create a dynamic criteria, like grails createCriteria() {}.
+     * DataTables dynamic ordering is also supported.
+     * To support DataTables pagination we have the start for the offset of the search, and
+     * length for the max results we want to return.
+     *
+     * @param t contains all criteria for equals, like name equals xx and active equals
+     *          true, etc.
+     *          it means no criteria on exact equals if t is null.
+     * @return
+     */
+    List<T> findByCriteria(T t);
 }

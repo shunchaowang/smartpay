@@ -261,4 +261,9 @@ public abstract class GenericQueryServiceImpl<T extends Serializable, PK>
 
         return findByCriteria(null, search, start, length, null, null);
     }
+
+    @Override
+    public List<T> findByCriteria(T t) {
+        return findByCriteria(t, null, null, null, null);
+    }
 }

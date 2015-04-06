@@ -1,27 +1,102 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.lambo.smartpay.ecs.web.controller.UserResource" %>
 <!DOCTYPE html>
 <%@include file="taglib.jsp" %>
+<div class="row-fluid">
+    <!-- order count by site -->
+    <div class="col-sm-4">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="orderCountSummary.label"/></h5>
+                ${merchantCommand.orderCount}
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table display table-bordered data-table" id="count-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="id.label"/></th>
+                        <th><spring:message code="identity.label"/></th>
+                        <th><spring:message code="name.label"/></th>
+                        <th><spring:message code="count.label"/></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- order amount by site -->
+    <div class="col-sm-4">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="orderAmountSummary.label"/></h5>
+                ${merchantCommand.orderAmount}
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table display table-bordered data-table" id="amount-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="id.label"/></th>
+                        <th><spring:message code="identity.label"/></th>
+                        <th><spring:message code="name.label"/></th>
+                        <th><spring:message code="amount.label"/></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- order amount by currency -->
+    <div class="col-sm-4">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="orderAmountSummary.label"/></h5>
+                ${merchantCommand.orderAmount}
+            </div>
+            <div class="widget-content nopadding">
+                <table class="table display table-bordered data-table" id="currency-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="currency.label"/></th>
+                        <th><spring:message code="amount.label"/></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<c:set var="username" value="<%=UserResource.getCurrentUser().getUsername()%>" scope="session"/>
-<h2>Welcome ${username}
-</h2>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#count-table').DataTable({
+            'language': {
+                'url': "${dataTablesLanguage}"
+            },
+            'processing': false,
+            'serverSide': false,
+            'info': false,
+            'paging': false,
+            'searching': false,
+            'ordering': false,
 
-<h2>Authorities <%=UserResource.getCurrentUser().getAuthorities()%>
-</h2>
 
-<h2>Controller: ${controller}</h2>
+            'ajax': {
+                'url': "${rootURL}listOrderCount",
+                'type': "GET",
+                'dataType': 'json'
+            },
 
-<h2>Action: ${action}</h2>
-
-<h2>View: ${_view}</h2>
-
-<h3>Name: <sec:authentication property="name"/></h3>
-
-<h3>
-    <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-        <a href="${rootURL}admin">Administration</a>
-    </sec:authorize>
-</h3>
-
-<p><a href="${rootURL}logout">Logout</a></p>
+            'columnDefs': [
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
+                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
+                {'name': 'name', 'targets': 2, 'data': 'siteName'},
+                {'name': 'count', 'targets': 3, 'data': 'orderCount'}
+            ]
+        });
+    });
+</script>

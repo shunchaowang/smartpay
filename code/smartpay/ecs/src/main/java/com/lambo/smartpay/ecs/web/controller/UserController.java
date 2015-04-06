@@ -93,35 +93,6 @@ public class UserController {
         return "main";
     }
 
-    /*
-    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public
-    @ResponseBody
-    String list(@RequestParam(value = "search[value]") String search,
-                @RequestParam(value = "start") int start,
-                @RequestParam(value = "length") int length,
-                @RequestParam(value = "order[0][column]") String order,
-                @RequestParam(value = "order[0][dir]") String orderDir) {
-
-        logger.debug("search: " + search);
-        logger.debug("start: " + start);
-        logger.debug("length: " + length);
-        logger.debug("order: " + order);
-        logger.debug("orderDir: " + orderDir);
-        logger.debug("OrderDir: " + StringUtils.upperCase(orderDir));
-
-        List<User> users = userService.findByCriteria(search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(StringUtils.upperCase(orderDir)));
-
-        DataTablesResultSet<User> result = new DataTablesResultSet<>();
-        result.setData(users);
-        result.setRecordsFiltered(1);
-        result.setRecordsTotal(1);
-        return result.toString();
-    }
-    */
-
-
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public
     @ResponseBody

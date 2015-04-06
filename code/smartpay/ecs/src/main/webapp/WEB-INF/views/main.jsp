@@ -42,11 +42,7 @@
     </div>
     <!-- close of content-header -->
     <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <jsp:include page="${_view}.jsp"/>
-            </div>
-        </div>
+        <jsp:include page="${_view}.jsp"/>
     </div>
 </div>
 <div class="row-fluid">
