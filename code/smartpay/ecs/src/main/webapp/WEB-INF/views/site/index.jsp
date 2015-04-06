@@ -146,8 +146,6 @@
             ]
         });
 
-        $('select').select2();
-
         // add live handler for remove button
         siteTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
