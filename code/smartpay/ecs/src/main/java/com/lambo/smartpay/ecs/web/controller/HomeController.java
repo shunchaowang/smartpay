@@ -9,6 +9,7 @@ import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.vo.MerchantOrderCommand;
+import com.lambo.smartpay.ecs.web.vo.PasswordCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import org.slf4j.Logger;
@@ -106,6 +107,15 @@ public class HomeController {
         result.setRecordsFiltered(sites.size());
 
         return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public String changePassword(Model model) {
+
+        PasswordCommand passwordCommand = new PasswordCommand();
+        model.addAttribute("passwordCommand", passwordCommand);
+        model.addAttribute("action", "changePassword");
+        return "main";
     }
 
 

@@ -88,7 +88,7 @@
     $(document).ready(function () {
         $('#new-merchant-form').validate({
             rules: {
-                indentity: {required: true, minlength: 3, maxlength: 32},
+                identity: {required: true, minlength: 3, maxlength: 32},
                 name: {required: true, minlength: 3, maxlength: 32},
                 url: {required: true, minlength: 3, maxlength: 128},
                 remank: {required: false, minlength: 3, maxlength: 512}
