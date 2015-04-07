@@ -71,17 +71,17 @@
             rules: {
                 currentPassword: {
                     required: true,
-                    minlength: 6,
+                    minlength: 5,
                     maxlength: 32
                 },
                 password: {
                     required: true,
-                    minlength: 6,
+                    minlength: 5,
                     maxlength: 32
                 },
                 confirmPassword: {
                     required: true,
-                    minlength: 6,
+                    minlength: 5,
                     maxlength: 32,
                     equalTo: "#password"
                 }

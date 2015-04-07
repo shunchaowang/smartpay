@@ -7,20 +7,10 @@
     <jsp:include page="_import.jsp"/>
 </head>
 <body>
+
 <jsp:include page="_header.jsp"/>
 <jsp:include page="_navbar.jsp"/>
 
-<div class='row' id='notification'>
-    <c:if test="${not empty message}">
-        <div class="alert alert-danger alert-dismissable" role="alert">
-            <button type="button" class="close" data-dismiss="alert">
-                <span aria-hidden="true">&times;</span>
-                <span class="sr-only"><spring:message code="action.close.label"/> </span>
-            </button>
-                ${message}
-        </div>
-    </c:if>
-</div>
 <!-- end of notification -->
 <div id="content">
     <div id="content-header">
@@ -39,6 +29,17 @@
                 </a>
             </c:if>
         </div>
+    </div>
+    <div class='col-sm-12' id='notification'>
+        <c:if test="${not empty message}">
+            <div class="alert alert-danger alert-dismissable" role="alert">
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only"><spring:message code="action.close.label"/> </span>
+                </button>
+                    ${message}
+            </div>
+        </c:if>
     </div>
     <!-- close of content-header -->
     <div class="container-fluid">

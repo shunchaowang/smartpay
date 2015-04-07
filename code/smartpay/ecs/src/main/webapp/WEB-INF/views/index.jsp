@@ -3,14 +3,14 @@
 <%@include file="taglib.jsp" %>
 <div class="row-fluid">
     <!-- order count by site -->
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <div class="widget-box">
             <div class="widget-title">
                 <span class="icon"><i class="icon icon-th"></i> </span>
                 <h5><spring:message code="orderCountSummary.label"/></h5>
                 ${merchantCommand.orderCount}
             </div>
-            <div class="widget-content nopadding">
+            <div class="widget-content">
                 <table class="table display table-bordered data-table" id="count-table">
                     <thead>
                     <tr>
@@ -37,14 +37,14 @@
         </div>
     </div>
     <!-- order amount by site -->
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <div class="widget-box">
             <div class="widget-title">
                 <span class="icon"><i class="icon icon-th"></i> </span>
                 <h5><spring:message code="orderAmountSummary.label"/></h5>
                 ${merchantCommand.orderAmount}
             </div>
-            <div class="widget-content nopadding">
+            <div class="widget-content">
                 <table class="table display table-bordered data-table" id="amount-table">
                     <thead>
                     <tr>
@@ -59,15 +59,18 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="row-fluid">
     <!-- order amount by currency -->
-    <div class="col-sm-4">
+    <div class="col-sm-6">
         <div class="widget-box">
             <div class="widget-title">
                 <span class="icon"><i class="icon icon-th"></i> </span>
                 <h5><spring:message code="orderAmountSummary.label"/></h5>
                 ${merchantCommand.orderAmount}
             </div>
-            <div class="widget-content nopadding">
+            <div class="widget-content">
                 <table class="table display table-bordered data-table" id="currency-table">
                     <thead>
                     <tr>
