@@ -425,6 +425,11 @@ public class MerchantController {
             throw new IntervalServerException("500", e.getMessage());
         }
 
+        merchant = UserResource.getCurrentUser().getMerchant();
+        merchantCommand = createMerchantCommand(merchant);
+        model.addAttribute("merchantCommand", merchantCommand);
+        model.addAttribute("action", "edit");
+
         return "main";
     }
 

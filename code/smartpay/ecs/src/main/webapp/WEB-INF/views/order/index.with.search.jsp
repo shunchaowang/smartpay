@@ -6,6 +6,15 @@
 
 <div class="row-fluid">
     <div class="col-sm-12">
+        <div class="col-sm-4 pull-right">
+            <a href="${rootURL}${controller}/search">
+                <h3>
+                    <button type="button" class="btn btn-default pull-right">
+                        <spring:message code="action.advanceSearch.label"/>
+                    </button>
+                </h3>
+            </a>
+        </div>
         <div class="widget-box">
             <div class="widget-title">
                 <span class="icon"><i class="icon icon-th"></i> </span>
@@ -90,7 +99,7 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '">' +
-                                '<button class="tableButton" type="button" name="show-button"'
+                                '<button type="button" name="show-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>'
                     }

@@ -68,10 +68,7 @@
                             </div>
                         </div>
                         <!-- buttons -->
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-success">Save</button>
-                        </div>
-                        <div class='form-actions'>
+                        <div class='form-actions col-lg-offset-2'>
                             <button class='btn btn-success' id='create-button' type="submit">
                                 <spring:message code='action.save.label'/>
                             </button>

@@ -11,8 +11,8 @@
                 <span class="icon"><i class="icon icon-th"></i> </span>
                 <h5><spring:message code="index.label" arguments="${entity}"/></h5>
             </div>
-            <div class="widget-content nopadding">
-                <table class="table display table-bordered data-table">
+            <div class="widget-content">
+                <table class="table display table-bordered data-table" id="site-table">
                     <thead>
                     <tr>
                         <th><spring:message code="id.label"/></th>
@@ -87,12 +87,13 @@
                 {
                     'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                        return '<a href="' + "${rootURL}${controller}" +
+                                '/edit/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="edit-button" '
+                                '<button class="tableButton" type="button" name="edit-button" '
                                 + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button></a>' + ' '
-                                + '<button type="button" name="delete-button"'
+                                + '<button class="tableButton" type="button" name="delete-button"'
                                 + ' value="' + row['id'] + '">' +
                                 '<spring:message code="action.delete.label"/>' +
                                 '</button>';

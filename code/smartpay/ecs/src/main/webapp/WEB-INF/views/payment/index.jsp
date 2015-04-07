@@ -10,8 +10,8 @@
                 <span class="icon"><i class="icon icon-th"></i> </span>
                 <h5><spring:message code="index.label" arguments="${entity}"/></h5>
             </div>
-            <div class="widget-content nopadding">
-                <table class="display cell-border" id="payment-table">
+            <div class="widget-content">
+                <table class="table display table-bordered data-table"  id="payment-table">
                     <thead>
                     <tr>
                         <th><spring:message code="id.label"/></th>
@@ -45,6 +45,11 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
+            "paginationType": "full_numbers",
+            "jQueryUI": true,
+            'dom': '<""if>rt<"F"lp>',
+
+
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",
@@ -97,17 +102,15 @@
                         false,
                     'data': 'paymentTypeName'
                 },
-                <c:if test="${domain.equals('paymentEdit')}">
                 {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                        return '<a href="' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
+                                '<button class="tableButton" type="button" name="show-button"'
+                                + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>'
                     }
-                </c:if>
             ]
         });
     });
