@@ -539,6 +539,7 @@ form {
 .form-horizontal .form-actions {
     margin-top: 0;
     margin-bottom: 0;
+    height: 40px;
 }
 
 .help-block, .help-inline {

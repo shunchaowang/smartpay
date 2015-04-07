@@ -3,36 +3,37 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="row">
-    <div class="col-sm-6">
-        <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
+<div class="row-fluid">
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+            </div>
+            <div class="widget-content nopadding">
+                <table class="display cell-border" id="payment-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="id.label"/></th>
+                        <th><spring:message code="orderNumber.label"/></th>
+                        <th><spring:message code="bankTransactionNumber.label"/></th>
+                        <th><spring:message code="amount.label"/></th>
+                        <th><spring:message code="currency.label"/></th>
+                        <th><spring:message code="createdTime.label"/></th>
+                        <th><spring:message code="returnCode.label"/></th>
+                        <th><spring:message code="paymentStatusName.label"/></th>
+                        <th><spring:message code="paymentTypeName.label"/></th>
+
+                        <c:if test="${domain.equals('paymentEdit')}">
+                            <th><spring:message code="action.operation.label"/></th>
+                        </c:if>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <!-- end of table title -->
-</div>
-<!-- end of class row -->
-<br/>
-
-<div class="row">
-    <table class="display cell-border" id="payment-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="orderNumber.label"/></th>
-            <th><spring:message code="bankTransactionNumber.label"/></th>
-            <th><spring:message code="amount.label"/></th>
-            <th><spring:message code="currency.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="returnCode.label"/></th>
-            <th><spring:message code="paymentStatusName.label"/></th>
-            <th><spring:message code="paymentTypeName.label"/></th>
-
-            <c:if test="${domain.equals('paymentEdit')}">
-                <th><spring:message code="action.operation.label"/></th>
-            </c:if>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 </div>
 
 <script type="text/javascript">
@@ -105,7 +106,7 @@
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button></a>'
-                }
+                    }
                 </c:if>
             ]
         });

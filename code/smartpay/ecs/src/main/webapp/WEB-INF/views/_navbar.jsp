@@ -18,9 +18,9 @@
             <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
                 <li class="submenu">
                     <a role="button" data-toggle="dropdown" data-target="#"
-                       href="#">
-                            <span><i class="glyphicon glyphicon-home"></i>
-                            11111<spring:message code="manage.label" arguments="${merchant}"/>
+                       href="#"><i class="icon icon-home"></i>
+                            <span>
+                            <spring:message code="home.label" arguments="${merchant}"/>
                             <b class="caret"></b>
                             </span>
                     </a>
@@ -33,7 +33,7 @@
             <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
                 <li class="dropdown">
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                       href="#">
+                       href="#"><i class="icon icon-pencil"></i>
                             <span>
                             <spring:message code="manage.label" arguments="${merchant}"/>
                             <b class="caret"></b>
@@ -63,7 +63,7 @@
 
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#">
+                   href="#"><i class="icon icon-pencil"></i>
                             <span>
                     <spring:message code="manage.label" arguments="${merchant}"/>
                     <b class="caret"></b>
@@ -105,11 +105,10 @@
             -->
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#">
+                   href="#"><i class="icon icon-th"></i>
                             <span>
-                    <spring:message code="manage.label" arguments="${site}"/>
+                    <spring:message code="manage.label" arguments="${site}"/><b class="caret"></b>
                             </span>
-                    <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
