@@ -119,7 +119,7 @@
 
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#"><i class="icon icon-search"></i>
+                   href="#"><i class="icon icon-refresh"></i>
                             <span>
                     <spring:message code="transaction.label"/>
                     <b class="caret"></b>
@@ -147,7 +147,7 @@
 
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#"><i class="icon icon-search"></i>
+                   href="#"><i class="icon icon-cog"></i>
                             <span>
                     <spring:message code="user.setting.label"/>
                     <b class="caret"></b>
