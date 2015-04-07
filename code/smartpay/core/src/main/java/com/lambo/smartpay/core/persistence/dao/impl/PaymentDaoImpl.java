@@ -176,7 +176,8 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
     @Override
     public Boolean isBlank(Payment payment) {
         return payment == null || payment.getId() == null && payment.getActive() == null &&
-                payment.getPaymentStatus() == null && payment.getCurrency() == null;
+                payment.getPaymentStatus() == null && payment.getCurrency() == null
+                && payment.getOrder() == null;
     }
 
     /**
