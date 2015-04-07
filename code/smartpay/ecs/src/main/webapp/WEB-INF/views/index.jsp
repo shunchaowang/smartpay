@@ -14,10 +14,21 @@
                 <table class="table display table-bordered data-table" id="count-table">
                     <thead>
                     <tr>
-                        <th><spring:message code="id.label"/></th>
-                        <th><spring:message code="identity.label"/></th>
-                        <th><spring:message code="name.label"/></th>
-                        <th><spring:message code="count.label"/></th>
+                        <th>
+                            <spring:message code="Site.label"/>
+                            <spring:message code="id.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="Site.label"/>
+                            <spring:message code="identity.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="Site.label"/>
+                            <spring:message code="name.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="count.label"/>
+                        </th>
                     </tr>
                     </thead>
                     <tbody></tbody>
