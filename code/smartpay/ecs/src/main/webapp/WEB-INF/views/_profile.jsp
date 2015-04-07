@@ -3,14 +3,33 @@
 <!--top-Header-menu-->
 <div id="user-nav" class="navbar navbar-inverse">
     <ul class="nav">
-        <li class="">
-            <a href="${rootURL}logout">
-                <i class="glyphicon glyphicon-off"></i>
-                            <span class="text">
-                <spring:message code="user.logout.label"/>
+        <sec:authorize access="isAuthenticated()">
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                   href="#">
+                    <span><i class="icon icon-user"></i>
+                    <sec:authentication property="principal.username"/>
+                    </span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}logout">
+                            <span><i class="icon icon-off"></i>
+                            <spring:message code="user.logout.label"/>
                             </span>
-            </a>
-        </li>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}changePassword">
+                            <span><i class="icon icon-briefcase"></i>
+                                <spring:message code="user.change.password.label"/>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </sec:authorize>
     </ul>
 </div>
 

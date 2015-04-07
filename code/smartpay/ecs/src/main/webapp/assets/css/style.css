@@ -162,7 +162,7 @@ a:active {
     position: absolute;
     right: 0px;
     top: 5px;
-    z-index: 20;
+    z-index: 999;
     margin: 0;
     border-left: 1px solid #3d3a37;
 }
@@ -196,7 +196,7 @@ a:active {
 }
 
 #user-nav > ul > li > a:hover, #user-nav > ul > li.open > a {
-    color: #ffffff;
+    color: #606060;
 }
 
 #user-nav > ul > li > a > i, #sidebar li a i {

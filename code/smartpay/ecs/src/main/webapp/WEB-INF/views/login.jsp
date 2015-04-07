@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="${rootURL}assets/css/login.css"/>
 </head>
 <body>
-<div class="col-md-6 col-md-offset-2">
+<div class="col-sm-12">
     <c:if test="${param.error != null}">
         <div class="alert alert-danger">
             Invalid UserName and Password.
