@@ -1125,11 +1125,14 @@ table.display thead th div.DataTables_sort_wrapper span {
     right: 0;
 }
 
+/** we want sorting icon */
+/*
 table.dataTable th.sorting,
 table.dataTable th.sorting_asc,
 table.dataTable th.sorting_desc {
     background: none;
 }
+*/
 
 .table.with-check tr th:first-child, .table.with-check tr td:first-child {
     width: 10px;

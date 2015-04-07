@@ -101,7 +101,8 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
             query.where(predicate);
         }
         TypedQuery<Long> typedQuery = entityManager.createQuery(query);
-        logger.debug("countByCriteria query is " + typedQuery);
+        logger.debug("countByCriteria query is "
+                + typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
@@ -200,7 +201,8 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         }
         if (order.getId() == null && StringUtils.isBlank(order.getMerchantNumber())
                 && order.getOrderStatus() == null && order.getActive() == null
-                && order.getCurrency() == null && order.getCustomer() == null) {
+                && order.getCurrency() == null && order.getCustomer() == null
+                && order.getSite() == null) {
             return true;
         }
         return false;
