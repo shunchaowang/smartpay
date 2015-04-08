@@ -3,12 +3,13 @@ package com.lambo.smartpay.ecs.web.vo;
 /**
  * Created by swang on 4/6/2015.
  */
-public class MerchantOrderCommand {
+public class HomeCommand {
 
     private Long merchantId;
     private String merchantName;
     private String merchantIdentity;
 
+    private Long siteCount;
     private Long orderCount;
     private Double orderAmount;
 
@@ -34,6 +35,14 @@ public class MerchantOrderCommand {
 
     public void setMerchantIdentity(String merchantIdentity) {
         this.merchantIdentity = merchantIdentity;
+    }
+
+    public Long getSiteCount() {
+        return siteCount;
+    }
+
+    public void setSiteCount(Long siteCount) {
+        this.siteCount = siteCount;
     }
 
     public Long getOrderCount() {

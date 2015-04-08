@@ -8,7 +8,7 @@
 body {
     overflow-x: hidden;
     margin-top: -9px;
-    margin-bottom:50px;
+    margin-bottom: 50px;
 }
 
 a:link {
@@ -31,10 +31,11 @@ a:active {
     color: #F77825;
 }
 
-.tableButtonA{
+.tableButtonA {
     color: #000000;
     text-decoration: none;
 }
+
 /* Header */
 #header {
     height: 64px;
@@ -54,8 +55,10 @@ a:active {
 }
 
 #header h2 {
-    color: #ffffff; !important;
-    font-size: px; !important;
+    color: #ffffff;
+!important;
+    font-size: px;
+!important;
 }
 
 #header h1 a {
@@ -379,10 +382,10 @@ a:active {
     padding: 10px 0;
     background: #2B2927;
     position: fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    margin-bottom:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-bottom: 0;
 }
 
 #tooltip {
@@ -942,7 +945,7 @@ form {
 @media (max-width: 767px) {
     body {
         padding: 0 !important;
-        margin-bottom:50px;
+        margin-bottom: 50px;
     }
 
     .container-fluid {
@@ -1190,4 +1193,116 @@ table.dataTable th.sorting_desc {
     text-align: center;
     vertical-align: middle;
     color: #606060;
+}
+
+/** stats box, pie and graph **/
+.stat-boxes, .stats-plain {
+    display: inline-block;
+    list-style: none outside none;
+    margin: 20px 0 10px;
+    text-align: center;
+}
+
+.stat-boxes2 {
+    background: none;
+    width: 100%;
+    padding: 0px;
+    margin: 0 auto;
+    position: relative;
+    top: 13px;
+    right: 10px;
+}
+
+.stats-plain {
+    width: 100%;
+}
+
+.stat-boxes li {
+    background: #F6F6F6;
+    border: 1px solid #D5D5D5;
+    box-shadow: 0 1px 0 0 #FFFFFF inset, 0 1px 0 rgba(255, 255, 255, 0.4);
+    display: inline-block;
+    line-height: 18px;
+    margin: 0 10px 10px;
+    padding: 0 10px;
+}
+
+.stat-boxes li a:hover, .stat-boxes li:hover, .quick-actions li:hover {
+    background: #fff;
+}
+
+.stats-plain li {
+    padding: 0 30px;
+    display: inline-block;
+    margin: 0 10px 20px;
+}
+
+.stats-plain li {
+    padding: 0 30px;
+    display: inline-block;
+    margin: 0 10px 20px;
+}
+
+.stats-plain li h4 {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.stats-plain li span {
+    font-size: 14px;
+    color: #555555;
+}
+
+.stat-boxes .left, .stat-boxes .right {
+    text-shadow: 0 1px 0 #fff;
+    float: left;
+}
+
+.stat-boxes .left {
+    border-right: 1px solid #DCDCDC;
+    box-shadow: 1px 0 0 0 #FFFFFF;
+    font-size: 10px;
+    font-weight: bold;
+    margin-right: 10px;
+    padding: 10px 14px 6px 4px;
+}
+
+.stat-boxes .right {
+    color: #666666;
+    font-size: 12px;
+    padding: 9px 10px 7px 0;
+    text-align: center;
+    width: 70px;
+}
+
+.stat-boxes .left span, .stat-boxes .right strong {
+    display: block;
+}
+
+.stat-boxes .right strong {
+    font-size: 26px;
+    margin-bottom: 3px;
+    margin-top: 6px;
+}
+
+.stat-boxes .peity_bar_good, .stat-boxes .peity_line_good {
+    color: #459D1C;
+}
+
+.stat-boxes .peity_bar_neutral, .stat-boxes .peity_line_neutral {
+    color: #757575;
+}
+
+.stat-boxes .peity_bar_bad, .stat-boxes .peity_line_bad {
+    color: #BA1E20;
+}
+
+.stats-plain {
+
+}
+
+/* Charts & graphs **/
+.chart, .pie, .bars {
+    height: 300px;
+    max-width: 100%;
 }

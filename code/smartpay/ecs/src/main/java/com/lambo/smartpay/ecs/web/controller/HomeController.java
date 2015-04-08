@@ -3,6 +3,7 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.Currency;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Site;
@@ -14,9 +15,11 @@ import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
-import com.lambo.smartpay.ecs.web.vo.MerchantOrderCommand;
+import com.lambo.smartpay.ecs.web.vo.HomeCommand;
 import com.lambo.smartpay.ecs.web.vo.PasswordCommand;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderAmount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCount;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCurrency;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +30,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -69,10 +73,14 @@ public class HomeController {
             return "403";
         }
         Merchant merchant = currentUser.getMerchant();
-        MerchantOrderCommand command = new MerchantOrderCommand();
+        HomeCommand command = new HomeCommand();
         command.setMerchantId(merchant.getId());
         command.setMerchantName(merchant.getName());
         command.setMerchantIdentity(merchant.getIdentity());
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        Long siteCount = siteService.countByCriteria(siteCriteria);
+        command.setSiteCount(siteCount);
         Order orderCriteria = new Order();
         Site site = new Site();
         site.setMerchant(merchant);
@@ -86,7 +94,11 @@ public class HomeController {
         for (Order order : orders) {
             amount += order.getAmount();
         }
-        command.setOrderAmount(amount);
+        Locale locale = LocaleContextHolder.getLocale();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
+        decimalFormat.applyPattern("###.##");
+        command.setOrderAmount(Double.valueOf(decimalFormat.format(amount)));
         model.addAttribute("merchantCommand", command);
 
         return "main";
@@ -123,6 +135,95 @@ public class HomeController {
         result.setData(counts);
         result.setRecordsTotal(sites.size());
         result.setRecordsFiltered(sites.size());
+
+        return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/listOrderAmount", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listOrderAmount() {
+
+        SecurityUser currentUser = UserResource.getCurrentUser();
+        if (currentUser == null) {
+            return "403";
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
+        decimalFormat.applyPattern("###.##");
+
+        // find all site, and get count based on site
+        Site site = new Site();
+        site.setMerchant(currentUser.getMerchant());
+
+        List<Site> sites = siteService.findByCriteria(site);
+        List<DataTablesOrderAmount> amounts = new ArrayList<>();
+        for (Site s : sites) {
+            DataTablesOrderAmount amount = new DataTablesOrderAmount();
+            amount.setSiteId(s.getId());
+            amount.setSiteIdentity(s.getIdentity());
+            amount.setSiteName(s.getName());
+            Order orderCriteria = new Order();
+            orderCriteria.setSite(s);
+            List<Order> orders = orderService.findByCriteria(orderCriteria);
+            Double sum = 0.0;
+            for (Order order : orders) {
+                sum += order.getAmount();
+            }
+            amount.setOrderAmount(Double.valueOf(decimalFormat.format(sum)));
+            amounts.add(amount);
+        }
+
+        DataTablesResultSet<DataTablesOrderAmount> result = new DataTablesResultSet<>();
+        result.setData(amounts);
+        result.setRecordsTotal(sites.size());
+        result.setRecordsFiltered(sites.size());
+
+        return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/listOrderCurrency", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listOrderCurrency() {
+
+        SecurityUser currentUser = UserResource.getCurrentUser();
+        if (currentUser == null) {
+            return "403";
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
+        decimalFormat.applyPattern("###.##");
+
+        // find all site, and get count based on site
+        Site site = new Site();
+        site.setMerchant(currentUser.getMerchant());
+
+        List<Currency> currencies = currencyService.getAll();
+        List<DataTablesOrderCurrency> amounts = new ArrayList<>();
+        for (Currency c : currencies) {
+            DataTablesOrderCurrency amount = new DataTablesOrderCurrency();
+            amount.setCurrencyId(c.getId());
+            amount.setCurrencyName(c.getName());
+            Order orderCriteria = new Order();
+            orderCriteria.setCurrency(c);
+            List<Order> orders = orderService.findByCriteria(orderCriteria);
+            Double sum = 0.0;
+            for (Order order : orders) {
+                sum += order.getAmount();
+            }
+            amount.setOrderAmount(Double.valueOf(decimalFormat.format(sum)));
+            amounts.add(amount);
+        }
+
+        DataTablesResultSet<DataTablesOrderCurrency> result = new DataTablesResultSet<>();
+        result.setData(amounts);
+        result.setRecordsTotal(currencies.size());
+        result.setRecordsFiltered(currencies.size());
 
         return JsonUtil.toJson(result);
     }
