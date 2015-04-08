@@ -20,13 +20,6 @@
                             </span>
                         </a>
                     </li>
-                    <li class="">
-                        <a href="${rootURL}changePassword">
-                            <span><i class="icon icon-briefcase"></i>
-                                <spring:message code="user.change.password.label"/>
-                            </span>
-                        </a>
-                    </li>
                 </ul>
             </li>
         </sec:authorize>

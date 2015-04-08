@@ -99,14 +99,14 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment/index">
+                        <a href="${rootURL}payment/indexReturn">
                             <span> >>
                             <spring:message code="return.info.label"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}return/index">
+                        <a href="${rootURL}payment/indexShipping">
                             <span> >>
                             <spring:message code="shipping.info.label"/>
                             </span>
@@ -155,7 +155,7 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}user/password">
+                        <a href="${rootURL}changePassword">
                             <span> >>
                             <spring:message code="user.change.password.label"/>
                             </span>
