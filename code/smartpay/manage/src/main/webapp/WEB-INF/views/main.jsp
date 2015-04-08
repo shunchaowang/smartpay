@@ -6,7 +6,7 @@
 <head>
     <jsp:include page="_import.jsp"/>
 </head>
-<body class="container">
+<body>
 <jsp:include page="_header.jsp"/>
 <jsp:include page="_navbar.jsp"/>
 
