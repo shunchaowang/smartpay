@@ -3,8 +3,12 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.Payment;
 import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
+import com.lambo.smartpay.core.persistence.entity.Shipment;
+import com.lambo.smartpay.core.persistence.entity.ShipmentStatus;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.service.PaymentStatusService;
+import com.lambo.smartpay.core.service.ShipmentService;
+import com.lambo.smartpay.core.service.ShipmentStatusService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.util.JsonUtil;
@@ -67,6 +71,20 @@ public class PaymentController {
         return "main";
     }
 
+    @RequestMapping(value = {"/indexPaymentReturn"}, method = RequestMethod.GET)
+    public String indexPaymentReturn(Model model) {
+        logger.debug("~~~~~~~~~ indexPaymentReturn ~~~~~~~~~");
+        model.addAttribute("domain", "PaymentReturn");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/indexPaymentShipping"}, method = RequestMethod.GET)
+    public String indexPaymentShipping(Model model) {
+        logger.debug("~~~~~~~~~ indexPaymentShipping ~~~~~~~~~");
+        model.addAttribute("domain", "PaymentShipping");
+        return "main";
+    }
+
     /*
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -104,11 +122,13 @@ public class PaymentController {
         Long recordsFiltered;
 
         /*
-        if (domain.equals("FreezeList"))
+
+        if (domain.equals("ReturnList"))
             codeString = ResourceProperties.MERCHANT_STATUS_NORMAL_CODE;
         if (domain.equals("UnfreezeList"))
             codeString = ResourceProperties.MERCHANT_STATUS_FROZEN_CODE;
             */
+
 
         if (codeString.equals("")) {
             logger.debug("~~~~~~~~~~ payment list ~~~~~~~~~~" + "all codeString ！！！");
@@ -179,166 +199,65 @@ public class PaymentController {
         return "main";
     }
 
-/*
-    public
-    @ResponseBody
-    String list(HttpServletRequest request) {
 
-        // parse sorting column
-        String paymentIndex = request.getParameter("payment[0][column]");
-        String payment = request.getParameter("columns[" + paymentIndex + "][name]");
+    @RequestMapping(value = "/edit{domain}/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
+            model) {
 
-        // parse sorting direction
-        String paymentDir = StringUtils.upperCase(request.getParameter("payment[0][dir]"));
+        logger.debug("~~~~~~ edit " + "domain=" + domain + "id=" + id);
 
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || payment == null || paymentDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
+        Payment payment;
+        try {
+            payment = paymentService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Site  " + id + " not found.");
         }
 
-        List<Payment> payments = paymentService.findByCriteria(search, start, length,
-                payment, ResourceProperties.JpaOrderDir.valueOf(paymentDir));
+        PaymentCommand paymentCommand = createPaymentCommand(payment);
 
-        // count total records
-        Long recordsTotal = paymentService.countAll();
-        // count records filtered
-        Long recordsFiltered = paymentService.countByCriteria(search);
-
-        if (payments == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
+        model.addAttribute("paymentCommand", paymentCommand);
+        if (domain != null) {
+            model.addAttribute("domain", domain);
         }
-
-        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
-
-        for (Payment o : payments) {
-            DataTablesPayment tablesPayment = new DataTablesPayment(o);
-            dataTablesPayments.add(tablesPayment);
-        }
-
-        DataTablesResultSet<DataTablesPayment> result = new DataTablesResultSet<>();
-        result.setData(dataTablesPayments);
-        result.setRecordsFiltered(recordsFiltered.intValue());
-        result.setRecordsTotal(recordsTotal.intValue());
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        model.addAttribute("action", "payshipping");
+        return "main";
     }
 
     /*
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String search(Model model) {
-        model.addAttribute("action", "search");
-        model.addAttribute("sites", siteService.getAll());
-        return "main";
+    @RequestMapping(value = "/payshipping", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String audit(@RequestParam(value = "id") Long id) {
+
+        logger.debug("~~~~~~~~~~ audit ~~~~~~~~~~" + "id= " + id);
+        //Initiate
+        Site site;
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("Site.label", null, locale);
+        String message = "";
+        //Do approve
+        try {
+            site = siteService.approveSite(id);
+            logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id);
+
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            message = messageSource
+                    .getMessage("not.audit.message", new String[]{label, id.toString()}, locale);
+            response.setMessage(message);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        message = messageSource
+                .getMessage("audit.message", new String[]{label, site.getName()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
     }
     */
 
-    /*
 
-    @RequestMapping(value = "/searchData", method = RequestMethod.GET,
-            produces = "application/json;charset=UTF-8")
-    public
-    @ResponseBody
-    String searchData(HttpServletRequest request) {
-
-        // parse sorting column
-        String paymentIndex = request.getParameter("payment[0][column]");
-        String payment = request.getParameter("columns[" + paymentIndex + "][name]");
-
-        // parse sorting direction
-        String paymentDir = StringUtils.upperCase(request.getParameter("payment[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || payment == null || paymentDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
-        }
-
-        // parse my own query params
-        String id = request.getParameter("id");
-        String merchantNumber = request.getParameter("merchantNUmber");
-        String paymentStatus = request.getParameter("paymentStatus");
-        String site = request.getParameter("site");
-        String timeBeginning = request.getParameter("timeBeginning");
-        String timeEnding = request.getParameter("timeEnding");
-
-        Payment paymentCriteria = new Payment();
-        if (!StringUtils.isBlank(id)) {
-            paymentCriteria.setId(Long.valueOf(id));
-        }
-        if (!StringUtils.isBlank(merchantNumber)) {
-            paymentCriteria.setMerchantNumber(merchantNumber);
-        }
-        if (!StringUtils.isBlank(paymentStatus)) {
-            PaymentStatus status = null;
-            try {
-                status = paymentStatusService.get(Long.valueOf(paymentStatus));
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-            }
-            paymentCriteria.setPaymentStatus(status);
-        }
-        if (!StringUtils.isBlank(site)) {
-            Site siteCriteria = null;
-            try {
-                siteCriteria = siteService.get(Long.valueOf(site));
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-            }
-            paymentCriteria.setSite(siteCriteria);
-        }
-        Date beginning = null;
-        Date ending = null;
-        if ((!StringUtils.isBlank(timeBeginning)) && (!StringUtils.isBlank(timeEnding))) {
-            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            try {
-                beginning = dateFormat.parse(timeBeginning);
-                ending = dateFormat.parse(timeEnding);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "Bad Request.");
-            }
-        }
-
-        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search, start, length,
-                payment, ResourceProperties.JpaOrderDir.valueOf(paymentDir), beginning, ending);
-
-        // count total records
-        Long recordsTotal = paymentService.countAll();
-        // count records filtered
-        Long recordsFiltered = paymentService.countByCriteria(search);
-
-        if (payments == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
-
-        for (Payment o : payments) {
-            DataTablesPayment tablesPayment = new DataTablesPayment(o);
-            dataTablesPayments.add(tablesPayment);
-        }
-
-        DataTablesResultSet<DataTablesPayment> result = new DataTablesResultSet<>();
-        result.setData(dataTablesPayments);
-        result.setRecordsFiltered(recordsFiltered.intValue());
-        result.setRecordsTotal(recordsTotal.intValue());
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
-    }
-      */
 
     private PaymentCommand createPaymentCommand(Payment payment) {
         PaymentCommand PaymentCommand = new PaymentCommand();
@@ -379,8 +298,12 @@ public class PaymentController {
         PaymentCommand.setBillZipCode(payment.getBillZipCode());
         PaymentCommand.setBillCountry(payment.getBillCountry());
 
+
+
+
         return PaymentCommand;
     }
+
 }
 
 

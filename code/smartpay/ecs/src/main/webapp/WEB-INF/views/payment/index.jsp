@@ -23,6 +23,8 @@
                         <th><spring:message code="returnCode.label"/></th>
                         <th><spring:message code="paymentStatusName.label"/></th>
                         <th><spring:message code="paymentTypeName.label"/></th>
+                        <th><spring:message code="action.operation.label"/></th>
+
 
                         <c:if test="${domain.equals('paymentEdit')}">
                             <th><spring:message code="action.operation.label"/></th>
@@ -101,7 +103,9 @@
                     'name': 'paymentTypeName', 'targets': 8, 'searchable': false, 'orderable':
                         false,
                     'data': 'paymentTypeName'
-                },
+                }
+                <c:if test="${domain.equals('Payment')}">
+                ,
                 {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
@@ -111,7 +115,64 @@
                                 + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>'
                     }
+                }
+                </c:if>
+                <c:if test="${domain.equals('PaymentReturn')}">
+                ,
+                {
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return '<a href="' + "${rootURL}${controller}" + '/return${domain}/'
+                                + row['id'] + '">' +
+                                '<button class="tableButton" type="button" name="payreturn-button"'
+                                + '">' + '<spring:message code="action.payreturn.label"/>'
+                                + '</button></a>'
+                    }
+                }
+                </c:if>
+                <c:if test="${domain.equals('PaymentShipping')}">
+                ,
+                {
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        return '<a href="' + "${rootURL}${controller}" + '/edit${domain}/'
+                                + row['id'] + '">' +
+                                + '<button type="button" name="payshipping-button"'
+                                + ' class="tableButton" value="' + row['id'] + '">' +
+                                '<spring:message code="action.payshipping.label"/>' +
+                                + '</button></a>'
+                    }
+                }
+                </c:if>
+
             ]
+        });
+
+
+        // add live handler for payshipping button
+        paymentTable.on('click', 'button[type=button][name=payshipping-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}${controller}" + '/payshipping',
+                data: {id: id},
+                dataType: 'JSON',
+                error: function (error) {
+                    alert('There was an error');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    paymentTable.ajax.reload();
+                }
+            });
         });
     });
 </script>

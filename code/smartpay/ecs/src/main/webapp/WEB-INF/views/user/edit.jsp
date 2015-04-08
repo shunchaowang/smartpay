@@ -81,7 +81,7 @@
                                     <spring:message code='action.save.label'/>
                                 </button>
                                 <a href="${rootURL}${controller}">
-                                    <button type="button" class="btn btn-default">
+                                    <button type="button" class="btn btn-success">
                                         <spring:message code="action.return.label"/>
                                     </button>
                                 </a>

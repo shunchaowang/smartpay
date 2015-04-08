@@ -99,7 +99,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment/indexReturn">
+                        <a href="${rootURL}payment/index">
                             <span> >>
                             <spring:message code="return.info.label"/>
                             </span>
@@ -127,14 +127,14 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}payment/indexReturn">
+                        <a href="${rootURL}payment/indexPaymentReturn">
                             <span> >>
                             <spring:message code="return.manage.label"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment/indexShipping">
+                        <a href="${rootURL}payment/indexPaymentShipping">
                             <span> >>
                             <spring:message code="shipping.manage.label"/>
                             </span>

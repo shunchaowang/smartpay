@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
 <!--Header-part-->
-<div id="header">
-    <h1><a href="${rootURL}"><spring:message code="application.name"/> </a></h1>
+<div id="header"><h2>&nbsp;&nbsp;
+    <spring:message code="application.name"/></h2>
 </div>
 <!--close-Header-part-->
 

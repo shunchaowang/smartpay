@@ -81,10 +81,10 @@
 
                         <!-- buttons -->
                         <div class='form-actions col-lg-offset-2'>
-                            <button class='btn btn-default' id='create-button' type="submit">
+                            <button class='btn btn-success' id='create-button' type="submit">
                                 <spring:message code='action.save.label'/>
                             </button>
-                            <button class='btn btn-default' id='reset-button' type="reset">
+                            <button class='btn btn-success' id='reset-button' type="reset">
                                 <spring:message code='action.reset.label'/>
                             </button>
                         </div>

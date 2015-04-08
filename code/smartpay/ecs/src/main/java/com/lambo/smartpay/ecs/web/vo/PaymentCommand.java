@@ -40,6 +40,24 @@ public class PaymentCommand {
     private String billZipCode;
     private String billCountry;
 
+    // this is about payment's shipment info ...
+    private String shipmentId;
+    private String shipmentCarrier;
+    private String shipmentTrackingNumber;
+    private String shipmentAddress1;
+
+    /*
+    private String shipmentFirstName;
+    private String shipmentLastName;
+    private String getShipmentAddress2;
+    private String shipmentCity;
+    private String shipmentState;
+    private String shipmentCountry;
+    private String shipmentZipcode;
+    */
+    private String shipmentStatusId;
+    private String shipmentStatusName;
+
 
     public Long getId() {
         return id;
@@ -251,5 +269,48 @@ public class PaymentCommand {
     }
     public void setBillCountry(String billCountry) {
         this.billCountry = billCountry;
+    }
+
+    //
+    public String getShipmentId() {
+        return shipmentId;
+    }
+    public void setShipmentId(String shipmentId) {
+        this.shipmentId = shipmentId;
+    }
+
+    public String getShipmentCarrier() {
+        return shipmentCarrier;
+    }
+    public void setShipmentCarrier(String shipmentCarrier) {
+        this.shipmentCarrier = shipmentCarrier;
+    }
+
+    public String getShipmentTrackingNumber() {
+        return shipmentTrackingNumber;
+    }
+    public void setShipmentTrackingNumber(String shipmentTrackingNumber) {
+        this.shipmentTrackingNumber = shipmentTrackingNumber;
+    }
+
+    public String getShipmentAddress1() {
+        return shipmentAddress1;
+    }
+    public void setShipmentAddress1(String shipmentAddress1) {
+        this.shipmentAddress1 = shipmentAddress1;
+    }
+
+    public String getShipmentStatusId() {
+        return shipmentStatusId;
+    }
+    public void setShipmentStatusId(String shipmentStatusId) {
+        this.shipmentStatusId = shipmentStatusId;
+    }
+
+    public String getShipmentStatusName() {
+        return shipmentAddress1;
+    }
+    public void setShipmentStatusName(String shipmentStatusName) {
+        this.shipmentStatusName = shipmentStatusName;
     }
 }

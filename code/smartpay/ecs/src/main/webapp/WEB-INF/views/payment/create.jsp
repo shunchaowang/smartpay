@@ -107,10 +107,10 @@
         </div>
         <div class='form-group'>
             <div class='col-sm-offset-3 col-sm-10'>
-                <button class='btn btn-default' id='create-button' type="submit">
+                <button class='btn btn-success' id='create-button' type="submit">
                     <spring:message code='action.save.label'/>
                 </button>
-                <button class='btn btn-default' id='reset-button' type="reset">
+                <button class='btn btn-success' id='reset-button' type="reset">
                     <spring:message code='action.reset.label'/>
                 </button>
             </div>

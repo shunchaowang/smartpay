@@ -9,7 +9,7 @@
         <div class="widget-box">
             <div class="widget-title">
 									<span class="icon">
-										<i class="icon icon-info-sign"></i>
+										<i class="icon icon-align-justify"></i>
 									</span>
                 <h5><spring:message code="user.change.password.label"/></h5>
             </div>
