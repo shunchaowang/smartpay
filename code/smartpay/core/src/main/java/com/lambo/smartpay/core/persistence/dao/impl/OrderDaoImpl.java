@@ -312,7 +312,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         if (order.getCurrency() != null && order.getCurrency().getId() != null) {
             Predicate currencyPredicate = builder.equal(
                     root.join("currency").<Long>get("id"),
-                    builder.literal(order.getSite().getId()));
+                    builder.literal(order.getCurrency().getId()));
             if (predicate == null) {
                 predicate = currencyPredicate;
             } else {

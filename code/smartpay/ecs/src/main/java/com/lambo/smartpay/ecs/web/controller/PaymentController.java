@@ -62,7 +62,6 @@ public class PaymentController {
 
     @ModelAttribute("paymentStatuses")
     public List<PaymentStatus> paymentStatuses() {
-        logger.debug("payment status: " + paymentStatusService.countAll());
         return paymentStatusService.getAll();
     }
 
@@ -73,14 +72,12 @@ public class PaymentController {
 
     @RequestMapping(value = {"/indexPaymentReturn"}, method = RequestMethod.GET)
     public String indexPaymentReturn(Model model) {
-        logger.debug("~~~~~~~~~ indexPaymentReturn ~~~~~~~~~");
         model.addAttribute("domain", "PaymentReturn");
         return "main";
     }
 
     @RequestMapping(value = {"/indexPaymentShipping"}, method = RequestMethod.GET)
     public String indexPaymentShipping(Model model) {
-        logger.debug("~~~~~~~~~ indexPaymentShipping ~~~~~~~~~");
         model.addAttribute("domain", "PaymentShipping");
         return "main";
     }
@@ -94,8 +91,6 @@ public class PaymentController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");

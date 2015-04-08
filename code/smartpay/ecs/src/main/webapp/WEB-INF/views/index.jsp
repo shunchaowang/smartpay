@@ -16,13 +16,13 @@
                     <li>
                         <div class="right">
                             <strong>${merchantCommand.orderCount}</strong>
-                            <spring:message code="orderCountSummary.label"/>
+                            <spring:message code="Transaction.label"/>
                         </div>
                     </li>
                     <li>
                         <div class="right">
                             <strong>${merchantCommand.orderAmount}</strong>
-                            <spring:message code="orderAmountSummary.label"/>
+                            <spring:message code="amount.label"/>
                         </div>
                     </li>
                 </ul>
@@ -118,6 +118,7 @@
                     <thead>
                     <tr>
                         <th><spring:message code="currency.label"/></th>
+                        <th><spring:message code="count.label"/></th>
                         <th><spring:message code="amount.label"/></th>
                     </tr>
                     </thead>
@@ -178,7 +179,32 @@
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
                 {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
                 {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'count', 'targets': 3, 'data': 'orderAmount'}
+                {'name': 'amount', 'targets': 3, 'data': 'orderAmount'}
+            ]
+        });
+
+        $('#currency-table').DataTable({
+            'language': {
+                'url': "${dataTablesLanguage}"
+            },
+            'processing': false,
+            'serverSide': false,
+            'info': false,
+            'paging': false,
+            'searching': false,
+            'ordering': false,
+
+
+            'ajax': {
+                'url': "${rootURL}listOrderCurrency",
+                'type': "GET",
+                'dataType': 'json'
+            },
+
+            'columnDefs': [
+                {'name': 'currency', 'targets': 0, 'data': 'currencyName'},
+                {'name': 'count', 'targets': 1, 'data': 'orderCount'},
+                {'name': 'amount', 'targets': 2, 'data': 'orderAmount'}
             ]
         });
     });

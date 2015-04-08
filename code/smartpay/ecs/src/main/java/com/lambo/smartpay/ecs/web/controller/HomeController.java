@@ -211,6 +211,8 @@ public class HomeController {
             amount.setCurrencyName(c.getName());
             Order orderCriteria = new Order();
             orderCriteria.setCurrency(c);
+            Long count = orderService.countByCriteria(orderCriteria);
+            amount.setOrderCount(count);
             List<Order> orders = orderService.findByCriteria(orderCriteria);
             Double sum = 0.0;
             for (Order order : orders) {

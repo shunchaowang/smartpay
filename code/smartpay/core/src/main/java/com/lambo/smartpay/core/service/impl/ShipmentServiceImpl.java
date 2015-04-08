@@ -21,31 +21,33 @@ import java.util.List;
  * Created by swang on 3/25/2015.
  */
 @Service("shipmentService")
-public class ShipmentServiceImpl extends GenericDateQueryServiceImpl<Shipment, Long>
+public class ShipmentServiceImpl extends GenericQueryServiceImpl<Shipment, Long>
         implements ShipmentService {
 
     private static final Logger logger = LoggerFactory.getLogger(ShipmentServiceImpl.class);
     @Autowired
     private ShipmentDao shipmentDao;
 
+    @Override
+    public Shipment findByTrackingNumber(String trackingNumber) {
+        return shipmentDao.findByTrackingNumber(trackingNumber);
+    }
+
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
      *
-     * @param shipment         contains all criteria for equals, like name equals xx and active
-     *                         equals
-     *                         true, etc.
-     * @param search           instance wildcard search keyword, like name likes %xx%, etc.
-     *                         it means no criteria with wildcard search if search is null.
-     *                         it means no criteria on exact equals if t is null.
-     * @param createdTimeStart start of date range.
-     * @param createdTimeEnd   end of date range.
+     * @param shipment contains all criteria for equals, like name equals xx and active
+     *                 equals
+     *                 true, etc.
+     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
+     *                 it means no criteria with wildcard search if search is null.
+     *                 it means no criteria on exact equals if t is null.
      * @return number of the T matching criteria.
      */
     @Override
-    public Long countByCriteria(Shipment shipment, String search, Date createdTimeStart,
-                                Date createdTimeEnd) {
-        return shipmentDao.countByCriteria(shipment, search, createdTimeStart, createdTimeEnd);
+    public Long countByCriteria(Shipment shipment, String search) {
+        return shipmentDao.countByCriteria(shipment, search);
     }
 
     /**
@@ -56,27 +58,24 @@ public class ShipmentServiceImpl extends GenericDateQueryServiceImpl<Shipment, L
      * To support DataTables pagination we have the start for the offset of the search, and
      * length for the max results we want to return.
      *
-     * @param shipment         contains all criteria for equals, like name equals xx and active
-     *                         equals
-     *                         true, etc.
-     *                         it means no criteria on exact equals if t is null.
-     * @param search           instance wildcard search keyword, like name likes %xx%, etc.
-     *                         it means no criteria with wildcard search if search is null.
-     * @param start            first position of the result.
-     * @param length           max record of the result.
-     * @param order            order by field, default is id.
-     * @param orderDir         order direction on the order field. default is DESC.
-     * @param createdTimeStart start of date range.
-     * @param createdTimeEnd   end of date range.
+     * @param shipment contains all criteria for equals, like name equals xx and active
+     *                 equals
+     *                 true, etc.
+     *                 it means no criteria on exact equals if t is null.
+     * @param search   instance wildcard search keyword, like name likes %xx%, etc.
+     *                 it means no criteria with wildcard search if search is null.
+     * @param start    first position of the result.
+     * @param length   max record of the result.
+     * @param order    order by field, default is id.
+     * @param orderDir order direction on the order field. default is DESC.
      * @return
      */
     @Override
     public List<Shipment> findByCriteria(Shipment shipment, String search, Integer start,
                                          Integer length, String order,
-                                         ResourceProperties.JpaOrderDir orderDir,
-                                         Date createdTimeStart, Date createdTimeEnd) {
+                                         ResourceProperties.JpaOrderDir orderDir) {
         return shipmentDao.findByCriteria(shipment, search, start, length,
-                order, orderDir, createdTimeStart, createdTimeEnd);
+                order, orderDir);
     }
 
     @Override

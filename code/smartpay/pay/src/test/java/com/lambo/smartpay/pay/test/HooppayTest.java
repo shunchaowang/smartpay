@@ -40,7 +40,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by swang on 3/31/2015.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {PayConfig.class, MvcConfig.class, WebAppInitializer.class,
         ServiceConfig.class, PersistenceConfigDev.class})
 @ActiveProfiles("dev")

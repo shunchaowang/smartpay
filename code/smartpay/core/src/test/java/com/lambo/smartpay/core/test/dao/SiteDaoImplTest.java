@@ -141,7 +141,7 @@ public class SiteDaoImplTest {
         site.setIdentity("xyz");
         site.setMerchant(merchant);
         site.setSiteStatus(createdSiteStatus);
-        site.setUrl("www.google.com");
+        site.setUrl("www.yahoo.com.cn");
         site = siteDao.create(site);
         assertNotNull(site);
 
