@@ -4,26 +4,25 @@
 </c:if>
 
 <div class="row">
+    <div class="col-sm-6">
+        <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
+    </div>
+    <!-- end of table title -->
     <div class="col-sm-4 pull-right">
         <a href="${rootURL}${controller}/search">
-            <h5>
+            <h3>
                 <button type="button" class="btn btn-default pull-right">
                     <spring:message code="action.advanceSearch.label"/>
                 </button>
-            </h5>
+            </h3>
         </a>
     </div>
 </div>
+<!-- end of class row -->
+<br/>
 
-<div class="row-fluid">
-    <div class="col-sm-12">
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-            </div>
-            <div class="widget-content">
-                <table class="table display table-bordered data-table" id="order-table">
+<div class="row">
+    <table class="display cell-border" id="order-table">
         <thead>
         <tr>
             <th><spring:message code="id.label"/></th>
@@ -39,11 +38,7 @@
         </thead>
         <tbody></tbody>
     </table>
-            </div>
-        </div>
-    </div>
 </div>
-
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -55,9 +50,6 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
-            "paginationType": "full_numbers",
-            "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",
@@ -100,12 +92,12 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/show${domain}/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="show-button" class="tableButton"'
+                                '<button type="button" name="show-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>'
                                 + '<a href="' + "${rootURL}${controller}" + '/ship${domain}/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="ship-button" class="tableButton"'
+                                '<button type="button" name="ship-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.ship.label"/>'
                                 + '</button></a>'
                     }

@@ -6,32 +6,32 @@
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#" href="#">
                     <!-- TODO: Only show menu items based on permissions (e.g., Guest has no account page) -->
-                    <i class="glyphicon glyphicon-user icon-white"></i>
-                    <sec:authentication property="principal.username"/>
+                    <i class="icon icon-user"></i>
+                    <sec:authentication property="principal.username"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
                         <a href="${rootURL}logout">
-                            <i class="glyphicon glyphicon-home"></i>
+                            <i class="icon icon-home"></i>
                             <spring:message code="user.profile.label"/>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}logout">
-                            <i class="glyphicon glyphicon-lock"></i>
+                            <i class="icon icon-lock"></i>
                             <spring:message code="user.change.password.label"/>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}logout">
-                            <i class="glyphicon glyphicon-envelope"></i>
+                            <i class="icon icon-envelope"></i>
                             <spring:message code="user.change.email.label"/>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}logout">
-                            <i class="glyphicon glyphicon-off"></i>
+                            <i class="icon icon-off"></i>
                             <spring:message code="user.logout.label"/>
                         </a>
                     </li>

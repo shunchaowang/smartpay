@@ -16,6 +16,9 @@
         <spring:message code='MerchantAdmin.label' var="merchantAdmin"/>
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
+        <spring:message code='Payreturn.label' var="payreturn"/>
+        <spring:message code='Shipment.label' var="shipment"/>
+
 
         <ul>
             <sec:authorize access="hasRole('ROLE_ADMIN')">
@@ -37,7 +40,7 @@
                 <!-- show merchant management as hierarchical dropdown menu -->
                 <li class="dropdown">
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#">
+                       data-target="#" href="#"><i class="icon icon-th-list"></i>
                              <span>
                             <spring:message code="manage.label" arguments="${merchant}"/>
                             <b class="caret"></b>
@@ -100,7 +103,7 @@
             -->
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#">
+                   href="#"><i class="icon icon-th-list"></i>
                    <span>
  <spring:message code="manage.label" arguments="${site}"/>
                     <b class="caret"></b>
@@ -153,7 +156,7 @@
             <sec:authorize access="hasRole('ROLE_ADMIN')">
                 <li class="dropdown">
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#">
+                       data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
                         <spring:message code="manage.label" arguments="${user}"/>
                         <b class="caret"></b>
@@ -196,21 +199,104 @@
             </sec:authorize>
             <!-- user management ends -->
 
-            <li>
-                <a href="${rootURL}order">
-                                            <span>
-                    <spring:message code="manage.label" arguments="${order}"/>
-                                                </span>
-                </a>
-            </li>
-            <li>
-                <a href="${rootURL}payment">
-                    <span>
-                    <spring:message code="manage.label" arguments="${payment}"/>
-                    </span>
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+                        <span>
+                        <spring:message code="manage.label" arguments="${order}"/>
+                        <b class="caret"></b>
+                            </span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}order">
+                                <span> >>
+                                    <spring:message code="info.label" arguments="${order}"/>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}order/search">
+                                <span> >>
+                                    <spring:message code="search.label" arguments="${order}"/>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </sec:authorize>
 
-                </a>
-            </li>
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+                        <span>
+                        <spring:message code="manage.label" arguments="${shipment}"/>
+                        <b class="caret"></b>
+                            </span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}payment">
+                                <span> >>
+                                    <spring:message code="info.label" arguments="${shipment}"/>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </sec:authorize>
+
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+                        <span>
+                        <spring:message code="manage.label" arguments="${payreturn}"/>
+                        <b class="caret"></b>
+                            </span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}payment">
+                                <span> >>
+                                    <spring:message code="info.label" arguments="${payreturn}"/>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </sec:authorize>
+
+
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+                        <span>
+                        <spring:message code="user.setting.label" />
+                        <b class="caret"></b>
+                            </span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}changePassword">
+                                <span> >>
+                                    <spring:message code="user.change.password.label" />
+                                </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}payment">
+                                <span> >>
+                                    <spring:message code="user.profile.label"/>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </sec:authorize>
         </ul>
 
 

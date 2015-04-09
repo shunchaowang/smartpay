@@ -7,18 +7,7 @@
     <link rel="stylesheet" href="${rootURL}assets/css/login.css"/>
 </head>
 <body>
-<div class="col-sm-12">
-    <c:if test="${param.error != null}">
-        <div class="alert alert-danger">
-            Invalid UserName and Password.
-        </div>
-    </c:if>
-    <c:if test="${param.logout != null}">
-        <div class="alert alert-success">
-            You have been logged out.
-        </div>
-    </c:if>
-</div>
+
 
 <div id="logo">
     <img src="${rootURL}assets/images/login-logo.png" alt=""/>
@@ -54,6 +43,19 @@
         </div>
 
     </form>
+</div>
+
+<div class="col-sm-12">
+    <c:if test="${param.error != null}">
+        <div class="alert alert-danger">
+            Invalid UserName and Password.
+        </div>
+    </c:if>
+    <c:if test="${param.logout != null}">
+        <div class="alert alert-success">
+            You have been logged out.
+        </div>
+    </c:if>
 </div>
 
 <script src="${rootURL}assets/js/login.js"></script>

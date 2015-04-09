@@ -3,48 +3,49 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="row">
-    <div class="col-sm-6">
-        <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
+<div class="row-fluid">
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+            </div>
+            <div class="widget-content">
+                <table class="table display table-bordered data-table" id="merchant-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="id.label"/></th>
+                        <th><spring:message code="identity.label"/></th>
+                        <th><spring:message code="name.label"/></th>
+                        <th><spring:message code="address.label"/></th>
+                        <th><spring:message code="contact.label"/></th>
+                        <th><spring:message code="tel.label"/></th>
+                        <th><spring:message code="email.label"/></th>
+                        <th><spring:message code="createdTime.label"/></th>
+                        <th><spring:message code="status.label"/></th>
+
+                        <c:if test="${domain.equals('MerchantEdit')}">
+                            <th><spring:message code="action.operation.label"/></th>
+                        </c:if>
+
+                        <c:if test="${domain.equals('MerchantFee')}">
+                            <th><spring:message code="action.operation.label"/></th>
+                        </c:if>
+
+                        <c:if test="${domain.equals('FreezeList')}">
+                            <th><spring:message code="action.operation.label"/></th>
+                        </c:if>
+
+                        <c:if test="${domain.equals('UnfreezeList')}">
+                            <th><spring:message code="action.operation.label"/></th>
+                        </c:if>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <!-- end of table title -->
-</div>
-<!-- end of class row -->
-<br/>
-
-<div class="row">
-    <table class="display cell-border" id="merchant-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="identity.label"/></th>
-            <th><spring:message code="name.label"/></th>
-            <th><spring:message code="address.label"/></th>
-            <th><spring:message code="contact.label"/></th>
-            <th><spring:message code="tel.label"/></th>
-            <th><spring:message code="email.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-
-            <c:if test="${domain.equals('MerchantEdit')}">
-                <th><spring:message code="action.operation.label"/></th>
-            </c:if>
-
-            <c:if test="${domain.equals('MerchantFee')}">
-                <th><spring:message code="action.operation.label"/></th>
-            </c:if>
-
-            <c:if test="${domain.equals('FreezeList')}">
-                <th><spring:message code="action.operation.label"/></th>
-            </c:if>
-
-            <c:if test="${domain.equals('UnfreezeList')}">
-                <th><spring:message code="action.operation.label"/></th>
-            </c:if>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 </div>
 
 <script type="text/javascript">
@@ -56,6 +57,9 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
+            "paginationType": "full_numbers",
+            "jQueryUI": true,
+            'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
                 'url': "${rootURL}${controller}/list${domain}",
@@ -106,11 +110,11 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                '<button type="button" name="edit-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button></a>' +
                                 '<button type="button" name="delete-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                + ' class="tableButton" value="' + row['id'] + '">' +
                                 '<spring:message code="action.delete.label"/>' +
                                 '</button>';
                     }
@@ -122,7 +126,7 @@
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/setfee/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
+                                '<button type="button" name="edit-button" class="tableButton"'
                                 + '">' + '<spring:message code="merchant.setfee.label"/>'
                                 + '</button></a>';
                     }
@@ -133,7 +137,7 @@
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="freeze-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                + ' class="tableButton" value="' + row['id'] + '">' +
                                 '<spring:message code="action.freeze.label"/>' +
                                 '</button>';
                     }
@@ -144,7 +148,7 @@
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="unfreeze-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                + ' class="tableButton" value="' + row['id'] + '">' +
                                 '<spring:message code="action.unfreeze.label"/>' +
                                 '</button>';
                     }
