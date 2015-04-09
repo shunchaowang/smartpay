@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -79,6 +80,7 @@ public class ShipmentServiceImpl extends GenericQueryServiceImpl<Shipment, Long>
     }
 
     @Override
+    @Transactional
     public Shipment create(Shipment shipment)
             throws MissingRequiredFieldException, NotUniqueException {
 
@@ -139,6 +141,7 @@ public class ShipmentServiceImpl extends GenericQueryServiceImpl<Shipment, Long>
     }
 
     @Override
+    @Transactional
     public Shipment update(Shipment shipment)
             throws MissingRequiredFieldException, NotUniqueException {
 
@@ -189,6 +192,7 @@ public class ShipmentServiceImpl extends GenericQueryServiceImpl<Shipment, Long>
     }
 
     @Override
+    @Transactional
     public Shipment delete(Long id) throws NoSuchEntityException {
         if (id == null) {
             throw new NoSuchEntityException("Id is null.");

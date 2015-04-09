@@ -42,7 +42,7 @@ public class Shipment implements Serializable {
     @Column(name = "SHMT_ADDRESS_1", length = 128, nullable = false)
     private String address1;
 
-    @Column(name = "SHMT_ADDRESS_2", length = 128, nullable = false)
+    @Column(name = "SHMT_ADDRESS_2", length = 128, nullable = true)
     private String address2;
 
     @Column(name = "SHMT_CITY", length = 32, nullable = false)
