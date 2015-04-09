@@ -3,6 +3,7 @@ package com.lambo.smartpay.ecs.util;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * Created by swang on 3/30/2015.
@@ -19,6 +20,13 @@ public class DataTablesParams {
 
     public DataTablesParams(HttpServletRequest request) {
 
+//        System.out.println("Logging request params...");
+//        Enumeration<String> parameterNames = request.getParameterNames();
+//        while (parameterNames.hasMoreElements()) {
+//            String parameterName = parameterNames.nextElement();
+//            System.out.println(parameterName + " : "
+//                    + request.getParameterValues(parameterName)[0]);
+//        }
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
         order = request.getParameter("columns[" + orderIndex + "][name]");

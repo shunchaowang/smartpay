@@ -134,7 +134,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment/indexPaymentShipping">
+                        <a href="${rootURL}shipment/shipping">
                             <span> >>
                             <spring:message code="shipping.manage.label"/>
                             </span>

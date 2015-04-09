@@ -1,5 +1,12 @@
 package com.lambo.smartpay.ecs.web.vo.table;
 
+import com.lambo.smartpay.core.persistence.entity.Order;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.text.DateFormat;
+import java.util.Locale;
+
 /**
  * Created by swang on 4/8/2015.
  */
@@ -9,7 +16,7 @@ public class DataTablesShipment {
     private String carrier;
     private String trackingNumber;
     private Long orderId;
-    private Long orderNumber;
+    private String orderNumber;
     private String createdTime;
     private Long orderStatusId;
     private String orderStatusName;
@@ -17,6 +24,24 @@ public class DataTablesShipment {
     private String shipmentStatusName;
     private String customerName;
     private String customerAddress;
+
+    public DataTablesShipment() {}
+    public DataTablesShipment(Order order) {
+        orderId = order.getId();
+        orderNumber = order.getMerchantNumber();
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        createdTime = dateFormat.format(order.getCreatedTime());
+        orderStatusId = order.getOrderStatus().getId();
+        orderStatusName = order.getOrderStatus().getName();
+        customerName = StringUtils.join(
+                new String[]{order.getCustomer().getFirstName(),
+                        order.getCustomer().getLastName()}, " ");
+        customerAddress = StringUtils.join(
+                new String[] {order.getCustomer().getAddress1(), order.getCustomer().getCity(),
+                        order.getCustomer().getState(), order.getCustomer().getZipCode(),
+                        order.getCustomer().getCountry()}, " ");
+    }
 
     public Long getId() {
         return id;
@@ -50,11 +75,11 @@ public class DataTablesShipment {
         this.orderId = orderId;
     }
 
-    public Long getOrderNumber() {
+    public String getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(Long orderNumber) {
+    public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
     }
 

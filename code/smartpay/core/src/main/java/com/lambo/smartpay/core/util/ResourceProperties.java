@@ -23,9 +23,13 @@ public abstract class ResourceProperties {
     public static final String ROLE_MERCHANT_OPERATOR_CODE = "201";
     // initial password for new user
     public static final String INITIAL_PASSWORD = "asdf1234";
-    private static final String USER_STATUS_NORMAL_CODE = "100";
-    private static final String USER_STATUS_DEACTIVATED_CODE = "400";
-    private static final String USER_STATUS_FROZEN_CODE = "501";
+    public static final String USER_STATUS_NORMAL_CODE = "100";
+    public static final String USER_STATUS_DEACTIVATED_CODE = "400";
+    public static final String USER_STATUS_FROZEN_CODE = "501";
+
+    // order status
+    public static final String ORDER_STATUS_PAID_CODE = "401";
+    public static final String ORDER_STATUS_SHIPPED_CODE = "502";
 
     public enum JpaOrderDir {
         ASC("ASC"),
