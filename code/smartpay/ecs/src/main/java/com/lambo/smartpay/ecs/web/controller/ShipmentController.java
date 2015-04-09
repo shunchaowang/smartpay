@@ -77,7 +77,6 @@ public class ShipmentController {
 
     @RequestMapping(value = {"/shipping"}, method = RequestMethod.GET)
     public String indexWaitForShipping(Model model) {
-
         model.addAttribute("domain", "WaitForShipping");
         model.addAttribute("action", "shipping");
         return "main";
