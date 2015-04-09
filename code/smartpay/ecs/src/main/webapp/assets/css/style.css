@@ -170,7 +170,7 @@ a:active {
     position: absolute;
     right: 0px;
     top: 5px;
-    z-index: 999;
+    /*z-index: 999;*/
     margin: 0;
     border-left: 1px solid #3d3a37;
 }
@@ -1305,4 +1305,12 @@ table.dataTable th.sorting_desc {
 .chart, .pie, .bars {
     height: 300px;
     max-width: 100%;
+}
+
+.alert {
+    position: absolute;
+    z-index: 999;
+    top: 42px;
+    left: 50px;
+    right: 50px;
 }

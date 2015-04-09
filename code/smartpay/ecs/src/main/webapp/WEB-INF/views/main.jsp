@@ -22,6 +22,7 @@
     </c:if>
 </div>
 <!-- end of notification -->
+
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
