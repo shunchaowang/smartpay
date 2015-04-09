@@ -28,6 +28,21 @@
                                 <spring:message code="merchantNumber.label"/>
                             </label>
 
+                            <div class="controls col-sm-1">
+                                <input type="text" class="text" name="merchantNumber"
+                                       id="merchantNumber"/>
+                            </div>
+                            <label class="col-sm-1 control-label" for="orderStatus">
+                                <spring:message code="status.label"/>
+                            </label>
+
+                            <div class="controls col-sm-1">
+                                <select id="orderStatus" class="text">
+                                    <c:forEach items="${orderStatuses}" var="status">
+                                        <option value="${status.id}">${status.name}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
                         </div>
                         <br>
                         <!-- line of id, merchant number and status -->
