@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.persistence.entity.UserStatus;
@@ -35,6 +34,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
@@ -165,7 +165,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String save(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+    public String save(Model model, RedirectAttributes attributes,
+                       @ModelAttribute("userCommand") UserCommand userCommand) {
         // get merchant operator role
         Role role = null;
         try {
@@ -228,7 +229,8 @@ public class UserController {
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
         model.addAttribute("action", "index");
-        return "main";
+
+        return "redirect:/user/index";
     }
 
     /**
