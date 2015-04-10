@@ -44,7 +44,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @Profile("prod")
 @ComponentScan({"com.lambo.smartpay.core.persistence"})
-@PropertySource(value = {"classpath:application.properties"}, ignoreResourceNotFound = true)
+@PropertySource(value = {"classpath:application-prod.properties"}, ignoreResourceNotFound = true)
 //@EnableJpaRepositories(basePackages = {"com.lambo.smartpay.repositories"}) // not used right now
 public class PersistenceConfigProd {
 
@@ -69,7 +69,7 @@ public class PersistenceConfigProd {
 
         factory.setDataSource(dataSource());
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.lambo.smartpay.persistence.entity");
+        factory.setPackagesToScan("com.lambo.smartpay.core.persistence.entity");
 
         Properties jpaProperties = new Properties();
         jpaProperties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));

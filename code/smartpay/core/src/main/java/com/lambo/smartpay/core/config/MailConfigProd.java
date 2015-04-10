@@ -24,7 +24,7 @@ import java.util.Properties;
  */
 @Configuration
 @Profile("prod")
-@PropertySource(value = {"classpath:application.properties"}, ignoreResourceNotFound = true)
+@PropertySource(value = {"classpath:application-prod.properties"}, ignoreResourceNotFound = true)
 public class MailConfigProd {
 
     private static final Logger LOG = LoggerFactory.getLogger(MailConfigProd.class);

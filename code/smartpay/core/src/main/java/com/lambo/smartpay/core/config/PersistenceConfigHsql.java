@@ -65,7 +65,7 @@ public class PersistenceConfigHsql {
 
         factory.setDataSource(dataSource());
         factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("com.lambo.smartpay.persistence.entity");
+        factory.setPackagesToScan("com.lambo.smartpay.core.persistence.entity");
 
         Properties jpaProperties = new Properties();
         jpaProperties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
