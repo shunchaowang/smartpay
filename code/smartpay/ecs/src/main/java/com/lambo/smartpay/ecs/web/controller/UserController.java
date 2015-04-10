@@ -209,26 +209,25 @@ public class UserController {
         try {
             user = userService.create(user);
             String fieldLabel = messageSource.getMessage("operator.label", null, locale);
-            model.addAttribute("message",
+            attributes.addFlashAttribute("message",
                     messageSource.getMessage("created.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (MissingRequiredFieldException e) {
             logger.info(e.getMessage());
             String fieldLabel = messageSource.getMessage("operator.label", null, locale);
-            model.addAttribute("message",
+            attributes.addFlashAttribute("message",
                     messageSource.getMessage("not.created.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             e.printStackTrace();
         } catch (NotUniqueException e) {
             logger.info(e.getMessage());
             String fieldLabel = messageSource.getMessage("operator.label", null, locale);
-            model.addAttribute("message",
+            attributes.addFlashAttribute("message",
                     messageSource.getMessage("not.created.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             e.printStackTrace();
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
-        model.addAttribute("action", "index");
 
         return "redirect:/user/index";
     }
