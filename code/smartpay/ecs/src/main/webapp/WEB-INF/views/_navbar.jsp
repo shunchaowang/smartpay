@@ -28,6 +28,77 @@
                     </a>
                 </li>
             </sec:authorize>
+
+            <!-- merchant admin menu ends -->
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                   href="#"><i class="icon icon-refresh"></i>
+                            <span>
+                    <spring:message code="transaction.label"/>
+                    <b class="caret"></b>
+                            </span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}payment/index">
+                            <span> >>
+                            <spring:message code="payment.search.label"/>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}order/index">
+                            <span> >>
+                            <spring:message code="order.search.label"/>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}shipment/shipping">
+                            <span> >>
+                            <spring:message code="shipping.manage.label"/>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}payment/indexPaymentReturn">
+                            <span> >>
+                            <spring:message code="return.manage.label"/>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                       href="#"><i class="icon icon-pencil"></i>
+                            <span>
+                            <spring:message code="manage.label" arguments="${site}"/>
+                            <b class="caret"></b>
+                            </span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="">
+                            <a href="${rootURL}site/create">
+                            <span> >>
+                            <spring:message code="create.label" arguments="${site}"/>
+                            </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}site/index">
+                            <span> >>
+                            <spring:message code="manage.label" arguments="${site}"/>
+                            </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </sec:authorize>
+
             <!-- merchant management goes here -->
             <!-- merchant admin can view merchant detail -->
             <!-- merchant operator cannot see merchant nav -->
@@ -57,20 +128,6 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="${rootURL}site/create">
-                            <span> >>
-                            <spring:message code="create.label" arguments="${site}"/>
-                            </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}site/index">
-                            <span> >>
-                            <spring:message code="manage.label" arguments="${site}"/>
-                            </span>
-                            </a>
-                        </li>
-                        <li class="">
                             <a href="${rootURL}merchant/edit">
                             <span> >>
                             <spring:message code="merchant.edit.label" arguments="${merchant}"/>
@@ -80,6 +137,29 @@
                     </ul>
                 </li>
             </sec:authorize>
+
+
+            <!-- merchant admin menu ends -->
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                   href="#"><i class="icon icon-search"></i>
+                            <span>
+                    <spring:message code="complain.info.label"/>
+                    <b class="caret"></b>
+                            </span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}refund/indexRefund">
+                            <span> >>
+                            <spring:message code="refund.info.label"/>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- merchant admin menu ends -->
 
             <li class="dropdown">
@@ -92,56 +172,22 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}order/index">
-                            <span> >>
-                            <spring:message code="order.info.label" arguments="${order}"/>
-                            </span>
-                        </a>
-                    </li>
-                    <li class="">
                         <a href="${rootURL}payment/index">
                             <span> >>
-                            <spring:message code="return.info.label"/>
+                            <spring:message code="payment.search.label"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment/indexShipping">
+                        <a href="${rootURL}order/index">
                             <span> >>
-                            <spring:message code="shipping.info.label"/>
+                            <spring:message code="order.search.label"/>
                             </span>
                         </a>
                     </li>
                 </ul>
             </li>
 
-            <!-- merchant admin menu ends -->
-
-            <li class="dropdown">
-                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#"><i class="icon icon-refresh"></i>
-                            <span>
-                    <spring:message code="transaction.label"/>
-                    <b class="caret"></b>
-                            </span>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                    <li class="">
-                        <a href="${rootURL}payment/indexPaymentReturn">
-                            <span> >>
-                            <spring:message code="return.manage.label"/>
-                            </span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}shipment/shipping">
-                            <span> >>
-                            <spring:message code="shipping.manage.label"/>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
 
             <!-- merchant admin menu ends -->
 

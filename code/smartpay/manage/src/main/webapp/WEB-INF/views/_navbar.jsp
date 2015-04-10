@@ -12,8 +12,10 @@
         <spring:message code='Transaction.label' var="merchantTransaction"/>
         <spring:message code='Site.label' var="site"/>
         <spring:message code='User.label' var="user"/>
-        <spring:message code='Admin.label' var="admin"/>
+        <spring:message code='manage.admin.label' var="admin"/>
+        <spring:message code='ecs.admin.label' var="ecsadmin"/>
         <spring:message code='MerchantAdmin.label' var="merchantAdmin"/>
+        <spring:message code='transaction.label' var="transaction"/>
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
         <spring:message code='Payreturn.label' var="payreturn"/>
@@ -56,17 +58,10 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="${rootURL}merchant/">
-                                <span> >>
-                                <spring:message code="merchant.list.label" arguments="${merchant}"/>
-                                                            </span>
-                            </a>
-                        </li>
-                        <li class="">
                             <a href="${rootURL}merchant/indexMerchantEdit">
                                 <span> >>
                                 <spring:message code="merchant.manage.label" arguments="${merchant}"/>
-                                                                                        </span>
+                                </span>
                             </a>
                         </li>
                         <li class="">
@@ -122,7 +117,7 @@
                         <li class="">
                             <a href="${rootURL}site">
                                 <span> >>
-                                <spring:message code="index.label" arguments="${site}"/>
+                                <spring:message code="manage.label" arguments="${site}"/>
                                                                                        </span>
                             </a>
                         </li>
@@ -164,21 +159,6 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li class="">
-                            <a href="${rootURL}user/indexAdmin">
-                                <span> >>
-                                <spring:message code="index.label" arguments="${admin}"/>
-                                                                                            </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}user/indexMerchantAdmin">
-                                <span> >>
-                                <spring:message code="index.label"
-                                                arguments="${merchantAdmin}"/>
-                                                                                           </span>
-                            </a>
-                        </li>
-                        <li class="">
                             <a href="${rootURL}user/createAdmin">
                                 <span> >>
                                 <spring:message code="create.label" arguments="${admin}"/>
@@ -193,6 +173,21 @@
                                                                    </span>
                             </a>
                         </li>
+                        <li class="">
+                            <a href="${rootURL}user/indexAdmin">
+                                <span> >>
+                                <spring:message code="index.label" arguments="${admin}"/>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}user/indexMerchantAdmin">
+                                <span> >>
+                                <spring:message code="index.label" arguments="${merchantAdmin}"/>
+                                </span>
+                            </a>
+                        </li>
+
                         <!-- admin menu ends -->
                     </ul>
                 </li>
@@ -204,7 +199,7 @@
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                        data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
-                        <spring:message code="manage.label" arguments="${order}"/>
+                        <spring:message code="manage.label" arguments="${transaction}"/>
                         <b class="caret"></b>
                             </span>
                     </a>
@@ -223,22 +218,22 @@
                                 </span>
                             </a>
                         </li>
-                    </ul>
-                </li>
-            </sec:authorize>
-
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#"><i class="icon icon-th-list"></i>
-                        <span>
-                        <spring:message code="manage.label" arguments="${shipment}"/>
-                        <b class="caret"></b>
-                            </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
                         <li class="">
                             <a href="${rootURL}payment">
+                                <span> >>
+                                    <spring:message code="info.label" arguments="${payment}"/>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}shipment">
+                                <span> >>
+                                    <spring:message code="manage.label" arguments="${shipment}"/>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}refund">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${shipment}"/>
                                 </span>
@@ -253,7 +248,7 @@
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                        data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
-                        <spring:message code="manage.label" arguments="${payreturn}"/>
+                        <spring:message code="complain.info.label"/>
                         <b class="caret"></b>
                             </span>
                     </a>

@@ -17,7 +17,7 @@
                 <div class="widget-content nopadding">
                     <form:form class="form-horizontal" action="${rootURL}${controller}/create" method="POST"
                                commandName="siteCommand" id="new-site-form">
-                        <form:input path="id" id="id" type="hidden" value="${siteCommand.id}"/>
+                        <form:input size="80" path="id" id="id" type="hidden" value="${siteCommand.id}"/>
 
                         <!-- identity -->
                         <div class="control-group">
@@ -26,7 +26,7 @@
                                 <spring:message code="identity.label"/>
                             </label>
                             <div class="controls">
-                                <form:input path="identity" id="identity" class="text"
+                                <form:input size="80" path="identity" id="identity" class="text"
                                             value="${siteCommand.identity}"/>
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                                 <spring:message code="name.label"/>
                             </label>
                             <div class="controls">
-                                <form:input path="name" id="name" class="text"
+                                <form:input size="80" path="name" id="name" class="text"
                                             value="${siteCommand.name}"/>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                                 <spring:message code="site.url.label"/>
                             </label>
                             <div class="controls">
-                                <form:input path="url" id="url" class="text" required=""
+                                <form:input size="80" path="url" id="url" class="text" required=""
                                             value="${siteCommand.url}"/>
                             </div>
                         </div>
