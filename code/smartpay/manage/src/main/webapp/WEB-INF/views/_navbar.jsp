@@ -226,7 +226,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="${rootURL}shipment">
+                            <a href="${rootURL}shipment/shipping">
                                 <span> >>
                                     <spring:message code="manage.label" arguments="${shipment}"/>
                                 </span>
