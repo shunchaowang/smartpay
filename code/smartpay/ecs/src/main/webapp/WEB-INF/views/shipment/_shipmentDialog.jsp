@@ -4,6 +4,7 @@
 <spring:message var="cancelAction" code="action.cancel.label"/>
 
 <style media="screen" type="text/css">
+
     .dialogClass {
         background-color: #e5e5e5;
         padding: 5px;
