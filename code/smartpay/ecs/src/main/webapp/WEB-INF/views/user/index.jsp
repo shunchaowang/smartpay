@@ -3,6 +3,18 @@
 <%@include file="../taglib.jsp" %>
 <spring:message code="${domain}.label" var="entity"/>
 
+<style media="screen" type="text/css">
+    .dialogClass {
+        background-color: #e5e5e5;
+        padding: 5px;
+    }
+
+    .dialogClass .ui-dialog-titlebar-close {
+        display: none;
+    }
+
+</style>
+
 <div class="row-fluid">
     <div class="col-sm-12">
         <div class="widget-box">
@@ -31,11 +43,14 @@
     </div>
 </div>
 
+<div id="dialog-area">
+
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $('#user-table').DataTable({
+        var userTable = $('#user-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -73,15 +88,79 @@
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button>' + '</a>' + ' '
-                                + '<a href="' + "${rootURL}${controller}" + '/delete/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="delete-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.delete.label"/>'
-                                + '</button>' + '</a>';
+                                + '</button>' + '</a>'
+                                + '<button type="button" name="delete-button" class="tableButton"'
+                                + ' value="' + row['id'] + '">'
+                                + '<spring:message code="action.delete.label"/>'
+                                + '</button>';
                     }
                 }
             ]
+        });
+
+        userTable.on('click', 'button[type=button][name=delete-button]', function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}${controller}/delete",
+                data: {
+                    id: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var confirmModal = $("#confirm-dialog").dialog({
+                        autoOpen: false,
+                        resizable: false,
+                        height: 'auto',
+                        width: 300,
+                        modal: true,
+                        dialogClass: "dialogClass",
+                        open: function (event, ui) {
+                            $(".ui-dialog-titlebar-close", ui.dialog || ui).hide();
+                        },
+                        close: function () {
+                            confirmModal.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#cancel-button").click(function (event) {
+                        event.preventDefault();
+                        confirmModal.dialog("close");
+                    });
+
+                    $("#delete-confirm-button").click(function (event) {
+                        event.preventDefault();
+
+                        $.ajax({
+                            type: 'post',
+                            url: "${rootURL}${controller}/delete",
+                            data: {
+                                id: $("#id").val()
+                            },
+                            error: function () {
+                                alert('There was an error.');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                confirmModal.dialog("close");
+                                userTable.ajax.reload();
+                            }
+                        });
+                    });
+                }
+            });
         });
 
     });

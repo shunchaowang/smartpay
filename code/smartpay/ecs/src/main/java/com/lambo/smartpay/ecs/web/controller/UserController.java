@@ -14,11 +14,14 @@ import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
+import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
+import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.ecs.web.vo.UserCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesUser;
+import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +36,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -360,6 +365,64 @@ public class UserController {
         }
         return "main";
     }
+
+    @RequestMapping(value = {"/delete"}, method = RequestMethod.GET)
+    public ModelAndView delete(HttpServletRequest request) {
+
+        String id = request.getParameter("id");
+        if (StringUtils.isBlank(id)) {
+            throw new BadRequestException("400", "User id is blank.");
+        }
+        User user = null;
+        try {
+            user = userService.get(Long.valueOf(id));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Cannot find user " + id);
+        }
+
+        ModelAndView view = new ModelAndView("user/_confirmModal");
+        view.addObject("id", id);
+        view.addObject("username", user.getUsername());
+        return view;
+    }
+
+    /**
+     * ajax calls to delete a user by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/delete", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String delete(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("User.label", null, locale);
+        User user = null;
+        try {
+            user = userService.delete(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.deleted.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String deletedMessage = messageSource.getMessage("deleted.message",
+                new String[]{label, user.getUsername()}, locale);
+        response.setMessage(deletedMessage);
+        return JsonUtil.toJson(response);
+    }
+
 
     // create a new User from a UserCommand
     private User createUser(UserCommand userCommand, Role role) {
