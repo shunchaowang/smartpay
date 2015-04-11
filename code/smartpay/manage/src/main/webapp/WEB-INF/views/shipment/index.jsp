@@ -1,110 +1,86 @@
+<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="row">
-    <div class="col-sm-6">
-        <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
-    </div>
-    <!-- end of table title -->
-</div>
-<!-- end of class row -->
-<br/>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+								<span class="icon">
+									<i class="icon icon-align-justify"></i>
+								</span>
+                    <h5><b><spring:message code='index.label' arguments="${entity}"/></b></h5>
+                </div>
+                <div class="widget-content nopadding">
 
-<div class="row">
-    <table class="display cell-border" id="user-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="username.label"/></th>
-            <th><spring:message code="firstName.label"/></th>
-            <th><spring:message code="lastName.label"/></th>
-            <th><spring:message code="email.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+                    <form:form action="${rootURL}${controller}/payshipping" method="POST"
+                               commandName="paymentCommand" cssClass="form-horizontal" id="auditpayment-form">
+                        <form:input size="80" path="id" id="id" type="hidden" value="${paymentCommand.id}"/>
+
+                        <div class="control-group">
+                            <label class="col-sm-3 control-label" >
+                                <span class="required-indicator">*</span>
+                                <spring:message code="orderNumber.label"/>
+                            </label>
+                            <div class="controls">
+                                ${paymentCommand.orderNumber}
+                            </div>
+                        </div>
+
+                        <!-- bankTransactionNumber -->
+                        <div class="control-group">
+                            <label class="col-sm-3 control-label" for="bankTransactionNumber">
+                                <span class="required-indicator">*</span>
+                                <spring:message code="bankTransactionNumber.label"/>
+                            </label>
+
+                            <div class="controls">
+                                <form:input size="80" path="bankTransactionNumber" id="bankTransactionNumber" cssClass="text"
+                                            value="${paymentCommand.bankTransactionNumber}"/>
+                            </div>
+                        </div>
+                        <!-- url -->
+                        <div class="control-group">
+                            <label class="col-sm-3 control-label" for="currency">
+                                <span class="required-indicator">*</span>
+                                <spring:message code="currency.label"/>
+                            </label>
+
+                            <div class="controls">
+                                <form:input size="80" path="currencyName" id="currencyName" cssClass="text" required=""
+                                            value="${paymentCommand.currencyName}"/>
+                            </div>
+                        </div>
+                        <div class='form-actions col-lg-offset-2'>
+                                <button class='btn btn-success' id='create-button' type="submit">
+                                    <spring:message code='action.save.label'/>
+                                </button>
+                                <a href="${rootURL}${controller}">
+                                    <button type="button" class="btn btn-success">
+                                        <spring:message code="action.return.label"/>
+                                    </button>
+                                </a>
+                        </div>
+                    </form:form>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <script type="text/javascript">
     $(document).ready(function () {
-
-        var userTable = $('#user-table').DataTable({
-            'language': {
-                'url': "${dataTablesLanguage}"
-            },
-            'processing': true,
-            'serverSide': true,
-            'paging': true,
-
-            'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
-                'type': "GET",
-                'dataType': 'json'
-            },
-            // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
-            'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {
-                    'name': 'username', 'targets': 1, 'data': 'username',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
-                },
-                {'name': 'firstName', 'targets': 2, 'data': 'firstName'},
-                {'name': 'lastName', 'targets': 3, 'data': 'lastName'},
-                {'name': 'email', 'targets': 4, 'data': 'email'},
-                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
-                {
-                    'name': 'userStatus', 'targets': 6, 'searchable': false,
-                    'orderable': false, 'data': 'userStatus'
-                },
-                {
-                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' +
-                                '<button type="button" name="delete-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
-                                '</button>';
-                    }
-                }
-            ]
-        });
-
-        // add live handler for remove button
-        userTable.on('click', 'button[type=button][name=delete-button]', function (event) {
-            event.preventDefault();
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}${controller}" + '/delete',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    userTable.ajax.reload();
-                }
-            });
+        $('#edit-payment-form').validate({
+            rules: {
+                firstName: {required: true, minlength: 3, maxlength: 32},
+                lastName: {required: true, minlength: 3, maxlength: 32},
+                url: {required: true, minlength: 3, maxlength: 32},
+            }
         });
     });
 </script>

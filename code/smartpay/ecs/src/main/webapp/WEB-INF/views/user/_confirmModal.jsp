@@ -16,17 +16,17 @@
 </style>
 
 <div id="confirm-dialog">
-    <form class="form-horizontal" id="new-shipment-form">
+    <form id="new-shipment-form">
         <input id="id" name="id" value="${id}" type="hidden"/>
         <!-- carrier -->
-        <div class="control-group">
+        <div>
             <p>
                 <spring:message code="delete.confirm.message"
                                 arguments="${entity}, ${username}"/>
             </p>
         </div>
         <!-- buttons -->
-        <div class='form-actions col-sm-offset-4'>
+        <div class='col-sm-offset-4'>
             <button class='tableButton' id='delete-confirm-button'>
                 <spring:message code='action.delete.label'/>
             </button>
