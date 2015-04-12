@@ -2,33 +2,57 @@
 <%@include file="../taglib.jsp" %>
 <spring:message code="${domain}.label" var="entity"/>
 
-<div class="row">
-    <div class="col-sm-6">
-        <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
+        </div>
     </div>
-    <!-- end of table title -->
-</div>
-<!-- end of class row -->
-<br/>
+    <!-- reserved for notification -->
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <!— actual content —>
+        <div class="row">
+            <div class="col-sm-6">
+                <h3><b><spring:message code="index.label" arguments="${entity}"/></b></h3>
+            </div>
+            <!-- end of table title -->
+        </div>
+        <!-- end of class row -->
+        <br/>
 
-<div class="row">
-    <table class="display cell-border" id="merchant-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="identity.label"/></th>
-            <th><spring:message code="name.label"/></th>
-            <th><spring:message code="address.label"/></th>
-            <th><spring:message code="contact.label"/></th>
-            <th><spring:message code="tel.label"/></th>
-            <th><spring:message code="email.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <div class="row">
+            <table class="display cell-border" id="merchant-table">
+                <thead>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="identity.label"/></th>
+                    <th><spring:message code="name.label"/></th>
+                    <th><spring:message code="address.label"/></th>
+                    <th><spring:message code="contact.label"/></th>
+                    <th><spring:message code="tel.label"/></th>
+                    <th><spring:message code="email.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">

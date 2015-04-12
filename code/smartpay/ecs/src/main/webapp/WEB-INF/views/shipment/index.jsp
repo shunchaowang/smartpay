@@ -3,58 +3,83 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
-
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="widget-box">
-                <div class="widget-title">
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
+        </div>
+    </div>
+    <!-- reserved for notification -->
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <!— actual content —>
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="widget-box">
+                    <div class="widget-title">
 								<span class="icon">
 									<i class="icon icon-align-justify"></i>
 								</span>
-                    <h5><b><spring:message code='index.label' arguments="${entity}"/></b></h5>
-                </div>
-                <div class="widget-content nopadding">
+                        <h5><b><spring:message code='index.label' arguments="${entity}"/></b></h5>
+                    </div>
+                    <div class="widget-content nopadding">
 
-                    <form:form action="${rootURL}${controller}/payshipping" method="POST"
-                               commandName="paymentCommand" cssClass="form-horizontal" id="auditpayment-form">
-                        <form:input size="80" path="id" id="id" type="hidden" value="${paymentCommand.id}"/>
+                        <form:form action="${rootURL}${controller}/payshipping" method="POST"
+                                   commandName="paymentCommand" cssClass="form-horizontal"
+                                   id="auditpayment-form">
+                            <form:input size="80" path="id" id="id" type="hidden"
+                                        value="${paymentCommand.id}"/>
 
-                        <div class="control-group">
-                            <label class="col-sm-3 control-label" >
-                                <span class="required-indicator">*</span>
-                                <spring:message code="orderNumber.label"/>
-                            </label>
-                            <div class="controls">
-                                ${paymentCommand.orderNumber}
+                            <div class="control-group">
+                                <label class="col-sm-3 control-label">
+                                    <span class="required-indicator">*</span>
+                                    <spring:message code="orderNumber.label"/>
+                                </label>
+
+                                <div class="controls">
+                                        ${paymentCommand.orderNumber}
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- bankTransactionNumber -->
-                        <div class="control-group">
-                            <label class="col-sm-3 control-label" for="bankTransactionNumber">
-                                <span class="required-indicator">*</span>
-                                <spring:message code="bankTransactionNumber.label"/>
-                            </label>
+                            <!-- bankTransactionNumber -->
+                            <div class="control-group">
+                                <label class="col-sm-3 control-label" for="bankTransactionNumber">
+                                    <span class="required-indicator">*</span>
+                                    <spring:message code="bankTransactionNumber.label"/>
+                                </label>
 
-                            <div class="controls">
-                                <form:input size="80" path="bankTransactionNumber" id="bankTransactionNumber" cssClass="text"
-                                            value="${paymentCommand.bankTransactionNumber}"/>
+                                <div class="controls">
+                                    <form:input size="80" path="bankTransactionNumber"
+                                                id="bankTransactionNumber" cssClass="text"
+                                                value="${paymentCommand.bankTransactionNumber}"/>
+                                </div>
                             </div>
-                        </div>
-                        <!-- url -->
-                        <div class="control-group">
-                            <label class="col-sm-3 control-label" for="currency">
-                                <span class="required-indicator">*</span>
-                                <spring:message code="currency.label"/>
-                            </label>
+                            <!-- url -->
+                            <div class="control-group">
+                                <label class="col-sm-3 control-label" for="currency">
+                                    <span class="required-indicator">*</span>
+                                    <spring:message code="currency.label"/>
+                                </label>
 
-                            <div class="controls">
-                                <form:input size="80" path="currencyName" id="currencyName" cssClass="text" required=""
-                                            value="${paymentCommand.currencyName}"/>
+                                <div class="controls">
+                                    <form:input size="80" path="currencyName" id="currencyName"
+                                                cssClass="text" required=""
+                                                value="${paymentCommand.currencyName}"/>
+                                </div>
                             </div>
-                        </div>
-                        <div class='form-actions col-lg-offset-2'>
+                            <div class='form-actions col-lg-offset-2'>
                                 <button class='btn btn-success' id='create-button' type="submit">
                                     <spring:message code='action.save.label'/>
                                 </button>
@@ -63,15 +88,15 @@
                                         <spring:message code="action.return.label"/>
                                     </button>
                                 </a>
-                        </div>
-                    </form:form>
-                </div>
+                            </div>
+                        </form:form>
+                    </div>
 
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <script type="text/javascript">
     $(document).ready(function () {

@@ -4,32 +4,56 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="row-fluid">
-    <div class="col-sm-12">
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-            </div>
-            <div class="widget-content">
-                <table class="table display table-bordered data-table" id="site-table">
-                    <thead>
-                    <tr>
-                        <th><spring:message code="id.label"/></th>
-                        <th><spring:message code="identity.label"/></th>
-                        <th><spring:message code="name.label"/></th>
-                        <th><spring:message code="site.url.label"/></th>
-                        <th><spring:message code="createdTime.label"/></th>
-                        <th><spring:message code="status.label"/></th>
-                        <!--
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
+        </div>
+    </div>
+    <!-- reserved for notification -->
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <!— actual content —>
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"><i class="icon icon-th"></i> </span>
+                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+                    </div>
+                    <div class="widget-content">
+                        <table class="table display table-bordered data-table" id="site-table">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="id.label"/></th>
+                                <th><spring:message code="identity.label"/></th>
+                                <th><spring:message code="name.label"/></th>
+                                <th><spring:message code="site.url.label"/></th>
+                                <th><spring:message code="createdTime.label"/></th>
+                                <th><spring:message code="status.label"/></th>
+                                <!--
                         <c:if test="${domain.equals('Site')}">
                             <th><spring:message code="action.operation.label"/></th>
                         </c:if>
                         -->
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -73,24 +97,24 @@
                 }
                 /*
                 <c:if test="${domain.equals('Site')}">
-                ,
-                {
-                    'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
-                    'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" +
-                                '/edit/'
-                                + row['id'] + '">' +
-                                '<button class="tableButton" type="button" name="edit-button" '
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' + ' '
-                                + '<button class="tableButton" type="button" name="delete-button"'
-                                + ' value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
-                                '</button>';
-                    }
-                }
+                 ,
+                 {
+                 'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
+                 'render': function (data, type, row) {
+                 return '<a href="' + "${rootURL}${controller}" +
+                 '/edit/'
+                 + row['id'] + '">' +
+                 '<button class="tableButton" type="button" name="edit-button" '
+                 + '">' + '<spring:message code="action.edit.label"/>'
+                 + '</button></a>' + ' '
+                 + '<button class="tableButton" type="button" name="delete-button"'
+                 + ' value="' + row['id'] + '">' +
+                 '<spring:message code="action.delete.label"/>' +
+                 '</button>';
+                 }
+                 }
                 </c:if>
-                */
+                 */
             ]
         });
 

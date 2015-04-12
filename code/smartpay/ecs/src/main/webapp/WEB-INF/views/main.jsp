@@ -23,30 +23,9 @@
 </div>
 <!-- end of notification -->
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
-                <spring:message code="home.label"/>
-            </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
-        </div>
-    </div>
-   <!-- reserved for notification -->
-    <!-- close of content-header -->
-    <div class="container-fluid">
-        <jsp:include page="${_view}.jsp"/>
-    </div>
-</div>
+<!-- content area -->
+<jsp:include page="${_view}.jsp"/>
+
 <div class="row-fluid">
     <jsp:include page="_footer.jsp"/>
 </div>

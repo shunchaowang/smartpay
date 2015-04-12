@@ -1,40 +1,63 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="${domain}.label" var="entity"/>
-
-<div class="row">
-    <div class="col-xs-6 pull-left">
-        <h2><b><spring:message code="index.label" arguments="${entity}"/></b></h2>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
+        </div>
     </div>
-    <!-- end of pull-left -->
-    <!-- <sec:authorize access="hasRole('ROLE_ADMIN')"> -->
-    <div class="col-xs-2 pull-right">
-        <a href="${rootURL}${controller}/createSite">
-            <button type="button" class="btn btn-primary" id="new-button">
-                <spring:message code="create.label" arguments="${entity}"/>
-            </button>
-        </a>
-    </div>
-    <!-- </sec:authorize> -->
-    <!-- end of pull-right -->
-</div>
-<!-- end of class row -->
-<br/>
+    <!-- reserved for notification -->
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <!— actual content —>
+        <div class="row">
+            <div class="col-xs-6 pull-left">
+                <h2><b><spring:message code="index.label" arguments="${entity}"/></b></h2>
+            </div>
+            <!-- end of pull-left -->
+            <!-- <sec:authorize access="hasRole('ROLE_ADMIN')"> -->
+            <div class="col-xs-2 pull-right">
+                <a href="${rootURL}${controller}/createSite">
+                    <button type="button" class="btn btn-primary" id="new-button">
+                        <spring:message code="create.label" arguments="${entity}"/>
+                    </button>
+                </a>
+            </div>
+            <!-- </sec:authorize> -->
+            <!-- end of pull-right -->
+        </div>
+        <!-- end of class row -->
+        <br/>
 
-<div class="row">
-    <table class="display cell-border" id="site-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="name.label"/></th>
-            <th><spring:message code="site.url.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+        <div class="row">
+            <table class="display cell-border" id="site-table">
+                <thead>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="name.label"/></th>
+                    <th><spring:message code="site.url.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">

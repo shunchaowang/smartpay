@@ -3,105 +3,130 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<!-- start of search form -->
-<div class="row">
-    <form class="form-horizontal">
-        <div class="row">
-            <label class="col-sm-1 control-label" for="id">
-                <spring:message code="id.label"/>
-            </label>
-
-            <div class="col-sm-2">
-                <input type="text" class="form-control" name="id" id="id"/>
-            </div>
-            <label class="col-sm-1 control-label" for="merchantNumber">
-                <spring:message code="merchantNumber.label"/>
-            </label>
-
-            <div class="col-sm-2">
-                <input type="text" class="form-control" name="merchantNumber"
-                       id="merchantNumber"/>
-            </div>
-            <label class="col-sm-1 control-label" for="orderStatus">
-                <spring:message code="status.label"/>
-            </label>
-
-            <div class="col-sm-2">
-                <select id="orderStatus" class="form-control">
-                    <c:forEach items="${orderStatuses}" var="status">
-                        <option value="${status.id}">${status.name}</option>
-                    </c:forEach>
-                </select>
-            </div>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
         </div>
-        <br>
-        <!-- line of id, merchant number and status -->
+    </div>
+    <!-- reserved for notification -->
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <!— actual content —>
+        <!-- start of search form -->
         <div class="row">
-            <label class="col-sm-1 control-label" for="site">
-                <spring:message code="Site.label"/>
-            </label>
+            <form class="form-horizontal">
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="id">
+                        <spring:message code="id.label"/>
+                    </label>
 
-            <div class="col-sm-2">
-                <select id="site" class="form-control">
-                    <c:forEach items="${sites}" var="site">
-                        <option value="${site.id}">${site.name}</option>
-                    </c:forEach>
-                </select>
-            </div>
-            <label class="col-sm-1 control-label" for="begin-date">
-                <spring:message code="date.begin.label"/>
-            </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="id" id="id"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="merchantNumber">
+                        <spring:message code="merchantNumber.label"/>
+                    </label>
 
-            <div class="col-sm-2">
-                <input id="begin-date" name="begin-date"
-                       class="form-control datepicker" readonly="true"
-                       style="background:white;"/>
-            </div>
-            <label class="col-sm-1 control-label" for="end-date">
-                <spring:message code="date.end.label"/>
-            </label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="merchantNumber"
+                               id="merchantNumber"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="orderStatus">
+                        <spring:message code="status.label"/>
+                    </label>
 
-            <div class="col-sm-2">
-                <input id="end-date" name="end-date"
-                       class="form-control datepicker" readonly="true"
-                       style="background:white;"/>
-            </div>
+                    <div class="col-sm-2">
+                        <select id="orderStatus" class="form-control">
+                            <c:forEach items="${orderStatuses}" var="status">
+                                <option value="${status.id}">${status.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <!-- line of id, merchant number and status -->
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="site">
+                        <spring:message code="Site.label"/>
+                    </label>
+
+                    <div class="col-sm-2">
+                        <select id="site" class="form-control">
+                            <c:forEach items="${sites}" var="site">
+                                <option value="${site.id}">${site.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <label class="col-sm-1 control-label" for="begin-date">
+                        <spring:message code="date.begin.label"/>
+                    </label>
+
+                    <div class="col-sm-2">
+                        <input id="begin-date" name="begin-date"
+                               class="form-control datepicker" readonly="true"
+                               style="background:white;"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="end-date">
+                        <spring:message code="date.end.label"/>
+                    </label>
+
+                    <div class="col-sm-2">
+                        <input id="end-date" name="end-date"
+                               class="form-control datepicker" readonly="true"
+                               style="background:white;"/>
+                    </div>
+                </div>
+                <br>
+                <!-- line of site, begin date and end date -->
+                <div class="row">
+                    <div class='col-sm-offset-3 col-sm-10'>
+                        <button class='btn btn-default' id='search-button' type="submit">
+                            <spring:message code='action.search.label'/>
+                        </button>
+                        <button class='btn btn-default col-sm-offset-3' id='reset-button'
+                                type="reset">
+                            <spring:message code='action.reset.label'/>
+                        </button>
+                    </div>
+                </div>
+                <!-- line of submit and reset buttons -->
+            </form>
         </div>
-        <br>
-        <!-- line of site, begin date and end date -->
+        <!-- end of search form -->
+        <br/>
+
         <div class="row">
-            <div class='col-sm-offset-3 col-sm-10'>
-                <button class='btn btn-default' id='search-button' type="submit">
-                    <spring:message code='action.search.label'/>
-                </button>
-                <button class='btn btn-default col-sm-offset-3' id='reset-button' type="reset">
-                    <spring:message code='action.reset.label'/>
-                </button>
-            </div>
+            <table class="display cell-border" id="order-table">
+                <thead>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="merchantNumber.label"/></th>
+                    <th><spring:message code="amount.label"/></th>
+                    <th><spring:message code="currency.label"/></th>
+                    <th><spring:message code="Site.label"/></th>
+                    <th><spring:message code="Customer.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-        <!-- line of submit and reset buttons -->
-    </form>
-</div>
-<!-- end of search form -->
-<br/>
-
-<div class="row">
-    <table class="display cell-border" id="order-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="merchantNumber.label"/></th>
-            <th><spring:message code="amount.label"/></th>
-            <th><spring:message code="currency.label"/></th>
-            <th><spring:message code="Site.label"/></th>
-            <th><spring:message code="Customer.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    </div>
 </div>
 
 <script type="text/javascript">

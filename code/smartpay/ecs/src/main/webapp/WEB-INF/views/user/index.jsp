@@ -15,36 +15,60 @@
 
 </style>
 
-<div class="row-fluid">
-    <div class="col-sm-12">
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-            </div>
-            <div class="widget-content">
-                <table class="table display table-bordered data-table" id="user-table">
-                    <thead>
-                    <tr>
-                        <th><spring:message code="id.label"/></th>
-                        <th><spring:message code="username.label"/></th>
-                        <th><spring:message code="firstName.label"/></th>
-                        <th><spring:message code="lastName.label"/></th>
-                        <th><spring:message code="email.label"/></th>
-                        <th><spring:message code="createdTime.label"/></th>
-                        <th><spring:message code="status.label"/></th>
-                        <th><spring:message code="action.operation.label"/></th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
         </div>
     </div>
-</div>
+    <!-- reserved for notification -->
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <!— actual content —>
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"><i class="icon icon-th"></i> </span>
+                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+                    </div>
+                    <div class="widget-content">
+                        <table class="table display table-bordered data-table" id="user-table">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="id.label"/></th>
+                                <th><spring:message code="username.label"/></th>
+                                <th><spring:message code="firstName.label"/></th>
+                                <th><spring:message code="lastName.label"/></th>
+                                <th><spring:message code="email.label"/></th>
+                                <th><spring:message code="createdTime.label"/></th>
+                                <th><spring:message code="status.label"/></th>
+                                <th><spring:message code="action.operation.label"/></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div id="dialog-area">
+        <div id="dialog-area">
 
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
