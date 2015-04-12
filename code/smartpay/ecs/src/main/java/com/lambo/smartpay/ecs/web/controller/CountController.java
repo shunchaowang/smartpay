@@ -1,23 +1,13 @@
 package com.lambo.smartpay.ecs.web.controller;
 
-import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
-import com.lambo.smartpay.core.exception.NoSuchEntityException;
-import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.Currency;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Site;
-import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.CurrencyService;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.UserService;
-import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
-import com.lambo.smartpay.ecs.web.exception.BadRequestException;
-import com.lambo.smartpay.ecs.web.vo.PasswordCommand;
-import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderAmount;
-import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCurrency;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import org.slf4j.Logger;
@@ -32,7 +22,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -72,54 +61,11 @@ public class CountController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping(value = {"", "/index", "/indexOrder"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/currency"}, method = RequestMethod.GET)
+    public String countByCurrency(Model model) {
+        model.addAttribute("action", "currency");
         return "main";
     }
-
-    /*
-    @RequestMapping(value = {"/", "/index"})
-    public String count(Model model) {
-        //view.addObject("action", "index");
-        // we need to retrieve all orders for the merchant
-        // and calculate the count of the order and amount of the order
-        // order summary based on currency
-        SecurityUser currentUser = UserResource.getCurrentUser();
-        if (currentUser == null) {
-            return "403";
-        }
-        Merchant merchant = currentUser.getMerchant();
-        CountCommand command = new CountCommand();
-        command.setMerchantId(merchant.getId());
-        command.setMerchantName(merchant.getName());
-        command.setMerchantIdentity(merchant.getIdentity());
-        Site siteCriteria = new Site();
-        siteCriteria.setMerchant(merchant);
-        Long siteCount = siteService.countByCriteria(siteCriteria);
-        command.setSiteCount(siteCount);
-        Order orderCriteria = new Order();
-        Site site = new Site();
-        site.setMerchant(merchant);
-        orderCriteria.setSite(site);
-
-        Long orderCount = orderService.countByCriteria(orderCriteria);
-        command.setOrderCount(orderCount);
-
-        List<Order> orders = orderService.findByCriteria(orderCriteria);
-        Double amount = 0.0;
-        for (Order order : orders) {
-            amount += order.getAmount();
-        }
-        Locale locale = LocaleContextHolder.getLocale();
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
-        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
-        decimalFormat.applyPattern("###.##");
-        command.setOrderAmount(Double.valueOf(decimalFormat.format(amount)));
-        model.addAttribute("merchantCommand", command);
-
-        return "main";
-    }
-    */
 
     @RequestMapping(value = "/countByCurrency", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -127,14 +73,6 @@ public class CountController {
     @ResponseBody
     String countByCurrency() {
 
-        logger.debug("~~~~~~~~~~~~~~countByCurrency");
-
-        /*
-        SecurityUser currentUser = UserResource.getCurrentUser();
-        if (currentUser == null) {
-            return "403";
-        }
-        */
         Locale locale = LocaleContextHolder.getLocale();
         NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
         DecimalFormat decimalFormat = (DecimalFormat) numberFormat;

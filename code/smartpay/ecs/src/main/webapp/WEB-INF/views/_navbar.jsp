@@ -108,14 +108,14 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}count/countByCurrency">
+                        <a href="${rootURL}count/currency">
                             <span> >>
                             <spring:message code="count.by.currency"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}count/countBySite">
+                        <a href="${rootURL}count/site">
                             <span> >>
                             <spring:message code="count.by.site"/>
                             </span>
