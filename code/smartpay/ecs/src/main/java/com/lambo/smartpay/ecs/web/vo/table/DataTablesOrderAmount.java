@@ -9,6 +9,7 @@ public class DataTablesOrderAmount {
     private String siteName;
     private String siteIdentity;
     private Double orderAmount;
+    private int orderCount;
 
     public Long getSiteId() {
         return siteId;
@@ -40,5 +41,13 @@ public class DataTablesOrderAmount {
 
     public void setOrderAmount(Double orderAmount) {
         this.orderAmount = orderAmount;
+    }
+
+    public int getOrderCount() {
+        return orderCount;
+    }
+
+    public void setOrderCount(int orderCount) {
+        this.orderCount = orderCount;
     }
 }

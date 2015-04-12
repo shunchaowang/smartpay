@@ -8,6 +8,7 @@ import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.ecs.util.JsonUtil;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderAmount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCurrency;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import org.slf4j.Logger;
@@ -67,6 +68,12 @@ public class CountController {
         return "main";
     }
 
+    @RequestMapping(value = {"/site"}, method = RequestMethod.GET)
+    public String countBySite(Model model) {
+        model.addAttribute("action", "site");
+        return "main";
+    }
+
     @RequestMapping(value = "/countByCurrency", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
@@ -108,6 +115,72 @@ public class CountController {
         result.setData(amounts);
         result.setRecordsTotal(currencies.size());
         result.setRecordsFiltered(currencies.size());
+
+        return JsonUtil.toJson(result);
+    }
+
+
+
+    @RequestMapping(value = "/countBySite", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String countBySite() {
+
+        /*
+        SecurityUser currentUser = UserResource.getCurrentUser();
+        if (currentUser == null) {
+            return "403";
+        }
+
+        */
+
+
+        Locale locale = LocaleContextHolder.getLocale();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
+        decimalFormat.applyPattern("###.##");
+
+        // find all site, and get count based on site
+        Site site = new Site();
+        //site.setMerchant(currentUser.getMerchant());
+
+        List<Site> sites = siteService.findByCriteria(site);
+        List<DataTablesOrderAmount> amounts = new ArrayList<>();
+        for (Site s : sites) {
+            DataTablesOrderAmount amount = new DataTablesOrderAmount();
+            amount.setSiteId(s.getId());
+            amount.setSiteIdentity(s.getIdentity());
+            amount.setSiteName(s.getName());
+            Order orderCriteria = new Order();
+            orderCriteria.setSite(s);
+            List<Order> orders = orderService.findByCriteria(orderCriteria);
+            Double sum = 0.0;
+            int count = 0;
+            for (Order order : orders) {
+                sum += order.getAmount();
+                count += 1;
+            }
+            amount.setOrderAmount(Double.valueOf(decimalFormat.format(sum)));
+            amount.setOrderCount(count);
+            amounts.add(amount);
+
+            /*
+            DataTablesOrderCount count = new DataTablesOrderCount();
+            count.setSiteId(s.getId());
+            count.setSiteIdentity(s.getIdentity());
+            count.setSiteName(s.getName());
+            Order orderCriteria = new Order();
+            orderCriteria.setSite(s);
+            count.setOrderCount(orderService.countByCriteria(orderCriteria));
+            counts.add(count);
+            */
+        }
+
+        DataTablesResultSet<DataTablesOrderAmount> result = new DataTablesResultSet<>();
+        result.setData(amounts);
+        result.setRecordsTotal(sites.size());
+        result.setRecordsFiltered(sites.size());
 
         return JsonUtil.toJson(result);
     }

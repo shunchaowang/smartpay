@@ -30,17 +30,31 @@
                 <div class="widget-box">
                     <div class="widget-title">
                         <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="count.by.currency"/></h5>
+                        <h5><spring:message code="count.by.site"/></h5>
                         ${merchantCommand.orderAmount}
                     </div>
                     <div class="widget-content">
-                        <table class="table display table-bordered data-table"
-                               id="currency-table">
+                        <table class="table display table-bordered data-table" id="amount-table">
                             <thead>
                             <tr>
-                                <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="count.label"/></th>
-                                <th><spring:message code="amount.label"/></th>
+                                <th>
+                                    <spring:message code="Site.label"/>
+                                    <spring:message code="id.label"/>
+                                </th>
+                                <th>
+                                    <spring:message code="Site.label"/>
+                                    <spring:message code="identity.label"/>
+                                </th>
+                                <th>
+                                    <spring:message code="Site.label"/>
+                                    <spring:message code="name.label"/>
+                                </th>
+                                <th>
+                                    <spring:message code="count.label"/>
+                                </th>
+                                <th>
+                                    <spring:message code="amount.label"/>
+                                </th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -52,9 +66,11 @@
     </div>
 </div>
 
+
+
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#currency-table').DataTable({
+        $('#amount-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -67,16 +83,18 @@
 
 
             'ajax': {
-                'url': "${rootURL}${controller}/countByCurrency",
+                'url': "${rootURL}${controller}/countBySite",
                 'type': "GET",
                 'dataType': 'json'
             },
 
 
             'columnDefs': [
-                {'name': 'currency', 'targets': 0, 'data': 'currencyName'},
-                {'name': 'count', 'targets': 1, 'data': 'orderCount'},
-                {'name': 'amount', 'targets': 2, 'data': 'orderAmount'}
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
+                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
+                {'name': 'name', 'targets': 2, 'data': 'siteName'},
+                {'name': 'count', 'targets': 3, 'data': 'orderCount'},
+                {'name': 'amount', 'targets': 4, 'data': 'orderAmount'}
             ]
         });
     });
