@@ -19,15 +19,13 @@
 
         <ul>
             <!--    HOME    -->
-            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                <li>
-                    <a href="${rootURL}"><i class="icon icon-home"></i>
+            <li>
+                <a href="${rootURL}"><i class="icon icon-home"></i>
                             <span>
                     <spring:message code="home.label"/>
                             </span>
-                    </a>
-                </li>
-            </sec:authorize>
+                </a>
+            </li>
 
             <!-- merchant admin menu ends -->
 
@@ -71,33 +69,31 @@
                 </ul>
             </li>
 
-            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                       href="#"><i class="icon icon-pencil"></i>
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                   href="#"><i class="icon icon-pencil"></i>
                             <span>
                             <spring:message code="manage.label" arguments="${site}"/>
                             <b class="caret"></b>
                             </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li class="">
-                            <a href="${rootURL}site/create">
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}site/create">
                             <span> >>
                             <spring:message code="create.label" arguments="${site}"/>
                             </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}site/index">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}site/index">
                             <span> >>
                             <spring:message code="manage.label" arguments="${site}"/>
                             </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </sec:authorize>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
 
             <!-- merchant admin menu ends -->
@@ -133,16 +129,18 @@
             <!-- merchant admin can view merchant detail -->
             <!-- merchant operator cannot see merchant nav -->
             <!-- merchant admin menu starts -->
-            <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                       href="#"><i class="icon icon-pencil"></i>
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                   href="#"><i class="icon icon-pencil"></i>
                             <span>
                             <spring:message code="manage.label" arguments="${merchant}"/>
                             <b class="caret"></b>
                             </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
+                </a>
+
+                <ul class="dropdown-menu" role="menu">
+                    <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
+
                         <li class="">
                             <a href="${rootURL}user/create">
                             <span> >>
@@ -157,16 +155,17 @@
                             </span>
                             </a>
                         </li>
-                        <li class="">
-                            <a href="${rootURL}merchant/edit">
+                    </sec:authorize>
+
+                    <li class="">
+                        <a href="${rootURL}merchant/edit">
                             <span> >>
                             <spring:message code="merchant.edit.label" arguments="${merchant}"/>
                             </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </sec:authorize>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
 
             <!-- merchant admin menu ends -->
@@ -198,8 +197,9 @@
             </li>
         </ul>
 
-        <!-- end navbar-collapse -->
     </sec:authorize>
+
+    <!-- end navbar-collapse -->
 </div>
 <!-- end container-fluid -->
 
