@@ -3,15 +3,18 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
 import com.lambo.smartpay.core.persistence.entity.Shipment;
 import com.lambo.smartpay.core.persistence.entity.ShipmentStatus;
+import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.ShipmentService;
 import com.lambo.smartpay.core.service.ShipmentStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.DataTablesParams;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
@@ -107,6 +110,17 @@ public class ShipmentController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+
+        Merchant merchant = securityUser.getMerchant();
+        Order orderCriteria = new Order();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        orderCriteria.setSite(siteCriteria);
+
         // only paid order can be shipped
         OrderStatus paidOrderStatus = null;
         try {
@@ -116,7 +130,7 @@ public class ShipmentController {
             e.printStackTrace();
             throw new IntervalServerException("500", "Cannot find paid order status.");
         }
-        Order orderCriteria = new Order();
+
         orderCriteria.setOrderStatus(paidOrderStatus);
 
         List<Order> orders = orderService.findByCriteria(orderCriteria, params.getSearch(),
