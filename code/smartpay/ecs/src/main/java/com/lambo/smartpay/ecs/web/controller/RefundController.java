@@ -20,8 +20,8 @@ import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
-import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesRefund;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -228,12 +228,10 @@ public class RefundController {
             refund = refundService.create(refund);
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            response.setStatus("failed");
-            response.setMessage(failedMessage);
+            throw new BadRequestException("400", e.getMessage());
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            response.setStatus("failed");
-            response.setMessage(failedMessage);
+            throw new BadRequestException("400", e.getMessage());
         }
         response.setStatus("successful");
         response.setMessage(successfulMessage);
@@ -244,6 +242,7 @@ public class RefundController {
     private Refund createRefund(Order order) {
         Refund refund = new Refund();
         refund.setOrder(order);
+        refund.setCurrency(order.getCurrency());
         refund.setBillFirstName(order.getCustomer().getFirstName());
         refund.setBillLastName(order.getCustomer().getLastName());
         refund.setBillAddress1(order.getCustomer().getAddress1());
@@ -251,6 +250,11 @@ public class RefundController {
         refund.setBillState(order.getCustomer().getState());
         refund.setBillZipCode(order.getCustomer().getZipCode());
         refund.setBillCountry(order.getCustomer().getCountry());
+        // bank account number, return code and transaction number
+        // are set to be 0000 for now
+        refund.setBankAccountNumber("0000");
+        refund.setBankReturnCode("0000");
+        refund.setBankTransactionNumber("0000");
         return refund;
     }
 }
