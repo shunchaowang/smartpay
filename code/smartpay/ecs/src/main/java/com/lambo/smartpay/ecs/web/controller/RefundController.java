@@ -185,7 +185,7 @@ public class RefundController {
 
         String orderId = request.getParameter("orderId");
         Float amount = Float.parseFloat(request.getParameter("amount"));
-        String remark = request.getParameter("amount");
+        String remark = request.getParameter("remark");
 
         if (StringUtils.isBlank(orderId) || StringUtils.isBlank(amount.toString())
                 || StringUtils.isBlank(remark.toString())) {
