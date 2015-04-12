@@ -19,6 +19,7 @@ public abstract class ResourceProperties {
     public static final String PROFILES_PROD = "prod";
     // user role code
     public static final String ROLE_ADMIN_CODE = "100";
+    public static final String ROLE_ADMIN_OPERATOR_CODE = "101";
     public static final String ROLE_MERCHANT_ADMIN_CODE = "200";
     public static final String ROLE_MERCHANT_OPERATOR_CODE = "201";
     // initial password for new user

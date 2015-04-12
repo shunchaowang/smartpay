@@ -246,7 +246,7 @@ public class UserController {
 
         Role role = null;
         try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
             logger.info("Cannot find admin role.");
             e.printStackTrace();

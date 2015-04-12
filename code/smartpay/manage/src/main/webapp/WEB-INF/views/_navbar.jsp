@@ -5,7 +5,6 @@
     <sec:authorize access="isAuthenticated()">
         <!-- navbar -->
 
-
         <!-- define domain related vars -->
         <spring:message code='Merchant.label' var="merchant"/>
         <spring:message code='Credential.label' var="merchantCredential"/>
@@ -23,74 +22,66 @@
         <spring:message code='Refund.label' var="refund"/>
 
 
-
         <ul>
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
 
-                <li>
-                    <a href="${rootURL}"><i class="icon icon-home"></i>
+            <li>
+                <a href="${rootURL}"><i class="icon icon-home"></i>
                             <span>
                     <spring:message code="home.label"/>
                             </span>
-                    </a>
-                </li>
-            </sec:authorize>
+                </a>
+            </li>
 
-            <!-- merchant management goes here -->
-            <!-- admin can view merchant list, add merchant -->
-            <!-- merchant admin can view merchant detail -->
-            <!-- admin menu starts -->
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <!-- show merchant management as hierarchical dropdown menu -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+            <!-- show merchant management as hierarchical dropdown menu -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                   data-target="#" href="#"><i class="icon icon-th-list"></i>
                              <span>
                             <spring:message code="manage.label" arguments="${merchant}"/>
                             <b class="caret"></b>
                              </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li class="">
-                            <a href="${rootURL}merchant/create">
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}merchant/create">
                                 <span> >>
                                 <spring:message code="create.label"
                                                 arguments="${merchant}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}merchant/indexMerchantEdit">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}merchant/indexMerchantEdit">
                                 <span> >>
                                 <spring:message code="merchant.manage.label" arguments="${merchant}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}merchant/indexMerchantFee">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}merchant/indexMerchantFee">
                                 <span> >>
                                 <spring:message code="merchant.setfee.label"
                                                 arguments="${merchant}"/>
                                  </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}merchant/indexFreezeList">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}merchant/indexFreezeList">
                                 <span> >>
                                 <spring:message code="freeze.label" arguments="${merchant}"/>
                                                             </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}merchant/indexUnfreezeList">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}merchant/indexUnfreezeList">
                                 <span> >>
                                 <spring:message code="unfreeze.label" arguments="${merchant}"/>
                                                                                         </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </sec:authorize>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- admin menu ends -->
 
             <!-- site management goes here -->
@@ -102,64 +93,63 @@
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
                    href="#"><i class="icon icon-th-list"></i>
                    <span>
- <spring:message code="manage.label" arguments="${site}"/>
+                        <spring:message code="manage.label" arguments="${site}"/>
                     <b class="caret"></b>
                     </span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <!-- admin menu starts -->
-                    <sec:authorize access="hasAnyRole('ROLE_ADMIN')">
-                        <li class="">
-                            <a href="${rootURL}site/create">
+                    <li class="">
+                        <a href="${rootURL}site/create">
                                 <span> >>
                                 <spring:message code="create.label" arguments="${site}"/>
                                                                                        </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}site">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}site">
                                 <span> >>
                                 <spring:message code="manage.label" arguments="${site}"/>
                                                                                        </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}site/indexAuditList">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}site/indexAuditList">
                                 <span> >>
                                 <spring:message code="audit.label" arguments="${site}"/>
                                                                </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}site/indexFreezeList">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}site/indexFreezeList">
                                 <span> >>
                                 <spring:message code="freeze.label" arguments="${site}"/>
                                                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}site/indexUnfreezeList">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}site/indexUnfreezeList">
                                 <span> >>
                                 <spring:message code="unfreeze.label" arguments="${site}"/>
                                                                  </span>
-                            </a>
-                        </li>
-                    </sec:authorize>
+                        </a>
+                    </li>
                 </ul>
             </li>
 
             <!-- user management goes here -->
             <!-- admin menu goes here -->
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                   data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
                         <spring:message code="manage.label" arguments="${user}"/>
                         <b class="caret"></b>
                             </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <sec:authorize access="hasRole('ROLE_ADMIN')">
+
                         <li class="">
                             <a href="${rootURL}user/createAdmin">
                                 <span> >>
@@ -167,139 +157,133 @@
                                                                       </span>
                             </a>
                         </li>
-                        <li class="">
-                            <a href="${rootURL}user/createMerchantAdmin">
+                    </sec:authorize>
+                    <li class="">
+                        <a href="${rootURL}user/createMerchantAdmin">
                                 <span> >>
                                 <spring:message code="create.label"
                                                 arguments="${merchantAdmin}"/>
                                                                    </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}user/indexAdmin">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}user/indexAdmin">
                                 <span> >>
                                 <spring:message code="index.label" arguments="${admin}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}user/indexMerchantAdmin">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}user/indexMerchantAdmin">
                                 <span> >>
                                 <spring:message code="index.label" arguments="${merchantAdmin}"/>
                                 </span>
-                            </a>
-                        </li>
+                        </a>
+                    </li>
 
-                        <!-- admin menu ends -->
-                    </ul>
-                </li>
-            </sec:authorize>
+                    <!-- admin menu ends -->
+                </ul>
+            </li>
             <!-- user management ends -->
 
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                   data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
                         <spring:message code="transaction.label"/>
                         <b class="caret"></b>
                             </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li class="">
-                            <a href="${rootURL}order">
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}order">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${order}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}order/search">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}order/search">
                                 <span> >>
                                     <spring:message code="search.label" arguments="${order}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}payment">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}payment">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${payment}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}shipment/shipping">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}shipment/shipping">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${shipment}"/>
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}refund/refund">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}refund/refund">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${refund}"/>
                                 </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </sec:authorize>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                   data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
                         <spring:message code="complain.info.label"/>
                         <b class="caret"></b>
                             </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li class="">
-                            <a href="${rootURL}payment">
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}payment">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${payreturn}"/>
                                 </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </sec:authorize>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
 
-            <sec:authorize access="hasRole('ROLE_ADMIN')">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-                       data-target="#" href="#"><i class="icon icon-th-list"></i>
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                   data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
                         <spring:message code="user.setting.label" />
                         <b class="caret"></b>
                             </span>
-                    </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li class="">
-                            <a href="${rootURL}changePassword">
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}changePassword">
                                 <span> >>
                                     <spring:message code="user.change.password.label" />
                                 </span>
-                            </a>
-                        </li>
-                        <li class="">
-                            <a href="${rootURL}user/edit/0">
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}user/edit/0">
                                 <span> >>
                                     <spring:message code="user.profile.label"/>
                                 </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </sec:authorize>
+                        </a>
+                    </li>
+                </ul>
+            </li>
         </ul>
 
 
-
-
-        <!-- end navbar-collapse -->
     </sec:authorize>
+
+    <!-- end navbar-collapse -->
+
 </div>
 <!-- end container-fluid -->
