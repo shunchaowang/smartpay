@@ -46,6 +46,7 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/site")
+@Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
 public class SiteController {
 
     private static final Logger logger = LoggerFactory.getLogger(SiteController.class);
@@ -82,13 +83,11 @@ public class SiteController {
 
     @RequestMapping(value = {"", "/index", "/indexSite"}, method = RequestMethod.GET)
     public String index() {
-        logger.debug("I've been through here ~~~~~~~~~~ 1 ");
         return "main";
     }
 
     @RequestMapping(value = {"/indexDeclineList"}, method = RequestMethod.GET)
     public String indexDeclineList(Model model) {
-        logger.debug("~~~~~~~~~ indexDeclineList ~~~~~~~~~");
         model.addAttribute("domain", "DeclineList");
         return "main";
     }
@@ -97,8 +96,6 @@ public class SiteController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -154,7 +151,6 @@ public class SiteController {
     }
 
 
-    @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
 
@@ -163,11 +159,8 @@ public class SiteController {
         return "main";
     }
 
-    @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
-
-        logger.debug(" ~~~~~~~ create site here ~~~~~~~~ ");
 
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
@@ -233,9 +226,6 @@ public class SiteController {
 
         model.addAttribute("siteCommand", siteCommand);
 
-        logger.debug("whether come to here ??? " + siteCommand.getId());
-        logger.debug("whether come to here ??? " + siteCommand.getRemark());
-
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
         Site site = createSite(siteCommand);
@@ -270,7 +260,6 @@ public class SiteController {
         String label = messageSource.getMessage("Site.label", null, locale);
         try {
             site = siteService.delete(id);
-            logger.debug("here u r" + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -291,7 +280,6 @@ public class SiteController {
     @ResponseBody
     public String approve(@RequestParam(value = "id") Long id) {
 
-        logger.debug("~~~~~~~~~~ approve ~~~~~~~~~~" + "id= " + id);
         //Initiate
         Site site;
         JsonResponse response = new JsonResponse();
@@ -320,8 +308,6 @@ public class SiteController {
     @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
             model) {
-
-        logger.debug("~~~~~~ whether come to here ??? " + "domain=" + domain + "id=" + id);
 
         Site site;
         try {
@@ -352,14 +338,6 @@ public class SiteController {
         SiteCommand.setRemark(site.getRemark());
         SiteCommand.setActive(site.getActive());
 
-        /*
-        if (site.getMerchant() != null) {
-            SiteCommand.setMerchant(site.getMerchant().getId());
-            SiteCommand.setMerchantName(site.getMerchant().getName());
-            logger.debug("SiteMerchant ---" + SiteCommand.getMerchant());
-            logger.debug("SiteMerchant ---" + SiteCommand.getMerchantName());
-        }
-        */
 
         if (site.getSiteStatus() != null) {
             SiteCommand.setSiteStatusId(site.getSiteStatus().getId());
@@ -376,7 +354,6 @@ public class SiteController {
 
         //
         if (siteCommand.getId() != null ){
-            logger.debug("~~~~~~~~~~ site id = " + siteCommand.getId());
             try {
                 site = siteService.get(siteCommand.getId());
             } catch (NoSuchEntityException e) {

@@ -53,7 +53,7 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/user")
-@Secured({"MERCHANT_ROLE_ADMIN"})
+@Secured({"ROLE_MERCHANT_ADMIN"})
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -128,6 +128,16 @@ public class UserController {
         }
         User userCriteria = new User();
         userCriteria.setMerchant(principal.getMerchant());
+        // create Role object for query criteria
+        Role criteriaRole;
+        try {
+            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role found.");
+        }
+        userCriteria.setRoles(new HashSet<Role>());
+        userCriteria.getRoles().add(criteriaRole);
         List<User> users = userService.findByCriteria(userCriteria, search, start, length, order,
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
