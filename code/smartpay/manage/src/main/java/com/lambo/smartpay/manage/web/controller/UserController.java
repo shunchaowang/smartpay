@@ -47,7 +47,7 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/user")
-@Secured({"ROLE_ADMIN"})
+@Secured({"ROLE_ADMIN_OPERATOR"})
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -76,18 +76,28 @@ public class UserController {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"/", "/index", "/indexAdmin"}, method = RequestMethod.GET)
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = {"/indexAdmin"}, method = RequestMethod.GET)
     public String indexAdmin(Model model) {
         model.addAttribute("domain", "Admin");
         return "main";
     }
 
-    @RequestMapping(value = {"/indexMerchantAdmin"}, method = RequestMethod.GET)
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = {"/indexAdminOperator"}, method = RequestMethod.GET)
+    public String indexAdminOperator(Model model) {
+        model.addAttribute("domain", "AdminOperator");
+        model.addAttribute("action", "index");
+        return "main";
+    }
+
+    @RequestMapping(value = {"", "/", "/index", "/indexMerchantAdmin"}, method = RequestMethod.GET)
     public String indexMerchantAdmin(Model model) {
         model.addAttribute("domain", "MerchantAdmin");
         return "main";
     }
 
+    @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/listAdmin", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
@@ -98,6 +108,71 @@ public class UserController {
         Role criteriaRole;
         try {
             criteriaRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role found.");
+        }
+        // create User criteria and attached the role
+        User criteriaUser = new User();
+        criteriaUser.setRoles(new HashSet<Role>());
+        criteriaUser.getRoles().add(criteriaRole);
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+
+        // count total records
+        Long recordsTotal = userService.countByCriteria(criteriaUser);
+        // count records filtered
+        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
+
+        if (users == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+
+        for (User user : users) {
+            DataTablesUser tableUser = new DataTablesUser(user);
+            dataTablesUsers.add(tableUser);
+        }
+
+        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
+        result.setData(dataTablesUsers);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        return JsonUtil.toJson(result);
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = "/listAdminOperator", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listAdminOperator(HttpServletRequest request) {
+
+        // create Role object for query criteria
+        Role criteriaRole;
+        try {
+            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "No role found.");
@@ -216,11 +291,21 @@ public class UserController {
         return JsonUtil.toJson(result);
     }
 
-
+    @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/createAdmin", method = RequestMethod.GET)
     public String createAdmin(Model model) {
 
         model.addAttribute("domain", "Admin");
+        model.addAttribute("action", "create");
+        model.addAttribute("userCommand", new UserCommand());
+        return "main";
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = "/createAdminOperator", method = RequestMethod.GET)
+    public String createAdminOperator(Model model) {
+
+        model.addAttribute("domain", "AdminOperator");
         model.addAttribute("action", "create");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
@@ -237,11 +322,72 @@ public class UserController {
         return "main";
     }
 
+    @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
     public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
 
         // set subDomain to model
         model.addAttribute("domain", "Admin");
+        // form role code based on the role parameter
+
+        Role role = null;
+        try {
+            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            logger.info("Cannot find admin role.");
+            e.printStackTrace();
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+
+        // check if username already taken
+        if (userService.findByUsername(userCommand.getUsername()) != null) {
+
+            String fieldLabel = messageSource.getMessage("username.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+            model.addAttribute("userCommand", userCommand);
+            model.addAttribute("action", "create");
+            return "main";
+        }
+        // check if email already taken
+        if (userService.findByEmail(userCommand.getEmail()) != null) {
+
+            String fieldLabel = messageSource.getMessage("email.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, userCommand.getEmail()}, locale));
+            model.addAttribute("userCommand", userCommand);
+            model.addAttribute("action", "create");
+            return "main";
+        }
+        //TODO check if all required fields filled
+
+        // create User and set admin to user
+        User user = createUser(userCommand, role);
+        // set initial password
+        user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
+        // persist user
+        try {
+            user = userService.create(user);
+        } catch (MissingRequiredFieldException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.info(e.getMessage());
+            e.printStackTrace();
+        }
+        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
+        return "main";
+    }
+
+    @Secured({"ROLE_ADMIN"})
+    @RequestMapping(value = "/createAdminOperator", method = RequestMethod.POST)
+    public String saveAdminOperator(Model model, @ModelAttribute("userCommand") UserCommand
+            userCommand) {
+
+        // set subDomain to model
+        model.addAttribute("domain", "AdminOperator");
         // form role code based on the role parameter
 
         Role role = null;

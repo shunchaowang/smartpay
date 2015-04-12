@@ -7,6 +7,7 @@
 
         <!-- define domain related vars -->
         <spring:message code='Merchant.label' var="merchant"/>
+        <spring:message code='AdminOperator.label' var="adminOperator"/>
         <spring:message code='Credential.label' var="merchantCredential"/>
         <spring:message code='Transaction.label' var="merchantTransaction"/>
         <spring:message code='Site.label' var="site"/>
@@ -53,7 +54,8 @@
                     <li class="">
                         <a href="${rootURL}merchant/indexMerchantEdit">
                                 <span> >>
-                                <spring:message code="merchant.manage.label" arguments="${merchant}"/>
+                                <spring:message code="merchant.manage.label"
+                                                arguments="${merchant}"/>
                                 </span>
                         </a>
                     </li>
@@ -151,10 +153,17 @@
                     <sec:authorize access="hasRole('ROLE_ADMIN')">
 
                         <li class="">
-                            <a href="${rootURL}user/createAdmin">
+                            <a href="${rootURL}user/createAdminOperator">
                                 <span> >>
-                                <spring:message code="create.label" arguments="${admin}"/>
+                                <spring:message code="create.label" arguments="${adminOperator}"/>
                                                                       </span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="${rootURL}user/indexAdminOperator">
+                                <span> >>
+                                <spring:message code="index.label" arguments="${adminOperator}"/>
+                                </span>
                             </a>
                         </li>
                     </sec:authorize>
@@ -164,13 +173,6 @@
                                 <spring:message code="create.label"
                                                 arguments="${merchantAdmin}"/>
                                                                    </span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}user/indexAdmin">
-                                <span> >>
-                                <spring:message code="index.label" arguments="${admin}"/>
-                                </span>
                         </a>
                     </li>
                     <li class="">
@@ -257,7 +259,7 @@
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                    data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
-                        <spring:message code="user.setting.label" />
+                        <spring:message code="user.setting.label"/>
                         <b class="caret"></b>
                             </span>
                 </a>
@@ -265,7 +267,7 @@
                     <li class="">
                         <a href="${rootURL}changePassword">
                                 <span> >>
-                                    <spring:message code="user.change.password.label" />
+                                    <spring:message code="user.change.password.label"/>
                                 </span>
                         </a>
                     </li>
