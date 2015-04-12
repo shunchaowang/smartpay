@@ -112,16 +112,16 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}payment/index">
+                        <a href="${rootURL}count/countByCurrency">
                             <span> >>
-                            <spring:message code="payment.search.label"/>
+                            <spring:message code="count.by.currency"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}order/index">
+                        <a href="${rootURL}count/countBySite">
                             <span> >>
-                            <spring:message code="order.search.label"/>
+                            <spring:message code="count.by.site"/>
                             </span>
                         </a>
                     </li>
