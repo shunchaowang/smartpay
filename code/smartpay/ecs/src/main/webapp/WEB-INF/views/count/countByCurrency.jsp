@@ -37,19 +37,20 @@
             'language': {
                 'url': "${dataTablesLanguage}"
             },
-            'processing': false,
-            'serverSide': false,
-            'info': false,
-            'paging': false,
-            'searching': false,
-            'ordering': false,
+            'processing': true,
+            'serverSide': true,
+            'paging': true,
+            "paginationType": "full_numbers",
+            "jQueryUI": true,
+            'dom': '<""if>rt<"F"lp>',
 
 
             'ajax': {
-                'url': "${rootURL}countByCurrency",
+                'url': "${rootURL}${controller}/countByCurrency",
                 'type': "GET",
                 'dataType': 'json'
             },
+
 
             'columnDefs': [
                 {'name': 'currency', 'targets': 0, 'data': 'currencyName'},
@@ -59,3 +60,4 @@
         });
     });
 </script>
+
