@@ -11,11 +11,10 @@ import java.util.Locale;
 /**
  * Created by swang on 4/8/2015.
  */
-public class DataTablesReturnPayment {
+public class DataTablesRefund {
 
     private Long id;
-    private String carrier;
-    private String trackingNumber;
+
     private Long orderId;
     private String orderNumber;
     private float orderAmount;
@@ -35,11 +34,15 @@ public class DataTablesReturnPayment {
     private Long siteId;
     private String siteUrl;
 
+    private float refundAmount;
+    private String refundRemark;
 
-    public DataTablesReturnPayment(Order order) {
+
+
+
+
+    public DataTablesRefund(Order order) {
         orderId = order.getId();
-        carrier = order.getShipments().iterator().next().getCarrier();
-        trackingNumber = order.getShipments().iterator().next().getTrackingNumber();
         orderNumber = order.getMerchantNumber();
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
@@ -64,6 +67,10 @@ public class DataTablesReturnPayment {
 
         siteUrl = order.getSite().getUrl();
 
+
+        refundAmount = order.getRefunds().iterator().next().getAmount();
+        refundRemark = order.getRefunds().iterator().next().getRemark();
+
     }
 
 
@@ -77,22 +84,6 @@ public class DataTablesReturnPayment {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCarrier() {
-        return carrier;
-    }
-
-    public void setCarrier(String carrier) {
-        this.carrier = carrier;
-    }
-
-    public String getTrackingNumber() {
-        return trackingNumber;
-    }
-
-    public void setTrackingNumber(String trackingNumber) {
-        this.trackingNumber = trackingNumber;
     }
 
     public Long getOrderId() {
@@ -224,6 +215,23 @@ public class DataTablesReturnPayment {
 
     public void setSiteUrl(String siteUrl) {
         this.siteUrl = siteUrl;
+    }
+
+    //
+    public float getRefundAmount() {
+        return refundAmount;
+    }
+
+    public void setSiteId(float refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+
+    public String getRefundRemark() {
+        return refundRemark;
+    }
+
+    public void setRefundRemark(String refundRemark) {
+        this.refundRemark = refundRemark;
     }
 
 }

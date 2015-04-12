@@ -20,6 +20,8 @@
         <spring:message code='Payment.label' var="payment"/>
         <spring:message code='Payreturn.label' var="payreturn"/>
         <spring:message code='Shipment.label' var="shipment"/>
+        <spring:message code='Refund.label' var="refund"/>
+
 
 
         <ul>
@@ -228,14 +230,14 @@
                         <li class="">
                             <a href="${rootURL}shipment/shipping">
                                 <span> >>
-                                    <spring:message code="manage.label" arguments="${shipment}"/>
+                                    <spring:message code="info.label" arguments="${shipment}"/>
                                 </span>
                             </a>
                         </li>
                         <li class="">
-                            <a href="${rootURL}refund">
+                            <a href="${rootURL}refund/refund">
                                 <span> >>
-                                    <spring:message code="info.label" arguments="${shipment}"/>
+                                    <spring:message code="info.label" arguments="${refund}"/>
                                 </span>
                             </a>
                         </li>

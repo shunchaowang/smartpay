@@ -1,4 +1,4 @@
-package com.lambo.smartpay.ecs.web.controller;
+package com.lambo.smartpay.manage.web.controller;
 
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
@@ -14,15 +14,15 @@ import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.RefundService;
 import com.lambo.smartpay.core.service.RefundStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
-import com.lambo.smartpay.ecs.config.SecurityUser;
-import com.lambo.smartpay.ecs.util.DataTablesParams;
-import com.lambo.smartpay.ecs.util.JsonUtil;
-import com.lambo.smartpay.ecs.web.exception.BadRequestException;
-import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
-import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
-import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
-import com.lambo.smartpay.ecs.web.vo.table.DataTablesRefund;
-import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
+import com.lambo.smartpay.manage.config.SecurityUser;
+import com.lambo.smartpay.manage.util.DataTablesParams;
+import com.lambo.smartpay.manage.util.JsonUtil;
+import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.exception.IntervalServerException;
+import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesRefund;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,11 +115,13 @@ public class RefundController {
             throw new BadRequestException("400", "User is null.");
         }
 
+        /*
         Merchant merchant = securityUser.getMerchant();
-        Order orderCriteria = new Order();
         Site siteCriteria = new Site();
         siteCriteria.setMerchant(merchant);
         orderCriteria.setSite(siteCriteria);
+        */
+        Order orderCriteria = new Order();
 
         // only paid order can be shipped
         OrderStatus paidOrderStatus = null;
@@ -205,19 +207,19 @@ public class RefundController {
         Refund refund = createRefund(order);
         refund.setAmount(amount);
         refund.setRemark(remark);
-        RefundStatus refundStatus = null;
-        OrderStatus refundedOrderStatus = null;
+        RefundStatus shippedRefundStatus = null;
+        OrderStatus shippedOrderStatus = null;
         try {
-            refundStatus = refundStatusService.findByCode(ResourceProperties
+            shippedRefundStatus = refundStatusService.findByCode(ResourceProperties
                     .REFUND_STATUS_FUNDED_CODE);
-            refundedOrderStatus = orderStatusService.findByCode(ResourceProperties
+            shippedOrderStatus = orderStatusService.findByCode(ResourceProperties
                     .ORDER_STATUS_REFUNDED_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new IntervalServerException("500", "Cannot find refund or order status.");
         }
-        refund.setRefundStatus(refundStatus);
-        order.setOrderStatus(refundedOrderStatus);
+        refund.setRefundStatus(shippedRefundStatus);
+        order.setOrderStatus(shippedOrderStatus);
         // when persisting refund, order should be cascaded merged
         String domain = messageSource.getMessage("Refund.label", null, locale);
         String failedMessage = messageSource.getMessage("not.saved.message",

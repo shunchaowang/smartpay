@@ -13,24 +13,6 @@
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
                         <a href="${rootURL}logout">
-                            <i class="icon icon-home"></i>
-                            <spring:message code="user.profile.label"/>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}logout">
-                            <i class="icon icon-lock"></i>
-                            <spring:message code="user.change.password.label"/>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}logout">
-                            <i class="icon icon-envelope"></i>
-                            <spring:message code="user.change.email.label"/>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}logout">
                             <i class="icon icon-off"></i>
                             <spring:message code="user.logout.label"/>
                         </a>

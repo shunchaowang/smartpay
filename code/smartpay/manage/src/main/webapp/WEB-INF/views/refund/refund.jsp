@@ -24,7 +24,8 @@
                         <th><spring:message code="status.label"/></th>
                         <th><spring:message code="Customer.label"/></th>
                         <th><spring:message code="Address.label"/></th>
-                        <th><spring:message code="action.operation.label"/></th>
+                        <th><spring:message code="Refund.label"/></th>
+                        <th><spring:message code="remark.label"/></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -93,6 +94,15 @@
                     'orderable': false, 'data': 'customerAddress'
                 },
                 {
+                    'name': 'refundAmount', 'targets': 9, 'searchable': false,
+                    'orderable': false, 'data': 'refundAmount'
+                },
+                {
+                    'name': 'refundRemark', 'targets': 10, 'searchable': false,
+                    'orderable': false, 'data': 'refundRemark'
+                },
+                    /*
+                {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button class="tableButton" type="button" name="refund-button"'
@@ -100,6 +110,7 @@
                                 + '<spring:message code="refund.label"/>' + '</button>';
                     }
                 }
+                */
             ]
         });
 
