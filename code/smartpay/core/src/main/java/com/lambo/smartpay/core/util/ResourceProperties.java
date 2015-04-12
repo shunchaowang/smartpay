@@ -30,7 +30,10 @@ public abstract class ResourceProperties {
     // order status
     public static final String ORDER_STATUS_PAID_CODE = "401";
     public static final String ORDER_STATUS_SHIPPED_CODE = "502";
+    public static final String ORDER_STATUS_REFUNDED_CODE = "504";
+
     public static final String SHIPMENT_STATUS_SHIPPED_CODE = "500";
+    public static final String REFUND_STATUS_FUNDED_CODE = "501";
 
     public enum JpaOrderDir {
         ASC("ASC"),

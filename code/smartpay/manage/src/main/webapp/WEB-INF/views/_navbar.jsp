@@ -199,7 +199,7 @@
                     <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                        data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
-                        <spring:message code="manage.label" arguments="${transaction}"/>
+                        <spring:message code="transaction.label"/>
                         <b class="caret"></b>
                             </span>
                     </a>
@@ -283,7 +283,7 @@
                             </a>
                         </li>
                         <li class="">
-                            <a href="${rootURL}payment">
+                            <a href="${rootURL}user/edit/0">
                                 <span> >>
                                     <spring:message code="user.profile.label"/>
                                 </span>

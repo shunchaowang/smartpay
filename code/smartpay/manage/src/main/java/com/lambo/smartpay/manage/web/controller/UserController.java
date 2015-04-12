@@ -408,12 +408,18 @@ public class UserController {
 
         model.addAttribute("action", "edit");
         // get user by id
+
         User user;
-        try {
-            user = userService.get(id);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+
+        if (id == 0) {
+                user = UserResource.getCurrentUser();
+        } else {
+            try {
+                user = userService.get(id);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "User " + id + " not found.");
+            }
         }
         // set domain based on user's role
         String domain = "MerchantAdmin";

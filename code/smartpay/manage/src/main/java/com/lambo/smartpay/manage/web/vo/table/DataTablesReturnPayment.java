@@ -1,4 +1,4 @@
-package com.lambo.smartpay.ecs.web.vo.table;
+package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Payment;
@@ -11,9 +11,11 @@ import java.util.Locale;
 /**
  * Created by swang on 4/8/2015.
  */
-public class DataTablesShipment {
+public class DataTablesReturnPayment {
 
     private Long id;
+    private String carrier;
+    private String trackingNumber;
     private Long orderId;
     private String orderNumber;
     private float orderAmount;
@@ -33,11 +35,16 @@ public class DataTablesShipment {
     private Long siteId;
     private String siteUrl;
 
-    public DataTablesShipment(Order order) {
+
+    public DataTablesReturnPayment(Order order) {
         orderId = order.getId();
+        carrier = order.getShipments().iterator().next().getCarrier();
+        trackingNumber = order.getShipments().iterator().next().getTrackingNumber();
         orderNumber = order.getMerchantNumber();
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        orderAmount = order.getAmount();
+        orderCurrency = order.getCurrency().getName();
         createdTime = dateFormat.format(order.getCreatedTime());
         orderStatusId = order.getOrderStatus().getId();
         orderStatusName = order.getOrderStatus().getName();
@@ -49,8 +56,6 @@ public class DataTablesShipment {
                         order.getCustomer().getState(), order.getCustomer().getZipCode(),
                         order.getCustomer().getCountry()}, " ");
 
-        orderAmount = order.getAmount();
-        orderCurrency = order.getCurrency().getName();
 
         Payment payment = order.getPayments().iterator().next();
         paymentId = payment.getId();
@@ -58,7 +63,13 @@ public class DataTablesShipment {
         bankTransactionNumber = payment.getBankTransactionNumber();
 
         siteUrl = order.getSite().getUrl();
+
     }
+
+
+
+
+
 
     public Long getId() {
         return id;
@@ -66,6 +77,22 @@ public class DataTablesShipment {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
+    }
+
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
     }
 
     public Long getOrderId() {

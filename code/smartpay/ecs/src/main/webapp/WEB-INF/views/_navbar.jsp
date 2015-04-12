@@ -62,7 +62,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment/indexPaymentReturn">
+                        <a href="${rootURL}refund/refund">
                             <span> >>
                             <spring:message code="return.manage.label"/>
                             </span>
@@ -98,6 +98,36 @@
                     </ul>
                 </li>
             </sec:authorize>
+
+
+            <!-- merchant admin menu ends -->
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
+                   href="#"><i class="icon icon-search"></i>
+                            <span>
+                    <spring:message code="info.count.label"/>
+                    <b class="caret"></b>
+                            </span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="">
+                        <a href="${rootURL}payment/index">
+                            <span> >>
+                            <spring:message code="payment.search.label"/>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}order/index">
+                            <span> >>
+                            <spring:message code="order.search.label"/>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
 
             <!-- merchant management goes here -->
             <!-- merchant admin can view merchant detail -->
@@ -143,56 +173,6 @@
 
             <li class="dropdown">
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#"><i class="icon icon-search"></i>
-                            <span>
-                    <spring:message code="complain.info.label"/>
-                    <b class="caret"></b>
-                            </span>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                    <li class="">
-                        <a href="${rootURL}refund/indexRefund">
-                            <span> >>
-                            <spring:message code="refund.info.label"/>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!-- merchant admin menu ends -->
-
-            <li class="dropdown">
-                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-                   href="#"><i class="icon icon-search"></i>
-                            <span>
-                    <spring:message code="info.count.label"/>
-                    <b class="caret"></b>
-                            </span>
-                </a>
-                <ul class="dropdown-menu" role="menu">
-                    <li class="">
-                        <a href="${rootURL}payment/index">
-                            <span> >>
-                            <spring:message code="payment.search.label"/>
-                            </span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}order/index">
-                            <span> >>
-                            <spring:message code="order.search.label"/>
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-
-            <!-- merchant admin menu ends -->
-
-            <li class="dropdown">
-                <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
                    href="#"><i class="icon icon-cog"></i>
                             <span>
                     <spring:message code="user.setting.label"/>
@@ -208,7 +188,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}user/edit">
+                        <a href="${rootURL}user/edit/0">
                             <span> >>
                             <spring:message code="user.profile.label"/>
                             </span>

@@ -279,14 +279,22 @@ public class UserController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Long id, Model model) {
 
+        logger.debug("~~~~~~~~~~~edit + " + id);
         model.addAttribute("action", "edit");
         // get user by id
         User user = null;
-        try {
-            user = userService.get(id);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+        if (id==0){
+            user = UserResource.getCurrentUser();
+            logger.debug("~~~~~~~~~~~user + " + user.getUsername());
+            logger.debug("~~~~~~~~~~~user + " + user.getCreatedTime());
+
+        } else {
+            try {
+                user = userService.get(id);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "User " + id + " not found.");
+            }
         }
 
         // create command user and add to model and view

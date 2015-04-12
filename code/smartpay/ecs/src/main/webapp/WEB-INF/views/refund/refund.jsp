@@ -12,7 +12,7 @@
                 <h5><spring:message code="index.label" arguments="${entity}"/></h5>
             </div>
             <div class="widget-content">
-                <table class="table display table-bordered data-table" id="shipment-table">
+                <table class="table display table-bordered data-table" id="refund-table">
                     <thead>
                     <tr>
                         <th><spring:message code="id.label"/></th>
@@ -23,6 +23,8 @@
                         <th><spring:message code="createdTime.label"/></th>
                         <th><spring:message code="site.url.label"/></th>
                         <th><spring:message code="status.label"/></th>
+                        <th><spring:message code="Customer.label"/></th>
+                        <th><spring:message code="Address.label"/></th>
                         <th><spring:message code="action.operation.label"/></th>
                     </tr>
                     </thead>
@@ -37,7 +39,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var shipmentTable = $('#shipment-table').DataTable({
+        var refundTable = $('#refund-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -88,26 +90,35 @@
                     'orderable': false, 'data': 'orderStatusName'
                 },
                 {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'name': 'customerName', 'targets': 8, 'searchable': false,
+                    'orderable': false, 'data': 'customerName'
+                },
+                {
+                    'name': 'customerAddress', 'targets': 9, 'searchable': false,
+                    'orderable': false, 'data': 'customerAddress'
+                },
+                {
+                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<button class="tableButton" type="button" name="addShipment-button"'
+                        return '<button class="tableButton" type="button" name="refund-button"'
                                 + ' value="' + row['orderId'] + '">'
-                                + '<spring:message code="Shipment.label"/>' + '</button>';
+                                + '<spring:message code="refund.label"/>' + '</button>';
                     }
                 }
             ]
         });
 
 
-        // add live handler for add shipment button
-        shipmentTable.on('click', 'button[type=button][name=addShipment-button]', function
+        // add live handler for add refund button
+        refundTable.on('click', 'button[type=button][name=refund-button]', function
                 (event) {
             event.preventDefault();
             $.ajax({
                 type: 'get',
-                url: "${rootURL}${controller}/addShipment",
+                url: "${rootURL}${controller}/addRefund",
                 data: {
-                    orderId: this.value
+                    orderId: this.value,
+                    amount:this.amount
                 },
                 error: function () {
                     alert('There was an error.');
@@ -116,7 +127,7 @@
                     $('#dialog-area').append(data);
 
                     // define dialog
-                    var shipmentDialog = $("#shipment-dialog").dialog({
+                    var refundDialog = $("#refund-dialog").dialog({
                         autoOpen: false,
                         height: 'auto',
                         width: 600,
@@ -126,13 +137,13 @@
                             $(".ui-dialog-titlebar-close", ui.dialog || ui).hide();
                         },
                         close: function () {
-                            shipmentDialog.dialog("destroy").remove();
+                            refundDialog.dialog("destroy").remove();
                         }
                     }).dialog("open");
 
                     $("#cancel-button").click(function (event) {
                         event.preventDefault();
-                        shipmentDialog.dialog("close");
+                        refundDialog.dialog("close");
                     });
 
                     $("#save-button").click(function (event) {
@@ -140,11 +151,11 @@
 
                         $.ajax({
                             type: 'post',
-                            url: "${rootURL}${controller}/addShipment",
+                            url: "${rootURL}${controller}/addRefund",
                             data: {
                                 orderId: $("#orderId").val(),
-                                carrier: $("#carrier").val(),
-                                trackingNumber: $("#trackingNumber").val()
+                                amount: $("#amount").val(),
+                                remark: $("#remark").val()
                             },
                             error: function () {
                                 alert('There was an error.');
@@ -158,20 +169,20 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                shipmentDialog.dialog("close");
-                                shipmentTable.ajax.reload();
+                                refundDialog.dialog("close");
+                                refundTable.ajax.reload();
                             }
                         });
                     });
 
-                    $("#new-shipment-form").validate({
+                    $("#new-refund-form").validate({
                         rules: {
-                            carrier: {
+                            amount: {
                                 required: true,
                                 minlength: 2,
                                 maxlength: 32
                             },
-                            trackingNumber: {
+                            remark: {
                                 required: true,
                                 minlength: 5,
                                 maxlength: 32

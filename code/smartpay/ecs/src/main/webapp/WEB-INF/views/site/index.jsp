@@ -21,22 +21,11 @@
                         <th><spring:message code="site.url.label"/></th>
                         <th><spring:message code="createdTime.label"/></th>
                         <th><spring:message code="status.label"/></th>
+                        <!--
                         <c:if test="${domain.equals('Site')}">
                             <th><spring:message code="action.operation.label"/></th>
                         </c:if>
-                        <c:if test="${domain.equals('AuditList')}">
-                            <th><spring:message code="action.operation.label"/></th>
-                        </c:if>
-                        <c:if test="${domain.equals('FreezeList')}">
-                            <th><spring:message code="action.operation.label"/></th>
-                        </c:if>
-
-                        <c:if test="${domain.equals('UnfreezeList')}">
-                            <th><spring:message code="action.operation.label"/></th>
-                        </c:if>
-                        <c:if test="${domain.equals('DeclineList')}">
-                            <th><spring:message code="action.operation.label"/></th>
-                        </c:if>
+                        -->
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -82,6 +71,7 @@
                     'name': 'siteStatus', 'targets': 5, 'searchable': false,
                     'orderable': false, 'data': 'siteStatus'
                 }
+                /*
                 <c:if test="${domain.equals('Site')}">
                 ,
                 {
@@ -100,54 +90,7 @@
                     }
                 }
                 </c:if>
-                <c:if test="${domain.equals('AuditList')}">
-                ,
-                {
-                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button type="button" name="audit-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.audit.label"/>' +
-                                '</button>';
-                    }
-                }
-                </c:if>
-                <c:if test="${domain.equals('FreezeList')}">
-                ,
-                {
-                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button type="button" name="freeze-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.freeze.label"/>' +
-                                '</button>';
-                    }
-                }
-                </c:if>
-                <c:if test="${domain.equals('UnfreezeList')}">
-                ,
-                {
-                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button type="button" name="unfreeze-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.unfreeze.label"/>' +
-                                '</button>';
-                    }
-                }
-                </c:if>
-                <c:if test="${domain.equals('DeclineList')}">
-                ,
-                {
-                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button type="button" name="approve-button"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                '<spring:message code="action.approve.label"/>' +
-                                '</button>';
-                    }
-                }
-                </c:if>
+                */
             ]
         });
 

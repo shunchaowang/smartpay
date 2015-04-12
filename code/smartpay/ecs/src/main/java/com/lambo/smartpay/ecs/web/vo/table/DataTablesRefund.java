@@ -11,9 +11,10 @@ import java.util.Locale;
 /**
  * Created by swang on 4/8/2015.
  */
-public class DataTablesShipment {
+public class DataTablesRefund {
 
     private Long id;
+
     private Long orderId;
     private String orderNumber;
     private float orderAmount;
@@ -33,11 +34,17 @@ public class DataTablesShipment {
     private Long siteId;
     private String siteUrl;
 
-    public DataTablesShipment(Order order) {
+
+
+
+
+    public DataTablesRefund(Order order) {
         orderId = order.getId();
         orderNumber = order.getMerchantNumber();
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        orderAmount = order.getAmount();
+        orderCurrency = order.getCurrency().getName();
         createdTime = dateFormat.format(order.getCreatedTime());
         orderStatusId = order.getOrderStatus().getId();
         orderStatusName = order.getOrderStatus().getName();
@@ -49,8 +56,6 @@ public class DataTablesShipment {
                         order.getCustomer().getState(), order.getCustomer().getZipCode(),
                         order.getCustomer().getCountry()}, " ");
 
-        orderAmount = order.getAmount();
-        orderCurrency = order.getCurrency().getName();
 
         Payment payment = order.getPayments().iterator().next();
         paymentId = payment.getId();
@@ -58,7 +63,13 @@ public class DataTablesShipment {
         bankTransactionNumber = payment.getBankTransactionNumber();
 
         siteUrl = order.getSite().getUrl();
+
     }
+
+
+
+
+
 
     public Long getId() {
         return id;

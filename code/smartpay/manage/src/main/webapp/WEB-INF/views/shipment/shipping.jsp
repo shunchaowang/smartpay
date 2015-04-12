@@ -17,11 +17,15 @@
                     <tr>
                         <th><spring:message code="id.label"/></th>
                         <th><spring:message code="orderNumber.label"/></th>
+                        <th><spring:message code="bankTransactionNumber.label"/></th>
+                        <th><spring:message code="bankName.label"/></th>
+                        <th><spring:message code="amount.label"/></th>
+                        <th><spring:message code="currency.label"/></th>
                         <th><spring:message code="createdTime.label"/></th>
+                        <th><spring:message code="site.url.label"/></th>
+                        <th><spring:message code="carrier.label"/></th>
+                        <th><spring:message code="trackingNumber.label"/></th>
                         <th><spring:message code="status.label"/></th>
-                        <th><spring:message code="Customer.label"/></th>
-                        <th><spring:message code="Address.label"/></th>
-                        <th><spring:message code="action.operation.label"/></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -62,28 +66,40 @@
                     }
                 },
                 {
-                    'name': 'createdTime', 'targets': 2, 'searchable': false,
+                    'name': 'bankTransactionNumber', 'targets': 2, 'searchable': true,
+                    'orderable': false, 'data': 'bankTransactionNumber'
+                },
+                {
+                    'name': 'bankName', 'targets': 3, 'searchable': true,
+                    'orderable': false, 'data': 'bankName'
+                },
+                {
+                    'name': 'orderAmount', 'targets': 4, 'searchable': true,
+                    'orderable': false, 'data': 'orderAmount'
+                },
+                {
+                    'name': 'orderCurrency', 'targets': 5, 'searchable': true,
+                    'orderable': false, 'data': 'orderCurrency'
+                },
+                {
+                    'name': 'createdTime', 'targets': 6, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'orderStatus', 'targets': 3, 'searchable': false,
+                    'name': 'siteUrl', 'targets': 7, 'searchable': true,
+                    'orderable': false, 'data': 'siteUrl'
+                },
+                {
+                    'name': 'carrier', 'targets': 8, 'searchable': false,
+                    'orderable': false, 'data': 'carrier'
+                },
+                {
+                    'name': 'trackingNumber', 'targets': 9, 'searchable': false,
+                    'orderable': false, 'data': 'trackingNumber'
+                },
+                {
+                    'name': 'orderStatus', 'targets': 10, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
-                },
-                {
-                    'name': 'customerName', 'targets': 4, 'searchable': false,
-                    'orderable': false, 'data': 'customerName'
-                },
-                {
-                    'name': 'customerAddress', 'targets': 5, 'searchable': false,
-                    'orderable': false, 'data': 'customerAddress'
-                },
-                {
-                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button class="tableButton" type="button" name="addShipment-button"'
-                                + ' value="' + row['orderId'] + '">'
-                                + '<spring:message code="Shipment.label"/>' + '</button>';
-                    }
                 }
             ]
         });

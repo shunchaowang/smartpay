@@ -79,7 +79,7 @@
             rules: {
                 firstName: {required: true, minlength: 3, maxlength: 32},
                 lastName: {required: true, minlength: 3, maxlength: 32},
-                url: {required: true, minlength: 3, maxlength: 32},
+                url: {required: true, minlength: 3, maxlength: 32}
             }
         });
     });
