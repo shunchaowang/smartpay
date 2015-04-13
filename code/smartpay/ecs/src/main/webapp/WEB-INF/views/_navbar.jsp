@@ -14,9 +14,6 @@
         <spring:message code='Return.label' var="return"/>
         <spring:message code='Shipping.label' var="shipping"/>
 
-
-
-
         <ul>
             <!--    HOME    -->
             <li>

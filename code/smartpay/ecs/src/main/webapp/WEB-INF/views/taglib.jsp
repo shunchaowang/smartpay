@@ -11,10 +11,15 @@
 <c:url var="rootURL" value="/"/>
 <!-- some useful variables and paths -->
 
+<!-- var to support internationalization of dataTables, we must not use rootURL here,
+I guess the reason for this is that DataTables language url option will add request context
+automatically.
+-->
 <c:set var="currentLocale"
        value="<%=LocaleContextHolder.getLocale().getLanguage()%>"/>
 <c:url var="dataTablesLanguage"
-       value="${rootURL}assets/vendor/DataTables-1.10.4/localization/messages_${currentLocale}.json"/>
+       value="/assets/vendor/DataTables-1.10.4/localization/messages_${currentLocale}.json"/>
+
 
 <c:if test="${action == null}">
     <c:set var="action" value="index"/>

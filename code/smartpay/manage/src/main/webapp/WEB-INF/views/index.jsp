@@ -23,6 +23,11 @@
         <a href="${rootURL}admin">Administration</a>
     </sec:authorize>
 </h3>
+<h3>
+    PageContext: ${pageContext.request.contextPath}
+    <br>
+    rootURL: ${rootURL}
+</h3>
 
 <a href="${rootURL}user/list">User Table</a><br/>
 <a href="${rootURL}user/json">User in Json Array</a>

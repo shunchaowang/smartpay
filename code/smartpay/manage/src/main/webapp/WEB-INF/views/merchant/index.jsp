@@ -2,7 +2,6 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
-
 <div class="row-fluid">
     <div class="col-sm-12">
         <div class="widget-box">
