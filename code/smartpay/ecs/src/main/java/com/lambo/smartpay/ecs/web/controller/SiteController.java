@@ -46,7 +46,6 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/site")
-@Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
 public class SiteController {
 
     private static final Logger logger = LoggerFactory.getLogger(SiteController.class);

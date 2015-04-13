@@ -44,7 +44,6 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/transaction")
-@Secured({"ROLE_ADMIN"})
 public class TransactionController {
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionController.class);

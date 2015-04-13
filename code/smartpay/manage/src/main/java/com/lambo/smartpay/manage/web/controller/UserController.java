@@ -47,7 +47,6 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/user")
-@Secured({"ROLE_ADMIN_OPERATOR"})
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);

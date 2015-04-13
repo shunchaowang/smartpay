@@ -61,7 +61,6 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/merchant")
-@Secured({"ROLE_ADMIN"})
 public class MerchantController {
 
     private static final Logger logger = LoggerFactory.getLogger(MerchantController.class);
