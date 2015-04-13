@@ -102,6 +102,7 @@ public class HomeController {
         orderCommand.setOrderNo("O1111111");
         orderCommand.setAmount("12.34");
         orderCommand.setReturnUrl("www.google.com");
+        orderCommand.setReferer("www.google.com");
         orderCommand.setCurrency("USD");
         orderCommand.setProductType("1");
         orderCommand.setGoodsName("Mac, iPhone, iPad, iWatch");
@@ -118,10 +119,10 @@ public class HomeController {
         orderCommand.setShipCountry("US");
 
         model.addAttribute("orderCommand", orderCommand);
-        // check md5info, md5 summary should be generated based merNo, merKey,
-        // siteNo and formatted amount
-        String calculatedMd5Info = MDUtil.getMD5Str("merchant" + "12345"
-                + "Site12345" + "12.34");
+        // check md5info, md5 summary should be generated based merKey, merNo,
+        // orderNo, formatted amount, 3 uppercase currency characters
+        String calculatedMd5Info = MDUtil.getMD5Str("12345" + "merchant"
+                + "O1111111" + "12.34" + "USD");
         model.addAttribute("md5Info", calculatedMd5Info);
         return new ModelAndView("index");
     }
@@ -132,12 +133,9 @@ public class HomeController {
         // params passed from client
         // merchant and site number
         String merNo = formatString(request.getParameter("merNo"));
-        // merchant need to pass a site number for site check
-        String siteNo = formatString(request.getParameter("siteNo"));
         logger.debug("Merchant number is " + merNo);
-        logger.debug("Site number is " + siteNo);
-        if (StringUtils.isBlank(merNo) || StringUtils.isBlank(siteNo)) {
-            throw new BadRequestException("400", "Merchant number or site number is blank.");
+        if (StringUtils.isBlank(merNo)) {
+            throw new BadRequestException("400", "Merchant number is blank.");
         }
         // transaction info
         String orderNo = formatString(request.getParameter("orderNo"));
@@ -242,11 +240,18 @@ public class HomeController {
             throw new BadRequestException("400", "Merchant return URL is blank.");
         }
 
+        // referer is the site url in our system, used for site approval
+        String referer = formatString(request.getParameter("referer"));
+        logger.debug("Referer is " + referer);
+        if (StringUtils.isBlank(referer)) {
+            throw new BadRequestException("400", "Referer is blank.");
+        }
+
         // we need to check if the merchant or the site is frozen
         // if so decline the payment request
         Merchant merchant = merchantService.findByIdentity(merNo);
         String merchantKey = merchant.getEncryption().getKey();
-        Site site = siteService.findByIdentity(siteNo);
+        Site site = siteService.findByUrl(referer);
         if (merchant == null || site == null) {
             return "403";
         }
@@ -264,11 +269,13 @@ public class HomeController {
 
         // check md5info, md5 summary should be generated based merNo, merKey,
         // siteNo and formatted amount
-        String calculatedMd5Info = MDUtil.getMD5Str(merNo + merchantKey + siteNo + amount);
+        String calculatedMd5Info = MDUtil.getMD5Str(merchantKey + merNo + orderNo
+                + amount + currency);
         if (!md5Info.equals(calculatedMd5Info)) {
             String succeed = "0";
             String errcode = "1002. MD5 Info Checking Error.";
-            String resultMd5Info = MDUtil.getMD5Str(merNo + siteNo + amount + succeed);
+            String resultMd5Info = MDUtil.getMD5Str(merchantKey + merNo + orderNo + amount +
+                    currency + succeed);
             try {
                 response.sendRedirect(returnURL + "&succeed=" + succeed + "&amount=" +
                         amount + "&orderNo=" + orderNo
@@ -484,8 +491,9 @@ public class HomeController {
         // return string
         // check md5info, md5 summary should be generated based merNo, merKey,
         // siteNo and formatted amount
-        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
-                + merchantKey + orderCommand.getSiteNo() + orderCommand.getAmount());
+        String calculatedMd5Info = MDUtil.getMD5Str(merchantKey + orderCommand.getMerNo()
+                + orderCommand.getOrderNo() + orderCommand.getAmount()
+                + orderCommand.getCurrency() + succeed);
 
         result = "?succeed=" + succeed + "&amount=" + orderCommand.getAmount()
                 + "&orderNo=" + orderCommand.getOrderNo()

@@ -16,6 +16,7 @@ public class OrderCommand {
     private Long currencyId;
     private Long customerId;
     private String returnUrl;
+    private String referer;
     private String amount;
     private String currency;
     private String productType;
@@ -35,6 +36,14 @@ public class OrderCommand {
     private String shipCountry;
     private String shipZipCode;
     private String remark;
+
+    public String getReferer() {
+        return referer;
+    }
+
+    public void setReferer(String referer) {
+        this.referer = referer;
+    }
 
     public String getOrderNo() {
         return orderNo;

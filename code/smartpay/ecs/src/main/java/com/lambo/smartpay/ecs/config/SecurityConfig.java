@@ -17,10 +17,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Created by swang on 3/12/2015.
+ * We need to have EnableGlabalMethodSecurity annotation to use secured annotation on
+ * classes and methods. Make sure SecurityConfig needs to be loaded by We App Initializer for
+ * Secured annotation only takes effect on the current servlet context. So We need to have
+ * SecurityConfig in dispatcher servlet context instead of spring application context. This is
+ * very important!
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

@@ -36,13 +36,13 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="merNo">
-                <span class="required-indicator">*</span>Site No:
+            <label class="col-sm-3 control-label" for="referer">
+                <span class="required-indicator">*</span>Referer:
             </label>
 
             <div class="col-sm-6">
-                <input name="siteNo" id="siteNo" class="form-control"
-                       value="${orderCommand.siteNo}"/>
+                <input name="referer" id="referer" class="form-control"
+                       value="${orderCommand.referer}"/>
             </div>
         </div>
         <div class="form-group">

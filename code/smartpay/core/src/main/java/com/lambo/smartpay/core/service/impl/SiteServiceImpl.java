@@ -49,6 +49,15 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
     }
 
     @Override
+    public Site findByUrl(String url) {
+        if (StringUtils.isBlank(url)) {
+            logger.debug("Url is blank.");
+            return null;
+        }
+        return siteDao.findByUrl(url);
+    }
+
+    @Override
     public Site findByIdentity(String identity) {
         if (StringUtils.isBlank(identity)) {
             logger.debug("Identity is blank.");
