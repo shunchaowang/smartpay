@@ -81,27 +81,23 @@ public class SiteController {
 
     @RequestMapping(value = {"", "/index", "/indexSite"}, method = RequestMethod.GET)
     public String index() {
-        logger.debug("I've been through here ~~~~~~~~~~ 1 ");
         return "main";
     }
 
     @RequestMapping(value = {"/indexAuditList"}, method = RequestMethod.GET)
     public String indexAuditList(Model model) {
-        logger.debug("~~~~~~~~~ indexAuditList ~~~~~~~~~");
         model.addAttribute("domain", "AuditList");
         return "main";
     }
 
     @RequestMapping(value = {"/indexFreezeList"}, method = RequestMethod.GET)
     public String indexFreezeList(Model model) {
-        logger.debug("~~~~~~~~~ indexFreezeList ~~~~~~~~~");
         model.addAttribute("domain", "FreezeList");
         return "main";
     }
 
     @RequestMapping(value = {"/indexUnfreezeList"}, method = RequestMethod.GET)
     public String indexUnfreezeList(Model model) {
-        logger.debug("~~~~~~~~~ indexUnfreezeList ~~~~~~~~~");
         model.addAttribute("domain", "UnfreezeList");
         return "main";
     }
@@ -110,8 +106,6 @@ public class SiteController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -145,8 +139,6 @@ public class SiteController {
             codeString = ResourceProperties.SITE_STATUS_FROZEN_CODE;
 
         if (codeString.equals("")) {
-            logger.debug("~~~~~~~~~~ site list ~~~~~~~~~~" + "all codeString ！！！");
-
             sites = siteService.findByCriteria(search, start, length, order,
                     ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
@@ -155,7 +147,6 @@ public class SiteController {
             recordsFiltered = siteService.countByCriteria(search);
 
         } else {
-            logger.debug("~~~~~~~~~~ site list ~~~~~~~~~~" + "codeString = " + codeString);
             // normal merchant status
             Site siteCriteria = new Site();
             SiteStatus status = null;
@@ -195,7 +186,6 @@ public class SiteController {
     }
 
 
-    @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
 
@@ -204,11 +194,8 @@ public class SiteController {
         return "main";
     }
 
-    @Secured({"ROLE_MERCHANT_ADMIN", "ROLE_MERCHANT_OPERATOR"})
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
-
-        logger.debug(" ~~~~~~~ create site here ~~~~~~~~ ");
 
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
@@ -261,9 +248,6 @@ public class SiteController {
                        @ModelAttribute("siteCommand") SiteCommand siteCommand) {
 
         model.addAttribute("siteCommand", siteCommand);
-
-        logger.debug("whether come to here ??? " + siteCommand.getId());
-        logger.debug("whether come to here ??? " + siteCommand.getRemark());
 
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
@@ -320,7 +304,6 @@ public class SiteController {
     @ResponseBody
     public String audit(@RequestParam(value = "id") Long id) {
 
-        logger.debug("~~~~~~~~~~ audit ~~~~~~~~~~" + "id= " + id);
         //Initiate
         Site site;
         JsonResponse response = new JsonResponse();
@@ -330,7 +313,6 @@ public class SiteController {
         //Do approve
         try {
             site = siteService.approveSite(id);
-            logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -352,7 +334,6 @@ public class SiteController {
     @ResponseBody
     public String freeze(@RequestParam(value = "id") Long id) {
 
-        logger.debug("~~~~~~~~~~ freeze ~~~~~~~~~~" + "id= " + id);
         //Initiate
         Site site;
         JsonResponse response = new JsonResponse();
@@ -362,7 +343,6 @@ public class SiteController {
         //Do approve
         try {
             site = siteService.freezeSite(id);
-            logger.debug("~~~~~~~~~~ approved ~~~~~~~~~~" + "id= " + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -384,7 +364,6 @@ public class SiteController {
     @ResponseBody
     public String unfreeze(@RequestParam(value = "id") Long id) {
 
-        logger.debug("~~~~~~~~~~ unfreeze ~~~~~~~~~~" + "id= " + id);
         //Initiate
         Site site;
         JsonResponse response = new JsonResponse();
@@ -394,7 +373,6 @@ public class SiteController {
         //Do approve
         try {
             site = siteService.unfreezeSite(id);
-            logger.debug("~~~~~~~~~~ unfreeze ~~~~~~~~~~" + "id= " + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -413,8 +391,6 @@ public class SiteController {
     @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
             model) {
-
-        logger.debug("~~~~~~ whether come to here ??? " + "domain=" + domain + "id=" + id);
 
         Site site;
         try {
@@ -448,8 +424,6 @@ public class SiteController {
         if (site.getMerchant() != null) {
             SiteCommand.setMerchant(site.getMerchant().getId());
             SiteCommand.setMerchantName(site.getMerchant().getName());
-            logger.debug("SiteMerchant ---" + SiteCommand.getMerchant());
-            logger.debug("SiteMerchant ---" + SiteCommand.getMerchantName());
         }
 
         if (site.getSiteStatus() != null) {
@@ -468,7 +442,6 @@ public class SiteController {
 
         //
         if (siteCommand.getId() != null ){
-            logger.debug("~~~~~~~~~~ site id = " + siteCommand.getId());
             try {
                 site = siteService.get(siteCommand.getId());
             } catch (NoSuchEntityException e) {

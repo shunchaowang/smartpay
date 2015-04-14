@@ -288,7 +288,6 @@ public class SiteController {
         //Do approve
         try {
             site = siteService.approveSite(id);
-            logger.debug("~~~~~~~~~~ approve ~~~~~~~~~~" + "id= " + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
