@@ -4,83 +4,102 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="widget-box">
-                <div class="widget-title">
-								<span class="icon">
-									<i class="icon icon-align-justify"></i>
-								</span>
-                    <h5><b><spring:message code='index.label' arguments="${entity}"/></b></h5>
-                </div>
-                <div class="widget-content nopadding">
-
-                    <form:form action="${rootURL}${controller}/payshipping" method="POST"
-                               commandName="paymentCommand" cssClass="form-horizontal" id="auditpayment-form">
-                        <form:input size="80" path="id" id="id" type="hidden" value="${paymentCommand.id}"/>
-
-                        <div class="control-group">
-                            <label class="col-sm-3 control-label" >
-                                <span class="required-indicator">*</span>
-                                <spring:message code="orderNumber.label"/>
-                            </label>
-                            <div class="controls">
-                                ${paymentCommand.orderNumber}
-                            </div>
-                        </div>
-
-                        <!-- bankTransactionNumber -->
-                        <div class="control-group">
-                            <label class="col-sm-3 control-label" for="bankTransactionNumber">
-                                <span class="required-indicator">*</span>
-                                <spring:message code="bankTransactionNumber.label"/>
-                            </label>
-
-                            <div class="controls">
-                                <form:input size="80" path="bankTransactionNumber" id="bankTransactionNumber" cssClass="text"
-                                            value="${paymentCommand.bankTransactionNumber}"/>
-                            </div>
-                        </div>
-                        <!-- url -->
-                        <div class="control-group">
-                            <label class="col-sm-3 control-label" for="currency">
-                                <span class="required-indicator">*</span>
-                                <spring:message code="currency.label"/>
-                            </label>
-
-                            <div class="controls">
-                                <form:input size="80" path="currencyName" id="currencyName" cssClass="text" required=""
-                                            value="${paymentCommand.currencyName}"/>
-                            </div>
-                        </div>
-                        <div class='form-actions col-lg-offset-2'>
-                                <button class='btn btn-success' id='create-button' type="submit">
-                                    <spring:message code='action.save.label'/>
-                                </button>
-                                <a href="${rootURL}${controller}">
-                                    <button type="button" class="btn btn-success">
-                                        <spring:message code="action.return.label"/>
-                                    </button>
-                                </a>
-                        </div>
-                    </form:form>
-                </div>
-
+<div class="row-fluid">
+    <div class="col-sm-12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+            </div>
+            <div class="widget-content">
+                <table class="table display table-bordered data-table" id="shipment-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="id.label"/></th>
+                        <th><spring:message code="orderNumber.label"/></th>
+                        <th><spring:message code="bankTransactionNumber.label"/></th>
+                        <th><spring:message code="bankName.label"/></th>
+                        <th><spring:message code="amount.label"/></th>
+                        <th><spring:message code="currency.label"/></th>
+                        <th><spring:message code="createdTime.label"/></th>
+                        <th><spring:message code="site.url.label"/></th>
+                        <th><spring:message code="carrier.label"/></th>
+                        <th><spring:message code="trackingNumber.label"/></th>
+                        <th><spring:message code="status.label"/></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#edit-payment-form').validate({
-            rules: {
-                firstName: {required: true, minlength: 3, maxlength: 32},
-                lastName: {required: true, minlength: 3, maxlength: 32},
-                url: {required: true, minlength: 3, maxlength: 32},
-            }
+        var shipmentTable = $('#shipment-table').DataTable({
+            'language': {
+                'url': "${dataTablesLanguage}"
+            },
+            'processing': true,
+            'serverSide': true,
+            'paging': true,
+            "paginationType": "full_numbers",
+            "jQueryUI": true,
+            'dom': '<""if>rt<"F"lp>',
+
+            'ajax': {
+                'url': "${rootURL}${controller}/list",
+                'type': "GET",
+                'dataType': 'json'
+            },
+            // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
+            'columnDefs': [
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'orderId'},
+                {
+                    'name': 'merchantNumber', 'targets': 1, 'data': 'orderNumber',
+                    'render': function (data, type, row) {
+                        return '<a href=' + "${rootURL}order" + '/show/'
+                                + row['orderId'] + '>' + data + '</a>';
+                    }
+                },
+                {
+                    'name': 'bankTransactionNumber', 'targets': 2, 'searchable': true,
+                    'orderable': false, 'data': 'bankTransactionNumber'
+                },
+                {
+                    'name': 'bankName', 'targets': 3, 'searchable': true,
+                    'orderable': false, 'data': 'bankName'
+                },
+                {
+                    'name': 'orderAmount', 'targets': 4, 'searchable': true,
+                    'orderable': false, 'data': 'orderAmount'
+                },
+                {
+                    'name': 'orderCurrency', 'targets': 5, 'searchable': true,
+                    'orderable': false, 'data': 'orderCurrency'
+                },
+                {
+                    'name': 'createdTime', 'targets': 6, 'searchable': false,
+                    'data': 'createdTime'
+                },
+                {
+                    'name': 'siteUrl', 'targets': 7, 'searchable': true,
+                    'orderable': false, 'data': 'siteUrl'
+                },
+                {
+                    'name': 'carrier', 'targets': 8, 'searchable': false,
+                    'orderable': false, 'data': 'carrier'
+                },
+                {
+                    'name': 'trackingNumber', 'targets': 9, 'searchable': false,
+                    'orderable': false, 'data': 'trackingNumber'
+                },
+                {
+                    'name': 'orderStatus', 'targets': 10, 'searchable': false,
+                    'orderable': false, 'data': 'orderStatusName'
+                }
+            ]
         });
     });
 </script>

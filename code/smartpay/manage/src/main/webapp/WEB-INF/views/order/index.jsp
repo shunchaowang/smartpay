@@ -103,7 +103,7 @@
                                 '<button type="button" name="show-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>'
-                                + '<a href="' + "${rootURL}${controller}" + '/ship${domain}/'
+                                + '<a href="' + "${rootURL}shipment" + '/addShipment'
                                 + row['id'] + '">' +
                                 '<button type="button" name="ship-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.ship.label"/>'

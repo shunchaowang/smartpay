@@ -77,17 +77,58 @@ public class ShipmentController {
 
     @RequestMapping(value = {"/", "", "/index"}, method = RequestMethod.GET)
     public String index() {
-        return "index";
+        return "main";
     }
 
-    public String list() {
-        return null;
+    @RequestMapping(value = {"/list"}, method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String list(HttpServletRequest request) {
+        DataTablesParams params = new DataTablesParams(request);
+        Integer start = Integer.valueOf(params.getOffset());
+        Integer length = Integer.valueOf(params.getMax());
+        if (start == null || length == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        // only shipped order can be shipped
+        OrderStatus paidOrderStatus = null;
+        try {
+            paidOrderStatus = orderStatusService
+                    .findByCode(ResourceProperties.ORDER_STATUS_SHIPPED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", "Cannot find paid order status.");
+        }
+        Order orderCriteria = new Order();
+        orderCriteria.setOrderStatus(paidOrderStatus);
+
+        List<Order> orders = orderService.findByCriteria(orderCriteria, params.getSearch(),
+                start, length, params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = orderService.countByCriteria(orderCriteria);
+        Long recordsFiltered = orderService.countByCriteria(orderCriteria, params.getSearch());
+        if (orders == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesShipment> shipments = new ArrayList<>();
+        for (Order order : orders) {
+            DataTablesShipment shipment = new DataTablesShipment(order);
+            shipments.add(shipment);
+        }
+
+        DataTablesResultSet<DataTablesShipment> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(shipments);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
     }
 
     @RequestMapping(value = {"/shipping"}, method = RequestMethod.GET)
     public String indexWaitForShipping(Model model) {
 
-        logger.debug("~~~~~~~~shipping~~~~~~~~~~" + "/shipping");
         model.addAttribute("domain", "WaitForShipping");
         model.addAttribute("action", "shipping");
         //model.addAttribute("command", new ShipmentCommand());
@@ -98,8 +139,6 @@ public class ShipmentController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listWaitForShipping(Model model, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~shipping~~~~~~~~~~" + "/WaitForShipping");
 
         model.addAttribute("domain", "WaitForShipping");
 
@@ -114,7 +153,7 @@ public class ShipmentController {
         OrderStatus paidOrderStatus = null;
         try {
             paidOrderStatus = orderStatusService
-                    .findByCode(ResourceProperties.ORDER_STATUS_SHIPPED_CODE);
+                    .findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new IntervalServerException("500", "Cannot find paid order status.");
