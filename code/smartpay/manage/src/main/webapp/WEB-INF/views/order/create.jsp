@@ -12,7 +12,7 @@
 <br>
 
 <div class="row">
-    <form:form action="${rootURL}${controller}/create${domain}" method="POST"
+    <form:form action="${rootURL}${controller}/create" method="POST"
                commandName="userCommand" cssClass="form-horizontal" id="new-user-form">
         <div class="form-group">
             <label class="col-sm-3 control-label" for="username">

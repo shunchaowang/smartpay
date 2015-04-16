@@ -69,17 +69,15 @@ public class OrderController {
         return orderStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index", "/indexOrder"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
 
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
+    public String list(HttpServletRequest request) {
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -127,13 +125,10 @@ public class OrderController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
-            model) {
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, Model model) {
 
-        logger.debug("~~~~~~ show " + "domain=" + domain + "id=" + id);
-
-        Order order;
+        Order order = null;
         try {
             order = orderService.get(id);
         } catch (NoSuchEntityException e) {
@@ -142,9 +137,7 @@ public class OrderController {
         }
         OrderCommand orderCommand = createOrderCommand(order);
         model.addAttribute("orderCommand", orderCommand);
-        if (domain != null) {
-            model.addAttribute("domain", domain);
-        }
+
         model.addAttribute("action", "show");
         return "main";
     }
@@ -271,7 +264,8 @@ public class OrderController {
         orderCommand.setSiteId(order.getSite().getId());
         orderCommand.setSiteName(order.getSite().getName());
         orderCommand.setCustomerId(order.getCustomer().getId());
-        orderCommand.setCustomerName(order.getCustomer().getFirstName()+order.getCustomer().getLastName());
+        orderCommand.setCustomerName(
+                order.getCustomer().getFirstName() + order.getCustomer().getLastName());
         orderCommand.setCreatedTime(order.getCreatedTime().toString());
         orderCommand.setOrderStatusId(order.getOrderStatus().getId());
         orderCommand.setOrderStatusName(order.getOrderStatus().getName());

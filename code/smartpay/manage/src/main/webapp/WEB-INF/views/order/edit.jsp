@@ -117,7 +117,7 @@
                 <button class='btn btn-default' id='reset-button' type="reset">
                     <spring:message code='action.reset.label'/>
                 </button>
-                <a href="${rootURL}${controller}/index${domain}">
+                <a href="${rootURL}${controller}/index">
                     <button type="button" class="btn btn-default">
                         <spring:message code="action.return.label"/>
                     </button>

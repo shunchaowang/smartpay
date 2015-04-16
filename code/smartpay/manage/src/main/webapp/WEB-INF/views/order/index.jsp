@@ -60,7 +60,7 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -70,7 +70,7 @@
                 {
                     'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -79,35 +79,37 @@
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'currencyName', 'targets': 3, 'data': 'currencyName',
+                    'name': 'currency', 'targets': 3, 'data': 'currencyName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'siteName', 'targets': 4, 'data': 'siteName',
+                    'name': 'site', 'targets': 4, 'data': 'siteName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'customerName', 'targets': 5, 'data': 'customerName',
+                    'name': 'customer', 'targets': 5, 'data': 'customerName',
                     'searchable': false, 'orderable': false
                 },
                 {'name': 'createdTime', 'targets': 6, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'orderStatusName', 'targets': 7, 'searchable': false,
+                    'name': 'orderStatus', 'targets': 7, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
                 },
                 {
                     'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href="' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="show-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.show.label"/>'
-                                + '</button></a>'
-                                + '<a href="' + "${rootURL}shipment" + '/addShipment'
+                                + '</button></a>';
+                                /*
+                                + '<a href="' + "${rootURL}${controller}" + '/edit/'
                                 + row['id'] + '">' +
-                                '<button type="button" name="ship-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.ship.label"/>'
+                                '<button type="button" name="edit-button" class="tableButton"'
+                                + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button></a>'
+                                */
                     }
                 }
             ]

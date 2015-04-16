@@ -231,15 +231,15 @@
                         'searchable': false, 'orderable': false
                     },
                     {
-                        'name': 'currency', 'targets': 3, 'data': 'currency',
+                        'name': 'currency', 'targets': 3, 'data': 'currencyName',
                         'searchable': false, 'orderable': false
                     },
                     {
-                        'name': 'site', 'targets': 4, 'data': 'site',
+                        'name': 'site', 'targets': 4, 'data': 'siteName',
                         'searchable': false, 'orderable': false
                     },
                     {
-                        'name': 'customer', 'targets': 5, 'data': 'customer',
+                        'name': 'customer', 'targets': 5, 'data': 'customerName',
                         'searchable': false, 'orderable': false
                     },
                     {
@@ -250,20 +250,17 @@
                     },
                     {
                         'name': 'orderStatus', 'targets': 7, 'searchable': false,
-                        'orderable': false, 'data': 'orderStatus'
+                        'orderable': false, 'data': 'orderStatusName'
                     },
                     {
                         'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                         'render': function (data, type, row) {
-                            return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                            return '<a href="' + "${rootURL}${controller}" + '/show/'
                                     + row['id'] + '">' +
-                                    '<button type="button" name="edit-button" class="btn btn-default"'
-                                    + '">' + '<spring:message code="action.edit.label"/>'
-                                    + '</button></a>' +
-                                    '<button type="button" name="delete-button"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    '<spring:message code="action.delete.label"/>' +
-                                    '</button>';
+                                    '<button type="button" name="edit-button"'
+                                    + ' class="tableButton"' + '>'
+                                    + '<spring:message code="action.show.label"/>'
+                                    + '</button></a>';
                         }
                     }
                 ]
