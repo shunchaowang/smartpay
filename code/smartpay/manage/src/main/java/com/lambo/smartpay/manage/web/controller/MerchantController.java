@@ -352,6 +352,10 @@ public class MerchantController {
         MerchantCommand command = new MerchantCommand();
         Long count = merchantService.countAll();
         String identity = "M" + String.format("%07d", count);
+        while (merchantService.findByIdentity(identity) != null) {
+            count++;
+            identity = "M" + String.format("%07d", count);
+        }
         command.setIdentity(identity);
         model.addAttribute("merchantCommand", command);
         model.addAttribute("action", "create");
