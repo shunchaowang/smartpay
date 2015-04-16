@@ -29,7 +29,7 @@
 
                             <div class="controls">
                                 <form:input size="80" path="identity" id="identity" cssClass="text" required=""
-                                            placeholder="Identity"/>
+                                            value="${merchantCommand.identity}"/>
                             </div>
                         </div>
 
