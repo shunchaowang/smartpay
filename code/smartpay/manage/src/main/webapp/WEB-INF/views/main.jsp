@@ -42,9 +42,9 @@
     <!-- end of notification -->
 
     <!-- close of content-header -->
-    <div class="container-fluid">
-        <jsp:include page="${_view}.jsp"/>
-    </div>
+
+    <jsp:include page="${_view}.jsp"/>
+
 </div>
 <div class="row-fluid">
     <jsp:include page="_footer.jsp"/>
