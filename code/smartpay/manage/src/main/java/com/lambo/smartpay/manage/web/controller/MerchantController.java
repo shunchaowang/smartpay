@@ -133,28 +133,24 @@ public class MerchantController {
 
     @RequestMapping(value = {"/indexMerchantEdit"}, method = RequestMethod.GET)
     public String indexMerchantEdit(Model model) {
-        logger.debug("~~~~~~~~~ indexMerchantEdit ~~~~~~~~~");
         model.addAttribute("domain", "MerchantEdit");
         return "main";
     }
 
     @RequestMapping(value = {"/indexMerchantFee"}, method = RequestMethod.GET)
     public String indexMerchantFee(Model model) {
-        logger.debug("~~~~~~~~~ indexMerchantFee ~~~~~~~~~");
         model.addAttribute("domain", "MerchantFee");
         return "main";
     }
 
     @RequestMapping(value = {"/indexFreezeList"}, method = RequestMethod.GET)
     public String indexFreezeList(Model model) {
-        logger.debug("~~~~~~~~~ indexFreezeList ~~~~~~~~~");
         model.addAttribute("domain", "FreezeList");
         return "main";
     }
 
     @RequestMapping(value = {"/indexUnfreezeList"}, method = RequestMethod.GET)
     public String indexUnfreezeList(Model model) {
-        logger.debug("~~~~~~~~~ indexUnfreezeList ~~~~~~~~~");
         model.addAttribute("domain", "UnfreezeList");
         return "main";
     }
@@ -164,8 +160,6 @@ public class MerchantController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -197,7 +191,6 @@ public class MerchantController {
             codeString = ResourceProperties.MERCHANT_STATUS_FROZEN_CODE;
 
         if (codeString.equals("")) {
-            logger.debug("~~~~~~~~~~ merchant list ~~~~~~~~~~" + "all codeString ！！！");
 
             merchants = merchantService.findByCriteria(search, start,
                     length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
@@ -206,7 +199,6 @@ public class MerchantController {
             recordsFiltered = merchantService.countByCriteria(search);
 
         } else {
-            logger.debug("~~~~~~~~~~ merchant list ~~~~~~~~~~" + "codeString = " + codeString);
             // normal merchant status
             Merchant merchantCriteria = new Merchant();
             MerchantStatus status = null;
@@ -248,8 +240,6 @@ public class MerchantController {
     @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
             model) {
-
-        logger.debug("~~~~~~ whether come to here ??? " + "domain=" + domain + "id=" + id);
 
         Merchant merchant;
         try {

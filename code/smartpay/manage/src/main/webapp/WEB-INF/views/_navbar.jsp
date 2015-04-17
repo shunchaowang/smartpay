@@ -102,13 +102,6 @@
                 <ul class="dropdown-menu" role="menu">
                     <!-- admin menu starts -->
                     <li class="">
-                        <a href="${rootURL}site/create">
-                                <span> >>
-                                <spring:message code="create.label" arguments="${site}"/>
-                                                                                       </span>
-                        </a>
-                    </li>
-                    <li class="">
                         <a href="${rootURL}site">
                                 <span> >>
                                 <spring:message code="manage.label" arguments="${site}"/>

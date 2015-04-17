@@ -29,7 +29,7 @@
 
                             <div class="controls">
                                 <form:input size="80" path="identity" id="identity" cssClass="text" required=""
-                                            value="${merchantCommand.identity}"/>
+                                            value="${merchantCommand.identity}" readonly="true"/>
                             </div>
                         </div>
 

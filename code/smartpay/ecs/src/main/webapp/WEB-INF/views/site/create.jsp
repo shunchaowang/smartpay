@@ -50,7 +50,7 @@
 
                                 <div class="controls">
                                     <form:input size="80" path="identity" id="identity" class="text"
-                                                value="${siteCommand.identity}"/>
+                                                value="${siteCommand.identity}" readonly="true"/>
                                 </div>
                             </div>
 

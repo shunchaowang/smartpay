@@ -43,11 +43,7 @@
                                 <th><spring:message code="site.url.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="status.label"/></th>
-                                <!--
-                        <c:if test="${domain.equals('Site')}">
-                            <th><spring:message code="action.operation.label"/></th>
-                        </c:if>
-                        -->
+                                <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -73,7 +69,7 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -85,7 +81,7 @@
                 {
                     'name': 'name', 'targets': 2, 'data': 'name',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -94,27 +90,22 @@
                 {
                     'name': 'siteStatus', 'targets': 5, 'searchable': false,
                     'orderable': false, 'data': 'siteStatus'
+                },
+                {
+                    'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
+                    'render': function (data, type, row) {
+                        return '<a href="' + "${rootURL}${controller}" +
+                                '/edit/'
+                                + row['id'] + '">' +
+                                '<button class="tableButton" type="button" name="edit-button" '
+                                + '">' + '<spring:message code="action.edit.label"/>'
+                                + '</button></a>' + ' '
+                                + '<button class="tableButton" type="button" name="delete-button"'
+                                + ' value="' + row['id'] + '">' +
+                                '<spring:message code="action.delete.label"/>' +
+                                '</button>';
+                    }
                 }
-                /*
-                <c:if test="${domain.equals('Site')}">
-                 ,
-                 {
-                 'name': 'operation', 'targets': 6, 'orderable': false, 'searchable': false,
-                 'render': function (data, type, row) {
-                 return '<a href="' + "${rootURL}${controller}" +
-                 '/edit/'
-                 + row['id'] + '">' +
-                 '<button class="tableButton" type="button" name="edit-button" '
-                 + '">' + '<spring:message code="action.edit.label"/>'
-                 + '</button></a>' + ' '
-                 + '<button class="tableButton" type="button" name="delete-button"'
-                 + ' value="' + row['id'] + '">' +
-                 '<spring:message code="action.delete.label"/>' +
-                 '</button>';
-                 }
-                 }
-                </c:if>
-                 */
             ]
         });
 

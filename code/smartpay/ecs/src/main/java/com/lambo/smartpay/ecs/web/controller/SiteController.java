@@ -4,13 +4,14 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.persistence.entity.SiteStatus;
+import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -91,10 +92,10 @@ public class SiteController {
         return "main";
     }
 
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
+    public String list(HttpServletRequest request) {
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -129,7 +130,7 @@ public class SiteController {
 
         // count total records and filtered records
         recordsTotal = siteService.countByCriteria(siteCriteria);
-        recordsFiltered = siteService.countByCriteria(siteCriteria,search);
+        recordsFiltered = siteService.countByCriteria(siteCriteria, search);
 
         if (sites == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -153,13 +154,30 @@ public class SiteController {
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
 
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User has not logged in.");
+        }
+        Merchant merchant = securityUser.getMerchant();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        Long count = siteService.countByCriteria(siteCriteria);
+        String identity = "S" + String.format("%07d", count);
+        while (siteService.findByIdentity(identity) != null) {
+            count++;
+            identity = "S" + String.format("%07d", count);
+        }
+        SiteCommand command = new SiteCommand();
+        command.setIdentity(identity);
+
         model.addAttribute("action", "create");
-        model.addAttribute("siteCommand", new SiteCommand());
+        model.addAttribute("siteCommand", command);
         return "main";
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+    public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand,
+                         RedirectAttributes attributes) {
 
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
@@ -178,26 +196,26 @@ public class SiteController {
         try {
             siteService.create(site);
             String fieldLabel = messageSource.getMessage("Site.label", null, locale);
-            model.addAttribute("message",
+            attributes.addFlashAttribute("message",
                     messageSource.getMessage("created.message",
-                            new String[]{fieldLabel, site.getName()+site.getUrl()}, locale));
+                            new String[]{fieldLabel, site.getName() + site.getUrl()}, locale));
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
             String fieldLabel = messageSource.getMessage("Site.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("created.message",
-                            new String[]{fieldLabel, site.getName()+site.getUrl()}, locale));
+                            new String[]{fieldLabel, site.getName() + site.getUrl()}, locale));
             throw new IntervalServerException("500", e.getMessage());
         } catch (NotUniqueException e) {
             e.printStackTrace();
             String fieldLabel = messageSource.getMessage("Site.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("created.message",
-                            new String[]{fieldLabel, site.getName()+site.getUrl()}, locale));
+                            new String[]{fieldLabel, site.getName() + site.getUrl()}, locale));
             throw new IntervalServerException("500", e.getMessage());
         }
 
-        return "main";
+        return "redirect:/site/index";
 
     }
 
@@ -351,7 +369,7 @@ public class SiteController {
         SiteStatus siteStatus = null;
 
         //
-        if (siteCommand.getId() != null ){
+        if (siteCommand.getId() != null) {
             try {
                 site = siteService.get(siteCommand.getId());
             } catch (NoSuchEntityException e) {
