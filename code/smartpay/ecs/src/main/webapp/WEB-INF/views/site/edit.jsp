@@ -25,7 +25,6 @@
     <!-- reserved for notification -->
     <!-- close of content-header -->
     <div class="container-fluid">
-        <!— actual content —>
         <div class="row-fluid">
             <div class="span12">
                 <div class="widget-box">

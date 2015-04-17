@@ -1,7 +1,7 @@
 package com.lambo.smartpay.ecs.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.Payment;
+import com.lambo.smartpay.core.persistence.entity.Refund;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -14,62 +14,46 @@ import java.util.Locale;
 public class DataTablesRefund {
 
     private Long id;
-
-    private Long orderId;
-    private String orderNumber;
-    private float orderAmount;
-    private String orderCurrency;
+    private Float amount;
+    private String currency;
     private String createdTime;
-    private Long orderStatusId;
-    private String orderStatusName;
-    private Long shipmentStatusId;
-    private String shipmentStatusName;
-    private String customerName;
-    private String customerAddress;
-
-    private Long paymentId;
     private String bankName;
     private String bankTransactionNumber;
+    private String bankAccountNumber;
+    private String bankReturnCode;
 
-    private Long siteId;
-    private String siteUrl;
+    // order info
+    private Long orderId;
+    private String orderNumber;
+    private Float orderAmount;
+    private String orderCurrency;
 
+    // customer info
+    private String customerName;
 
+    public DataTablesRefund(Refund refund) {
 
-
-
-    public DataTablesRefund(Order order) {
-        orderId = order.getId();
-        orderNumber = order.getMerchantNumber();
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+
+        id = refund.getId();
+        amount = refund.getAmount();
+        currency = refund.getCurrency().getName();
+        createdTime = dateFormat.format(refund.getCreatedTime());
+        bankName = refund.getBankName();
+        bankTransactionNumber = refund.getBankTransactionNumber();
+        bankAccountNumber = refund.getBankAccountNumber();
+        bankReturnCode = refund.getBankReturnCode();
+
+        Order order = refund.getOrder();
+        orderId = order.getId();
+        orderNumber = order.getMerchantNumber();
         orderAmount = order.getAmount();
         orderCurrency = order.getCurrency().getName();
-        createdTime = dateFormat.format(order.getCreatedTime());
-        orderStatusId = order.getOrderStatus().getId();
-        orderStatusName = order.getOrderStatus().getName();
-        customerName = StringUtils.join(
-                new String[]{order.getCustomer().getFirstName(),
-                        order.getCustomer().getLastName()}, " ");
-        customerAddress = StringUtils.join(
-                new String[] {order.getCustomer().getAddress1(), order.getCustomer().getCity(),
-                        order.getCustomer().getState(), order.getCustomer().getZipCode(),
-                        order.getCustomer().getCountry()}, " ");
 
-
-        Payment payment = order.getPayments().iterator().next();
-        paymentId = payment.getId();
-        bankName = payment.getBankName();
-        bankTransactionNumber = payment.getBankTransactionNumber();
-
-        siteUrl = order.getSite().getUrl();
-
+        customerName = StringUtils.join(order.getCustomer().getFirstName(),
+                order.getCustomer().getLastName(), " ");
     }
-
-
-
-
-
 
     public Long getId() {
         return id;
@@ -77,6 +61,62 @@ public class DataTablesRefund {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getBankTransactionNumber() {
+        return bankTransactionNumber;
+    }
+
+    public void setBankTransactionNumber(String bankTransactionNumber) {
+        this.bankTransactionNumber = bankTransactionNumber;
+    }
+
+    public String getBankAccountNumber() {
+        return bankAccountNumber;
+    }
+
+    public void setBankAccountNumber(String bankAccountNumber) {
+        this.bankAccountNumber = bankAccountNumber;
+    }
+
+    public String getBankReturnCode() {
+        return bankReturnCode;
+    }
+
+    public void setBankReturnCode(String bankReturnCode) {
+        this.bankReturnCode = bankReturnCode;
     }
 
     public Long getOrderId() {
@@ -95,11 +135,11 @@ public class DataTablesRefund {
         this.orderNumber = orderNumber;
     }
 
-    public float getOrderAmount() {
+    public Float getOrderAmount() {
         return orderAmount;
     }
 
-    public void setOrderAmount(float orderAmount) {
+    public void setOrderAmount(Float orderAmount) {
         this.orderAmount = orderAmount;
     }
 
@@ -111,46 +151,6 @@ public class DataTablesRefund {
         this.orderCurrency = orderCurrency;
     }
 
-    public String getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(String createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public Long getOrderStatusId() {
-        return orderStatusId;
-    }
-
-    public void setOrderStatusId(Long orderStatusId) {
-        this.orderStatusId = orderStatusId;
-    }
-
-    public String getOrderStatusName() {
-        return orderStatusName;
-    }
-
-    public void setOrderStatusName(String orderStatusName) {
-        this.orderStatusName = orderStatusName;
-    }
-
-    public Long getShipmentStatusId() {
-        return shipmentStatusId;
-    }
-
-    public void setShipmentStatusId(Long shipmentStatusId) {
-        this.shipmentStatusId = shipmentStatusId;
-    }
-
-    public String getShipmentStatusName() {
-        return shipmentStatusName;
-    }
-
-    public void setShipmentStatusName(String shipmentStatusName) {
-        this.shipmentStatusName = shipmentStatusName;
-    }
-
     public String getCustomerName() {
         return customerName;
     }
@@ -158,56 +158,4 @@ public class DataTablesRefund {
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
-
-    public String getCustomerAddress() {
-        return customerAddress;
-    }
-
-    public void setCustomerAddress(String customerAddress) {
-        this.customerAddress = customerAddress;
-    }
-
-
-    //
-    public Long getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    public String getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public String getBankTransactionNumber() {
-        return bankName;
-    }
-
-    public void setBankTransactionNumber(String bankTransactionNumber) {
-        this.bankTransactionNumber = bankTransactionNumber;
-    }
-
-    //
-    public Long getSiteId() {
-        return paymentId;
-    }
-
-    public void setSiteId(Long siteId) {
-        this.siteId = siteId;
-    }
-
-    public String getSiteUrl() {
-        return siteUrl;
-    }
-
-    public void setSiteUrl(String siteUrl) {
-        this.siteUrl = siteUrl;
-    }
-
 }
