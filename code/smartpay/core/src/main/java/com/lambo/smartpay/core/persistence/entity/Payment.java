@@ -9,11 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
@@ -109,6 +111,10 @@ public class Payment implements Serializable {
             optional = false)
     @JoinColumn(name = "PYMT_CRCY_ID", nullable = false)
     private Currency currency;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "payment",
+            orphanRemoval = true)
+    private Set<Claim> claims;
 
     public Long getId() {
         return id;
@@ -300,5 +306,13 @@ public class Payment implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Set<Claim> getClaims() {
+        return claims;
+    }
+
+    public void setClaims(Set<Claim> claims) {
+        this.claims = claims;
     }
 }
