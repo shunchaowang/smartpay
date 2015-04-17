@@ -1,7 +1,6 @@
 package com.lambo.smartpay.ecs.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.Payment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -26,10 +25,6 @@ public class DataTablesShipment {
     private String customerName;
     private String customerAddress;
 
-    private Long paymentId;
-    private String bankName;
-    private String bankTransactionNumber;
-
     private Long siteId;
     private String siteUrl;
 
@@ -45,18 +40,14 @@ public class DataTablesShipment {
                 new String[]{order.getCustomer().getFirstName(),
                         order.getCustomer().getLastName()}, " ");
         customerAddress = StringUtils.join(
-                new String[] {order.getCustomer().getAddress1(), order.getCustomer().getCity(),
+                new String[]{order.getCustomer().getAddress1(), order.getCustomer().getCity(),
                         order.getCustomer().getState(), order.getCustomer().getZipCode(),
                         order.getCustomer().getCountry()}, " ");
 
         orderAmount = order.getAmount();
         orderCurrency = order.getCurrency().getName();
 
-        Payment payment = order.getPayments().iterator().next();
-        paymentId = payment.getId();
-        bankName = payment.getBankName();
-        bankTransactionNumber = payment.getBankTransactionNumber();
-
+        siteId = order.getSite().getId();
         siteUrl = order.getSite().getUrl();
     }
 
@@ -156,35 +147,8 @@ public class DataTablesShipment {
         this.customerAddress = customerAddress;
     }
 
-
-    //
-    public Long getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    public String getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public String getBankTransactionNumber() {
-        return bankName;
-    }
-
-    public void setBankTransactionNumber(String bankTransactionNumber) {
-        this.bankTransactionNumber = bankTransactionNumber;
-    }
-
-    //
     public Long getSiteId() {
-        return paymentId;
+        return siteId;
     }
 
     public void setSiteId(Long siteId) {

@@ -3,6 +3,7 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
+
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -24,7 +25,6 @@
     <!-- reserved for notification -->
     <!-- close of content-header -->
     <div class="container-fluid">
-        <!— actual content —>
         <div class="row-fluid">
             <div class="col-sm-12">
                 <div class="widget-box">
@@ -38,11 +38,11 @@
                             <tr>
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="orderNumber.label"/></th>
-                                <th><spring:message code="bankTransactionNumber.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="site.url.label"/></th>
+                                <th><spring:message code="custom.label"/></th>
+                                <th><spring:message code="address.label"/></th>
                                 <th><spring:message code="status.label"/></th>
                                 <th><spring:message code="action.operation.label"/></th>
                             </tr>
@@ -87,24 +87,24 @@
                     }
                 },
                 {
-                    'name': 'bankTransactionNumber', 'targets': 2, 'searchable': true,
-                    'orderable': false, 'data': 'bankTransactionNumber'
-                },
-                {
-                    'name': 'orderAmount', 'targets': 3, 'searchable': true,
+                    'name': 'orderAmount', 'targets': 2, 'searchable': true,
                     'orderable': false, 'data': 'orderAmount'
                 },
                 {
-                    'name': 'orderCurrency', 'targets': 4, 'searchable': true,
+                    'name': 'orderCurrency', 'targets': 3, 'searchable': true,
                     'orderable': false, 'data': 'orderCurrency'
                 },
                 {
-                    'name': 'createdTime', 'targets': 5, 'searchable': false,
+                    'name': 'createdTime', 'targets': 4, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'siteUrl', 'targets': 6, 'searchable': true,
-                    'orderable': false, 'data': 'siteUrl'
+                    'name': 'customer', 'targets': 5, 'searchable': true,
+                    'orderable': false, 'data': 'customerName'
+                },
+                {
+                    'name': 'address', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'customerAddress'
                 },
                 {
                     'name': 'orderStatus', 'targets': 7, 'searchable': false,
@@ -113,9 +113,10 @@
                 {
                     'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<button class="tableButton" type="button" name="addShipment-button"'
-                                + ' value="' + row['orderId'] + '">'
-                                + '<spring:message code="Shipment.label"/>' + '</button>';
+                        return '<button type="button" name="addShipment-button"'
+                                + ' class="tableButton" value="' + row['orderId'] + '">'
+                                + '<spring:message code="action.ship.label"/>'
+                                + '</button>';
                     }
                 }
             ]
@@ -137,7 +138,7 @@
                 },
                 success: function (data) {
                     $('#dialog-area').append(data);
-
+                    console.log("data: " + data);
                     // define dialog
                     var shipmentDialog = $("#shipment-dialog").dialog({
                         autoOpen: false,

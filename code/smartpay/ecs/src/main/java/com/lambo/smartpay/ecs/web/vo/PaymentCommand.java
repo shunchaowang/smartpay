@@ -46,15 +46,6 @@ public class PaymentCommand {
     private String shipmentTrackingNumber;
     private String shipmentAddress1;
 
-    /*
-    private String shipmentFirstName;
-    private String shipmentLastName;
-    private String getShipmentAddress2;
-    private String shipmentCity;
-    private String shipmentState;
-    private String shipmentCountry;
-    private String shipmentZipcode;
-    */
     private String shipmentStatusId;
     private String shipmentStatusName;
 

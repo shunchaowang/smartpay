@@ -195,15 +195,16 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         String likeSearch = "%" + search + "%";
 
         // get all paths for the query
-        Path<String> bankNamePath = root.get("bankName");
+        Path<String> bankTransactionNumberPath = root.get("bankTransactionNumber");
 
         // create the predicate expression for all the path
-        Predicate bankNamePredicate = builder.like(bankNamePath, likeSearch);
+        Predicate bankTransactionNumberPredicate =
+                builder.like(bankTransactionNumberPath, likeSearch);
 
 
         // create the final Predicate and return
-        logger.debug("Formulated jpa predicate is " + bankNamePredicate.toString());
-        return bankNamePredicate;
+        logger.debug("Formulated jpa predicate is " + bankTransactionNumberPredicate.toString());
+        return bankTransactionNumberPredicate;
     }
 
     /**
@@ -312,6 +313,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         // get all supporting paths
         Path<Long> idPath = root.get("id");
         Path<Date> createdTimePath = root.get("createdTime");
+        Path<Date> successTimePath = root.get("successTime");
 
         // create Order instance, default would be ORDER BY id DESC, newest to oldest
         Order orderBy = null;
@@ -324,6 +326,9 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
                     case "createdTime":
                         orderBy = builder.asc(createdTimePath);
                         break;
+                    case "successTime":
+                        orderBy = builder.asc(successTimePath);
+                        break;
                     default:
                         orderBy = builder.asc(idPath);
                 }
@@ -335,6 +340,9 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
                         break;
                     case "createdTime":
                         orderBy = builder.desc(createdTimePath);
+                        break;
+                    case "successTime":
+                        orderBy = builder.desc(successTimePath);
                         break;
                     default:
                         orderBy = builder.desc(idPath);

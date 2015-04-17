@@ -219,13 +219,6 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}shipment/shipping">
-                                <span> >>
-                                    <spring:message code="manage.label" arguments="${shipment}"/>
-                                </span>
-                        </a>
-                    </li>
-                    <li class="">
                         <a href="${rootURL}shipment">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${shipment}"/>

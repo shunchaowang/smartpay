@@ -14,6 +14,7 @@ public class DataTablesPayment {
     private Long id;
     private Float amount;
     private String createdTime;
+    private String successTime;
     private String bankName;
     private String bankTransactionNumber;
     private String bankReturnCode;
@@ -43,6 +44,9 @@ public class DataTablesPayment {
         id = payment.getId();
         amount = payment.getAmount();
         createdTime = dateFormat.format(payment.getCreatedTime());
+        if (payment.getSuccessTime() != null) {
+            successTime = dateFormat.format(payment.getSuccessTime());
+        }
         bankName = payment.getBankName();
         bankTransactionNumber = payment.getBankTransactionNumber();
         bankReturnCode = payment.getBankReturnCode();
@@ -70,6 +74,7 @@ public class DataTablesPayment {
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -77,6 +82,7 @@ public class DataTablesPayment {
     public Float getAmount() {
         return amount;
     }
+
     public void setAmount(Float amount) {
         this.amount = amount;
     }
@@ -84,6 +90,7 @@ public class DataTablesPayment {
     public String getCreatedTime() {
         return createdTime;
     }
+
     public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
@@ -91,6 +98,7 @@ public class DataTablesPayment {
     public String getBankName() {
         return bankName;
     }
+
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
@@ -98,6 +106,7 @@ public class DataTablesPayment {
     public String getBankTransactionNumber() {
         return bankTransactionNumber;
     }
+
     public void setBankTransactionNumber(String bankTransactionNumber) {
         this.bankTransactionNumber = bankTransactionNumber;
     }
@@ -105,6 +114,7 @@ public class DataTablesPayment {
     public String getBankReturnCode() {
         return bankReturnCode;
     }
+
     public void setBankReturnCode(String bankReturnCode) {
         this.bankReturnCode = bankReturnCode;
     }
@@ -112,6 +122,7 @@ public class DataTablesPayment {
     public Long getPaymentStatusId() {
         return paymentStatusId;
     }
+
     public void setPaymentStatusId(Long paymentStatusId) {
         this.paymentStatusId = paymentStatusId;
     }
@@ -119,6 +130,7 @@ public class DataTablesPayment {
     public String getPaymentStatusName() {
         return paymentStatusName;
     }
+
     public void setPaymentStatusName(String paymentStatusName) {
         this.paymentStatusName = paymentStatusName;
     }
@@ -126,6 +138,7 @@ public class DataTablesPayment {
     public Long getPaymentTypeId() {
         return paymentTypeId;
     }
+
     public void setPaymentTypeId(Long paymentTypeId) {
         this.paymentTypeId = paymentTypeId;
     }
@@ -133,6 +146,7 @@ public class DataTablesPayment {
     public String getPaymentTypeName() {
         return paymentTypeName;
     }
+
     public void setPaymentTypeName(String paymentTypeName) {
         this.paymentTypeName = paymentTypeName;
     }
@@ -141,6 +155,7 @@ public class DataTablesPayment {
     public Long getOrderId() {
         return orderId;
     }
+
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
@@ -148,6 +163,7 @@ public class DataTablesPayment {
     public String getOrderNumber() {
         return orderNumber;
     }
+
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
     }
@@ -156,6 +172,7 @@ public class DataTablesPayment {
     public Long getCurrencyId() {
         return currencyId;
     }
+
     public void setCurrencyId(Long currencyId) {
         this.currencyId = currencyId;
     }
@@ -163,6 +180,7 @@ public class DataTablesPayment {
     public String getCurrencyName() {
         return currencyName;
     }
+
     public void setCurrencyName(String currencyName) {
         this.currencyName = currencyName;
     }
@@ -171,6 +189,7 @@ public class DataTablesPayment {
     public Long getMerchantId() {
         return merchantId;
     }
+
     public void setMerchantId(Long currencyId) {
         this.merchantId = merchantId;
     }
@@ -178,6 +197,7 @@ public class DataTablesPayment {
     public String getMerchantName() {
         return merchantName;
     }
+
     public void setMerchantName(String merchantName) {
         this.merchantName = merchantName;
     }
@@ -185,6 +205,7 @@ public class DataTablesPayment {
     public String getMerchantNumber() {
         return merchantNumber;
     }
+
     public void setMerchantNumber(String merchantNumber) {
         this.merchantNumber = merchantNumber;
     }
@@ -194,6 +215,7 @@ public class DataTablesPayment {
     public Long getSiteId() {
         return siteId;
     }
+
     public void setSiteId(Long siteId) {
         this.siteId = siteId;
     }
@@ -201,8 +223,16 @@ public class DataTablesPayment {
     public String getSiteName() {
         return siteName;
     }
+
     public void setSiteName(String siteName) {
         this.siteName = siteName;
     }
 
+    public String getSuccessTime() {
+        return successTime;
+    }
+
+    public void setSuccessTime(String successTime) {
+        this.successTime = successTime;
+    }
 }
