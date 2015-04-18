@@ -11,7 +11,7 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}" class="current">
+            <a href="${rootURL}${controller}/${action}" class="current">
                 <spring:message code="index.label" arguments="${entity}"/>
             </a>
         </div>
@@ -77,7 +77,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/listAll",
                 'type': "GET",
                 'dataType': 'json'
             },

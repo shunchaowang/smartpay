@@ -10,7 +10,7 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}">
+            <a href="${rootURL}${controller}/indexAll">
                 <spring:message code="manage.label" arguments="${merchant}"/>
             </a>
             <a href="${rootURL}${controller}/${action}" class="current">
@@ -124,58 +124,6 @@
                     }
                 }
             ]
-        });
-
-        // add live handler for remove button
-        merchantTable.on('click', 'button[type=button][name=delete-button]', function (event) {
-            event.preventDefault();
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}${controller}" + '/delete',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    merchantTable.ajax.reload();
-                }
-            });
-        });
-
-        // add live handler for freeze button
-        merchantTable.on('click', 'button[type=button][name=freeze-button]', function (event) {
-            event.preventDefault();
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}${controller}" + '/freeze',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    merchantTable.ajax.reload();
-                }
-            });
         });
 
         // add live handler for unfreeze button

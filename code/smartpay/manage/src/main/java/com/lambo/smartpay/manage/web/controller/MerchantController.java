@@ -70,15 +70,6 @@ public class MerchantController {
     private MerchantStatusService merchantStatusService;
 
     @Autowired
-    private SiteService siteService;
-    @Autowired
-    private SiteStatusService siteStatusService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserStatusService userStatusService;
-
-    @Autowired
     private CredentialStatusService credentialStatusService;
     @Autowired
     private CredentialTypeService credentialTypeService;
@@ -126,30 +117,28 @@ public class MerchantController {
     }
 
     // index view
-    @RequestMapping(value = {"/", "/index", ""}, method = RequestMethod.GET)
-    public String index() {
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexNormal"}, method = RequestMethod.GET)
-    public String indexNormal(Model model) {
-        model.addAttribute("domain", "NormalMerchant");
-        model.addAttribute("action", "indexNormal");
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexFrozen"}, method = RequestMethod.GET)
-    public String indexFrozen(Model model) {
-        model.addAttribute("domain", "FrozenMerchant");
-        model.addAttribute("action", "indexFrozen");
+    @RequestMapping(value = {"/index{domain}"},
+            method = RequestMethod.GET)
+    public String index(@PathVariable("domain") String domain, Model model) {
+        if (domain.equals("All")) {
+            model.addAttribute("action", "indexAll");
+        } else if (domain.equals("Normal")) {
+            model.addAttribute("domain", "NormalMerchant");
+            model.addAttribute("action", "indexNormal");
+        } else if (domain.equals("Frozen")) {
+            model.addAttribute("domain", "FrozenMerchant");
+            model.addAttribute("action", "indexFrozen");
+        } else {
+            throw new BadRequestException("400", "Domain does not exist.");
+        }
         return "main";
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(HttpServletRequest request) {
+    public String list(@PathVariable("domain") String domain, HttpServletRequest request) {
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -169,12 +158,53 @@ public class MerchantController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Merchant> merchants = merchantService
-                .findByCriteria(search, start, length, order,
-                        ResourceProperties.JpaOrderDir.valueOf(orderDir));
-        // count total and filtered
-        Long recordsTotal = merchantService.countAll();
-        Long recordsFiltered = merchantService.countByCriteria(search);
+        List<Merchant> merchants = null;
+        Long recordsTotal = null;
+        Long recordsFiltered = null;
+        if (domain.equals("All")) {
+            merchants = merchantService
+                    .findByCriteria(search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            // count total and filtered
+            recordsTotal = merchantService.countAll();
+            recordsFiltered = merchantService.countByCriteria(search);
+        } else if (domain.equals("Normal")) {
+            MerchantStatus normalMerchantStatus = null;
+            try {
+                normalMerchantStatus = merchantStatusService
+                        .findByCode(ResourceProperties.MERCHANT_STATUS_NORMAL_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot find normal merchant status.");
+            }
+            Merchant merchantCriteria = new Merchant();
+            merchantCriteria.setMerchantStatus(normalMerchantStatus);
+            merchants = merchantService
+                    .findByCriteria(merchantCriteria, search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            // count total and filtered
+            recordsTotal = merchantService.countByCriteria(merchantCriteria);
+            recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
+        } else if (domain.equals("Frozen")) {
+            MerchantStatus frozenMerchantStatus = null;
+            try {
+                frozenMerchantStatus = merchantStatusService
+                        .findByCode(ResourceProperties.MERCHANT_STATUS_FROZEN_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot find normal merchant status.");
+            }
+            Merchant merchantCriteria = new Merchant();
+            merchantCriteria.setMerchantStatus(frozenMerchantStatus);
+            merchants = merchantService
+                    .findByCriteria(merchantCriteria, search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            // count total and filtered
+            recordsTotal = merchantService.countByCriteria(merchantCriteria);
+            recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
+        } else {
+            throw new BadRequestException("400", "Domain does not exist.");
+        }
 
         if (merchants == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -193,127 +223,7 @@ public class MerchantController {
 
         return JsonUtil.toJson(resultSet);
     }
-
-    // ajax for DataTables
-    @RequestMapping(value = "/listNormal", method = RequestMethod.GET,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String listNormal(HttpServletRequest request) {
-
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
-
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
-        }
-
-        MerchantStatus normalMerchantStatus = null;
-        try {
-            normalMerchantStatus = merchantStatusService
-                    .findByCode(ResourceProperties.MERCHANT_STATUS_NORMAL_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find normal merchant status.");
-        }
-        Merchant merchantCriteria = new Merchant();
-        merchantCriteria.setMerchantStatus(normalMerchantStatus);
-
-        List<Merchant> merchants = merchantService
-                .findByCriteria(merchantCriteria, search, start, length, order,
-                        ResourceProperties.JpaOrderDir.valueOf(orderDir));
-        // count total and filtered
-        Long recordsTotal = merchantService.countByCriteria(merchantCriteria);
-        Long recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
-
-        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
-        for (Merchant merchant : merchants) {
-            DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
-            dataTablesMerchants.add(tablesMerchant);
-        }
-
-        DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(dataTablesMerchants);
-        resultSet.setRecordsTotal(recordsTotal.intValue());
-        resultSet.setRecordsFiltered(recordsFiltered.intValue());
-
-        return JsonUtil.toJson(resultSet);
-    }
-
-    // ajax for DataTables
-    @RequestMapping(value = "/listFrozen", method = RequestMethod.GET,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String listFrozen(HttpServletRequest request) {
-
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
-
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
-        }
-
-        MerchantStatus frozenMerchantStatus = null;
-        try {
-            frozenMerchantStatus = merchantStatusService
-                    .findByCode(ResourceProperties.MERCHANT_STATUS_FROZEN_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find normal merchant status.");
-        }
-        Merchant merchantCriteria = new Merchant();
-        merchantCriteria.setMerchantStatus(frozenMerchantStatus);
-
-        List<Merchant> merchants = merchantService
-                .findByCriteria(merchantCriteria, search, start, length, order,
-                        ResourceProperties.JpaOrderDir.valueOf(orderDir));
-        // count total and filtered
-        Long recordsTotal = merchantService.countByCriteria(merchantCriteria);
-        Long recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
-
-        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
-        for (Merchant merchant : merchants) {
-            DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
-            dataTablesMerchants.add(tablesMerchant);
-        }
-
-        DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(dataTablesMerchants);
-        resultSet.setRecordsTotal(recordsTotal.intValue());
-        resultSet.setRecordsFiltered(recordsFiltered.intValue());
-
-        return JsonUtil.toJson(resultSet);
-    }
-
+    
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Long id, Model model) {
 
@@ -456,7 +366,7 @@ public class MerchantController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-
+        model.addAttribute("action", "indexAll");
         return "main";
     }
 
@@ -519,12 +429,13 @@ public class MerchantController {
             throw new IntervalServerException("500", e.getMessage());
         }
 
+        model.addAttribute("action", "indexAll");
         return "main";
     }
 
     @RequestMapping(value = "/editFee", method = RequestMethod.POST)
     public String editFee(Model model,
-                         @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
+                          @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
 
         model.addAttribute("merchantCommand", merchantCommand);
 
@@ -544,7 +455,7 @@ public class MerchantController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-
+        model.addAttribute("action", "indexAll");
         return "main";
     }
 

@@ -9,7 +9,7 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}">
+            <a href="${rootURL}${controller}/indexAll">
                 <spring:message code="manage.label" arguments="${entity}"/>
             </a>
             <a href="${rootURL}${controller}/${action}" class="current">

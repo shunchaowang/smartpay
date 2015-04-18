@@ -52,7 +52,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}merchant">
+                        <a href="${rootURL}merchant/indexAll">
                                 <span> >>
                                 <spring:message code="info.label"
                                                 arguments="${merchant}"/>
