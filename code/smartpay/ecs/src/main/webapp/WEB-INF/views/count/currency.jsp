@@ -24,13 +24,12 @@
     <!-- reserved for notification -->
     <!-- close of content-header -->
     <div class="container-fluid">
-        <!— actual content —>
         <div class="row-fluid">
             <div class="col-sm-12">
                 <div class="widget-box">
                     <div class="widget-title">
                         <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="count.by.currency"/></h5>
+                        <h5><spring:message code="countBy.label" arguments="${entity}"/></h5>
                         ${merchantCommand.orderAmount}
                     </div>
                     <div class="widget-content">
@@ -58,13 +57,21 @@
             'language': {
                 'url': "${dataTablesLanguage}"
             },
-            'processing': true,
-            'serverSide': true,
-            'paging': true,
-            "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
-
+            'dom': 'T<"">t<"F">',
+            "tableTools": {
+                "sSwfPath": "${tableTools}",
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "mColumns": [0, 1, 2]
+                    },
+                    {
+                        "sExtends": "xls",
+                        "mColumns": [0, 1, 2]
+                    }
+                ]
+            },
 
             'ajax': {
                 'url': "${rootURL}${controller}/countByCurrency",
@@ -74,9 +81,18 @@
 
 
             'columnDefs': [
-                {'name': 'currency', 'targets': 0, 'data': 'currencyName'},
-                {'name': 'count', 'targets': 1, 'data': 'orderCount'},
-                {'name': 'amount', 'targets': 2, 'data': 'orderAmount'}
+                {
+                    'name': 'currency', 'targets': 0, 'data': 'currencyName',
+                    'orderable': false, 'searchable': false
+                },
+                {
+                    'name': 'count', 'targets': 1, 'data': 'orderCount',
+                    'orderable': false, 'searchable': false
+                },
+                {
+                    'name': 'amount', 'targets': 2, 'data': 'orderAmount',
+                    'orderable': false, 'searchable': false
+                }
             ]
         });
     });

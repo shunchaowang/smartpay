@@ -65,12 +65,14 @@ public class CountController {
     @RequestMapping(value = {"/currency"}, method = RequestMethod.GET)
     public String countByCurrency(Model model) {
         model.addAttribute("action", "currency");
+        model.addAttribute("domain", "currency");
         return "main";
     }
 
     @RequestMapping(value = {"/site"}, method = RequestMethod.GET)
     public String countBySite(Model model) {
         model.addAttribute("action", "site");
+        model.addAttribute("domain", "Site");
         return "main";
     }
 

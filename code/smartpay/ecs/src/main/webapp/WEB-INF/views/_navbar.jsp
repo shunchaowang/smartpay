@@ -11,8 +11,9 @@
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
         <spring:message code='operator.label' var="operator"/>
-        <spring:message code='Return.label' var="return"/>
-        <spring:message code='Shipping.label' var="shipping"/>
+        <spring:message code='Refund.label' var="refund"/>
+        <spring:message code='Shipment.label' var="shipment"/>
+        <spring:message code='currency.label' var="currency"/>
 
         <ul>
             <!--    HOME    -->
@@ -38,28 +39,42 @@
                     <li class="">
                         <a href="${rootURL}payment/index">
                             <span> >>
-                            <spring:message code="payment.search.label"/>
+                            <spring:message code="info.label" arguments="${payment}"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}order/index">
                             <span> >>
-                            <spring:message code="order.search.label"/>
+                            <spring:message code="info.label" arguments="${order}"/>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}shipment/index">
+                            <span> >>
+                            <spring:message code="info.label" arguments="${shipment}"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}shipment/shipping">
                             <span> >>
-                            <spring:message code="shipping.manage.label"/>
+                            <spring:message code="manage.label" arguments="${shipment}"/>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="${rootURL}refund/index">
+                            <span> >>
+                            <spring:message code="info.label" arguments="${refund}"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}refund/refund">
                             <span> >>
-                            <spring:message code="return.manage.label"/>
+                            <spring:message code="manage.label" arguments="${refund}"/>
                             </span>
                         </a>
                     </li>
@@ -107,14 +122,14 @@
                     <li class="">
                         <a href="${rootURL}count/currency">
                             <span> >>
-                            <spring:message code="count.by.currency"/>
+                            <spring:message code="countBy.label" arguments="${currency}"/>
                             </span>
                         </a>
                     </li>
                     <li class="">
                         <a href="${rootURL}count/site">
                             <span> >>
-                            <spring:message code="count.by.site"/>
+                            <spring:message code="countBy.label" arguments="${site}"/>
                             </span>
                         </a>
                     </li>
@@ -157,7 +172,7 @@
                     <li class="">
                         <a href="${rootURL}merchant/edit">
                             <span> >>
-                            <spring:message code="merchant.edit.label" arguments="${merchant}"/>
+                            <spring:message code="edit.label" arguments="${merchant}"/>
                             </span>
                         </a>
                     </li>

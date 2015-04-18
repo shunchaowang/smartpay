@@ -24,13 +24,12 @@
     <!-- reserved for notification -->
     <!-- close of content-header -->
     <div class="container-fluid">
-        <!— actual content —>
         <div class="row-fluid">
             <div class="col-sm-12">
                 <div class="widget-box">
                     <div class="widget-title">
                         <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="count.by.site"/></h5>
+                        <h5><spring:message code="countBy.label" arguments="${entity}"/></h5>
                         ${merchantCommand.orderAmount}
                     </div>
                     <div class="widget-content">
@@ -67,20 +66,27 @@
 </div>
 
 
-
 <script type="text/javascript">
     $(document).ready(function () {
         $('#amount-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
-            'processing': true,
-            'serverSide': true,
-            'paging': true,
-            "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
-
+            'dom': 'T<"">t<"F">',
+            "tableTools": {
+                "sSwfPath": "${tableTools}",
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "mColumns": [1, 2, 3, 4]
+                    },
+                    {
+                        "sExtends": "xls",
+                        "mColumns": [1, 2, 3, 4]
+                    }
+                ]
+            },
 
             'ajax': {
                 'url': "${rootURL}${controller}/countBySite",
@@ -90,11 +96,26 @@
 
 
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
-                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
-                {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'count', 'targets': 3, 'data': 'orderCount'},
-                {'name': 'amount', 'targets': 4, 'data': 'orderAmount'}
+                {
+                    'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId',
+                    'orderable': false, 'searchable': false
+                },
+                {
+                    'name': 'identity', 'targets': 1, 'data': 'siteIdentity',
+                    'orderable': false, 'searchable': false
+                },
+                {
+                    'name': 'name', 'targets': 2, 'data': 'siteName',
+                    'orderable': false, 'searchable': false
+                },
+                {
+                    'name': 'count', 'targets': 3, 'data': 'orderCount',
+                    'orderable': false, 'searchable': false
+                },
+                {
+                    'name': 'amount', 'targets': 4, 'data': 'orderAmount',
+                    'orderable': false, 'searchable': false
+                }
             ]
         });
     });
