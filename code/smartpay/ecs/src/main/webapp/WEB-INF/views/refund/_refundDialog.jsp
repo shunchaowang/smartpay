@@ -1,6 +1,6 @@
 <%@include file="../taglib.jsp" %>
-<spring:message var="refundDomain" code="Shipping.label"/>
-<spring:message var="formTitle" code="create.label" arguments="${refundDomain}"/>
+<spring:message var="entity" code="${domain}.label"/>
+<spring:message var="formTitle" code="create.label" arguments="${entity}"/>
 <spring:message var="cancelAction" code="action.cancel.label"/>
 
 <style media="screen" type="text/css">

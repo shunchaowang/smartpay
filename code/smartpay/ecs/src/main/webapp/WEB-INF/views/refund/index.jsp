@@ -36,15 +36,26 @@
                         <table class="table display table-bordered data-table" id="payment-table">
                             <thead>
                             <tr>
-                                <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="bankTransactionNumber.label"/></th>
-                                <th><spring:message code="amount.label"/></th>
-                                <th><spring:message code="currency.label"/></th>
+                                <th>
+                                    <spring:message code="Refund.label"/>
+                                    <spring:message code="id.label"/>
+                                </th>
+                                <th>
+                                    <spring:message code="Refund.label"/>
+                                    <spring:message code="amount.label"/>
+                                </th>
                                 <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="bankAccountNumber.label"/></th>
-                                <th><spring:message code="merchantNumber.label"/></th>
-                                <th><spring:message code="amount.label"/></th>
+                                <th>
+                                    <spring:message code="Order.label"/>
+                                    <spring:message code="merchantNumber.label"/>
+                                </th>
+                                <th>
+                                    <spring:message code="Order.label"/>
+                                    <spring:message code="amount.label"/>
+                                </th>
                                 <th><spring:message code="currency.label"/></th>
+                                <th><spring:message code="custom.label"/></th>
+                                <th><spring:message code="status.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -67,17 +78,17 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': 'T<""if>rt<"F"lp>',
+            'dom': 'T<""i>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [0, 1, 2, 3, 4, 5, 6, 7]
                     }
                 ]
             },
@@ -89,53 +100,49 @@
             },
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
+                {'name': 'id', 'targets': 0, 'visible': true, 'data': 'id'},
                 {
-                    'name': 'bankTransactionNumber', 'targets': 1, 'data': 'bankTransactionNumber',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
-                },
-                {
-                    'name': 'amount', 'targets': 2, 'data': 'amount',
+                    'name': 'amount', 'targets': 1, 'data': 'amount',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'currency', 'targets': 3, 'searchable': false, 'orderable': false,
-                    'data': 'currency'
-                },
-                {
-                    'name': 'createdTime', 'targets': 4, 'searchable': false,
+                    'name': 'createdTime', 'targets': 2, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'bankAccountNumber',
-                    'targets': 5,
-                    'searchable': false,
-                    'orderable': false,
-                    'data': 'bankAccountNumber'
-                },
-                {
                     'name': 'merchantNumber',
-                    'targets': 6,
+                    'targets': 3,
                     'searchable': false,
                     'orderable': false,
                     'data': 'orderNumber'
                 },
                 {
                     'name': 'orderAmount',
-                    'targets': 7,
+                    'targets': 4,
                     'searchable': false,
                     'orderable': false,
                     'data': 'orderAmount'
                 },
                 {
                     'name': 'orderCurrency',
-                    'targets': 8,
+                    'targets': 5,
                     'searchable': false,
                     'orderable': false,
                     'data': 'orderCurrency'
+                },
+                {
+                    'name': 'customer',
+                    'targets': 6,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'customerName'
+                },
+                {
+                    'name': 'refundStatus',
+                    'targets': 7,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'refundStatusName'
                 }
             ]
         });

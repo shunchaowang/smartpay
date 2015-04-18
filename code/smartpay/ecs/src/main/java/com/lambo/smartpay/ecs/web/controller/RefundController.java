@@ -22,6 +22,7 @@ import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrder;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesRefund;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
@@ -137,20 +138,18 @@ public class RefundController {
     }
 
     @RequestMapping(value = {"/refund"}, method = RequestMethod.GET)
-    public String indexWaitForRefund(Model model) {
+    public String indexPaidOrder(Model model) {
 
-        model.addAttribute("domain", "WaitForRefund");
+        model.addAttribute("domain", "PaidOrder");
         model.addAttribute("action", "refund");
-        //model.addAttribute("command", new RefundCommand());
         return "main";
     }
 
-    @RequestMapping(value = {"/listWaitForRefund"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/listPaidOrder"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listWaitForRefund(Model model, HttpServletRequest request) {
+    public String listPaidOrder(Model model, HttpServletRequest request) {
 
-        model.addAttribute("domain", "WaitForRefund");
 
         DataTablesParams params = new DataTablesParams(request);
         Integer start = Integer.valueOf(params.getOffset());
@@ -169,27 +168,33 @@ public class RefundController {
         Site siteCriteria = new Site();
         siteCriteria.setMerchant(merchant);
         orderCriteria.setSite(siteCriteria);
-        Refund refundCriteria = new Refund();
-        refundCriteria.setOrder(orderCriteria);
+        OrderStatus paidOrderStatus = null;
+        try {
+            paidOrderStatus =
+                    orderStatusService.findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", "Cannot find paid order status.");
+        }
+        orderCriteria.setOrderStatus(paidOrderStatus);
 
-
-        List<Refund> refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
+        List<Order> orders = orderService.findByCriteria(orderCriteria, params.getSearch(),
                 start, length, params.getOrder(),
                 ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-        Long recordsTotal = refundService.countByCriteria(refundCriteria);
-        Long recordsFiltered = refundService.countByCriteria(refundCriteria, params.getSearch());
-        if (refunds == null || recordsTotal == null || recordsFiltered == null) {
+        Long recordsTotal = orderService.countByCriteria(orderCriteria);
+        Long recordsFiltered = orderService.countByCriteria(orderCriteria, params.getSearch());
+        if (orders == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        List<DataTablesRefund> dataTablesRefunds = new ArrayList<>();
-        for (Refund r : refunds) {
-            DataTablesRefund refund = new DataTablesRefund(r);
-            dataTablesRefunds.add(refund);
+        List<DataTablesOrder> dataTablesOrders = new ArrayList<>();
+        for (Order o : orders) {
+            DataTablesOrder order = new DataTablesOrder(o);
+            dataTablesOrders.add(order);
         }
 
-        DataTablesResultSet<DataTablesRefund> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(dataTablesRefunds);
+        DataTablesResultSet<DataTablesOrder> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesOrders);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 
@@ -200,15 +205,14 @@ public class RefundController {
     public ModelAndView addRefund(HttpServletRequest request) {
 
         String orderId = request.getParameter("orderId");
-        String amount = request.getParameter("amount");
 
         if (StringUtils.isBlank(orderId)) {
             throw new BadRequestException("400", "Order id is blank.");
         }
 
         ModelAndView view = new ModelAndView("refund/_refundDialog");
+        view.addObject("domain", "Refund");
         view.addObject("orderId", orderId);
-        view.addObject("amount", amount);
         return view;
     }
 
@@ -246,7 +250,7 @@ public class RefundController {
         OrderStatus refundedOrderStatus = null;
         try {
             refundStatus = refundStatusService.findByCode(ResourceProperties
-                    .REFUND_STATUS_FUNDED_CODE);
+                    .REFUND_STATUS_INITIATED_CODE);
             refundedOrderStatus = orderStatusService.findByCode(ResourceProperties
                     .ORDER_STATUS_REFUNDED_CODE);
         } catch (NoSuchEntityException e) {
@@ -254,6 +258,9 @@ public class RefundController {
             throw new IntervalServerException("500", "Cannot find refund or order status.");
         }
         refund.setRefundStatus(refundStatus);
+        // we set order status to be refunded when we initiate the refund
+        // if the refund is not approved by manage, we are change the order status back
+        // to paid or sth else when manage denies the refund
         order.setOrderStatus(refundedOrderStatus);
         // when persisting refund, order should be cascaded merged
         String domain = messageSource.getMessage("Refund.label", null, locale);
@@ -262,7 +269,8 @@ public class RefundController {
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, amount + " " + remark}, locale);
         try {
-            refund = refundService.create(refund);
+            refundService.create(refund);
+            orderService.update(order);
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
             throw new BadRequestException("400", e.getMessage());

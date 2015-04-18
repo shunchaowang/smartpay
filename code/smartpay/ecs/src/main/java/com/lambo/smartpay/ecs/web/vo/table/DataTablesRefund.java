@@ -2,7 +2,6 @@ package com.lambo.smartpay.ecs.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Refund;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.DateFormat;
@@ -21,6 +20,7 @@ public class DataTablesRefund {
     private String bankTransactionNumber;
     private String bankAccountNumber;
     private String bankReturnCode;
+    private String refundStatusName;
 
     // order info
     private Long orderId;
@@ -44,6 +44,7 @@ public class DataTablesRefund {
         bankTransactionNumber = refund.getBankTransactionNumber();
         bankAccountNumber = refund.getBankAccountNumber();
         bankReturnCode = refund.getBankReturnCode();
+        refundStatusName = refund.getRefundStatus().getName();
 
         Order order = refund.getOrder();
         orderId = order.getId();
@@ -51,8 +52,8 @@ public class DataTablesRefund {
         orderAmount = order.getAmount();
         orderCurrency = order.getCurrency().getName();
 
-        customerName = StringUtils.join(order.getCustomer().getFirstName(),
-                order.getCustomer().getLastName(), " ");
+        customerName = order.getCustomer().getFirstName() + " "
+                + order.getCustomer().getLastName();
     }
 
     public Long getId() {
@@ -157,5 +158,13 @@ public class DataTablesRefund {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    public String getRefundStatusName() {
+        return refundStatusName;
+    }
+
+    public void setRefundStatusName(String refundStatusName) {
+        this.refundStatusName = refundStatusName;
     }
 }

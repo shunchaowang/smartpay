@@ -38,14 +38,11 @@
                             <tr>
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="orderNumber.label"/></th>
-                                <th><spring:message code="bankTransactionNumber.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="site.url.label"/></th>
                                 <th><spring:message code="status.label"/></th>
                                 <th><spring:message code="Customer.label"/></th>
-                                <th><spring:message code="Address.label"/></th>
                                 <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
@@ -80,51 +77,35 @@
             },
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'orderId'},
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'merchantNumber', 'targets': 1, 'data': 'orderNumber',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}order" + '/show/'
-                                + row['orderId'] + '>' + data + '</a>';
-                    }
+                    'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber'
                 },
                 {
-                    'name': 'bankTransactionNumber', 'targets': 2, 'searchable': true,
-                    'orderable': false, 'data': 'bankTransactionNumber'
+                    'name': 'amount', 'targets': 2, 'searchable': true,
+                    'orderable': false, 'data': 'amount'
                 },
                 {
-                    'name': 'orderAmount', 'targets': 3, 'searchable': true,
-                    'orderable': false, 'data': 'orderAmount'
+                    'name': 'currency', 'targets': 3, 'searchable': true,
+                    'orderable': false, 'data': 'currencyName'
                 },
                 {
-                    'name': 'orderCurrency', 'targets': 4, 'searchable': true,
-                    'orderable': false, 'data': 'orderCurrency'
-                },
-                {
-                    'name': 'createdTime', 'targets': 5, 'searchable': false,
+                    'name': 'createdTime', 'targets': 4, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'siteUrl', 'targets': 6, 'searchable': true,
-                    'orderable': false, 'data': 'siteUrl'
-                },
-                {
-                    'name': 'orderStatus', 'targets': 7, 'searchable': false,
+                    'name': 'orderStatus', 'targets': 5, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
                 },
                 {
-                    'name': 'customerName', 'targets': 8, 'searchable': false,
+                    'name': 'customerName', 'targets': 6, 'searchable': false,
                     'orderable': false, 'data': 'customerName'
                 },
                 {
-                    'name': 'customerAddress', 'targets': 9, 'searchable': false,
-                    'orderable': false, 'data': 'customerAddress'
-                },
-                {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button class="tableButton" type="button" name="refund-button"'
-                                + ' value="' + row['orderId'] + '">'
+                                + ' value="' + row['id'] + '">'
                                 + '<spring:message code="refund.label"/>' + '</button>';
                     }
                 }

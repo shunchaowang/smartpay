@@ -35,6 +35,9 @@ public abstract class ResourceProperties {
 
     public static final String SHIPMENT_STATUS_SHIPPED_CODE = "500";
     public static final String REFUND_STATUS_FUNDED_CODE = "501";
+    public static final String REFUND_STATUS_ISSUED_CODE = "500";
+    public static final String REFUND_STATUS_INITIATED_CODE = "401";
+    public static final String REFUND_STATUS_APPROVED_CODE = "502";
 
     public enum JpaOrderDir {
         ASC("ASC"),

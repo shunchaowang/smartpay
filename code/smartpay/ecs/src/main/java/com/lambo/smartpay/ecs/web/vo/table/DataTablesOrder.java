@@ -39,8 +39,8 @@ public class DataTablesOrder {
         siteId = order.getSite().getId();
         siteName = order.getSite().getName();
         customerId = order.getCustomer().getId();
-        customerName = order.getCustomer().getLastName() + ", " + order.getCustomer()
-                .getFirstName();
+        customerName = order.getCustomer().getFirstName() + " " + order.getCustomer()
+                .getLastName();
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         createdTime = dateFormat.format(order.getCreatedTime());
