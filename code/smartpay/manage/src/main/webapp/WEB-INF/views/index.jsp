@@ -4,32 +4,47 @@
 <%@include file="taglib.jsp" %>
 
 <c:set var="username" value="<%=UserResource.getCurrentUser().getUsername()%>" scope="session"/>
-<h2>Welcome ${username}
-</h2>
 
-<h2>Authorities <%=UserResource.getCurrentUser().getAuthorities()%>
-</h2>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+        </div>
+    </div>
 
-<h2>Controller: ${controller}</h2>
+    <!-- close of content-header -->
 
-<h2>Action: ${action}</h2>
+    <h2>Welcome ${username}
+    </h2>
 
-<h2>View: ${_view}</h2>
+    <h2>Authorities <%=UserResource.getCurrentUser().getAuthorities()%>
+    </h2>
 
-<h3>Name: <sec:authentication property="name"/></h3>
+    <h2>Controller: ${controller}</h2>
 
-<h3>
-    <sec:authorize access="hasRole('ROLE_ADMIN')">
-        <a href="${rootURL}admin">Administration</a>
-    </sec:authorize>
-</h3>
-<h3>
-    PageContext: ${pageContext.request.contextPath}
-    <br>
-    rootURL: ${rootURL}
-</h3>
+    <h2>Action: ${action}</h2>
 
-<a href="${rootURL}user/list">User Table</a><br/>
-<a href="${rootURL}user/json">User in Json Array</a>
+    <h2>View: ${_view}</h2>
 
-<p><a href="${rootURL}logout">Logout</a></p>
+    <h3>Name: <sec:authentication property="name"/></h3>
+
+    <h3>
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <a href="${rootURL}admin">Administration</a>
+        </sec:authorize>
+    </h3>
+    <h3>
+        PageContext: ${pageContext.request.contextPath}
+        <br>
+        rootURL: ${rootURL}
+    </h3>
+
+    <a href="${rootURL}user/list">User Table</a><br/>
+    <a href="${rootURL}user/json">User in Json Array</a>
+
+    <p><a href="${rootURL}logout">Logout</a></p>
+
+</div>

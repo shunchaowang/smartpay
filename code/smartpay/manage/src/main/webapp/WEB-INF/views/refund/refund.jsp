@@ -4,38 +4,61 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="row-fluid">
-    <div class="col-sm-12">
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-            </div>
-            <div class="widget-content">
-                <table class="table display table-bordered data-table" id="refund-table">
-                    <thead>
-                    <tr>
-                        <th><spring:message code="id.label"/></th>
-                        <th><spring:message code="orderNumber.label"/></th>
-                        <th><spring:message code="bankTransactionNumber.label"/></th>
-                        <th><spring:message code="bankName.label"/></th>
-                        <th><spring:message code="createdTime.label"/></th>
-                        <th><spring:message code="site.url.label"/></th>
-                        <th><spring:message code="status.label"/></th>
-                        <th><spring:message code="Customer.label"/></th>
-                        <th><spring:message code="Address.label"/></th>
-                        <th><spring:message code="Refund.label"/></th>
-                        <th><spring:message code="remark.label"/></th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
+        </div>
+    </div>
+
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"><i class="icon icon-th"></i> </span>
+                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+                    </div>
+                    <div class="widget-content">
+                        <table class="table display table-bordered data-table" id="refund-table">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="id.label"/></th>
+                                <th><spring:message code="orderNumber.label"/></th>
+                                <th><spring:message code="bankTransactionNumber.label"/></th>
+                                <th><spring:message code="bankName.label"/></th>
+                                <th><spring:message code="createdTime.label"/></th>
+                                <th><spring:message code="site.url.label"/></th>
+                                <th><spring:message code="status.label"/></th>
+                                <th><spring:message code="Customer.label"/></th>
+                                <th><spring:message code="Address.label"/></th>
+                                <th><spring:message code="Refund.label"/></th>
+                                <th><spring:message code="remark.label"/></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div id="dialog-area"></div>
+    <div id="dialog-area"></div>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -101,16 +124,16 @@
                     'name': 'refundRemark', 'targets': 10, 'searchable': false,
                     'orderable': false, 'data': 'refundRemark'
                 },
-                    /*
-                {
-                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<button class="tableButton" type="button" name="refund-button"'
-                                + ' value="' + row['orderId'] + '">'
-                                + '<spring:message code="refund.label"/>' + '</button>';
-                    }
-                }
-                */
+                /*
+                 {
+                 'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                 'render': function (data, type, row) {
+                 return '<button class="tableButton" type="button" name="refund-button"'
+                 + ' value="' + row['orderId'] + '">'
+                 + '<spring:message code="refund.label"/>' + '</button>';
+                 }
+                 }
+                 */
             ]
         });
 

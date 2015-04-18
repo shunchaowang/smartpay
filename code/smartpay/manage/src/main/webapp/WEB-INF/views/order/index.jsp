@@ -15,30 +15,53 @@
     </div>
 </div>
 
-<div class="row-fluid">
-    <div class="col-sm-12">
-        <div class="widget-box">
-            <div class="widget-title">
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-            </div>
-            <div class="widget-content">
-                <table class="table display table-bordered data-table" id="order-table">
-        <thead>
-        <tr>
-            <th><spring:message code="id.label"/></th>
-            <th><spring:message code="merchantNumber.label"/></th>
-            <th><spring:message code="amount.label"/></th>
-            <th><spring:message code="currency.label"/></th>
-            <th><spring:message code="Site.label"/></th>
-            <th><spring:message code="Customer.label"/></th>
-            <th><spring:message code="createdTime.label"/></th>
-            <th><spring:message code="status.label"/></th>
-            <th><spring:message code="action.operation.label"/></th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<div id="content">
+    <div id="content-header">
+        <div id="breadcrumb">
+            <a href="${rootURL}">
+                <i class="icon icon-home"></i>
+                <spring:message code="home.label"/>
+            </a>
+            <c:if test="${domain != null}">
+                <spring:message code="${domain}.label" var="entity"/>
+                <a href="${rootURL}${controller}">
+                    <spring:message code="manage.label" arguments="${entity}"/>
+                </a>
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <spring:message code="${action}.label" arguments="${entity}"/>
+                </a>
+            </c:if>
+        </div>
+    </div>
+
+    <!-- close of content-header -->
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="col-sm-12">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <span class="icon"><i class="icon icon-th"></i> </span>
+                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
+                    </div>
+                    <div class="widget-content">
+                        <table class="table display table-bordered data-table" id="order-table">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="id.label"/></th>
+                                <th><spring:message code="merchantNumber.label"/></th>
+                                <th><spring:message code="amount.label"/></th>
+                                <th><spring:message code="currency.label"/></th>
+                                <th><spring:message code="Site.label"/></th>
+                                <th><spring:message code="Customer.label"/></th>
+                                <th><spring:message code="createdTime.label"/></th>
+                                <th><spring:message code="status.label"/></th>
+                                <th><spring:message code="action.operation.label"/></th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -103,13 +126,15 @@
                                 '<button type="button" name="show-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.show.label"/>'
                                 + '</button></a>';
-                                /*
-                                + '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>'
-                                */
+                        /*
+                         + '<a href="' + "
+                        ${rootURL}${controller}" + '/edit/'
+                         + row['id'] + '">' +
+                         '<button type="button" name="edit-button" class="tableButton"'
+                         + '">' + '
+                        <spring:message code="action.edit.label"/>'
+                         + '</button></a>'
+                         */
                     }
                 }
             ]

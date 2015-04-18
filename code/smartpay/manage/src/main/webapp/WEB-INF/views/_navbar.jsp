@@ -18,9 +18,9 @@
         <spring:message code='transaction.label' var="transaction"/>
         <spring:message code='Order.label' var="order"/>
         <spring:message code='Payment.label' var="payment"/>
-        <spring:message code='Payreturn.label' var="payreturn"/>
         <spring:message code='Shipment.label' var="shipment"/>
         <spring:message code='Refund.label' var="refund"/>
+        <spring:message code='Complain.label' var="complain"/>
 
 
         <ul>
@@ -52,30 +52,22 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}merchant/indexMerchantEdit">
+                        <a href="${rootURL}merchant">
                                 <span> >>
-                                <spring:message code="merchant.manage.label"
+                                <spring:message code="info.label"
                                                 arguments="${merchant}"/>
                                 </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}merchant/indexMerchantFee">
-                                <span> >>
-                                <spring:message code="merchant.setfee.label"
-                                                arguments="${merchant}"/>
-                                 </span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}merchant/indexFreezeList">
+                        <a href="${rootURL}merchant/indexNormal">
                                 <span> >>
                                 <spring:message code="freeze.label" arguments="${merchant}"/>
                                                             </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}merchant/indexUnfreezeList">
+                        <a href="${rootURL}merchant/indexFrozen">
                                 <span> >>
                                 <spring:message code="unfreeze.label" arguments="${merchant}"/>
                                                                                         </span>
@@ -219,7 +211,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}refund/refund">
+                        <a href="${rootURL}refund">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${refund}"/>
                                 </span>
@@ -232,15 +224,15 @@
                 <a class="dropdown-toggle" role="button" data-toggle="dropdown"
                    data-target="#" href="#"><i class="icon icon-th-list"></i>
                         <span>
-                        <spring:message code="complain.info.label"/>
+                        <spring:message code="manage.label" arguments="${complain}"/>
                         <b class="caret"></b>
                             </span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}payment">
+                        <a href="${rootURL}refund/refund">
                                 <span> >>
-                                    <spring:message code="info.label" arguments="${payreturn}"/>
+                                    <spring:message code="manage.label" arguments="${refund}"/>
                                 </span>
                         </a>
                     </li>

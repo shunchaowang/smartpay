@@ -3,12 +3,10 @@ package com.lambo.smartpay.manage.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
 import com.lambo.smartpay.core.persistence.entity.Refund;
 import com.lambo.smartpay.core.persistence.entity.RefundStatus;
-import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.RefundService;
@@ -80,28 +78,13 @@ public class RefundController {
 
     @RequestMapping(value = {"/", "", "/index"}, method = RequestMethod.GET)
     public String index() {
-        return "index";
-    }
-
-    public String list() {
-        return null;
-    }
-
-    @RequestMapping(value = {"/refund"}, method = RequestMethod.GET)
-    public String indexWaitForRefund(Model model) {
-
-        model.addAttribute("domain", "WaitForRefund");
-        model.addAttribute("action", "refund");
-        //model.addAttribute("command", new RefundCommand());
         return "main";
     }
 
-    @RequestMapping(value = {"/listWaitForRefund"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/list"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listWaitForRefund(Model model, HttpServletRequest request) {
-
-        model.addAttribute("domain", "WaitForRefund");
+    public String list(HttpServletRequest request) {
 
         DataTablesParams params = new DataTablesParams(request);
         Integer start = Integer.valueOf(params.getOffset());
@@ -115,43 +98,79 @@ public class RefundController {
             throw new BadRequestException("400", "User is null.");
         }
 
-        /*
-        Merchant merchant = securityUser.getMerchant();
-        Site siteCriteria = new Site();
-        siteCriteria.setMerchant(merchant);
-        orderCriteria.setSite(siteCriteria);
-        */
-        Order orderCriteria = new Order();
+        List<Refund> refunds = refundService.findByCriteria(params.getSearch(),
+                start, length, params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = refundService.countAll();
+        Long recordsFiltered = refundService.countByCriteria(params.getSearch());
+        if (refunds == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
 
-        // only paid order can be shipped
-        OrderStatus paidOrderStatus = null;
+        List<DataTablesRefund> dataTablesRefunds = new ArrayList<>();
+        for (Refund r : refunds) {
+            DataTablesRefund refund = new DataTablesRefund(r);
+            dataTablesRefunds.add(refund);
+        }
+
+        DataTablesResultSet<DataTablesRefund> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesRefunds);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
+    @RequestMapping(value = {"/refund"}, method = RequestMethod.GET)
+    public String indexInitiatedRefund(Model model) {
+
+        model.addAttribute("domain", "InitiatedRefund");
+        model.addAttribute("action", "refund");
+        //model.addAttribute("command", new RefundCommand());
+        return "main";
+    }
+
+    @RequestMapping(value = {"/listInitiatedRefund"}, method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listInitiatedRefund(Model model, HttpServletRequest request) {
+
+        DataTablesParams params = new DataTablesParams(request);
+        Integer start = Integer.valueOf(params.getOffset());
+        Integer length = Integer.valueOf(params.getMax());
+        if (start == null || length == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        RefundStatus initiatedRefundStatus = null;
         try {
-            paidOrderStatus = orderStatusService
-                    .findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
+            initiatedRefundStatus = refundStatusService
+                    .findByCode(ResourceProperties.REFUND_STATUS_INITIATED_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new IntervalServerException("500", "Cannot find paid order status.");
         }
 
-        orderCriteria.setOrderStatus(paidOrderStatus);
+        Refund refundCriteria = new Refund();
+        refundCriteria.setRefundStatus(initiatedRefundStatus);
 
-        List<Order> orders = orderService.findByCriteria(orderCriteria, params.getSearch(),
+        List<Refund> refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
                 start, length, params.getOrder(),
                 ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-        Long recordsTotal = orderService.countByCriteria(orderCriteria);
-        Long recordsFiltered = orderService.countByCriteria(orderCriteria, params.getSearch());
-        if (orders == null || recordsTotal == null || recordsFiltered == null) {
+        Long recordsTotal = refundService.countByCriteria(refundCriteria);
+        Long recordsFiltered = refundService.countByCriteria(refundCriteria, params.getSearch());
+        if (refunds == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        List<DataTablesRefund> refunds = new ArrayList<>();
-        for (Order order : orders) {
-            DataTablesRefund refund = new DataTablesRefund(order);
-            refunds.add(refund);
+        List<DataTablesRefund> dataTablesRefunds = new ArrayList<>();
+        for (Refund r : refunds) {
+            DataTablesRefund refund = new DataTablesRefund(r);
+            dataTablesRefunds.add(refund);
         }
 
         DataTablesResultSet<DataTablesRefund> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(refunds);
+        resultSet.setData(dataTablesRefunds);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 

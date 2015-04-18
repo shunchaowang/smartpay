@@ -1,9 +1,8 @@
 <%@include file="../taglib.jsp" %>
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
-    <spring:message code="Fee.label" var="fee"/>
+    <spring:message code="Merchant.label" var="merchant"/>
 </c:if>
-
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -11,7 +10,10 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}" class="current">
+            <a href="${rootURL}${controller}">
+                <spring:message code="manage.label" arguments="${merchant}"/>
+            </a>
+            <a href="${rootURL}${controller}/${action}" class="current">
                 <spring:message code="index.label" arguments="${entity}"/>
             </a>
         </div>
@@ -76,8 +78,9 @@
                     }
                 ]
             },
+
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/listFrozen",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -88,11 +91,7 @@
                     'name': 'identity', 'targets': 1, 'data': 'identity'
                 },
                 {
-                    'name': 'name', 'targets': 2, 'data': 'name',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
+                    'name': 'name', 'targets': 2, 'data': 'name'
                 },
                 {
                     'name': 'address', 'targets': 3, 'searchable': false, 'orderable': false,
@@ -118,19 +117,9 @@
                 {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' +
-                                '<a href="' + "${rootURL}${controller}" + '/editFee/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="setting.label" arguments="${fee}"/>'
-                                + '</button></a>'
-                                + '<button type="button" name="delete-button"'
+                        return '<button type="button" name="unfreeze-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
+                                '<spring:message code="action.unfreeze.label"/>' +
                                 '</button>';
                     }
                 }
