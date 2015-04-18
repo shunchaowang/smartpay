@@ -96,7 +96,7 @@
 
                     <c:if test="${not empty paymentCommand.createdTime}">
                         <tr>
-                            <td><spring:message code="createdTime.label"/></td>
+                            <td><spring:message code="paymentCreatedTime.label"/></td>
                             <td>${paymentCommand.createdTime}</td>
                         </tr>
                     </c:if>

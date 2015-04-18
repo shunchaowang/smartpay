@@ -41,7 +41,7 @@
                                 <th><spring:message code="bankTransactionNumber.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="createdTime.label"/></th>
+                                <th><spring:message code="paymentCreatedTime.label"/></th>
                                 <th><spring:message code="successTime.label"/></th>
                                 <th><spring:message code="returnCode.label"/></th>
                                 <th><spring:message code="paymentStatusName.label"/></th>
