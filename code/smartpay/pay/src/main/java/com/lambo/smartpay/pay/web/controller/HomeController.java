@@ -27,6 +27,7 @@ import com.lambo.smartpay.pay.util.MDUtil;
 import com.lambo.smartpay.pay.util.PayConfiguration;
 import com.lambo.smartpay.pay.util.ResourceProperties;
 import com.lambo.smartpay.pay.web.exception.BadRequestException;
+import com.lambo.smartpay.pay.web.exception.IntervalServerException;
 import com.lambo.smartpay.pay.web.vo.OrderCommand;
 import com.lambo.smartpay.pay.web.vo.PaymentCommand;
 import org.apache.commons.codec.binary.Base64;
@@ -97,8 +98,8 @@ public class HomeController {
     public ModelAndView home(Model model) {
         //view.addObject("action", "index");
         OrderCommand orderCommand = new OrderCommand();
-        orderCommand.setMerNo("merchant");
-        orderCommand.setSiteNo("Site12345");
+        orderCommand.setMerNo("M0000000");
+        orderCommand.setSiteNo("S0000000");
         orderCommand.setOrderNo("O1111111");
         orderCommand.setAmount("12.34");
         orderCommand.setReturnUrl("www.google.com");
@@ -121,7 +122,7 @@ public class HomeController {
         model.addAttribute("orderCommand", orderCommand);
         // check md5info, md5 summary should be generated based merKey, merNo,
         // orderNo, formatted amount, 3 uppercase currency characters
-        String calculatedMd5Info = MDUtil.getMD5Str("12345" + "merchant"
+        String calculatedMd5Info = MDUtil.getMD5Str("12345" + "M0000000"
                 + "O1111111" + "12.34" + "USD");
         model.addAttribute("md5Info", calculatedMd5Info);
         return new ModelAndView("index");
@@ -252,7 +253,12 @@ public class HomeController {
         Merchant merchant = merchantService.findByIdentity(merNo);
         String merchantKey = merchant.getEncryption().getKey();
         Site site = siteService.findByUrl(referer);
-        if (merchant == null || site == null) {
+        if (merchant == null) {
+            logger.debug("Merchant " + merNo + " is null.");
+            return "403";
+        }
+        if (site == null) {
+            logger.debug("Site " + referer + " is null.");
             return "403";
         }
         Boolean canOperate;
@@ -349,13 +355,13 @@ public class HomeController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        Order order = orderService.findByMerchantNumber(merNo);
+        Order order = orderService.findByMerchantNumber(orderNo);
 
         // if order does not exist create new
         if (order == null) {
             // create Order
             order = new Order();
-            order.setMerchantNumber(merNo);
+            order.setMerchantNumber(orderNo);
             order.setAmount(Float.valueOf(amount));
             order.setGoodsName(orderCommand.getGoodsName());
             order.setGoodsAmount(orderCommand.getGoodsNumber());
@@ -463,10 +469,19 @@ public class HomeController {
         String paymentStatusCode = "501";
 
         if (returnSucceed[1].equals("1")) {
-            succeed = "1";
+            succeed = "1"; // 交易成功
             orderStatus = "20"; // 交易成功
             paymentStatusCode = "500";
             payment.setSuccessTime(Calendar.getInstance().getTime());
+            OrderStatus paidOrderStatus = null;
+            try {
+                paidOrderStatus = orderStatusService
+                        .findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot find paid order status.");
+            }
+            payment.getOrder().setOrderStatus(paidOrderStatus);
         }
 
         PaymentStatus paymentStatus = null;
