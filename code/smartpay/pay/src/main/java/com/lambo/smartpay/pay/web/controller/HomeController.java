@@ -514,6 +514,12 @@ public class HomeController {
                 + "&orderNo=" + orderCommand.getOrderNo()
                 + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
                 + "&md5info=" + calculatedMd5Info;
+        if (StringUtils.contains(orderCommand.getReturnUrl(), '?')) {
+            result = "&succeed=" + succeed + "&amount=" + orderCommand.getAmount()
+                    + "&orderNo=" + orderCommand.getOrderNo()
+                    + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
+                    + "&md5info=" + calculatedMd5Info;
+        }
         response.sendRedirect(orderCommand.getReturnUrl() + result);
     }
 
