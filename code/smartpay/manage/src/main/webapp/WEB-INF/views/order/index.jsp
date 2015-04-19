@@ -3,18 +3,6 @@
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
 
-<div class="row">
-    <div class="col-sm-4 pull-right">
-        <a href="${rootURL}${controller}/search">
-            <h5>
-                <button type="button" class="btn btn-default pull-right">
-                    <spring:message code="action.advanceSearch.label"/>
-                </button>
-            </h5>
-        </a>
-    </div>
-</div>
-
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
