@@ -258,7 +258,7 @@ public class OrderController {
         orderCommand.setMerchantNumber(order.getMerchantNumber());
         orderCommand.setAmount(order.getAmount());
         orderCommand.setGoodsName(order.getGoodsName());
-        orderCommand.setGoodsAmount(order.getGoodsName());
+        orderCommand.setGoodsAmount(order.getGoodsAmount());
         orderCommand.setCurrencyId(order.getCurrency().getId());
         orderCommand.setCurrencyName(order.getCurrency().getName());
         orderCommand.setSiteId(order.getSite().getId());
