@@ -183,7 +183,7 @@
                         rules: {
                             amount: {
                                 required: true,
-                                minlength: 2,
+                                minlength: 1,
                                 maxlength: 32
                             },
                             remark: {

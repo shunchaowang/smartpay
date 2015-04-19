@@ -42,7 +42,6 @@
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="paymentCreatedTime.label"/></th>
-                                <th><spring:message code="successTime.label"/></th>
                                 <th><spring:message code="returnCode.label"/></th>
                                 <th><spring:message code="paymentStatusName.label"/></th>
                                 <th><spring:message code="paymentTypeName.label"/></th>
@@ -117,30 +116,26 @@
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'successTime', 'targets': 6, 'searchable': false,
-                    'data': 'successTime'
-                },
-                {
-                    'name': 'bankReturnCode', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'name': 'bankReturnCode', 'targets': 6, 'searchable': false, 'orderable': false,
                     'data': 'bankReturnCode'
                 },
                 {
                     'name': 'paymentStatusName',
-                    'targets': 8,
+                    'targets': 7,
                     'searchable': false,
                     'orderable': false,
                     'data': 'paymentStatusName'
                 },
                 {
                     'name': 'paymentTypeName',
-                    'targets': 9,
+                    'targets': 8,
                     'searchable': false,
                     'orderable': false,
                     'data': 'paymentTypeName'
                 },
                 {
                     'name': 'siteName',
-                    'targets': 10,
+                    'targets': 9,
                     'searchable': false,
                     'orderable': false,
                     'data': 'siteName'

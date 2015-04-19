@@ -45,7 +45,6 @@
                                 <th><spring:message code="Customer.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="status.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -79,7 +78,7 @@
             },
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'data': 'id', 'searchable': false},
+                {'name': 'id', 'targets': 0, 'data': 'id', 'visible': false, 'searchable': false},
                 {
                     'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
@@ -107,16 +106,6 @@
                 {
                     'name': 'orderStatusName', 'targets': 7, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
-                },
-                {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/show${domain}/'
-                                + row['id'] + '">' +
-                                '<button class="tableButton" type="button" name="show-button"'
-                                + '">' + '<spring:message code="action.show.label"/>'
-                                + '</button></a>'
-                    }
                 }
             ]
         });
