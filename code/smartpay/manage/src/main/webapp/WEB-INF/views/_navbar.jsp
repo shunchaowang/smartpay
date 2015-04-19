@@ -54,7 +54,7 @@
                     <li class="">
                         <a href="${rootURL}merchant/indexAll">
                                 <span> >>
-                                <spring:message code="info.label"
+                                <spring:message code="manage.label"
                                                 arguments="${merchant}"/>
                                 </span>
                         </a>

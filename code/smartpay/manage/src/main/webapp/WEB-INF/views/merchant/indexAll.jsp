@@ -122,12 +122,12 @@
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' +
-                                '<a href="' + "${rootURL}${controller}" + '/editFee/'
+                                + '</button></a>' + ' '
+                                + '<a href="' + "${rootURL}${controller}" + '/editFee/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="tableButton"'
                                 + '">' + '<spring:message code="setting.label" arguments="${fee}"/>'
-                                + '</button></a>'
+                                + '</button></a>' + ' '
                                 + '<button type="button" name="delete-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">' +
                                 '<spring:message code="action.delete.label"/>' +
