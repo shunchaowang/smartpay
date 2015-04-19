@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -79,33 +79,29 @@ public class SiteController {
         return merchantService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index", "/indexSite"}, method = RequestMethod.GET)
-    public String index() {
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexAuditList"}, method = RequestMethod.GET)
-    public String indexAuditList(Model model) {
-        model.addAttribute("domain", "AuditList");
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexFreezeList"}, method = RequestMethod.GET)
-    public String indexFreezeList(Model model) {
-        model.addAttribute("domain", "FreezeList");
-        return "main";
-    }
-
-    @RequestMapping(value = {"/indexUnfreezeList"}, method = RequestMethod.GET)
-    public String indexUnfreezeList(Model model) {
-        model.addAttribute("domain", "UnfreezeList");
+    @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("domain") String domain, Model model) {
+        if (domain.equals("All")) {
+            model.addAttribute("action", "indexAll");
+        } else if (domain.equals("Approved")) {
+            model.addAttribute("domain", "ApprovedSite");
+            model.addAttribute("action", "indexApproved");
+        } else if (domain.equals("Frozen")) {
+            model.addAttribute("domain", "FrozenSite");
+            model.addAttribute("action", "indexFrozen");
+        } else if (domain.equals("Created")) {
+            model.addAttribute("domain", "CreatedSite");
+            model.addAttribute("action", "indexCreated");
+        } else {
+            throw new BadRequestException("400", "Domain does not exist.");
+        }
         return "main";
     }
 
     @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
+    public String list(@PathVariable("domain") String domain, HttpServletRequest request) {
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -126,46 +122,70 @@ public class SiteController {
         }
 
         //
-        String codeString = "";
         List<Site> sites = null;
-        Long recordsTotal;
-        Long recordsFiltered;
+        Long recordsTotal = null;
+        Long recordsFiltered = null;
 
-        if (domain.equals("AuditList"))
-            codeString = ResourceProperties.SITE_STATUS_CREATED_CODE;
-        if (domain.equals("FreezeList"))
-            codeString = ResourceProperties.SITE_STATUS_APPROVED_CODE;
-        if (domain.equals("UnfreezeList"))
-            codeString = ResourceProperties.SITE_STATUS_FROZEN_CODE;
-
-        if (codeString.equals("")) {
-            sites = siteService.findByCriteria(search, start, length, order,
-                    ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
-            // count total records and filtered records
+        if (domain.equals("All")) {
+            sites = siteService
+                    .findByCriteria(search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
             recordsTotal = siteService.countAll();
             recordsFiltered = siteService.countByCriteria(search);
-
-        } else {
-            // normal merchant status
-            Site siteCriteria = new Site();
+        } else if (domain.equals("Approved")) {
             SiteStatus status = null;
             try {
-                status = siteStatusService.findByCode(codeString);
+                status = siteStatusService
+                        .findByCode(ResourceProperties.SITE_STATUS_APPROVED_CODE);
             } catch (NoSuchEntityException e) {
                 e.printStackTrace();
-                throw new BadRequestException("Cannot find SiteStatus with Code", codeString);
+                throw new BadRequestException("400", "Cannot find site status "
+                        + ResourceProperties.SITE_STATUS_APPROVED_CODE);
             }
-
+            Site siteCriteria = new Site();
             siteCriteria.setSiteStatus(status);
-            sites = siteService.findByCriteria(siteCriteria, search, start, length, order,
-                    ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
-            // count total and filtered
+            sites = siteService
+                    .findByCriteria(siteCriteria, search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
             recordsTotal = siteService.countByCriteria(siteCriteria);
             recordsFiltered = siteService.countByCriteria(siteCriteria, search);
+        } else if (domain.equals("Frozen")) {
+            SiteStatus status = null;
+            try {
+                status = siteStatusService
+                        .findByCode(ResourceProperties.SITE_STATUS_FROZEN_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Cannot find site status "
+                        + ResourceProperties.SITE_STATUS_FROZEN_CODE);
+            }
+            Site siteCriteria = new Site();
+            siteCriteria.setSiteStatus(status);
+            sites = siteService
+                    .findByCriteria(siteCriteria, search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            recordsTotal = siteService.countByCriteria(siteCriteria);
+            recordsFiltered = siteService.countByCriteria(siteCriteria, search);
+        } else if (domain.equals("Created")) {
+            SiteStatus status = null;
+            try {
+                status = siteStatusService
+                        .findByCode(ResourceProperties.SITE_STATUS_CREATED_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Cannot find site status "
+                        + ResourceProperties.SITE_STATUS_CREATED_CODE);
+            }
+            Site siteCriteria = new Site();
+            siteCriteria.setSiteStatus(status);
+            sites = siteService
+                    .findByCriteria(siteCriteria, search, start, length, order,
+                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
+            recordsTotal = siteService.countByCriteria(siteCriteria);
+            recordsFiltered = siteService.countByCriteria(siteCriteria, search);
+        } else {
+            throw new BadRequestException("400", "Domain does not exist.");
         }
-
 
         if (sites == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -195,7 +215,8 @@ public class SiteController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+    public String create(Model model, @ModelAttribute("siteCommand") SiteCommand siteCommand,
+                         RedirectAttributes attributes) {
 
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
@@ -220,9 +241,12 @@ public class SiteController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
+        String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+        attributes.addFlashAttribute("message",
+                messageSource.getMessage("created.message",
+                        new String[]{fieldLabel, siteCommand.getName()}, locale));
 
-        return "main";
-
+        return "redirect:/site/indexAll";
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -244,7 +268,7 @@ public class SiteController {
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(Model model,
+    public String edit(Model model, RedirectAttributes attributes,
                        @ModelAttribute("siteCommand") SiteCommand siteCommand) {
 
         model.addAttribute("siteCommand", siteCommand);
@@ -262,8 +286,12 @@ public class SiteController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
+        String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+        attributes.addFlashAttribute("message",
+                messageSource.getMessage("saved.message",
+                        new String[]{fieldLabel, siteCommand.getName()}, locale));
 
-        return "main";
+        return "redirect:/site/indexAll";
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST,
@@ -283,7 +311,6 @@ public class SiteController {
         String label = messageSource.getMessage("Site.label", null, locale);
         try {
             site = siteService.delete(id);
-            logger.debug("here u r" + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -388,9 +415,8 @@ public class SiteController {
         return JsonUtil.toJson(response);
     }
 
-    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
-            model) {
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, Model model) {
 
         Site site;
         try {
@@ -401,9 +427,7 @@ public class SiteController {
         }
         SiteCommand siteCommand = createSiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
-        if (domain != null) {
-            model.addAttribute("domain", domain);
-        }
+
         model.addAttribute("action", "show");
         return "main";
     }
@@ -441,7 +465,7 @@ public class SiteController {
         Merchant merchant = null;
 
         //
-        if (siteCommand.getId() != null ){
+        if (siteCommand.getId() != null) {
             try {
                 site = siteService.get(siteCommand.getId());
             } catch (NoSuchEntityException e) {

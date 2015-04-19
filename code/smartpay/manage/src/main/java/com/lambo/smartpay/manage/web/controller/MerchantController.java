@@ -18,10 +18,6 @@ import com.lambo.smartpay.core.service.EncryptionTypeService;
 import com.lambo.smartpay.core.service.FeeTypeService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.MerchantStatusService;
-import com.lambo.smartpay.core.service.SiteService;
-import com.lambo.smartpay.core.service.SiteStatusService;
-import com.lambo.smartpay.core.service.UserService;
-import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
@@ -223,7 +219,7 @@ public class MerchantController {
 
         return JsonUtil.toJson(resultSet);
     }
-    
+
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Long id, Model model) {
 
@@ -232,7 +228,7 @@ public class MerchantController {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "Site  " + id + " not found.");
+            throw new BadRequestException("400", "Merchant  " + id + " not found.");
         }
         MerchantCommand merchantCommand = createMerchantCommand(merchant);
         model.addAttribute("merchantCommand", merchantCommand);
@@ -264,9 +260,6 @@ public class MerchantController {
         String label = messageSource.getMessage("Merchant.label", null, locale);
         try {
             merchant = merchantService.freezeMerchant(id);
-
-            //TODO freeze all sites and users of the merchant
-
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             String notFrozenMessage = messageSource.getMessage("not.frozen.message",
@@ -304,8 +297,6 @@ public class MerchantController {
         String label = messageSource.getMessage("Merchant.label", null, locale);
         try {
             merchant = merchantService.unfreezeMerchant(id);
-
-            //TODO unfreeze all sites and users of the merchant
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             String notUnfrozenMessage = messageSource.getMessage("not.unfrozen.message",
@@ -439,8 +430,6 @@ public class MerchantController {
 
         model.addAttribute("merchantCommand", merchantCommand);
 
-        logger.debug("~~~~~~ whether come to here ??? " + merchantCommand.getId());
-
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
 
@@ -477,14 +466,11 @@ public class MerchantController {
 
         Merchant merchant;
 
-        logger.debug("here u r");
-
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
         String label = messageSource.getMessage("Merchant.label", null, locale);
         try {
             merchant = merchantService.delete(id);
-            logger.debug("here u r" + id);
 
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -516,7 +502,6 @@ public class MerchantController {
         credential.setContent(merchantCommand.getCredentialContent());
         credential.setActive(true);
 
-        //TODO HOW TO PARSE FROM STRING
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         Date date = Calendar.getInstance(locale).getTime();
@@ -544,7 +529,6 @@ public class MerchantController {
             e.printStackTrace();
         }
 
-        //TODO HOW TO PARSE FROM STRING
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         Date date = Calendar.getInstance(locale).getTime();
@@ -557,7 +541,6 @@ public class MerchantController {
         credential.setCredentialStatus(credentialStatus);
         credential.setCredentialType(credentialType);
         credential.setContent(merchantCommand.getCredentialContent());
-        //credential.setActive(true);
         return credential;
     }
 
@@ -586,7 +569,6 @@ public class MerchantController {
         }
         encryption.setEncryptionType(encryptionType);
         encryption.setKey(merchantCommand.getEncryptionKey());
-        //encryption.setActive(true);
         return encryption;
     }
 
@@ -614,7 +596,6 @@ public class MerchantController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        //fee.setActive(true);
         fee.setValue(merchantCommand.getCommissionFeeValue());
         fee.setFeeType(feeType);
 
@@ -660,7 +641,7 @@ public class MerchantController {
             e.printStackTrace();
         }
         if (merchantCommand.getId() != null) {
-            logger.debug("merchantCoomand.getId is not null");
+            logger.debug("Merchant " + merchantCommand.getId() + "is not null");
             merchant.setId(merchantCommand.getId());
         }
         merchant.setIdentity(merchantCommand.getIdentity());
@@ -693,11 +674,15 @@ public class MerchantController {
             merchant = merchantService.get(merchantCommand.getId());
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
+            throw new BadRequestException("400", "Merchant " + merchantCommand.getId()
+                    + "is null.");
         }
         try {
             merchantStatus = merchantStatusService.get(merchantCommand.getMerchantStatusId());
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
+            throw new BadRequestException("400", "Merchant status " + merchantCommand
+                    .getMerchantStatusId() + "is null.");
         }
 
         //set merchant basic info
@@ -716,7 +701,6 @@ public class MerchantController {
         merchant.setCredential(credential);
 
         return merchant;
-
     }
 
     private Merchant setMerchantFee(MerchantCommand merchantCommand) {
@@ -725,6 +709,8 @@ public class MerchantController {
             merchant = merchantService.get(merchantCommand.getId());
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
+            throw new BadRequestException("400", "Merchant " + merchantCommand.getId()
+                    + "is null.");
         }
 
         //set merchant encryption
@@ -738,7 +724,6 @@ public class MerchantController {
         merchant.setReturnFee(returnFee);
 
         return merchant;
-
     }
 
     private MerchantCommand createMerchantCommand(Merchant merchant) {

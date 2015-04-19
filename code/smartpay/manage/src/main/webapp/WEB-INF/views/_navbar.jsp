@@ -94,28 +94,28 @@
                 <ul class="dropdown-menu" role="menu">
                     <!-- admin menu starts -->
                     <li class="">
-                        <a href="${rootURL}site">
+                        <a href="${rootURL}site/indexAll">
                                 <span> >>
                                 <spring:message code="manage.label" arguments="${site}"/>
                                                                                        </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}site/indexAuditList">
+                        <a href="${rootURL}site/indexCreated">
                                 <span> >>
                                 <spring:message code="audit.label" arguments="${site}"/>
                                                                </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}site/indexFreezeList">
+                        <a href="${rootURL}site/indexApproved">
                                 <span> >>
                                 <spring:message code="freeze.label" arguments="${site}"/>
                                                                 </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}site/indexUnfreezeList">
+                        <a href="${rootURL}site/indexFrozen">
                                 <span> >>
                                 <spring:message code="unfreeze.label" arguments="${site}"/>
                                                                  </span>
@@ -183,7 +183,7 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}order">
+                        <a href="${rootURL}order/index">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${order}"/>
                                 </span>
@@ -197,21 +197,21 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}payment">
+                        <a href="${rootURL}payment/index">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${payment}"/>
                                 </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}shipment">
+                        <a href="${rootURL}shipment/index">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${shipment}"/>
                                 </span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}refund">
+                        <a href="${rootURL}refund/index">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${refund}"/>
                                 </span>

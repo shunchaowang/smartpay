@@ -16,7 +16,6 @@ import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
-import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.ecs.web.vo.UserCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
@@ -223,10 +222,7 @@ public class UserController {
         // persist user
         try {
             user = userService.create(user);
-            String fieldLabel = messageSource.getMessage("operator.label", null, locale);
-            attributes.addFlashAttribute("message",
-                    messageSource.getMessage("created.message",
-                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+
         } catch (MissingRequiredFieldException e) {
             logger.info(e.getMessage());
             String fieldLabel = messageSource.getMessage("operator.label", null, locale);
@@ -242,7 +238,11 @@ public class UserController {
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             e.printStackTrace();
         }
-        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
+
+        String fieldLabel = messageSource.getMessage("operator.label", null, locale);
+        attributes.addFlashAttribute("message",
+                messageSource.getMessage("created.message",
+                        new String[]{fieldLabel, user.getUsername()}, locale));
 
         return "redirect:/user/index";
     }
@@ -293,7 +293,7 @@ public class UserController {
         model.addAttribute("action", "edit");
         // get user by id
         User user = null;
-        if (id==0){
+        if (id == 0) {
             user = UserResource.getCurrentUser();
             logger.debug("~~~~~~~~~~~user + " + user.getUsername());
             logger.debug("~~~~~~~~~~~user + " + user.getCreatedTime());
