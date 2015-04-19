@@ -738,7 +738,7 @@ public class HomeController {
         pairs.add(new BasicNameValuePair("merNo", merchantId));
 
         // calcuate hooppay md5
-        String md5Info = MDUtil.getMD5Str(merchantId + orderCommand.getOrderId()
+        String md5Info = MDUtil.getMD5Str(merchantId + orderCommand.getOrderNo()
                 + orderCommand.getAmount() + orderCommand.getCurrency()
                 + merKey + orderCommand.getEmail());
         pairs.add(new BasicNameValuePair("md5Info", md5Info));
