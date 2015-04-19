@@ -10,15 +10,9 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/index">
+                <spring:message code="manage.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
 
@@ -45,10 +39,7 @@
                                 <th><spring:message code="returnCode.label"/></th>
                                 <th><spring:message code="paymentStatusName.label"/></th>
                                 <th><spring:message code="paymentTypeName.label"/></th>
-
-                                <c:if test="${domain.equals('paymentEdit')}">
-                                    <th><spring:message code="action.operation.label"/></th>
-                                </c:if>
+                                <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -74,7 +65,7 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -84,14 +75,14 @@
                 {
                     'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
                 {
                     'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -102,7 +93,7 @@
                 {
                     'name': 'amount', 'targets': 4, 'data': 'amount',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -132,7 +123,6 @@
                     'orderable': false,
                     'data': 'paymentTypeName'
                 },
-                <c:if test="${domain.equals('paymentEdit')}">
                 {
                     'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
@@ -140,9 +130,9 @@
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="btn btn-default"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>'
+                                + '</button></a>';
                     }
-                </c:if>
+                }
             ]
         });
     });

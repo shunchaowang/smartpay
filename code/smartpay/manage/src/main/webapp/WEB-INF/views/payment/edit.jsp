@@ -12,15 +12,12 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/index">
+                <spring:message code="manage.label" arguments="${entity}"/>
+            </a>
+            <a href="${rootURL}${controller}/${action}">
+                <spring:message code="manage.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
 
@@ -106,27 +103,24 @@
                                     </form:select>
                                 </div>
                             </div>
-                            <!-- if create a merchant admin we need to have merchant selection -->
-                            <c:if test="${domain == 'MerchantAdmin'}">
-                                <!-- user status -->
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="userStatus">
-                                        <spring:message code="Merchant.label"/>
-                                        <span class="required-indicator">*</span>
-                                    </label>
+                            <!-- user status -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="userStatus">
+                                    <spring:message code="Merchant.label"/>
+                                    <span class="required-indicator">*</span>
+                                </label>
 
-                                    <div class="col-sm-6">
-                                        <form:select path="merchant" id="merchant"
-                                                     cssClass="form-control" required=""
-                                                     value="${userCommand.merchant}">
-                                            <c:forEach items="${merchants}" var="merchant">
-                                                <form:option
-                                                        value="${merchant.id}">${merchant.name}</form:option>
-                                            </c:forEach>
-                                        </form:select>
-                                    </div>
+                                <div class="col-sm-6">
+                                    <form:select path="merchant" id="merchant"
+                                                 cssClass="form-control" required=""
+                                                 value="${userCommand.merchant}">
+                                        <c:forEach items="${merchants}" var="merchant">
+                                            <form:option
+                                                    value="${merchant.id}">${merchant.name}</form:option>
+                                        </c:forEach>
+                                    </form:select>
                                 </div>
-                            </c:if>
+                            </div>
                             <!-- remark -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="remark">
@@ -147,7 +141,7 @@
                                     <button class='btn btn-default' id='reset-button' type="reset">
                                         <spring:message code='action.reset.label'/>
                                     </button>
-                                    <a href="${rootURL}${controller}/index${domain}">
+                                    <a href="${rootURL}${controller}/index">
                                         <button type="button" class="btn btn-default">
                                             <spring:message code="action.return.label"/>
                                         </button>

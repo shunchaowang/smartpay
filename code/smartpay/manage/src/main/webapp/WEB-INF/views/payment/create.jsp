@@ -12,15 +12,12 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/index">
+                <spring:message code="manage.label" arguments="${entity}"/>
+            </a>
+            <a href="${rootURL}${controller}/${action}">
+                <spring:message code="manage.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
 
@@ -34,7 +31,7 @@
                         <h5><spring:message code="create.label" arguments="${entity}"/></h5>
                     </div>
                     <div class="widget-content">
-                        <form:form action="${rootURL}${controller}/create${domain}" method="POST"
+                        <form:form action="${rootURL}${controller}/create" method="POST"
                                    commandName="userCommand" cssClass="form-horizontal"
                                    id="new-user-form">
                             <div class="form-group">
@@ -107,25 +104,23 @@
                                 </div>
                             </div>
                             <!-- if create a merchant admin we need to have merchant selection -->
-                            <c:if test="${domain == 'MerchantAdmin'}">
-                                <!-- user status -->
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="userStatus">
-                                        <spring:message code="Merchant.label"/>
-                                        <span class="required-indicator">*</span>
-                                    </label>
+                            <!-- user status -->
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="userStatus">
+                                    <spring:message code="Merchant.label"/>
+                                    <span class="required-indicator">*</span>
+                                </label>
 
-                                    <div class="col-sm-6">
-                                        <form:select path="merchant" id="merchant"
-                                                     cssClass="form-control" required="">
-                                            <c:forEach items="${merchants}" var="merchant">
-                                                <form:option
-                                                        value="${merchant.id}">${merchant.name}</form:option>
-                                            </c:forEach>
-                                        </form:select>
-                                    </div>
+                                <div class="col-sm-6">
+                                    <form:select path="merchant" id="merchant"
+                                                 cssClass="form-control" required="">
+                                        <c:forEach items="${merchants}" var="merchant">
+                                            <form:option
+                                                    value="${merchant.id}">${merchant.name}</form:option>
+                                        </c:forEach>
+                                    </form:select>
                                 </div>
-                            </c:if>
+                            </div>
                             <!-- remark -->
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="remark">

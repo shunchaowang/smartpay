@@ -1,22 +1,18 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.Payment;
 import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
-import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.service.PaymentStatusService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.PaymentCommand;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
-import com.lambo.smartpay.manage.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,22 +62,15 @@ public class PaymentController {
         return paymentStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index", "/indexPayment"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
 
-    /*
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
-            */
-
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
-            produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
+    public String list(HttpServletRequest request) {
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -112,15 +96,7 @@ public class PaymentController {
         Long recordsTotal;
         Long recordsFiltered;
 
-        /*
-        if (domain.equals("FreezeList"))
-            codeString = ResourceProperties.MERCHANT_STATUS_NORMAL_CODE;
-        if (domain.equals("UnfreezeList"))
-            codeString = ResourceProperties.MERCHANT_STATUS_FROZEN_CODE;
-            */
-
         if (codeString.equals("")) {
-            logger.debug("~~~~~~~~~~ payment list ~~~~~~~~~~" + "all codeString ！！！");
 
             payments = paymentService.findByCriteria(search, start,
                     length, order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
@@ -129,10 +105,9 @@ public class PaymentController {
             recordsFiltered = paymentService.countByCriteria(search);
 
         } else {
-            logger.debug("~~~~~~~~~~ payment list ~~~~~~~~~~" + "codeString = " + codeString);
             // normal payment status
             Payment paymentCriteria = new Payment();
-            PaymentStatus status =null;
+            PaymentStatus status = null;
             try {
                 status = paymentStatusService.findByCode(codeString);
             } catch (NoSuchEntityException e) {
@@ -153,7 +128,7 @@ public class PaymentController {
         }
 
         List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
-        for (Payment payment: payments) {
+        for (Payment payment : payments) {
             DataTablesPayment tablesPayment = new DataTablesPayment(payment);
             dataTablesPayments.add(tablesPayment);
         }
@@ -166,11 +141,8 @@ public class PaymentController {
         return JsonUtil.toJson(resultSet);
     }
 
-    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
-            model) {
-
-        logger.debug("~~~~~~ show " + "domain=" + domain + "id=" + id);
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, Model model) {
 
         Payment payment;
         try {
@@ -181,9 +153,7 @@ public class PaymentController {
         }
         PaymentCommand paymentCommand = createPaymentCommand(payment);
         model.addAttribute("paymentCommand", paymentCommand);
-        if (domain != null) {
-            model.addAttribute("domain", domain);
-        }
+
         model.addAttribute("action", "show");
         return "main";
     }
@@ -320,7 +290,8 @@ public class PaymentController {
             }
         }
 
-        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search, start, length,
+        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search, start,
+        length,
                 payment, ResourceProperties.JpaOrderDir.valueOf(paymentDir), beginning, ending);
 
         // count total records
@@ -376,8 +347,10 @@ public class PaymentController {
         PaymentCommand.setSiteId(payment.getOrder().getSite().getId());
         PaymentCommand.setSiteName(payment.getOrder().getSite().getName());
 
-        //
-        PaymentCommand.setSuccessTime(payment.getSuccessTime().toString());
+
+        if (payment.getSuccessTime() != null) {
+            PaymentCommand.setSuccessTime(payment.getSuccessTime().toString());
+        }
         PaymentCommand.setRemark(payment.getRemark());
         PaymentCommand.setBillAddress1(payment.getBillAddress1());
         PaymentCommand.setBillAddress2(payment.getBillAddress2());
