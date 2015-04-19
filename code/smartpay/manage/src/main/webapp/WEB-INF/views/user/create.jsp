@@ -158,8 +158,8 @@
         $('#new-user-form').validate({
             rules: {
                 username: {required: true, minlength: 3, maxlength: 32},
-                firstName: {required: true, minlength: 3, maxlength: 32},
-                lastName: {required: true, minlength: 3, maxlength: 32},
+                firstName: {required: true, minlength: 1, maxlength: 32},
+                lastName: {required: true, minlength: 1, maxlength: 32},
                 email: {required: true, email: true, minlength: 3, maxlength: 32},
                 userStatus: {required: true}
             }

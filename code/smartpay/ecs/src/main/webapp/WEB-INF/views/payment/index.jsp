@@ -46,7 +46,7 @@
                                 <th><spring:message code="returnCode.label"/></th>
                                 <th><spring:message code="paymentStatusName.label"/></th>
                                 <th><spring:message code="paymentTypeName.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
+                                <th><spring:message code="paymentSiteName.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -75,11 +75,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1,2,3,4,5,6,7,8,9]
+                        "mColumns": [1,2,3,4,5,6,7,8,9,10]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1,2,3,4,5,6,7,8,9]
+                        "mColumns": [1,2,3,4,5,6,7,8,9,10]
                     }
                 ]
             },
@@ -139,15 +139,13 @@
                     'data': 'paymentTypeName'
                 },
                 {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button class="tableButton" type="button" name="show-button"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>'
-                    }
+                    'name': 'siteName',
+                    'targets': 10,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'siteName'
                 }
+
             ]
         });
     });
