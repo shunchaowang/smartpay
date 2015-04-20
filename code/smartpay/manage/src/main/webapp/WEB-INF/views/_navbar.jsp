@@ -211,7 +211,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}refund/index">
+                        <a href="${rootURL}refund/indexAll">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${refund}"/>
                                 </span>
@@ -230,7 +230,7 @@
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     <li class="">
-                        <a href="${rootURL}refund/refund">
+                        <a href="${rootURL}refund/indexInitiated">
                                 <span> >>
                                     <spring:message code="manage.label" arguments="${refund}"/>
                                 </span>

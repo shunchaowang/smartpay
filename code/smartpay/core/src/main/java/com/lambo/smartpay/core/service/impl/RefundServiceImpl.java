@@ -4,7 +4,9 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.dao.RefundDao;
+import com.lambo.smartpay.core.persistence.dao.RefundStatusDao;
 import com.lambo.smartpay.core.persistence.entity.Refund;
+import com.lambo.smartpay.core.persistence.entity.RefundStatus;
 import com.lambo.smartpay.core.service.RefundService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,8 @@ public class RefundServiceImpl extends GenericDateQueryServiceImpl<Refund, Long>
     private static final Logger logger = LoggerFactory.getLogger(RefundServiceImpl.class);
     @Autowired
     private RefundDao refundDao;
+    @Autowired
+    private RefundStatusDao refundStatusDao;
 
     /**
      * Dynamic search like grails findBy...
@@ -129,6 +133,22 @@ public class RefundServiceImpl extends GenericDateQueryServiceImpl<Refund, Long>
             throw new NoSuchEntityException("Id is null.");
         }
         return refundDao.get(id);
+    }
+
+    @Override
+    @Transactional
+    public Refund approveRefund(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Refund refund = refundDao.get(id);
+        if (refund == null) {
+            throw new NoSuchEntityException("Refund is null.");
+        }
+        RefundStatus approvedRefundStatus = refundStatusDao.findByCode(ResourceProperties
+                .REFUND_STATUS_APPROVED_CODE);
+        refund.setRefundStatus(approvedRefundStatus);
+        return refundDao.update(refund);
     }
 
     @Override

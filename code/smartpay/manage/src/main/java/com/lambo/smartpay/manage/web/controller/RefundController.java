@@ -1,10 +1,6 @@
 package com.lambo.smartpay.manage.web.controller;
 
-import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
-import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.OrderStatus;
 import com.lambo.smartpay.core.persistence.entity.Refund;
 import com.lambo.smartpay.core.persistence.entity.RefundStatus;
 import com.lambo.smartpay.core.service.OrderService;
@@ -16,12 +12,10 @@ import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.manage.util.DataTablesParams;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
-import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesRefund;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +24,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -76,15 +71,26 @@ public class RefundController {
         return refundStatusService.getAll();
     }
 
-    @RequestMapping(value = {"/", "", "/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("domain") String domain, Model model) {
+        if (domain.equals("All")) {
+            model.addAttribute("action", "indexAll");
+        } else if (domain.equals("Initiated")) {
+            model.addAttribute("domain", "InitiatedRefund");
+            model.addAttribute("action", "indexInitiated");
+        } else if (domain.equals("Approved")) {
+            model.addAttribute("domain", "ApprovedRefund");
+            model.addAttribute("action", "indexApproved");
+        } else {
+            throw new BadRequestException("400", "Domain does not exist.");
+        }
         return "main";
     }
 
-    @RequestMapping(value = {"/list"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/list{domain}"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(HttpServletRequest request) {
+    public String list(@PathVariable("domain") String domain, HttpServletRequest request) {
 
         DataTablesParams params = new DataTablesParams(request);
         Integer start = Integer.valueOf(params.getOffset());
@@ -98,11 +104,51 @@ public class RefundController {
             throw new BadRequestException("400", "User is null.");
         }
 
-        List<Refund> refunds = refundService.findByCriteria(params.getSearch(),
-                start, length, params.getOrder(),
-                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-        Long recordsTotal = refundService.countAll();
-        Long recordsFiltered = refundService.countByCriteria(params.getSearch());
+        List<Refund> refunds = null;
+        Long recordsTotal = null;
+        Long recordsFiltered = null;
+        if (domain.equals("All")) {
+            refunds = refundService.findByCriteria(params.getSearch(),
+                    start, length, params.getOrder(),
+                    ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+            recordsTotal = refundService.countAll();
+            recordsFiltered = refundService.countByCriteria(params.getSearch());
+        } else if (domain.equals("Initiated")) {
+            RefundStatus status = null;
+            try {
+                status = refundStatusService.findByCode(ResourceProperties
+                        .REFUND_STATUS_INITIATED_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Refund status doesn't exist.");
+            }
+            Refund refundCriteria = new Refund();
+            refundCriteria.setRefundStatus(status);
+            refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
+                    start, length, params.getOrder(),
+                    ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+            recordsTotal = refundService.countByCriteria(refundCriteria);
+            recordsFiltered = refundService.countByCriteria(refundCriteria, params.getSearch());
+        } else if (domain.equals("Approved")) {
+            RefundStatus status = null;
+            try {
+                status = refundStatusService.findByCode(ResourceProperties
+                        .REFUND_STATUS_APPROVED_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Refund status doesn't exist.");
+            }
+            Refund refundCriteria = new Refund();
+            refundCriteria.setRefundStatus(status);
+            refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
+                    start, length, params.getOrder(),
+                    ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+            recordsTotal = refundService.countByCriteria(refundCriteria);
+            recordsFiltered = refundService.countByCriteria(refundCriteria, params.getSearch());
+        } else {
+            throw new BadRequestException("400", "Domain does not exist.");
+        }
+
         if (refunds == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
@@ -121,157 +167,41 @@ public class RefundController {
         return JsonUtil.toJson(resultSet);
     }
 
-    @RequestMapping(value = {"/refund"}, method = RequestMethod.GET)
-    public String indexInitiatedRefund(Model model) {
-
-        model.addAttribute("domain", "InitiatedRefund");
-        model.addAttribute("action", "refund");
-        //model.addAttribute("command", new RefundCommand());
-        return "main";
-    }
-
-    @RequestMapping(value = {"/listInitiatedRefund"}, method = RequestMethod.GET,
+    /**
+     * ajax calls to audit a refund by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/approveRefund", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
+    public
     @ResponseBody
-    public String listInitiatedRefund(Model model, HttpServletRequest request) {
+    String approveRefund(@RequestParam(value = "id") Long id) {
 
-        DataTablesParams params = new DataTablesParams(request);
-        Integer start = Integer.valueOf(params.getOffset());
-        Integer length = Integer.valueOf(params.getMax());
-        if (start == null || length == null) {
-            throw new BadRequestException("400", "Bad Request.");
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
         }
 
-        RefundStatus initiatedRefundStatus = null;
-        try {
-            initiatedRefundStatus = refundStatusService
-                    .findByCode(ResourceProperties.REFUND_STATUS_INITIATED_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find paid order status.");
-        }
-
-        Refund refundCriteria = new Refund();
-        refundCriteria.setRefundStatus(initiatedRefundStatus);
-
-        List<Refund> refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
-                start, length, params.getOrder(),
-                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-        Long recordsTotal = refundService.countByCriteria(refundCriteria);
-        Long recordsFiltered = refundService.countByCriteria(refundCriteria, params.getSearch());
-        if (refunds == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesRefund> dataTablesRefunds = new ArrayList<>();
-        for (Refund r : refunds) {
-            DataTablesRefund refund = new DataTablesRefund(r);
-            dataTablesRefunds.add(refund);
-        }
-
-        DataTablesResultSet<DataTablesRefund> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(dataTablesRefunds);
-        resultSet.setRecordsTotal(recordsTotal.intValue());
-        resultSet.setRecordsFiltered(recordsFiltered.intValue());
-
-        return JsonUtil.toJson(resultSet);
-    }
-
-    @RequestMapping(value = {"/addRefund"}, method = RequestMethod.GET)
-    public ModelAndView addRefund(HttpServletRequest request) {
-
-        String orderId = request.getParameter("orderId");
-        String amount = request.getParameter("amount");
-
-        logger.debug("~~~~~~~~~~~ orderId = " + orderId);
-        logger.debug("~~~~~~~~~~~ amount = " + amount);
-
-        if (StringUtils.isBlank(orderId)) {
-            throw new BadRequestException("400", "Order id is blank.");
-        }
-
-        ModelAndView view = new ModelAndView("refund/_refundDialog");
-        view.addObject("orderId", orderId);
-        view.addObject("amount", amount);
-        return view;
-    }
-
-    @RequestMapping(value = {"/addRefund"}, method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String saveRefund(HttpServletRequest request) {
+        Refund refund = null;
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-
-        String orderId = request.getParameter("orderId");
-        Float amount = Float.parseFloat(request.getParameter("amount"));
-        String remark = request.getParameter("amount");
-
-        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(amount.toString())
-                || StringUtils.isBlank(remark.toString())) {
-            throw new BadRequestException("400", "Bad request.");
-        }
-
-        Order order = null;
+        String label = messageSource.getMessage("Refund.label", null, locale);
         try {
-            order = orderService.get(Long.valueOf(orderId));
+            refund = refundService.approveRefund(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "Order cannot be found.");
+            String notApprovedMessage = messageSource.getMessage("not.audit.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notApprovedMessage);
+            throw new BadRequestException("400", e.getMessage());
         }
 
-        // retrieve order and associated customer, set refund recipient to be
-        // the same with customer for now
-        Refund refund = createRefund(order);
-        refund.setAmount(amount);
-        refund.setRemark(remark);
-        RefundStatus shippedRefundStatus = null;
-        OrderStatus shippedOrderStatus = null;
-        try {
-            shippedRefundStatus = refundStatusService.findByCode(ResourceProperties
-                    .REFUND_STATUS_FUNDED_CODE);
-            shippedOrderStatus = orderStatusService.findByCode(ResourceProperties
-                    .ORDER_STATUS_REFUNDED_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find refund or order status.");
-        }
-        refund.setRefundStatus(shippedRefundStatus);
-        order.setOrderStatus(shippedOrderStatus);
-        // when persisting refund, order should be cascaded merged
-        String domain = messageSource.getMessage("Refund.label", null, locale);
-        String failedMessage = messageSource.getMessage("not.saved.message",
-                new String[]{domain, amount + " " + remark}, locale);
-        String successfulMessage = messageSource.getMessage("saved.message",
-                new String[]{domain, amount + " " + remark}, locale);
-        try {
-            refund = refundService.create(refund);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-            response.setStatus("failed");
-            response.setMessage(failedMessage);
-        } catch (NotUniqueException e) {
-            e.printStackTrace();
-            response.setStatus("failed");
-            response.setMessage(failedMessage);
-        }
-        response.setStatus("successful");
-        response.setMessage(successfulMessage);
-
+        String approvedMessage = messageSource.getMessage("audit.message",
+                new String[]{label, id.toString()}, locale);
+        response.setMessage(approvedMessage);
         return JsonUtil.toJson(response);
     }
 
-    private Refund createRefund(Order order) {
-        Refund refund = new Refund();
-        refund.setOrder(order);
-        refund.setBillFirstName(order.getCustomer().getFirstName());
-        refund.setBillLastName(order.getCustomer().getLastName());
-        refund.setBillAddress1(order.getCustomer().getAddress1());
-        refund.setBillCity(order.getCustomer().getCity());
-        refund.setBillState(order.getCustomer().getState());
-        refund.setBillZipCode(order.getCustomer().getZipCode());
-        refund.setBillCountry(order.getCustomer().getCountry());
-        return refund;
-    }
 }

@@ -1,5 +1,6 @@
 package com.lambo.smartpay.core.service;
 
+import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.Refund;
 
 /**
@@ -8,4 +9,6 @@ import com.lambo.smartpay.core.persistence.entity.Refund;
 public interface RefundService extends GenericDateQueryService<Refund, Long> {
 
     Refund findByBankTransactionNumber(String bankTransactionNumber);
+
+    Refund approveRefund(Long id) throws NoSuchEntityException;
 }
