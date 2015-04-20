@@ -177,7 +177,8 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
     public Boolean isBlank(Payment payment) {
         return payment == null || payment.getId() == null && payment.getActive() == null &&
                 payment.getPaymentStatus() == null && payment.getCurrency() == null
-                && payment.getOrder() == null;
+                && payment.getOrder() == null
+                && StringUtils.isBlank(payment.getBankTransactionNumber());
     }
 
     /**
@@ -229,6 +230,18 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         if (payment.getActive() != null) {
             predicate = builder.equal(root.<Boolean>get("active"),
                     builder.literal(payment.getActive()));
+        }
+
+        // check bank transaction number
+        if (!StringUtils.isBlank(payment.getBankTransactionNumber())) {
+            Predicate bankTransactionNumberPredicate =
+                    builder.like(root.<String>get("bankTransactionNumber"),
+                            builder.literal(payment.getBankAccountNumber()));
+            if (predicate == null) {
+                predicate = bankTransactionNumberPredicate;
+            } else {
+                predicate = builder.and(predicate, bankTransactionNumberPredicate);
+            }
         }
 
         // check Payment Status id

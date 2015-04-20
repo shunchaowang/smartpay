@@ -204,6 +204,13 @@
                         </a>
                     </li>
                     <li class="">
+                        <a href="${rootURL}payment/search">
+                                <span> >>
+                                    <spring:message code="search.label" arguments="${payment}"/>
+                                </span>
+                        </a>
+                    </li>
+                    <li class="">
                         <a href="${rootURL}shipment/index">
                                 <span> >>
                                     <spring:message code="info.label" arguments="${shipment}"/>

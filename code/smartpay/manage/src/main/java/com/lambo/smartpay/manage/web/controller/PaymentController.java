@@ -1,8 +1,10 @@
 package com.lambo.smartpay.manage.web.controller;
 
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
+import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Payment;
 import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
+import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.service.PaymentStatusService;
 import com.lambo.smartpay.core.service.SiteService;
@@ -26,7 +28,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -158,67 +164,12 @@ public class PaymentController {
         return "main";
     }
 
-/*
-    public
-    @ResponseBody
-    String list(HttpServletRequest request) {
-
-        // parse sorting column
-        String paymentIndex = request.getParameter("payment[0][column]");
-        String payment = request.getParameter("columns[" + paymentIndex + "][name]");
-
-        // parse sorting direction
-        String paymentDir = StringUtils.upperCase(request.getParameter("payment[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || payment == null || paymentDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
-        }
-
-        List<Payment> payments = paymentService.findByCriteria(search, start, length,
-                payment, ResourceProperties.JpaOrderDir.valueOf(paymentDir));
-
-        // count total records
-        Long recordsTotal = paymentService.countAll();
-        // count records filtered
-        Long recordsFiltered = paymentService.countByCriteria(search);
-
-        if (payments == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
-
-        for (Payment o : payments) {
-            DataTablesPayment tablesPayment = new DataTablesPayment(o);
-            dataTablesPayments.add(tablesPayment);
-        }
-
-        DataTablesResultSet<DataTablesPayment> result = new DataTablesResultSet<>();
-        result.setData(dataTablesPayments);
-        result.setRecordsFiltered(recordsFiltered.intValue());
-        result.setRecordsTotal(recordsTotal.intValue());
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
-    }
-
-    /*
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(Model model) {
         model.addAttribute("action", "search");
         model.addAttribute("sites", siteService.getAll());
         return "main";
     }
-    */
-
-    /*
 
     @RequestMapping(value = "/searchData", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -227,11 +178,11 @@ public class PaymentController {
     String searchData(HttpServletRequest request) {
 
         // parse sorting column
-        String paymentIndex = request.getParameter("payment[0][column]");
-        String payment = request.getParameter("columns[" + paymentIndex + "][name]");
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
 
         // parse sorting direction
-        String paymentDir = StringUtils.upperCase(request.getParameter("payment[0][dir]"));
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
 
         // parse search keyword
         String search = request.getParameter("search[value]");
@@ -240,13 +191,13 @@ public class PaymentController {
         Integer start = Integer.valueOf(request.getParameter("start"));
         Integer length = Integer.valueOf(request.getParameter("length"));
 
-        if (start == null || length == null || payment == null || paymentDir == null) {
+        if (start == null || length == null || order == null || orderDir == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
 
         // parse my own query params
         String id = request.getParameter("id");
-        String merchantNumber = request.getParameter("merchantNUmber");
+        String bankTransactionNumber = request.getParameter("bankTransactionNumber");
         String paymentStatus = request.getParameter("paymentStatus");
         String site = request.getParameter("site");
         String timeBeginning = request.getParameter("timeBeginning");
@@ -256,8 +207,8 @@ public class PaymentController {
         if (!StringUtils.isBlank(id)) {
             paymentCriteria.setId(Long.valueOf(id));
         }
-        if (!StringUtils.isBlank(merchantNumber)) {
-            paymentCriteria.setMerchantNumber(merchantNumber);
+        if (!StringUtils.isBlank(bankTransactionNumber)) {
+            paymentCriteria.setBankTransactionNumber(bankTransactionNumber);
         }
         if (!StringUtils.isBlank(paymentStatus)) {
             PaymentStatus status = null;
@@ -275,7 +226,9 @@ public class PaymentController {
             } catch (NoSuchEntityException e) {
                 e.printStackTrace();
             }
-            paymentCriteria.setSite(siteCriteria);
+            Order orderCriteria = new Order();
+            orderCriteria.setSite(siteCriteria);
+            paymentCriteria.setOrder(orderCriteria);
         }
         Date beginning = null;
         Date ending = null;
@@ -290,14 +243,15 @@ public class PaymentController {
             }
         }
 
-        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search, start,
-        length,
-                payment, ResourceProperties.JpaOrderDir.valueOf(paymentDir), beginning, ending);
+        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search,
+                start, length,
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir),
+                beginning, ending);
 
         // count total records
-        Long recordsTotal = paymentService.countAll();
+        Long recordsTotal = paymentService.countByCriteria(paymentCriteria);
         // count records filtered
-        Long recordsFiltered = paymentService.countByCriteria(search);
+        Long recordsFiltered = paymentService.countByCriteria(paymentCriteria, search);
 
         if (payments == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -314,11 +268,8 @@ public class PaymentController {
         result.setData(dataTablesPayments);
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
-      */
 
     private PaymentCommand createPaymentCommand(Payment payment) {
         PaymentCommand PaymentCommand = new PaymentCommand();

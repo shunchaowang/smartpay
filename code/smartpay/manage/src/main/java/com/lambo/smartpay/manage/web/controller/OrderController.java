@@ -224,9 +224,9 @@ public class OrderController {
                 order, ResourceProperties.JpaOrderDir.valueOf(orderDir), beginning, ending);
 
         // count total records
-        Long recordsTotal = orderService.countAll();
+        Long recordsTotal = orderService.countByCriteria(orderCriteria);
         // count records filtered
-        Long recordsFiltered = orderService.countByCriteria(search);
+        Long recordsFiltered = orderService.countByCriteria(orderCriteria, search);
 
         if (orders == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
