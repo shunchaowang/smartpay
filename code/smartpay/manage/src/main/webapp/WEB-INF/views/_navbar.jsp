@@ -21,6 +21,7 @@
         <spring:message code='Shipment.label' var="shipment"/>
         <spring:message code='Refund.label' var="refund"/>
         <spring:message code='Complain.label' var="complain"/>
+        <spring:message code='PaymentRefused.label' var="paymentRefused"/>
 
 
         <ul>
@@ -240,6 +241,30 @@
                         <a href="${rootURL}refund/indexInitiated">
                                 <span> >>
                                     <spring:message code="manage.label" arguments="${refund}"/>
+                                </span>
+                        </a>
+                    </li>
+                    <!-- query claim -->
+                    <li class="">
+                        <a href="${rootURL}claim/indexResolved">
+                                <span> >>
+                                    <spring:message code="info.label" arguments="${paymentRefused}"/>
+                                </span>
+                        </a>
+                    </li>
+                    <!-- manage claim  -->
+                    <li class="">
+                        <a href="${rootURL}claim/initiateClaim">
+                                <span> >>
+                                    <spring:message code="manage.label" arguments="${paymentRefused}"/>
+                                </span>
+                        </a>
+                    </li>
+                    <!-- resolve claim -->
+                    <li class="">
+                        <a href="${rootURL}claim/resolveClaim">
+                                <span> >>
+                                    <spring:message code="audit.label" arguments="${paymentRefused}"/>
                                 </span>
                         </a>
                     </li>

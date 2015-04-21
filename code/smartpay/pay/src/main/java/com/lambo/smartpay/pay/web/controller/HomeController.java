@@ -68,6 +68,7 @@ import java.util.Locale;
  * Pay home.
  */
 @Controller
+@RequestMapping("/")
 @SessionAttributes("orderCommand")
 public class HomeController {
 
@@ -94,7 +95,7 @@ public class HomeController {
     @Autowired
     private PaymentService paymentService;
 
-    @RequestMapping(value = {"", "/", "/index"})
+    @RequestMapping(value = {"index"})
     public ModelAndView home(Model model) {
         //view.addObject("action", "index");
         OrderCommand orderCommand = new OrderCommand();
@@ -128,7 +129,7 @@ public class HomeController {
         return new ModelAndView("index");
     }
 
-    @RequestMapping(value = {"/pay"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"pay"}, method = RequestMethod.POST)
     public String pay(HttpServletRequest request, HttpServletResponse response, Model model) {
 
         // params passed from client
@@ -414,7 +415,7 @@ public class HomeController {
         return "pay";
     }
 
-    @RequestMapping(value = {"/payByCard"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"payByCard"}, method = RequestMethod.POST)
     public void payByCard(@ModelAttribute("paymentCommand") PaymentCommand paymentCommand,
                           Model model,
                           HttpServletRequest request, HttpServletResponse response)
@@ -530,7 +531,7 @@ public class HomeController {
 
 
     // for 403 access denied page
-    @RequestMapping(value = "/403", method = RequestMethod.GET)
+    @RequestMapping(value = "403", method = RequestMethod.GET)
     public ModelAndView accessDenied() {
         ModelAndView view = new ModelAndView();
         view.setViewName("403");

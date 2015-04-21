@@ -24,7 +24,7 @@
 <!-- end of notification -->
 
 <div class='container'>
-    <form action="/pay" method="POST" class="form-horizontal">
+    <form action="${rootURL}pay" method="POST" class="form-horizontal">
         <div class="form-group">
             <label class="col-sm-3 control-label" for="merNo">
                 <span class="required-indicator">*</span>Merchant No:
