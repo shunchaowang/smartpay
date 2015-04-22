@@ -3,7 +3,7 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
-import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
 import com.lambo.smartpay.core.persistence.entity.Site;
@@ -11,6 +11,7 @@ import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
@@ -70,26 +71,15 @@ public class OrderController {
         return orderStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index", "/indexOrder"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
 
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String listDomain(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        logger.debug("~~~~~~~~~ listDomain ~~~~~~~~~" + domain);
-        //get current user
-        //User user = UserResource.getCurrentUser();
-        //Order criteriaOrder = new Order();
-        //criteriaOrder.setSite(user.);
-
-        // create User criteria and attached the role
-        //User criteriaUser = new User();
-        //criteriaUser.setRoles(new HashSet<Role>());
-        //criteriaUser.getRoles().add(criteriaRole);
+    public String list(HttpServletRequest request) {
 
         // parse sorting column
         String orderIndex = request.getParameter("order[0][column]");
@@ -109,14 +99,24 @@ public class OrderController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
 
-        List<Order> orders = orderService.findByCriteria(search, start, length,
+        Merchant merchant = securityUser.getMerchant();
+        Order orderCriteria = new Order();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        orderCriteria.setSite(siteCriteria);
+
+        List<Order> orders = orderService.findByCriteria(orderCriteria, search, start, length,
                 order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
 
         // count total records
-        Long recordsTotal = orderService.countAll();
+        Long recordsTotal = orderService.countByCriteria(orderCriteria);
         // count records filtered
-        Long recordsFiltered = orderService.countByCriteria(search);
+        Long recordsFiltered = orderService.countByCriteria(orderCriteria, search);
 
         if (orders == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -138,13 +138,10 @@ public class OrderController {
         return gson.toJson(result);
     }
 
-    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
-            model) {
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, Model model) {
 
-        logger.debug("~~~~~~ show " + "domain=" + domain + "id=" + id);
-
-        Order order;
+        Order order = null;
         try {
             order = orderService.get(id);
         } catch (NoSuchEntityException e) {
@@ -153,9 +150,7 @@ public class OrderController {
         }
         OrderCommand orderCommand = createOrderCommand(order);
         model.addAttribute("orderCommand", orderCommand);
-        if (domain != null) {
-            model.addAttribute("domain", domain);
-        }
+
         model.addAttribute("action", "show");
         return "main";
     }
@@ -163,8 +158,20 @@ public class OrderController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(Model model) {
+
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+        Merchant merchant = securityUser.getMerchant();
+        Order orderCriteria = new Order();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+
+        List<Site> sites = siteService.findByCriteria(siteCriteria);
+
         model.addAttribute("action", "search");
-        model.addAttribute("sites", siteService.getAll());
+        model.addAttribute("sites", sites);
         return "main";
     }
 
@@ -282,7 +289,8 @@ public class OrderController {
         orderCommand.setSiteId(order.getSite().getId());
         orderCommand.setSiteName(order.getSite().getName());
         orderCommand.setCustomerId(order.getCustomer().getId());
-        orderCommand.setCustomerName(order.getCustomer().getFirstName()+order.getCustomer().getLastName());
+        orderCommand.setCustomerName(
+                order.getCustomer().getFirstName() + order.getCustomer().getLastName());
         orderCommand.setCreatedTime(order.getCreatedTime().toString());
         orderCommand.setOrderStatusId(order.getOrderStatus().getId());
         orderCommand.setOrderStatusName(order.getOrderStatus().getName());

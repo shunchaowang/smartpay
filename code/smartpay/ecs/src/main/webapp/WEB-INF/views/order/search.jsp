@@ -10,15 +10,12 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/index">
+                <spring:message code="index.label" arguments="${entity}"/>
+            </a>
+            <a href="${rootURL}${controller}/${action}" class="current">
+                <spring:message code="${action}.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
     <!-- reserved for notification -->
@@ -120,7 +117,6 @@
                     <th><spring:message code="Customer.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="status.label"/></th>
-                    <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -145,32 +141,6 @@
             'ordering': false
         });
 
-        // add live handler for remove button
-        orderTable.on('click', 'button[type=button][name=delete-button]', function (event) {
-            event.preventDefault();
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}${controller}" + '/delete',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    orderTable.ajax.reload();
-                }
-            });
-        });
-
         $('#search-button').click(function (e) {
             e.preventDefault();
             orderTable.destroy();
@@ -181,6 +151,20 @@
                 'processing': true,
                 'serverSide': true,
                 'paging': true,
+                'dom': 'T<""if>rt<"F"lp>',
+                "tableTools": {
+                    "sSwfPath": "${tableTools}",
+                    "aButtons": [
+                        {
+                            "sExtends": "copy",
+                            "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                        },
+                        {
+                            "sExtends": "xls",
+                            "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                        }
+                    ]
+                },
 
                 'ajax': {
                     'url': "${rootURL}${controller}/searchData",
@@ -230,20 +214,6 @@
                     {
                         'name': 'orderStatus', 'targets': 7, 'searchable': false,
                         'orderable': false, 'data': 'orderStatus'
-                    },
-                    {
-                        'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
-                        'render': function (data, type, row) {
-                            return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                    + row['id'] + '">' +
-                                    '<button type="button" name="edit-button" class="btn btn-default"'
-                                    + '">' + '<spring:message code="action.edit.label"/>'
-                                    + '</button></a>' +
-                                    '<button type="button" name="delete-button"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    '<spring:message code="action.delete.label"/>' +
-                                    '</button>';
-                        }
                     }
                 ]
             });

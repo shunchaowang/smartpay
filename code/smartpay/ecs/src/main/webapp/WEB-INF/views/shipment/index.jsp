@@ -62,7 +62,20 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
+            'dom': 'T<""i>rt<"F"lp>',
+            "tableTools": {
+                "sSwfPath": "${tableTools}",
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                    },
+                    {
+                        "sExtends": "xls",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                    }
+                ]
+            },
 
             'ajax': {
                 'url': "${rootURL}${controller}/list",

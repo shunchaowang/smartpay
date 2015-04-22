@@ -6,13 +6,11 @@ import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.OrderStatus;
-import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
 import com.lambo.smartpay.core.persistence.entity.Refund;
 import com.lambo.smartpay.core.persistence.entity.RefundStatus;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
-import com.lambo.smartpay.core.service.PaymentStatusService;
 import com.lambo.smartpay.core.service.RefundService;
 import com.lambo.smartpay.core.service.RefundStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
@@ -63,8 +61,6 @@ public class RefundController {
     @Autowired
     private RefundStatusService refundStatusService;
     @Autowired
-    private PaymentStatusService paymentStatusService;
-    @Autowired
     private MessageSource messageSource;
 
     // here goes all model across the whole controller
@@ -78,12 +74,7 @@ public class RefundController {
         return "Refund";
     }
 
-    @ModelAttribute("paymentStatuses")
-    public List<PaymentStatus> paymentStatuses() {
-        return paymentStatusService.getAll();
-    }
-
-    @RequestMapping(value = {"/", "", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
@@ -112,7 +103,6 @@ public class RefundController {
         orderCriteria.setSite(siteCriteria);
         Refund refundCriteria = new Refund();
         refundCriteria.setOrder(orderCriteria);
-
 
         List<Refund> refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
                 start, length, params.getOrder(),

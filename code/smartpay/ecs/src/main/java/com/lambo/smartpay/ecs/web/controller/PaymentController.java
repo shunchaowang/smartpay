@@ -1,12 +1,13 @@
 package com.lambo.smartpay.ecs.web.controller;
 
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
+import com.lambo.smartpay.core.persistence.entity.Merchant;
+import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Payment;
-import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
+import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.PaymentService;
-import com.lambo.smartpay.core.service.PaymentStatusService;
-import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
@@ -40,10 +41,6 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
-    @Autowired
-    private SiteService siteService;
-    @Autowired
-    private PaymentStatusService paymentStatusService;
 
     // here goes all model across the whole controller
     @ModelAttribute("controller")
@@ -56,12 +53,7 @@ public class PaymentController {
         return "Payment";
     }
 
-    @ModelAttribute("paymentStatuses")
-    public List<PaymentStatus> paymentStatuses() {
-        return paymentStatusService.getAll();
-    }
-
-    @RequestMapping(value = {"", "/index", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
@@ -89,11 +81,25 @@ public class PaymentController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Payment> payments = paymentService.findByCriteria(search, start, length, order,
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+
+        Merchant merchant = securityUser.getMerchant();
+        Order orderCriteria = new Order();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        orderCriteria.setSite(siteCriteria);
+        Payment paymentCriteria = new Payment();
+        paymentCriteria.setOrder(orderCriteria);
+
+        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search, start,
+                length, order,
                 ResourceProperties.JpaOrderDir.valueOf(orderDir));
         // count total and filtered
-        Long recordsTotal = paymentService.countAll();
-        Long recordsFiltered = paymentService.countByCriteria(search);
+        Long recordsTotal = paymentService.countByCriteria(paymentCriteria);
+        Long recordsFiltered = paymentService.countByCriteria(paymentCriteria, search);
 
         if (payments == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -130,25 +136,6 @@ public class PaymentController {
         return "main";
     }
 
-
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
-
-        Payment payment = null;
-        try {
-            payment = paymentService.get(id);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "Site  " + id + " not found.");
-        }
-
-        PaymentCommand paymentCommand = createPaymentCommand(payment);
-
-        model.addAttribute("paymentCommand", paymentCommand);
-
-        model.addAttribute("action", "edit");
-        return "main";
-    }
 
     private PaymentCommand createPaymentCommand(Payment payment) {
         PaymentCommand paymentCommand = new PaymentCommand();

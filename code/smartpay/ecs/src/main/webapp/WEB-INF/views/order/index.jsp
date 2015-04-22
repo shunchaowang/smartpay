@@ -10,15 +10,9 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/${action}" class="current">
+                <spring:message code="${action}.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
     <!-- reserved for notification -->
@@ -68,11 +62,22 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
-
-
+            'dom': 'T<""if>rt<"F"lp>',
+            "tableTools": {
+                "sSwfPath": "${tableTools}",
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                    },
+                    {
+                        "sExtends": "xls",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                    }
+                ]
+            },
             'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -82,7 +87,7 @@
                 {
                     'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
+                        return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },

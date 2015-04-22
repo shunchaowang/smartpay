@@ -3,6 +3,7 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
+<spring:message code="Shipment.label" var="shipment"/>
 
 <div id="content">
     <div id="content-header">
@@ -11,15 +12,12 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/index">
+                <spring:message code="index.label" arguments="${shipment}"/>
+            </a>
+            <a href="${rootURL}${controller}/${action}" class="current">
+                <spring:message code="${action}.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
     <!-- reserved for notification -->
@@ -69,7 +67,20 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
+            'dom': 'T<""i>rt<"F"lp>',
+            "tableTools": {
+                "sSwfPath": "${tableTools}",
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                    },
+                    {
+                        "sExtends": "xls",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                    }
+                ]
+            },
 
             'ajax': {
                 'url': "${rootURL}${controller}/listWaitForShipping",

@@ -74,11 +74,6 @@ public class ShipmentController {
         return "Shipment";
     }
 
-    @ModelAttribute("paymentStatuses")
-    public List<ShipmentStatus> shipmentStatuses() {
-        return shipmentStatusService.getAll();
-    }
-
     @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";

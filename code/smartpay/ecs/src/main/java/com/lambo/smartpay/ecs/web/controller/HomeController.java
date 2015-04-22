@@ -17,6 +17,7 @@ import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.vo.HomeCommand;
 import com.lambo.smartpay.ecs.web.vo.PasswordCommand;
+import com.lambo.smartpay.ecs.web.vo.UserCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderAmount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCurrency;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -285,6 +287,86 @@ public class HomeController {
         return "main";
     }
 
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public String profile(Model model) {
+
+        User user = null;
+        try {
+            user = UserResource.getCurrentUser();
+        } catch (BadRequestException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User not found.");
+        }
+
+        // create command user and add to model and view
+        UserCommand userCommand = createUserCommand(user);
+        model.addAttribute("userCommand", userCommand);
+        model.addAttribute("action", "profile");
+        return "main";
+    }
+
+    /**
+     * Save a user.
+     *
+     * @param userCommand
+     * @return
+     */
+    @RequestMapping(value = "/profile", method = RequestMethod.POST)
+    public String updateProfile(Model model, @ModelAttribute("userCommand") UserCommand
+            userCommand) {
+        Locale locale = LocaleContextHolder.getLocale();
+
+        // if the email is change we need to check uniqueness
+        User user = null;
+        try {
+            user = userService.get(userCommand.getId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        if (user == null) {
+            throw new BadRequestException("400", "User " + userCommand.getId() + " not found.");
+        }
+
+        // create command user and add to model and view
+        if (!userCommand.getEmail().equals(user.getEmail())) {
+            User emailUser = userService.findByEmail(userCommand.getEmail());
+            if (emailUser != null) {
+                // get locale and messages
+                String fieldLabel = messageSource.getMessage("email.label", null, locale);
+                model.addAttribute("message",
+                        messageSource.getMessage("not.unique.message",
+                                new String[]{fieldLabel, userCommand.getEmail()}, locale));
+                model.addAttribute("userCommand", userCommand);
+                model.addAttribute("action", "profile");
+                return "main";
+            }
+        }
+
+        // pass uniqueness check create the user
+        editUser(user, userCommand);
+
+        // user is a user edited by merchant admin
+        try {
+            userService.update(user);
+            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+        }
+        return "redirect:/index";
+    }
 
     // for 403 access denied page
     @RequestMapping(value = "/403", method = RequestMethod.GET)
@@ -292,5 +374,38 @@ public class HomeController {
         ModelAndView view = new ModelAndView();
         view.setViewName("403");
         return view;
+    }
+
+    // create UserCommand from User
+    private UserCommand createUserCommand(User user) {
+        UserCommand userCommand = new UserCommand();
+        userCommand.setId(user.getId());
+        userCommand.setUsername(user.getUsername());
+        userCommand.setFirstName(user.getFirstName());
+        userCommand.setLastName(user.getLastName());
+        userCommand.setEmail(user.getEmail());
+        userCommand.setActive(user.getActive());
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
+        userCommand.setRemark(user.getRemark());
+        if (user.getMerchant() != null) {
+            userCommand.setMerchant(user.getMerchant().getId());
+            userCommand.setMerchantName(user.getMerchant().getName());
+        }
+
+        if (user.getUserStatus() != null) {
+            userCommand.setUserStatus(user.getUserStatus().getId());
+            userCommand.setUserStatusName(user.getUserStatus().getName());
+        }
+        return userCommand;
+    }
+
+    // edit a User from a UserCommand
+    private void editUser(User user, UserCommand userCommand) {
+        user.setFirstName(userCommand.getFirstName());
+        user.setLastName(userCommand.getLastName());
+        user.setEmail(userCommand.getEmail());
+        user.setRemark(userCommand.getRemark());
     }
 }

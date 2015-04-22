@@ -76,21 +76,11 @@ public class SiteController {
         return siteStatusService.getAll();
     }
 
-    @ModelAttribute("allMerchants")
-    public List<Merchant> allMerchants() {
-        return merchantService.getAll();
-    }
-
-    @RequestMapping(value = {"", "/index", "/indexSite"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
 
-    @RequestMapping(value = {"/indexDeclineList"}, method = RequestMethod.GET)
-    public String indexDeclineList(Model model) {
-        model.addAttribute("domain", "DeclineList");
-        return "main";
-    }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -115,8 +105,6 @@ public class SiteController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        //
-        String codeString = "";
         List<Site> sites = null;
         Long recordsTotal;
         Long recordsFiltered;
@@ -257,7 +245,7 @@ public class SiteController {
             throw new IntervalServerException("500", e.getMessage());
         }
 
-        return "main";
+        return "redirect:/site/index";
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST,
@@ -292,40 +280,10 @@ public class SiteController {
         return JsonUtil.toJson(response);
     }
 
-    @RequestMapping(value = "/approve", method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String approve(@RequestParam(value = "id") Long id) {
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable("id") Long id, Model model) {
 
-        //Initiate
-        Site site;
-        JsonResponse response = new JsonResponse();
-        Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
-        String message = "";
-        //Do approve
-        try {
-            site = siteService.approveSite(id);
-
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            message = messageSource
-                    .getMessage("not.approve.message", new String[]{label, id.toString()}, locale);
-            response.setMessage(message);
-            throw new BadRequestException("400", e.getMessage());
-        }
-
-        message = messageSource
-                .getMessage("approve.message", new String[]{label, site.getName()}, locale);
-        response.setMessage(message);
-        return JsonUtil.toJson(response);
-    }
-
-    @RequestMapping(value = "/show{domain}/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("domain") String domain, @PathVariable("id") Long id, Model
-            model) {
-
-        Site site;
+        Site site = null;
         try {
             site = siteService.get(id);
         } catch (NoSuchEntityException e) {
@@ -334,9 +292,7 @@ public class SiteController {
         }
         SiteCommand siteCommand = createSiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
-        if (domain != null) {
-            model.addAttribute("domain", domain);
-        }
+
         model.addAttribute("action", "show");
         return "main";
     }
@@ -364,11 +320,10 @@ public class SiteController {
 
     // create SiteCommand from User
     private Site createSite(SiteCommand siteCommand) {
-        //
+
         Site site = new Site();
         SiteStatus siteStatus = null;
 
-        //
         if (siteCommand.getId() != null) {
             try {
                 site = siteService.get(siteCommand.getId());
@@ -377,9 +332,9 @@ public class SiteController {
             }
         }
 
-        //Set site status as "1-created"
+        //Set site status as "Created"
         try {
-            siteStatus = siteStatusService.get(Long.parseLong("1"));
+            siteStatus = siteStatusService.findByCode(ResourceProperties.SITE_STATUS_CREATED_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
