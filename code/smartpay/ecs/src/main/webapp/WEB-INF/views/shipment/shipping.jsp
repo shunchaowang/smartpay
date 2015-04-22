@@ -3,6 +3,7 @@
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
+<spring:message code="Shipment.label" var="shipment"/>
 
 <div id="content">
     <div id="content-header">
@@ -11,15 +12,12 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
+            <a href="${rootURL}${controller}/index">
+                <spring:message code="index.label" arguments="${shipment}"/>
+            </a>
+            <a href="${rootURL}${controller}/${action}" class="current">
+                <spring:message code="${action}.label" arguments="${entity}"/>
+            </a>
         </div>
     </div>
     <!-- reserved for notification -->
@@ -69,30 +67,43 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': '<""if>rt<"F"lp>',
+            'dom': 'T<""i>rt<"F"lp>',
+            "tableTools": {
+                "sSwfPath": "${tableTools}",
+                "aButtons": [
+                    {
+                        "sExtends": "copy",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                    },
+                    {
+                        "sExtends": "xls",
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                    }
+                ]
+            },
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
+                'url': "${rootURL}${controller}/listWaitForShipping",
                 'type': "GET",
                 'dataType': 'json'
             },
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'orderId'},
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'merchantNumber', 'targets': 1, 'data': 'orderNumber',
+                    'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}order" + '/show/'
-                                + row['orderId'] + '>' + data + '</a>';
+                                + row['id'] + '>' + data + '</a>';
                     }
                 },
                 {
-                    'name': 'orderAmount', 'targets': 2, 'searchable': true,
-                    'orderable': false, 'data': 'orderAmount'
+                    'name': 'amount', 'targets': 2, 'searchable': true,
+                    'orderable': false, 'data': 'amount'
                 },
                 {
-                    'name': 'orderCurrency', 'targets': 3, 'searchable': true,
-                    'orderable': false, 'data': 'orderCurrency'
+                    'name': 'currency', 'targets': 3, 'searchable': true,
+                    'orderable': false, 'data': 'currencyName'
                 },
                 {
                     'name': 'createdTime', 'targets': 4, 'searchable': false,
@@ -114,7 +125,7 @@
                     'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="addShipment-button"'
-                                + ' class="tableButton" value="' + row['orderId'] + '">'
+                                + ' class="tableButton" value="' + row['id'] + '">'
                                 + '<spring:message code="action.ship.label"/>'
                                 + '</button>';
                     }

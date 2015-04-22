@@ -20,6 +20,7 @@ import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrder;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesShipment;
 import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
@@ -73,12 +74,7 @@ public class ShipmentController {
         return "Shipment";
     }
 
-    @ModelAttribute("paymentStatuses")
-    public List<ShipmentStatus> shipmentStatuses() {
-        return shipmentStatusService.getAll();
-    }
-
-    @RequestMapping(value = {"/", "", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
         return "main";
     }
@@ -94,35 +90,37 @@ public class ShipmentController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        // only shipped order can be shipped
-        OrderStatus paidOrderStatus = null;
-        try {
-            paidOrderStatus = orderStatusService
-                    .findByCode(ResourceProperties.ORDER_STATUS_SHIPPED_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find paid order status.");
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
         }
+        Merchant merchant = securityUser.getMerchant();
         Order orderCriteria = new Order();
-        orderCriteria.setOrderStatus(paidOrderStatus);
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        orderCriteria.setSite(siteCriteria);
+        Shipment shipmentCriteria = new Shipment();
+        shipmentCriteria.setOrder(orderCriteria);
 
-        List<Order> orders = orderService.findByCriteria(orderCriteria, params.getSearch(),
-                start, length, params.getOrder(),
-                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-        Long recordsTotal = orderService.countByCriteria(orderCriteria);
-        Long recordsFiltered = orderService.countByCriteria(orderCriteria, params.getSearch());
-        if (orders == null || recordsTotal == null || recordsFiltered == null) {
+        List<Shipment> shipments =
+                shipmentService.findByCriteria(shipmentCriteria, params.getSearch(),
+                        start, length, params.getOrder(),
+                        ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = shipmentService.countByCriteria(shipmentCriteria);
+        Long recordsFiltered =
+                shipmentService.countByCriteria(shipmentCriteria, params.getSearch());
+        if (shipments == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        List<DataTablesShipment> shipments = new ArrayList<>();
-        for (Order order : orders) {
-            DataTablesShipment shipment = new DataTablesShipment(order);
-            shipments.add(shipment);
+        List<DataTablesShipment> dataTablesShipments = new ArrayList<>();
+        for (Shipment s : shipments) {
+            DataTablesShipment shipment = new DataTablesShipment(s);
+            dataTablesShipments.add(shipment);
         }
 
         DataTablesResultSet<DataTablesShipment> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(shipments);
+        resultSet.setData(dataTablesShipments);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 
@@ -142,8 +140,6 @@ public class ShipmentController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listWaitForShipping(Model model, HttpServletRequest request) {
-
-        model.addAttribute("domain", "WaitForShipping");
 
         DataTablesParams params = new DataTablesParams(request);
         Integer start = Integer.valueOf(params.getOffset());
@@ -184,14 +180,14 @@ public class ShipmentController {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        List<DataTablesShipment> shipments = new ArrayList<>();
-        for (Order order : orders) {
-            DataTablesShipment shipment = new DataTablesShipment(order);
-            shipments.add(shipment);
+        List<DataTablesOrder> dataTablesOrders = new ArrayList<>();
+        for (Order o : orders) {
+            DataTablesOrder order = new DataTablesOrder(o);
+            dataTablesOrders.add(order);
         }
 
-        DataTablesResultSet<DataTablesShipment> resultSet = new DataTablesResultSet<>();
-        resultSet.setData(shipments);
+        DataTablesResultSet<DataTablesOrder> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesOrders);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
 
@@ -255,7 +251,7 @@ public class ShipmentController {
         shipment.setShipmentStatus(shippedShipmentStatus);
         order.setOrderStatus(shippedOrderStatus);
         // when persisting shipment, order should be cascaded merged
-        String domain = messageSource.getMessage("Shipping.label", null, locale);
+        String domain = messageSource.getMessage("Shipment.label", null, locale);
         String failedMessage = messageSource.getMessage("not.saved.message",
                 new String[]{domain, carrier + " " + trackingNumber}, locale);
         String successfulMessage = messageSource.getMessage("saved.message",

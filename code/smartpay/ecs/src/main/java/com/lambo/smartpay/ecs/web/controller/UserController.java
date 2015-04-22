@@ -81,17 +81,12 @@ public class UserController {
         return "User";
     }
 
-    @ModelAttribute("roles")
-    public List<Role> roles() {
-        return roleService.getAll();
-    }
-
     @ModelAttribute("userStatuses")
     public List<UserStatus> userStatuses() {
         return userStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
     public String index() {
 
         return "main";
@@ -289,15 +284,11 @@ public class UserController {
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") Long id, Model model) {
 
-        logger.debug("~~~~~~~~~~~edit + " + id);
         model.addAttribute("action", "edit");
         // get user by id
         User user = null;
         if (id == 0) {
             user = UserResource.getCurrentUser();
-            logger.debug("~~~~~~~~~~~user + " + user.getUsername());
-            logger.debug("~~~~~~~~~~~user + " + user.getCreatedTime());
-
         } else {
             try {
                 user = userService.get(id);
@@ -337,7 +328,7 @@ public class UserController {
             e.printStackTrace();
         }
         if (user == null) {
-            throw new BadRequestException("400", "User not found.");
+            throw new BadRequestException("400", "User " + userCommand.getId() + " not found.");
         }
 
         // create command user and add to model and view
@@ -381,7 +372,7 @@ public class UserController {
                     messageSource.getMessage("not.updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
         }
-        return "main";
+        return "redirect:/user/index";
     }
 
     @RequestMapping(value = {"/delete"}, method = RequestMethod.GET)

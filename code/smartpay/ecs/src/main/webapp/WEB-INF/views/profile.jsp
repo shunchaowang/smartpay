@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<%@include file="taglib.jsp" %>
 
 <div id="content">
     <div id="content-header">
@@ -11,17 +8,15 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}/index">
-                <spring:message code="index.label" arguments="${entity}"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="${action}.label" arguments="${entity}"/>
+            <a href="${rootURL}${action}" class="current">
+                <spring:message code="user.profile.label" var="userProfile"/>
             </a>
         </div>
     </div>
     <!-- reserved for notification -->
     <!-- close of content-header -->
     <div class="container-fluid">
+        <!— actual content —>
         <div class="row-fluid">
             <div class="span12">
                 <div class="widget-box">
@@ -29,52 +24,64 @@
 								<span class="icon">
 									<i class="icon icon-align-justify"></i>
 								</span>
-                        <h5><b><spring:message code='edit.label' arguments="${entity}"/></b></h5>
+                        <h5><b><spring:message code='edit.label' arguments="${userProfile}"/></b></h5>
                     </div>
                     <div class="widget-content nopadding">
+                        <form:form action="${rootURL}profile" method="POST"
+                                   commandName="userCommand" cssClass="form-horizontal"
+                                   id="edit-user-form">
+                            <form:input path="id" id="id" type="hidden" value="${userCommand.id}"/>
 
-                        <form:form action="${rootURL}${controller}/edit" method="POST"
-                                   commandName="siteCommand" cssClass="form-horizontal"
-                                   id="auditSite-form">
-                            <form:input size="80" path="id" id="id" type="hidden"
-                                        value="${siteCommand.id}"/>
-
-                            <!-- site identity -->
                             <div class="control-group">
-                                <label class="col-sm-3 control-label" for="identity">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="identity.label"/>
+                                <label class="col-sm-3 control-label" for="username">
+                                    <spring:message code="username.label"/>
                                 </label>
 
                                 <div class="controls">
-                                    <form:input size="80" path="identity" id="identity"
+                                    <form:input size="80" path="username" id="username"
                                                 cssClass="text"
-                                                value="${siteCommand.identity}" readonly="true"/>
+                                                value="${userCommand.username}" readonly="true"/>
                                 </div>
                             </div>
-                            <!-- name -->
+
+                            <!-- first name -->
                             <div class="control-group">
-                                <label class="col-sm-3 control-label" for="name">
+                                <label class="col-sm-3 control-label" for="firstName">
+                                    <spring:message code="firstName.label"/>
                                     <span class="required-indicator">*</span>
-                                    <spring:message code="name.label"/>
                                 </label>
 
                                 <div class="controls">
-                                    <form:input size="80" path="name" id="name" cssClass="text"
-                                                value="${siteCommand.name}"/>
-                                </div>
-                            </div>
-                            <!-- url -->
-                            <div class="control-group">
-                                <label class="col-sm-3 control-label" for="url">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="site.url.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:input size="80" path="url" id="url" cssClass="text"
+                                    <form:input size="80" path="firstName" id="firstName"
+                                                cssClass="text"
                                                 required=""
-                                                value="${siteCommand.url}"/>
+                                                value="${userCommand.firstName}"/>
+                                </div>
+                            </div>
+                            <!-- last name -->
+                            <div class="control-group">
+                                <label class="col-sm-3 control-label" for="lastName">
+                                    <spring:message code="lastName.label"/>
+                                    <span class="required-indicator">*</span>
+                                </label>
+
+                                <div class="controls">
+                                    <form:input size="80" path="lastName" id="lastName"
+                                                cssClass="text" required=""
+                                                value="${userCommand.lastName}"/>
+                                </div>
+                            </div>
+                            <!-- email -->
+                            <div class="control-group">
+                                <label class="col-sm-3 control-label" for="email">
+                                    <spring:message code="email.label"/>
+                                    <span class="required-indicator">*</span>
+                                </label>
+
+                                <div class="controls">
+                                    <form:input size="80" path="email" id="email" cssClass="text"
+                                                required=""
+                                                value="${userCommand.email}"/>
                                 </div>
                             </div>
                             <!-- remark -->
@@ -85,15 +92,14 @@
 
                                 <div class="controls">
                                     <form:textarea cols="100" rows="5" path="remark" id="remark"
-                                                   cssClass="text"
-                                                   value="${siteCommand.remark}"/>
+                                                   value="${userCommand.remark}"/>
                                 </div>
                             </div>
                             <div class='form-actions col-lg-offset-2'>
                                 <button class='btn btn-success' id='create-button' type="submit">
                                     <spring:message code='action.save.label'/>
                                 </button>
-                                <a href="${rootURL}${controller}/index">
+                                <a href="${rootURL}">
                                     <button type="button" class="btn btn-success">
                                         <spring:message code="action.return.label"/>
                                     </button>
@@ -109,11 +115,12 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#edit-site-form').validate({
+        $('#edit-user-form').validate({
             rules: {
                 firstName: {required: true, minlength: 3, maxlength: 32},
                 lastName: {required: true, minlength: 3, maxlength: 32},
-                url: {required: true, minlength: 3, maxlength: 32},
+                email: {required: true, minlength: 3, maxlength: 32},
+                userStatus: {required: true}
             }
         });
     });

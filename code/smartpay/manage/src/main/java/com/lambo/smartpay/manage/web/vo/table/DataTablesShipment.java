@@ -1,6 +1,7 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
+import com.lambo.smartpay.core.persistence.entity.Shipment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -30,7 +31,13 @@ public class DataTablesShipment {
     private Long siteId;
     private String siteUrl;
 
-    public DataTablesShipment(Order order) {
+    public DataTablesShipment(Shipment shipment) {
+
+        id = shipment.getId();
+        carrier = shipment.getCarrier();
+        trackingNumber = shipment.getTrackingNumber();
+
+        Order order = shipment.getOrder();
         orderId = order.getId();
         carrier = order.getShipments().iterator().next().getCarrier();
         trackingNumber = order.getShipments().iterator().next().getTrackingNumber();
@@ -52,7 +59,6 @@ public class DataTablesShipment {
 
         siteUrl = order.getSite().getUrl();
         siteId = order.getSite().getId();
-
     }
 
     public Long getId() {

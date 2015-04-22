@@ -1,9 +1,11 @@
 package com.lambo.smartpay.ecs.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Site;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.text.DateFormat;
+import java.util.Locale;
 
 /**
  * Created by linly on 3/16/2015.
@@ -16,7 +18,7 @@ public class DataTablesSite implements Serializable {
     private String identity;
     private String name;
     private String url;
-    private Date createdTime;
+    private String createdTime;
     private String siteStatus;
 
 
@@ -25,7 +27,9 @@ public class DataTablesSite implements Serializable {
         identity = site.getIdentity();
         name = site.getName();
         url = site.getUrl();
-        createdTime = site.getCreatedTime();
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        createdTime = dateFormat.format(site.getCreatedTime());
         siteStatus = site.getSiteStatus().getName();
     }
 
@@ -61,11 +65,11 @@ public class DataTablesSite implements Serializable {
         this.url = url;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
