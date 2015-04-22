@@ -1,6 +1,7 @@
 package com.lambo.smartpay.ecs.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
+import com.lambo.smartpay.core.persistence.entity.Shipment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -13,6 +14,10 @@ import java.util.Locale;
 public class DataTablesShipment {
 
     private Long id;
+    private String carrier;
+    private String trackingNumber;
+    private Long shipmentStatusId;
+    private String shipmentStatusName;
     private Long orderId;
     private String orderNumber;
     private float orderAmount;
@@ -20,15 +25,19 @@ public class DataTablesShipment {
     private String createdTime;
     private Long orderStatusId;
     private String orderStatusName;
-    private Long shipmentStatusId;
-    private String shipmentStatusName;
     private String customerName;
     private String customerAddress;
 
     private Long siteId;
     private String siteUrl;
 
-    public DataTablesShipment(Order order) {
+    public DataTablesShipment(Shipment shipment) {
+
+        id = shipment.getId();
+        carrier = shipment.getCarrier();
+        trackingNumber = shipment.getTrackingNumber();
+
+        Order order = shipment.getOrder();
         orderId = order.getId();
         orderNumber = order.getMerchantNumber();
         Locale locale = LocaleContextHolder.getLocale();
@@ -163,4 +172,19 @@ public class DataTablesShipment {
         this.siteUrl = siteUrl;
     }
 
+    public String getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(String carrier) {
+        this.carrier = carrier;
+    }
+
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
 }

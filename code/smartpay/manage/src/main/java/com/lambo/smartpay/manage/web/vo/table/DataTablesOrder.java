@@ -1,6 +1,7 @@
 package com.lambo.smartpay.manage.web.vo.table;
 
 import com.lambo.smartpay.core.persistence.entity.Order;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.DateFormat;
@@ -23,6 +24,7 @@ public class DataTablesOrder {
     private String siteName;
     private Long customerId;
     private String customerName;
+    private String customerAddress;
     private String createdTime;
     private Long orderStatusId;
     private String orderStatusName;
@@ -41,6 +43,10 @@ public class DataTablesOrder {
         customerId = order.getCustomer().getId();
         customerName = order.getCustomer().getLastName() + ", " + order.getCustomer()
                 .getFirstName();
+        customerAddress = StringUtils.join(
+                new String[]{order.getCustomer().getAddress1(), order.getCustomer().getCity(),
+                        order.getCustomer().getState(), order.getCustomer().getZipCode(),
+                        order.getCustomer().getCountry()}, " ");
         Locale locale = LocaleContextHolder.getLocale();
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         createdTime = dateFormat.format(order.getCreatedTime());
@@ -166,5 +172,13 @@ public class DataTablesOrder {
 
     public void setOrderStatusName(String orderStatusName) {
         this.orderStatusName = orderStatusName;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
     }
 }

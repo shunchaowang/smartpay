@@ -72,27 +72,27 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/list${domain}",
+                'url': "${rootURL}${controller}/listWaitForShipping",
                 'type': "GET",
                 'dataType': 'json'
             },
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'orderId'},
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'merchantNumber', 'targets': 1, 'data': 'orderNumber',
+                    'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}order" + '/show/'
-                                + row['orderId'] + '>' + data + '</a>';
+                                + row['id'] + '>' + data + '</a>';
                     }
                 },
                 {
-                    'name': 'orderAmount', 'targets': 2, 'searchable': true,
-                    'orderable': false, 'data': 'orderAmount'
+                    'name': 'amount', 'targets': 2, 'searchable': true,
+                    'orderable': false, 'data': 'amount'
                 },
                 {
-                    'name': 'orderCurrency', 'targets': 3, 'searchable': true,
-                    'orderable': false, 'data': 'orderCurrency'
+                    'name': 'currency', 'targets': 3, 'searchable': true,
+                    'orderable': false, 'data': 'currencyName'
                 },
                 {
                     'name': 'createdTime', 'targets': 4, 'searchable': false,
@@ -114,7 +114,7 @@
                     'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="addShipment-button"'
-                                + ' class="tableButton" value="' + row['orderId'] + '">'
+                                + ' class="tableButton" value="' + row['id'] + '">'
                                 + '<spring:message code="action.ship.label"/>'
                                 + '</button>';
                     }
