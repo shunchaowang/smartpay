@@ -39,6 +39,13 @@ public abstract class ResourceProperties {
     public static final String REFUND_STATUS_INITIATED_CODE = "401";
     public static final String REFUND_STATUS_APPROVED_CODE = "502";
 
+    // payment status
+    public static final String PAYMENT_STATUS_APPROVED_CODE = "500";
+    public static final String PAYMENT_STATUS_DECLINED_CODE = "501";
+    public static final String PAYMENT_STATUS_CLAIM_PENDING_CODE = "400";
+    public static final String PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE = "401";
+    public static final String PAYMENT_STATUS_CLAIM_RESOLVED_CODE = "502";
+
     public enum JpaOrderDir {
         ASC("ASC"),
         DESC("DESC");

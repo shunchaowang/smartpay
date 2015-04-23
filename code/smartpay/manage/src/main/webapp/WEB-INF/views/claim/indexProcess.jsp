@@ -10,7 +10,10 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}/index" class="current">
+            <a href="${rootURL}${controller}/indexResolved">
+                <spring:message code="index.label" arguments="${entity}"/>
+            </a>
+            <a href="${rootURL}${controller}/indexProcess" class="current">
                 <spring:message code="manage.label" arguments="${entity}"/>
             </a>
         </div>
@@ -65,7 +68,7 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}${controller}/listResolved",
                 'type': "GET",
                 'dataType': 'json'
             },

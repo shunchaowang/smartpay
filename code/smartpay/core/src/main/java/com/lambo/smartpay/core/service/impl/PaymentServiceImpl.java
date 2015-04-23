@@ -4,7 +4,9 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.dao.PaymentDao;
+import com.lambo.smartpay.core.persistence.dao.PaymentStatusDao;
 import com.lambo.smartpay.core.persistence.entity.Payment;
+import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,42 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
     private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
     @Autowired
     private PaymentDao paymentDao;
+    @Autowired
+    private PaymentStatusDao paymentStatusDao;
+
+    @Override
+    public Payment initiatePaymentClaim(Payment payment) {
+
+        if (payment == null) {
+            return null;
+        }
+        PaymentStatus paymentStatus = paymentStatusDao.findByCode(ResourceProperties
+                .PAYMENT_STATUS_CLAIM_PENDING_CODE);
+        payment.setPaymentStatus(paymentStatus);
+        return paymentDao.update(payment);
+    }
+
+    @Override
+    public Payment processPaymentClaim(Payment payment) {
+        if (payment == null) {
+            return null;
+        }
+        PaymentStatus paymentStatus = paymentStatusDao.findByCode(ResourceProperties
+                .PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE);
+        payment.setPaymentStatus(paymentStatus);
+        return paymentDao.update(payment);
+    }
+
+    @Override
+    public Payment resolvePaymentClaim(Payment payment) {
+        if (payment == null) {
+            return null;
+        }
+        PaymentStatus paymentStatus = paymentStatusDao.findByCode(ResourceProperties
+                .PAYMENT_STATUS_CLAIM_RESOLVED_CODE);
+        payment.setPaymentStatus(paymentStatus);
+        return paymentDao.update(payment);
+    }
 
     /**
      * Dynamic search like grails findBy...

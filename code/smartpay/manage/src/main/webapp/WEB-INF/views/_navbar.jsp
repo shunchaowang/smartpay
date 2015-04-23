@@ -254,7 +254,7 @@
                     </li>
                     <!-- manage claim  -->
                     <li class="">
-                        <a href="${rootURL}claim/initiateClaim">
+                        <a href="${rootURL}claim/indexApproved">
                                 <span> >>
                                     <spring:message code="manage.label" arguments="${paymentRefused}"/>
                                 </span>
@@ -262,7 +262,7 @@
                     </li>
                     <!-- resolve claim -->
                     <li class="">
-                        <a href="${rootURL}claim/resolveClaim">
+                        <a href="${rootURL}claim/indexProcess">
                                 <span> >>
                                     <spring:message code="audit.label" arguments="${paymentRefused}"/>
                                 </span>

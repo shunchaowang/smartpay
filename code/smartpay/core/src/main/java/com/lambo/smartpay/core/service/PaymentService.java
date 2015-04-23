@@ -7,4 +7,9 @@ import com.lambo.smartpay.core.persistence.entity.Payment;
  */
 public interface PaymentService extends GenericDateQueryService<Payment, Long> {
 
+    Payment initiatePaymentClaim(Payment payment);
+
+    Payment processPaymentClaim(Payment payment);
+
+    Payment resolvePaymentClaim(Payment payment);
 }

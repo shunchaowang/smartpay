@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
 </c:if>
-<spring:message code="Refund.label" var="refund"/>
+
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -11,18 +10,17 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}/index">
-                <spring:message code="index.label" arguments="${refund}"/>
+            <a href="${rootURL}${controller}/indexResolved">
+                <spring:message code="index.label" arguments="${entity}"/>
             </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="${action}.label" arguments="${entity}"/>
+            <a href="${rootURL}${controller}/indexApproved" class="current">
+                <spring:message code="manage.label" arguments="${entity}"/>
             </a>
         </div>
     </div>
-    <!-- reserved for notification -->
+
     <!-- close of content-header -->
     <div class="container-fluid">
-        <!— actual content —>
         <div class="row-fluid">
             <div class="col-sm-12">
                 <div class="widget-box">
@@ -31,16 +29,19 @@
                         <h5><spring:message code="index.label" arguments="${entity}"/></h5>
                     </div>
                     <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="refund-table">
+                        <table class="table display table-bordered data-table" id="payment-table">
                             <thead>
                             <tr>
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="orderNumber.label"/></th>
+                                <th><spring:message code="bankTransactionNumber.label"/></th>
+                                <th><spring:message code="bankName.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="status.label"/></th>
-                                <th><spring:message code="Customer.label"/></th>
+                                <th><spring:message code="returnCode.label"/></th>
+                                <th><spring:message code="paymentStatusName.label"/></th>
+                                <th><spring:message code="paymentTypeName.label"/></th>
                                 <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
@@ -50,14 +51,13 @@
                 </div>
             </div>
         </div>
-
         <div id="dialog-area"></div>
     </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var refundTable = $('#refund-table').DataTable({
+        var paymentTable = $('#payment-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -69,7 +69,7 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/listPaidOrder",
+                'url': "${rootURL}${controller}/listApproved",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -77,50 +77,65 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber'
+                    'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber'
                 },
                 {
-                    'name': 'amount', 'targets': 2, 'searchable': true,
-                    'orderable': false, 'data': 'amount'
+                    'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber'
                 },
                 {
-                    'name': 'currency', 'targets': 3, 'searchable': true,
-                    'orderable': false, 'data': 'currencyName'
+                    'name': 'bankName', 'targets': 3, 'searchable': false, 'orderable': false,
+                    'data': 'bankName'
                 },
                 {
-                    'name': 'createdTime', 'targets': 4, 'searchable': false,
+                    'name': 'amount', 'targets': 4, 'data': 'amount'
+                },
+                {
+                    'name': 'currencyName', 'targets': 5, 'searchable': false, 'orderable': false,
+                    'data': 'currencyName'
+                },
+                {
+                    'name': 'createdTime', 'targets': 6, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'orderStatus', 'targets': 5, 'searchable': false,
-                    'orderable': false, 'data': 'orderStatusName'
+                    'name': 'bankReturnCode', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'data': 'bankReturnCode'
                 },
                 {
-                    'name': 'customerName', 'targets': 6, 'searchable': false,
-                    'orderable': false, 'data': 'customerName'
+                    'name': 'paymentStatusName',
+                    'targets': 8,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'paymentStatusName'
                 },
                 {
-                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'name': 'paymentTypeName',
+                    'targets': 9,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'paymentTypeName'
+                },
+                {
+                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<button class="tableButton" type="button" name="refund-button"'
-                                + ' value="' + row['id'] + '">'
-                                + '<spring:message code="refund.label"/>' + '</button>';
+                        return '<button type="button" name="new-claim-button"'
+                                + ' class="tableButton" + value="' + row['id'] + '">'
+                                + '<spring:message code="action.refusePayment.label"/>'
+                                + '</button>';
                     }
                 }
             ]
         });
 
-
         // add live handler for add refund button
-        refundTable.on('click', 'button[type=button][name=refund-button]', function
+        paymentTable.on('click', 'button[type=button][name=new-claim-button]', function
                 (event) {
             event.preventDefault();
             $.ajax({
                 type: 'get',
-                url: "${rootURL}${controller}/addRefund",
+                url: "${rootURL}${controller}/addClaim",
                 data: {
-                    orderId: this.value,
-                    amount: this.amount
+                    paymentId: this.value
                 },
                 error: function () {
                     alert('There was an error.');
@@ -129,7 +144,7 @@
                     $('#dialog-area').append(data);
 
                     // define dialog
-                    var refundDialog = $("#refund-dialog").dialog({
+                    var claimDialog = $("#claim-dialog").dialog({
                         autoOpen: false,
                         height: 'auto',
                         width: 600,
@@ -139,28 +154,44 @@
                             $(".ui-dialog-titlebar-close", ui.dialog || ui).hide();
                         },
                         close: function () {
-                            refundDialog.dialog("destroy").remove();
+                            claimDialog.dialog("destroy").remove();
                         }
                     }).dialog("open");
 
                     $("#cancel-button").click(function (event) {
                         event.preventDefault();
-                        refundDialog.dialog("close");
+                        claimDialog.dialog("close");
                     });
 
                     $("#save-button").click(function (event) {
                         event.preventDefault();
 
+                        // update submit button to indicate busy
+                        //$(this).find("#save-button").attr("disabled","disabled").addClass("busy");
+                        // get the data of the file
+                        var formData = new FormData();
+
+                        formData.append("paymentId", $("#paymentId").val());
+                        formData.append("remark", $("#remark").val());
+                        formData.append("file", $("#file").get(0).files[0]);
                         $.ajax({
-                            type: 'post',
-                            url: "${rootURL}${controller}/addRefund",
-                            data: {
-                                orderId: $("#orderId").val(),
-                                amount: $("#amount").val(),
-                                remark: $("#remark").val()
-                            },
-                            error: function () {
-                                alert('There was an error.');
+                            type: "POST",
+                            url: "${rootURL}${controller}/addClaim",
+                            // set mimeType to be multipart form to
+                            // upload file
+                            mimeType: "multipart/form-data",
+                            // set content type to false or jQuery will tell
+                            // the server its a query string request
+                            contentType: false,
+                            // don't process the files or jQuery will convert
+                            // the files array into strings, and server
+                            // cannot pick it up
+                            processData: false,
+                            cache: false,
+                            data: formData,
+                            dataType: "json",
+                            error: function (data) {
+                                alert("There was an error");
                             },
                             success: function (data) {
                                 var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
@@ -171,19 +202,15 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                refundDialog.dialog("close");
-                                refundTable.ajax.reload();
+                                claimDialog.dialog("close");
+                                paymentTable.ajax.reload();
                             }
                         });
+                        //});
                     });
 
-                    $("#new-refund-form").validate({
+                    $("#new-claim-form").validate({
                         rules: {
-                            amount: {
-                                required: true,
-                                minlength: 1,
-                                maxlength: 32
-                            },
                             remark: {
                                 required: true,
                                 minlength: 5,
