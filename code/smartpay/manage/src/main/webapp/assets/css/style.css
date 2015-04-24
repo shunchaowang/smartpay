@@ -8,7 +8,7 @@
 body {
     overflow-x: hidden;
     margin-top: -9px;
-    margin-bottom:50px;
+    margin-bottom: 50px;
 }
 
 a:link {
@@ -31,10 +31,11 @@ a:active {
     color: #F77825;
 }
 
-.tableButtonA{
+.tableButtonA {
     color: #000000;
     text-decoration: none;
 }
+
 /* Header */
 #header {
     height: 64px;
@@ -54,8 +55,10 @@ a:active {
 }
 
 #header h2 {
-    color: #ffffff; !important;
-    font-size: 20px; !important;
+    color: #ffffff;
+!important;
+    font-size: 20px;
+!important;
 }
 
 #header h1 a {
@@ -379,10 +382,10 @@ a:active {
     padding: 10px 0;
     background: #2B2927;
     position: fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    margin-bottom:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-bottom: 0;
 }
 
 #tooltip {
@@ -942,7 +945,7 @@ form {
 @media (max-width: 767px) {
     body {
         padding: 0 !important;
-        margin-bottom:50px;
+        margin-bottom: 50px;
     }
 
     .container-fluid {
@@ -1205,4 +1208,9 @@ table.dataTable th.sorting_desc {
 .ui-datepicker {
     background-color: #e5e5e5;
     padding: 5px;
+}
+
+/** dialog title bar hidden */
+.ui-dialog-titlebar-close {
+    display: none;
 }

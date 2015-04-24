@@ -254,8 +254,6 @@ public class RefundController {
         order.setOrderStatus(refundedOrderStatus);
         // when persisting refund, order should be cascaded merged
         String domain = messageSource.getMessage("Refund.label", null, locale);
-        String failedMessage = messageSource.getMessage("not.saved.message",
-                new String[]{domain, amount + " " + remark}, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, amount + " " + remark}, locale);
         try {

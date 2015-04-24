@@ -52,6 +52,7 @@
             </div>
         </div>
     </div>
+    <div id="dialog-area"></div>
 </div>
 
 <script type="text/javascript">
@@ -68,7 +69,7 @@
             'dom': '<""if>rt<"F"lp>',
 
             'ajax': {
-                'url': "${rootURL}${controller}/listResolved",
+                'url': "${rootURL}${controller}/listProcess",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -76,29 +77,17 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
+                    'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber'
                 },
                 {
-                    'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
+                    'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber'
                 },
                 {
                     'name': 'bankName', 'targets': 3, 'searchable': false, 'orderable': false,
                     'data': 'bankName'
                 },
                 {
-                    'name': 'amount', 'targets': 4, 'data': 'amount',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
+                    'name': 'amount', 'targets': 4, 'data': 'amount'
                 },
                 {
                     'name': 'currencyName', 'targets': 5, 'searchable': false, 'orderable': false,
@@ -129,14 +118,59 @@
                 {
                     'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>';
+                        return '<button type="button" name="show-claim-button"'
+                                + ' class="tableButton" value="' + row['id'] + '">'
+                                + '<spring:message code="action.show.label"/>'
+                                + '</button>'
+                                + '<button type="button" name="audit-claim-button"'
+                                + ' class="tableButton" value="' + row['id'] + '">'
+                                + '<spring:message code="action.audit.label"/>'
+                                + '</button>';
                     }
                 }
             ]
+        });
+
+        // add live handler for add refund button
+        paymentTable.on('click', 'button[type=button][name=show-claim-button]', function
+                (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}${controller}/showClaim",
+                data: {
+                    paymentId: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var claimDialog = $("#claim-dialog").dialog({
+                        autoOpen: false,
+                        height: 'auto',
+                        width: 600,
+                        modal: true,
+                        //dialogClass: "dialogClass",
+                        open: function (event, ui) {
+                            $(".ui-dialog-titlebar-close", ui.dialog || ui).hide();
+                        },
+                        close: function () {
+                            claimDialog.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#close-button").click(function (event) {
+                        event.preventDefault();
+                        claimDialog.dialog("close");
+                    });
+
+                    // initialize the claim list table
+
+                }
+            });
         });
     });
 </script>

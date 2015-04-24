@@ -34,6 +34,7 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
     private PaymentStatusDao paymentStatusDao;
 
     @Override
+    @Transactional
     public Payment initiatePaymentClaim(Payment payment) {
 
         if (payment == null) {
@@ -46,6 +47,7 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
     }
 
     @Override
+    @Transactional
     public Payment processPaymentClaim(Payment payment) {
         if (payment == null) {
             return null;
@@ -57,6 +59,7 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
     }
 
     @Override
+    @Transactional
     public Payment resolvePaymentClaim(Payment payment) {
         if (payment == null) {
             return null;

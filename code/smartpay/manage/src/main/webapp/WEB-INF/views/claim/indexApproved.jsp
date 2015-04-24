@@ -51,8 +51,8 @@
                 </div>
             </div>
         </div>
-        <div id="dialog-area"></div>
     </div>
+    <div id="dialog-area"></div>
 </div>
 
 <script type="text/javascript">
@@ -119,7 +119,7 @@
                     'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="new-claim-button"'
-                                + ' class="tableButton" + value="' + row['id'] + '">'
+                                + ' class="tableButton" value="' + row['id'] + '">'
                                 + '<spring:message code="action.refusePayment.label"/>'
                                 + '</button>';
                     }
@@ -173,7 +173,7 @@
 
                         formData.append("paymentId", $("#paymentId").val());
                         formData.append("remark", $("#remark").val());
-                        formData.append("file", $("#file").get(0).files[0]);
+                        formData.append("file", $("#file")[0].files[0]);
                         $.ajax({
                             type: "POST",
                             url: "${rootURL}${controller}/addClaim",

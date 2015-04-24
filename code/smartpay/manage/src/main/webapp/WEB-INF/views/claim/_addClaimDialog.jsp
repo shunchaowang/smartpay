@@ -1,6 +1,6 @@
 <%@include file="../taglib.jsp" %>
-<spring:message var="formTitle" code="create.label" arguments="${PaymentRefused}"/>
-<spring:message var="cancelAction" code="action.cancel.label"/>
+<spring:message code="${domain}.label" var="entity"/>
+<spring:message var="formTitle" code="create.label" arguments="${entity}"/>
 
 <style media="screen" type="text/css">
 
@@ -37,9 +37,9 @@
             </label>
 
             <div class="controls">
-                <input size="40" name="remark" id="remark"
-                       class="text" required=""
-                       placeholder="Remark"/>
+                <textarea rows="4" cols="50" name="remark" id="remark"
+                       class="text" required="">
+                </textarea>
             </div>
         </div>
         <!-- buttons -->
