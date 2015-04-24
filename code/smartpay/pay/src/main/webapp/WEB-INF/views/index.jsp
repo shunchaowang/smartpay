@@ -232,12 +232,12 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label" for="merMd5info">
+            <label class="col-sm-3 control-label" for="md5Info">
                 <span class="required-indicator">*</span>md5Info:
             </label>
 
             <div class="col-sm-6">
-                <input name="merMd5info" id="merMd5info" class="form-control"
+                <input name="md5Info" id="md5Info" class="form-control"
                        value="${md5Info}"/>
             </div>
         </div>

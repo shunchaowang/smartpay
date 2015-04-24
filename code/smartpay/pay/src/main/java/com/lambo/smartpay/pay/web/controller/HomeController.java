@@ -121,10 +121,12 @@ public class HomeController {
         orderCommand.setShipCountry("US");
 
         model.addAttribute("orderCommand", orderCommand);
-        // check md5info, md5 summary should be generated based merKey, merNo,
-        // orderNo, formatted amount, 3 uppercase currency characters
-        String calculatedMd5Info = MDUtil.getMD5Str("12345" + "M0000000"
-                + "O1111111" + "12.34" + "USD");
+        // check md5info, md5 summary should be generated based on merNo,
+        // orderNo, formatted amount, 3 uppercase currency characters, merKey and email
+        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
+                + orderCommand.getOrderNo() + orderCommand.getAmount() + orderCommand.getCurrency()
+                + "12345" + orderCommand.getEmail());
+
         model.addAttribute("md5Info", calculatedMd5Info);
         return new ModelAndView("index");
     }
@@ -159,7 +161,7 @@ public class HomeController {
             throw new BadRequestException("400", "Currency is blank.");
         }
 
-        String md5Info = formatString(request.getParameter("merMd5info"));
+        String md5Info = formatString(request.getParameter("md5Info"));
         logger.debug("MD5 summary is " + md5Info);
         if (StringUtils.isBlank(md5Info)) {
             throw new BadRequestException("400", "MD5 summary is blank.");
@@ -274,10 +276,10 @@ public class HomeController {
             return "403";
         }
 
-        // check md5info, md5 summary should be generated based merNo, merKey,
-        // siteNo and formatted amount
-        String calculatedMd5Info = MDUtil.getMD5Str(merchantKey + merNo + orderNo
-                + amount + currency);
+        // check md5info, md5 summary should be generated based merNo, orderNo, formatted amount,
+        // 3 uppercase characters currency, merchantKey and email
+        String calculatedMd5Info = MDUtil.getMD5Str(merNo + orderNo + amount + currency
+                + merchantKey + email);
         if (!md5Info.equals(calculatedMd5Info)) {
             String succeed = "0";
             String errcode = "1002. MD5 Info Checking Error.";
@@ -504,9 +506,7 @@ public class HomeController {
             throw new BadRequestException("400", e.getMessage());
         }
 
-        // return string
-        // check md5info, md5 summary should be generated based merNo, merKey,
-        // siteNo and formatted amount
+        // return string md5 encoded return string
         String calculatedMd5Info = MDUtil.getMD5Str(merchantKey + orderCommand.getMerNo()
                 + orderCommand.getOrderNo() + orderCommand.getAmount()
                 + orderCommand.getCurrency() + succeed);
@@ -772,7 +772,6 @@ public class HomeController {
         pairs.add(new BasicNameValuePair("orderNo", orderCommand.getOrderNo()));
         pairs.add(new BasicNameValuePair("email", orderCommand.getEmail()));
         pairs.add(new BasicNameValuePair("phone", orderCommand.getPhone()));
-        pairs.add(new BasicNameValuePair("merNo", orderCommand.getMerNo()));
         pairs.add(new BasicNameValuePair("returnURL", orderCommand.getReturnUrl()));
         pairs.add(new BasicNameValuePair("productType", orderCommand.getProductType()));
         pairs.add(new BasicNameValuePair("amount", orderCommand.getAmount()));
