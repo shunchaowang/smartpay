@@ -128,7 +128,7 @@
                                 + '</button>'
                                 + '<button type="button" name="audit-claim-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">'
-                                + '<spring:message code="action.audit.label"/>'
+                                + '<spring:message code="action.complete.label"/>'
                                 + '</button>';
                     }
                 }

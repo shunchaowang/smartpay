@@ -11,7 +11,7 @@
                 <spring:message code="home.label"/>
             </a>
             <a href="${rootURL}${controller}/indexResolved" class="current">
-                <spring:message code="manage.label" arguments="${entity}"/>
+                <spring:message code="index.label" arguments="${entity}"/>
             </a>
         </div>
     </div>
