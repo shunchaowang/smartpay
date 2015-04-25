@@ -152,7 +152,7 @@ public class HomeController {
         if (StringUtils.isBlank(amount)) {
             throw new BadRequestException("400", "Amount is blank.");
         }
-        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+        DecimalFormat decimalFormat = new DecimalFormat("###.00");
         amount = decimalFormat.format(Float.parseFloat(amount));
 
         String currency = formatString(request.getParameter("currency"));
@@ -551,7 +551,7 @@ public class HomeController {
         orderCommand.setMerNo(request.getParameter("merNo"));
         orderCommand.setSiteNo(request.getParameter("siteNo"));
         orderCommand.setReturnUrl(request.getParameter("returnURL"));
-        DecimalFormat decimalFormat = new DecimalFormat("###.##");
+        DecimalFormat decimalFormat = new DecimalFormat("###.00");
         String amount = request.getParameter("amount");
         orderCommand.setAmount(decimalFormat.format(Float.parseFloat(amount)));
         orderCommand.setCurrency(request.getParameter("currency"));
