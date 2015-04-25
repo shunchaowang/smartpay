@@ -1204,6 +1204,14 @@ table.dataTable th.sorting_desc {
     color: #606060;
 }
 
+.tableWideButton {
+    width: 100px;
+    height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    color: #606060;
+}
+
 /** datepicker */
 .ui-datepicker {
     background-color: #e5e5e5;

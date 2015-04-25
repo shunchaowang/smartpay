@@ -124,11 +124,7 @@
                                 + '</button>'
                                 + '<button type="button" name="add-claim-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">'
-                                + '<spring:message code="action.revoke.label"/>'
-                                + '</button>'
-                                + '<button type="button" name="audit-claim-button"'
-                                + ' class="tableButton" value="' + row['id'] + '">'
-                                + '<spring:message code="action.audit.label"/>'
+                                + '<spring:message code="action.claim.label"/>'
                                 + '</button>';
                     }
                 }
@@ -265,33 +261,6 @@
                             }
                         }
                     });
-                }
-            });
-        });
-
-        // add live handler for audit claim button
-        paymentTable.on('click', 'button[type=button][name=audit-claim-button]', function
-                (event) {
-            event.preventDefault();
-            $.ajax({
-                type: 'post',
-                url: "${rootURL}${controller}/auditClaim",
-                data: {
-                    paymentId: this.value
-                },
-                error: function () {
-                    alert('There was an error.');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    paymentTable.ajax.reload();
                 }
             });
         });

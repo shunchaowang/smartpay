@@ -1321,3 +1321,8 @@ table.dataTable th.sorting_desc {
     background-color: #e5e5e5;
     padding: 5px;
 }
+
+/** dialog title bar hidden */
+.ui-dialog-titlebar-close {
+    display: none;
+}

@@ -14,6 +14,8 @@
         <spring:message code='Refund.label' var="refund"/>
         <spring:message code='Shipment.label' var="shipment"/>
         <spring:message code='currency.label' var="currency"/>
+        <spring:message code='Complain.label' var="complain"/>
+        <spring:message code='PaymentRefused.label' var="paymentRefused"/>
 
         <ul>
             <!--    HOME    -->
@@ -178,7 +180,35 @@
                     </li>
                 </ul>
             </li>
-
+            <li class="dropdown">
+                <a class="dropdown-toggle" role="button" data-toggle="dropdown"
+                   data-target="#" href="#"><i class="icon icon-th-list"></i>
+                        <span>
+                        <spring:message code="manage.label" arguments="${complain}"/>
+                        <b class="caret"></b>
+                            </span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- query claim -->
+                    <li class="">
+                        <a href="${rootURL}claim/indexResolved">
+                                <span> >>
+                                    <spring:message code="info.label"
+                                                    arguments="${paymentRefused}"/>
+                                </span>
+                        </a>
+                    </li>
+                    <!-- claim claim -->
+                    <li class="">
+                        <a href="${rootURL}claim/indexProcess">
+                                <span> >>
+                                    <spring:message code="claim.label"
+                                                    arguments="${paymentRefused}"/>
+                                </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <!-- merchant admin menu ends -->
 

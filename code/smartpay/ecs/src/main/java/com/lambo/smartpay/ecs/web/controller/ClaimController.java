@@ -1,24 +1,28 @@
-package com.lambo.smartpay.manage.web.controller;
+package com.lambo.smartpay.ecs.web.controller;
 
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.Claim;
+import com.lambo.smartpay.core.persistence.entity.Merchant;
+import com.lambo.smartpay.core.persistence.entity.Order;
 import com.lambo.smartpay.core.persistence.entity.Payment;
 import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
+import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.service.ClaimService;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.service.PaymentStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
-import com.lambo.smartpay.manage.util.DataTablesParams;
-import com.lambo.smartpay.manage.util.JsonUtil;
-import com.lambo.smartpay.manage.web.exception.BadRequestException;
-import com.lambo.smartpay.manage.web.exception.IntervalServerException;
-import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesClaim;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
-import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
+import com.lambo.smartpay.ecs.config.SecurityUser;
+import com.lambo.smartpay.ecs.util.DataTablesParams;
+import com.lambo.smartpay.ecs.util.JsonUtil;
+import com.lambo.smartpay.ecs.web.exception.BadRequestException;
+import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
+import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesClaim;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesPayment;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,9 +90,7 @@ public class ClaimController {
     public String index(@PathVariable("domain") String domain, Model model) {
 
         String action = "";
-        if (domain.equals("Approved")) {
-            action = "indexApproved";
-        } else if (domain.equals("Process")) {
+        if (domain.equals("Process")) {
             action = "indexProcess";
         } else if (domain.equals("Resolved")) {
             action = "indexResolved";
@@ -116,9 +118,7 @@ public class ClaimController {
         // only approved payment status can be initiated to be pending, this list
         // will show all approved payment and user can mark any of them to be claim pending
 
-        if (domain.equals("Approved")) { // for indexApproved, only approved payment
-            paymentStatusCode = ResourceProperties.PAYMENT_STATUS_APPROVED_CODE;
-        } else if (domain.equals("Process")) { // for indexProcess, only payment status process
+        if (domain.equals("Process")) { // for indexProcess, only payment status process
             paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE;
         } else if (domain.equals("Resolved")) { // for indexResolved, only payment status resolved
             paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE;
@@ -136,6 +136,16 @@ public class ClaimController {
         DataTablesParams params = new DataTablesParams(request);
         Payment paymentCriteria = new Payment();
         paymentCriteria.setPaymentStatus(paymentStatus);
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+        Merchant merchant = securityUser.getMerchant();
+        Order orderCriteria = new Order();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        orderCriteria.setSite(siteCriteria);
+        paymentCriteria.setOrder(orderCriteria);
 
         List<Payment> payments = paymentService.findByCriteria(paymentCriteria, params.getSearch(),
                 Integer.valueOf(params.getOffset()), Integer.valueOf(params.getMax()),
@@ -327,33 +337,5 @@ public class ClaimController {
         }
 
         return null;
-    }
-
-    @RequestMapping(value = {"/auditClaim"}, method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String auditClaim(HttpServletRequest request) {
-
-        JsonResponse response = new JsonResponse();
-        Locale locale = LocaleContextHolder.getLocale();
-        Long paymentId = Long.valueOf(request.getParameter("paymentId"));
-
-        Payment payment = null;
-        try {
-            payment = paymentService.get(paymentId);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "Cannot find payment " + paymentId);
-        }
-
-        // set payment status to be claim in pending
-        payment = paymentService.resolvePaymentClaim(payment);
-        String domain = messageSource.getMessage("PaymentRefused.label", null, locale);
-        String successfulMessage = messageSource.getMessage("audit.message",
-                new String[]{domain, payment.getBankTransactionNumber()}, locale);
-        response.setStatus("successful");
-        response.setMessage(successfulMessage);
-
-        return JsonUtil.toJson(response);
     }
 }
