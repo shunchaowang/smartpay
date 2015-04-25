@@ -214,9 +214,18 @@
                         // get the data of the file
                         var formData = new FormData();
 
+                        var file = $("#file")[0].files[0];
+                        var fileSize = (file.size/1024/1024).toFixed(2);
+                        if(fileSize > 20) {
+                            alert('The size of file ' + file.name + ' is ' +
+                            fileSize + 'M exceeding 20M limit ' +
+                            'file size.');
+                            return;
+                        }
+
                         formData.append("paymentId", $("#paymentId").val());
                         formData.append("remark", $("#remark").val());
-                        formData.append("file", $("#file")[0].files[0]);
+                        formData.append("file", file);
                         $.ajax({
                             type: "POST",
                             url: "${rootURL}${controller}/addClaim",
