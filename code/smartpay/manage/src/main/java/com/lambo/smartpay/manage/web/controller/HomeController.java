@@ -5,6 +5,8 @@ import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,10 +20,9 @@ import com.lambo.smartpay.manage.web.vo.PasswordCommand;
 import com.lambo.smartpay.manage.config.SecurityUser;
 import org.springframework.context.MessageSource;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.vo.UserCommand;
 
-
-
-
+import java.text.DateFormat;
 import java.util.Locale;
 
 /**
@@ -30,6 +31,7 @@ import java.util.Locale;
 @Controller
 public class HomeController {
 
+    private static Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     private UserService userService;
@@ -109,5 +111,119 @@ public class HomeController {
         model.addAttribute("action", "index");
         return "main";
     }
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public String profile(Model model) {
 
+        User user = null;
+        try {
+            user = UserResource.getCurrentUser();
+        } catch (BadRequestException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User not found.");
+        }
+
+        // create command user and add to model and view
+        UserCommand userCommand = createUserCommand(user);
+        model.addAttribute("userCommand", userCommand);
+        model.addAttribute("action", "profile");
+        return "main";
+    }
+
+    /**
+     * Save a user.
+     *
+     * @param userCommand
+     * @return
+     */
+    @RequestMapping(value = "/profile", method = RequestMethod.POST)
+    public String updateProfile(Model model, @ModelAttribute("userCommand") UserCommand
+            userCommand) {
+        Locale locale = LocaleContextHolder.getLocale();
+
+        // if the email is change we need to check uniqueness
+        User user = null;
+        try {
+            user = userService.get(userCommand.getId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        if (user == null) {
+            throw new BadRequestException("400", "User " + userCommand.getId() + " not found.");
+        }
+
+        // create command user and add to model and view
+        if (!userCommand.getEmail().equals(user.getEmail())) {
+            User emailUser = userService.findByEmail(userCommand.getEmail());
+            if (emailUser != null) {
+                // get locale and messages
+                String fieldLabel = messageSource.getMessage("email.label", null, locale);
+                model.addAttribute("message",
+                        messageSource.getMessage("not.unique.message",
+                                new String[]{fieldLabel, userCommand.getEmail()}, locale));
+                model.addAttribute("userCommand", userCommand);
+                model.addAttribute("action", "profile");
+                return "main";
+            }
+        }
+
+        // pass uniqueness check create the user
+        editUser(user, userCommand);
+
+        // user is a user edited by merchant admin
+        try {
+            userService.update(user);
+            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.updated.message",
+                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
+        }
+        return "redirect:/index";
+    }
+
+    // create UserCommand from User
+    private UserCommand createUserCommand(User user) {
+        UserCommand userCommand = new UserCommand();
+        userCommand.setId(user.getId());
+        userCommand.setUsername(user.getUsername());
+        userCommand.setFirstName(user.getFirstName());
+        userCommand.setLastName(user.getLastName());
+        userCommand.setEmail(user.getEmail());
+        userCommand.setActive(user.getActive());
+        if(user.getCreatedTime()!=null) {
+            Locale locale = LocaleContextHolder.getLocale();
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+            userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
+        }
+        userCommand.setRemark(user.getRemark());
+        if (user.getMerchant() != null) {
+            userCommand.setMerchant(user.getMerchant().getId());
+            userCommand.setMerchantName(user.getMerchant().getName());
+        }
+
+        if (user.getUserStatus() != null) {
+            userCommand.setUserStatus(user.getUserStatus().getId());
+            userCommand.setUserStatusName(user.getUserStatus().getName());
+        }
+        return userCommand;
+    }
+
+    // edit a User from a UserCommand
+    private void editUser(User user, UserCommand userCommand) {
+        user.setFirstName(userCommand.getFirstName());
+        user.setLastName(userCommand.getLastName());
+        user.setEmail(userCommand.getEmail());
+        user.setRemark(userCommand.getRemark());
+    }
 }

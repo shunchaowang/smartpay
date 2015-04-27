@@ -288,7 +288,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}user/edit/0">
+                        <a href="${rootURL}profile">
                                 <span> >>
                                     <spring:message code="user.profile.label"/>
                                 </span>
