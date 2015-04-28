@@ -117,7 +117,7 @@ public class HomeController {
         User user = null;
         try {
             user = userService.get(UserResource.getCurrentUser().getId());
-        } catch (NoSuchEntityException e) {
+        }catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Cannot find user.");
         }
