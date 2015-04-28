@@ -116,10 +116,10 @@ public class HomeController {
 
         User user = null;
         try {
-            user = UserResource.getCurrentUser();
-        } catch (BadRequestException e) {
+            user = userService.get(UserResource.getCurrentUser().getId());
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User not found.");
+            throw new BadRequestException("400", "Cannot find user.");
         }
 
         // create command user and add to model and view
