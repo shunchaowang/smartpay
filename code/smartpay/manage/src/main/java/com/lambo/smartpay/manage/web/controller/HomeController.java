@@ -116,10 +116,10 @@ public class HomeController {
 
         User user = null;
         try {
-            user = UserResource.getCurrentUser();
-        } catch (BadRequestException e) {
+            user = userService.get(UserResource.getCurrentUser().getId());
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User not found.");
+            throw new BadRequestException("400", "Cannot find user.");
         }
 
         // create command user and add to model and view
@@ -201,11 +201,9 @@ public class HomeController {
         userCommand.setLastName(user.getLastName());
         userCommand.setEmail(user.getEmail());
         userCommand.setActive(user.getActive());
-        if(user.getCreatedTime()!=null) {
-            Locale locale = LocaleContextHolder.getLocale();
-            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-            userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
-        }
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
         userCommand.setRemark(user.getRemark());
         if (user.getMerchant() != null) {
             userCommand.setMerchant(user.getMerchant().getId());
