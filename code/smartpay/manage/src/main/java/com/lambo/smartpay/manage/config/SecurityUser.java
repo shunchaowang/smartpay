@@ -30,6 +30,8 @@ public class SecurityUser extends User implements UserDetails {
             this.setActive(user.getActive());
             this.setRoles(user.getRoles());
             this.setMerchant(user.getMerchant());
+            this.setCreatedTime(user.getCreatedTime());
+            this.setRemark(user.getRemark());
         }
     }
 

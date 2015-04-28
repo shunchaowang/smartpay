@@ -201,11 +201,9 @@ public class HomeController {
         userCommand.setLastName(user.getLastName());
         userCommand.setEmail(user.getEmail());
         userCommand.setActive(user.getActive());
-        if(user.getCreatedTime()!=null) {
-            Locale locale = LocaleContextHolder.getLocale();
-            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-            userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
-        }
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        userCommand.setCreatedTime(dateFormat.format(user.getCreatedTime()));
         userCommand.setRemark(user.getRemark());
         if (user.getMerchant() != null) {
             userCommand.setMerchant(user.getMerchant().getId());
