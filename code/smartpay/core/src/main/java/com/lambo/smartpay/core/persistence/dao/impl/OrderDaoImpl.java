@@ -40,7 +40,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
 
         TypedQuery<Order> typedQuery = entityManager.createQuery(query);
 
-        logger.debug("findByName query is " + typedQuery);
+        logger.debug("findByMerchantNumber query is " + typedQuery);
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {

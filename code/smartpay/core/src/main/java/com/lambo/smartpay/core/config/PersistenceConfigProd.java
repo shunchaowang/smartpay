@@ -1,6 +1,5 @@
 package com.lambo.smartpay.core.config;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,6 +22,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -90,15 +91,16 @@ public class PersistenceConfigProd {
 
     @Bean(name = "dataSource")
     public DataSource dataSource() {
-        LOG.debug("Creating instance of singleton bean '" + BasicDataSource.class.getName() + "'");
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-        dataSource.setUrl(env.getProperty("jdbc.url"));
-        dataSource.setUsername(env.getProperty("jdbc.username"));
-        dataSource.setPassword(env.getProperty("jdbc.password"));
-        // requires utf 8 to support Chinese query
-        dataSource.addConnectionProperty("useUnicode", "yes");
-        dataSource.addConnectionProperty("characterEncoding", "UTF-8");
+        LOG.debug("Creating instance of singleton bean '" + JndiTemplate.class.getName() + "'");
+        JndiTemplate jndiTemplate = new JndiTemplate();
+        String jndiResource = "java:comp/env/" + env.getProperty("jndi.name");
+        LOG.debug("JNDI resource is " + jndiResource);
+        DataSource dataSource = null;
+        try {
+            dataSource = (DataSource) jndiTemplate.lookup(jndiResource);
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
         return dataSource;
     }
 
