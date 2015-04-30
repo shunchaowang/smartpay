@@ -991,6 +991,37 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`CLAIMS` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `smartpay`.`LOGS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay`.`LOGS` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay`.`LOGS` (
+  `LOG_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `LOG_USERNAME` VARCHAR(127) NOT NULL,
+  `LOG_CONTENT` TEXT NOT NULL,
+  `LOG_CREATED_TIME` TIMESTAMP NOT NULL,
+  `LOG_ACTIVE` TINYINT NOT NULL,
+  PRIMARY KEY (`LOG_ID`),
+  UNIQUE INDEX `LOG_ID_UNIQUE` (`LOG_ID` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay`.`ANNOUNCEMENTS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay`.`ANNOUNCEMENTS` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay`.`ANNOUNCEMENTS` (
+  `ANMT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ANMT_CONTENT` TEXT NOT NULL,
+  `ANMT_CREATED_TIME` TIMESTAMP NOT NULL,
+  `ANMT_ACTIVE` TINYINT NOT NULL,
+  PRIMARY KEY (`ANMT_ID`),
+  UNIQUE INDEX `LOG_ID_UNIQUE` (`ANMT_ID` ASC))
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
