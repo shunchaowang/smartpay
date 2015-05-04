@@ -105,7 +105,8 @@
                     <div class="container-fluid table-bordered col-sm-8">
                         <h3><spring:message code="paymentInfo.label"/></h3>
 
-                        <form:form action="${rootURL}payByCard" method="POST" commandName="paymentCommand"
+                        <form:form action="${rootURL}payByCard" method="POST"
+                                   commandName="paymentCommand"
                                    cssClass="form-horizontal" id="pay-form">
                             <table class="table table-hover">
                                 <tr>
@@ -224,7 +225,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billFirstName" type="text"
+                                                <form:input path="billFirstName" type="hidden"
                                                             name='billFirstName' id='billFirstName'
                                                             value='${orderCommand.shipFirstName}'/>
                                             </div>
@@ -240,7 +241,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billLastName" type="text"
+                                                <form:input path="billLastName" type="hidden"
                                                             name='billLastName' id='billLastName'
                                                             value='${orderCommand.shipLastName}'/>
                                             </div>
@@ -256,7 +257,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billAddress1" type="text"
+                                                <form:input path="billAddress1" type="hidden"
                                                             name='billAddress1' id='billAddress1'
                                                             value='${orderCommand.shipAddress}'/>
                                             </div>
@@ -271,7 +272,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billCity" type="text"
+                                                <form:input path="billCity" type="hidden"
                                                             name='billCity' id='billCity'
                                                             value='${orderCommand.shipCity}'/>
                                             </div>
@@ -286,7 +287,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billState" type="text"
+                                                <form:input path="billState" type="hidden"
                                                             name='billState' id='billState'
                                                             value='${orderCommand.shipState}'/>
                                             </div>
@@ -301,7 +302,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billZipCode" type="text"
+                                                <form:input path="billZipCode" type="hidden"
                                                             name='billZipCode' id='billZipCode'
                                                             value='${orderCommand.shipZipCode}'/>
                                             </div>
@@ -316,7 +317,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billCountry" type="text"
+                                                <form:input path="billCountry" type="hidden"
                                                             name='billCountry' id='billCountry'
                                                             value='${orderCommand.shipCountry}'/>
                                             </div>
