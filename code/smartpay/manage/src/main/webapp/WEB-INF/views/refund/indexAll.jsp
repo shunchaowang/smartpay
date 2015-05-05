@@ -74,7 +74,7 @@
             'paging': true,
             "paginationType": "full_numbers",
             "jQueryUI": true,
-            'dom': 'T<""i>rt<"F"lp>',
+            'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [

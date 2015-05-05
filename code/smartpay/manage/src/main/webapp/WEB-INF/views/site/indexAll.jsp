@@ -50,7 +50,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var siteTable = $('#site-table').DataTable({
+        var siteTable = $('.data-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },

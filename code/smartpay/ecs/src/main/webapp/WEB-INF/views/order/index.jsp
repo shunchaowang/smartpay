@@ -76,6 +76,7 @@
                     }
                 ]
             },
+
             'ajax': {
                 'url': "${rootURL}${controller}/list",
                 'type': "GET",

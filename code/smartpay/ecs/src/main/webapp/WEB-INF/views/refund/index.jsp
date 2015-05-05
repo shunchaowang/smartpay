@@ -78,11 +78,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                     }
                 ]
             },
