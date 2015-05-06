@@ -36,21 +36,17 @@
                                 <th><spring:message code="Merchant.label"/></th>
                                 <th><spring:message code="Site.label"/></th>
                                 <th>
-                                    <spring:message code="Refund.label"/>
-                                    <spring:message code="id.label"/>
+                                    <spring:message code="Refund.label"/><spring:message code="id.label"/>
                                 </th>
                                 <th>
-                                    <spring:message code="Refund.label"/>
-                                    <spring:message code="amount.label"/>
+                                    <spring:message code="Refund.label"/><spring:message code="amount.label"/>
                                 </th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th>
-                                    <spring:message code="Order.label"/>
-                                    <spring:message code="merchantNumber.label"/>
+                                    <spring:message code="Order.label"/><spring:message code="merchantNumber.label"/>
                                 </th>
                                 <th>
-                                    <spring:message code="Order.label"/>
-                                    <spring:message code="amount.label"/>
+                                    <spring:message code="Order.label"/><spring:message code="amount.label"/>
                                 </th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="custom.label"/></th>

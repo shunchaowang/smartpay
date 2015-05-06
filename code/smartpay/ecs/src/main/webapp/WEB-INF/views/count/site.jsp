@@ -37,16 +37,13 @@
                             <thead>
                             <tr>
                                 <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="id.label"/>
+                                    <spring:message code="Site.label"/><spring:message code="id.label"/>
                                 </th>
                                 <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="identity.label"/>
+                                    <spring:message code="Site.label"/><spring:message code="identity.label"/>
                                 </th>
                                 <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="name.label"/>
+                                    <spring:message code="Site.label"/><spring:message code="name.label"/>
                                 </th>
                                 <th>
                                     <spring:message code="count.label"/>

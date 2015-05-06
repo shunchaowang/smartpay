@@ -31,7 +31,7 @@
                             <thead>
                             <tr>
                                 <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="identity.label"/></th>
+                                <th><spring:message code="identity.label"/><spring:message code="id.label"/></th>
                                 <th><spring:message code="name.label"/></th>
                                 <th><spring:message code="site.url.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
