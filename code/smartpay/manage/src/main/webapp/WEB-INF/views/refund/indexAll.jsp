@@ -33,7 +33,7 @@
                                 <th><spring:message code="Merchant.label"/></th>
                                 <th><spring:message code="Site.label"/></th>
                                 <th>
-                                    <spring:message code="Refund.label"/>
+                                    <spring:message code="Refund.label"/><spring:message code="id.label"/>
                                 </th>
                                 <th>
                                     <spring:message code="Refund.label"/><spring:message code="amount.label"/>
