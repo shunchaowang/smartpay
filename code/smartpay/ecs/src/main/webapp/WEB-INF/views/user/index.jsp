@@ -80,6 +80,7 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
+            "order": [[0, "desc"]],
             "jQueryUI": true,
             'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {

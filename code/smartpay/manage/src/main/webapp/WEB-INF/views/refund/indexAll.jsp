@@ -73,6 +73,7 @@
             'serverSide': true,
             'paging': true,
             "paginationType": "full_numbers",
+            "order": [[2, "desc"]],
             "jQueryUI": true,
             'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {

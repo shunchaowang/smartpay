@@ -51,7 +51,7 @@
             'processing': true,
             'serverSide': true,
             'paging': true,
-
+            "order": [[0, "desc"]],
             'ajax': {
                 'url': "${rootURL}${controller}/list",
                 'type': "GET",
