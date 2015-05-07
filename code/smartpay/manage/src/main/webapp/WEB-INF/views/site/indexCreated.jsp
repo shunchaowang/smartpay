@@ -37,6 +37,7 @@
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="identity.label"/></th>
                                 <th><spring:message code="name.label"/></th>
+                                <th><spring:message code="site.merchant.label"/></th>
                                 <th><spring:message code="site.url.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="status.label"/></th>
@@ -70,11 +71,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5]
+                        "mColumns": [1, 2, 3, 4, 5, 6]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5]
+                        "mColumns": [1, 2, 3, 4, 5, 6]
                     }
                 ]
             },
@@ -92,14 +93,15 @@
                 {
                     'name': 'name', 'targets': 2, 'data': 'name'
                 },
-                {'name': 'url', 'targets': 3, 'data': 'url'},
-                {'name': 'createdTime', 'targets': 4, 'searchable': false, 'data': 'createdTime'},
+                {'name': 'merchant', 'targets': 3, 'data': 'merchant'},
+                {'name': 'url', 'targets': 4, 'data': 'url'},
+                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'siteStatus', 'targets': 5, 'searchable': false,
+                    'name': 'siteStatus', 'targets': 6, 'searchable': false,
                     'orderable': false, 'data': 'siteStatus'
                 },
                 {
-                    'name': 'operation', 'targets': 6, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="audit-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">' +

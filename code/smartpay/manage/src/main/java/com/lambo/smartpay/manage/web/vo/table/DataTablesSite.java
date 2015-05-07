@@ -18,6 +18,7 @@ public class DataTablesSite implements Serializable {
     private String url;
     private Date createdTime;
     private String siteStatus;
+    private String merchant;
 
 
     public DataTablesSite(Site site) {
@@ -27,6 +28,7 @@ public class DataTablesSite implements Serializable {
         url = site.getUrl();
         createdTime = site.getCreatedTime();
         siteStatus = site.getSiteStatus().getName();
+        merchant = site.getMerchant().getName();
     }
 
     public Long getId() {
@@ -76,4 +78,15 @@ public class DataTablesSite implements Serializable {
     public void setSiteStatus(String siteStatus) {
         this.siteStatus = siteStatus;
     }
+
+    public String getMerchant() {
+        return merchant;
+    }
+
+    public void setMerchant(String merchant) {
+        this.merchant = merchant;
+    }
+
+
+
 }
