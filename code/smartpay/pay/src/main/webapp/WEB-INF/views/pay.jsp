@@ -225,7 +225,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billFirstName" type="hidden"
+                                                <form:input path="billFirstName" type="text"
                                                             name='billFirstName' id='billFirstName'
                                                             value='${orderCommand.shipFirstName}'/>
                                             </div>
@@ -241,7 +241,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billLastName" type="hidden"
+                                                <form:input path="billLastName" type="text"
                                                             name='billLastName' id='billLastName'
                                                             value='${orderCommand.shipLastName}'/>
                                             </div>
@@ -257,7 +257,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billAddress1" type="hidden"
+                                                <form:input path="billAddress1" type="text"
                                                             name='billAddress1' id='billAddress1'
                                                             value='${orderCommand.shipAddress}'/>
                                             </div>
@@ -272,7 +272,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billCity" type="hidden"
+                                                <form:input path="billCity" type="text"
                                                             name='billCity' id='billCity'
                                                             value='${orderCommand.shipCity}'/>
                                             </div>
@@ -287,7 +287,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billState" type="hidden"
+                                                <form:input path="billState" type="text"
                                                             name='billState' id='billState'
                                                             value='${orderCommand.shipState}'/>
                                             </div>
@@ -302,7 +302,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billZipCode" type="hidden"
+                                                <form:input path="billZipCode" type="text"
                                                             name='billZipCode' id='billZipCode'
                                                             value='${orderCommand.shipZipCode}'/>
                                             </div>
@@ -317,7 +317,7 @@
                                             </label>
 
                                             <div class='col-sm-8'>
-                                                <form:input path="billCountry" type="hidden"
+                                                <form:input path="billCountry" type="text"
                                                             name='billCountry' id='billCountry'
                                                             value='${orderCommand.shipCountry}'/>
                                             </div>
