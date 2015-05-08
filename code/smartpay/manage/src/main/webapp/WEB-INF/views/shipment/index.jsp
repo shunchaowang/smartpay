@@ -35,7 +35,9 @@
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
+                                <th><spring:message code="Site.label"/></th>
                                 <th><spring:message code="site.url.label"/></th>
+                                <th><spring:message code="site.merchant.label"/></th>
                                 <th><spring:message code="carrier.label"/></th>
                                 <th><spring:message code="trackingNumber.label"/></th>
                                 <th><spring:message code="custom.label"/></th>
@@ -70,11 +72,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
                     }
                 ]
             },
@@ -103,27 +105,32 @@
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'siteUrl', 'targets': 5, 'searchable': true,
-                    'orderable': false, 'data': 'siteUrl'
+                    'name': 'siteName', 'targets': 5, 'data': 'siteName',
+                    'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'carrier', 'targets': 6, 'searchable': false,
+                    'name': 'siteUrl', 'targets': 6, 'searchable': true,
+                    'orderable': false, 'data': 'siteUrl'
+                },
+                {'name': 'merchantName', 'targets': 7, 'data': 'merchantName'},
+                {
+                    'name': 'carrier', 'targets': 8, 'searchable': false,
                     'orderable': false, 'data': 'carrier'
                 },
                 {
-                    'name': 'trackingNumber', 'targets': 7, 'searchable': false,
+                    'name': 'trackingNumber', 'targets': 9, 'searchable': false,
                     'orderable': false, 'data': 'trackingNumber'
                 },
                 {
-                    'name': 'customerName', 'targets': 8, 'searchable': false,
+                    'name': 'customerName', 'targets': 10, 'searchable': false,
                     'orderable': false, 'data': 'customerName'
                 },
                 {
-                    'name': 'customerAddress', 'targets': 9, 'searchable': false,
+                    'name': 'customerAddress', 'targets': 11, 'searchable': false,
                     'orderable': false, 'data': 'customerAddress'
                 },
                 {
-                    'name': 'orderStatus', 'targets': 10, 'searchable': false,
+                    'name': 'orderStatus', 'targets': 12, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
                 }
             ]

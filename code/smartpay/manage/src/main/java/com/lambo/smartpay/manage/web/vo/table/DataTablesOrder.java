@@ -28,6 +28,7 @@ public class DataTablesOrder {
     private String createdTime;
     private Long orderStatusId;
     private String orderStatusName;
+    private String merchantName;
 
     public DataTablesOrder(Order order) {
         id = order.getId();
@@ -52,6 +53,7 @@ public class DataTablesOrder {
         createdTime = dateFormat.format(order.getCreatedTime());
         orderStatusId = order.getOrderStatus().getId();
         orderStatusName = order.getOrderStatus().getName();
+        merchantName = order.getSite().getMerchant().getName();
     }
 
     public Long getId() {
@@ -180,5 +182,13 @@ public class DataTablesOrder {
 
     public void setCustomerAddress(String customerAddress) {
         this.customerAddress = customerAddress;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 }

@@ -152,6 +152,8 @@
                                 <th><spring:message code="bankName.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
+                                <th><spring:message code="Site.label"/></th>
+                                <th><spring:message code="site.merchant.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="returnCode.label"/></th>
                                 <th><spring:message code="paymentStatusName.label"/></th>
@@ -199,11 +201,11 @@
                     "aButtons": [
                         {
                             "sExtends": "copy",
-                            "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                            "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
                         },
                         {
                             "sExtends": "xls",
-                            "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                            "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
                         }
                     ]
                 },
@@ -249,26 +251,32 @@
                         'data': 'currencyName'
                     },
                     {
-                        'name': 'createdTime', 'targets': 6, 'searchable': false,
+                        'name': 'siteName', 'targets': 6, 'data': 'siteName',
+                        'searchable': false, 'orderable': false
+                    },
+                    {'name': 'merchantName', 'targets': 7, 'data': 'merchantName'},
+
+                    {
+                        'name': 'createdTime', 'targets': 8, 'searchable': false,
                         'data': 'createdTime'
                     },
                     {
                         'name': 'bankReturnCode',
-                        'targets': 7,
+                        'targets': 9,
                         'searchable': false,
                         'orderable': false,
                         'data': 'bankReturnCode'
                     },
                     {
                         'name': 'paymentStatusName',
-                        'targets': 8,
+                        'targets': 10,
                         'searchable': false,
                         'orderable': false,
                         'data': 'paymentStatusName'
                     },
                     {
                         'name': 'paymentTypeName',
-                        'targets': 9,
+                        'targets': 11,
                         'searchable': false,
                         'orderable': false,
                         'data': 'paymentTypeName'

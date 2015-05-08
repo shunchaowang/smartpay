@@ -30,6 +30,12 @@ public class DataTablesShipment {
 
     private Long siteId;
     private String siteUrl;
+    private  String siteName;
+
+    //merchant
+    private Long merchantId;
+    private String merchantName;
+    private String merchantNumber;
 
     public DataTablesShipment(Shipment shipment) {
 
@@ -59,6 +65,11 @@ public class DataTablesShipment {
 
         siteUrl = order.getSite().getUrl();
         siteId = order.getSite().getId();
+        siteName = order.getSite().getName();
+
+        merchantId = order.getSite().getMerchant().getId();
+        merchantName = order.getSite().getMerchant().getName();
+        merchantNumber = order.getMerchantNumber();
     }
 
     public Long getId() {
@@ -189,4 +200,35 @@ public class DataTablesShipment {
         this.siteUrl = siteUrl;
     }
 
+    public String getSiteName() {
+        return siteName;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public String getMerchantNumber() {
+        return merchantNumber;
+    }
+
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
+
+    public void setMerchantNumber(String merchantNumber) {
+        this.merchantNumber = merchantNumber;
+    }
 }
