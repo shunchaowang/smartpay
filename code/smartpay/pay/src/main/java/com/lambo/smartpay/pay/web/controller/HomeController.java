@@ -468,12 +468,12 @@ public class HomeController {
         payment.setBankReturnCode(bankCode);
 
         String succeed = "0";
-        String orderStatus = "2"; // 交易失败
+        //String orderStatus = "2"; // 交易失败
         String paymentStatusCode = "501";
 
         if (returnSucceed[1].equals("1")) {
             succeed = "1"; // 交易成功
-            orderStatus = "20"; // 交易成功
+            //orderStatus = "20"; // 交易成功
             paymentStatusCode = "500";
             payment.setSuccessTime(Calendar.getInstance().getTime());
             OrderStatus paidOrderStatus = null;
@@ -485,6 +485,15 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
+            try {
+                orderService.update(payment.getOrder());
+            } catch (MissingRequiredFieldException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot change order status to be paid.");
+            } catch (NotUniqueException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot change order status to be paid.");
+            }
         }
 
         PaymentStatus paymentStatus = null;

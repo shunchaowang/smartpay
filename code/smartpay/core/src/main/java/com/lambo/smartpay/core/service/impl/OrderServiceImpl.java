@@ -173,7 +173,6 @@ public class OrderServiceImpl extends GenericDateQueryServiceImpl<Order, Long>
             throw new MissingRequiredFieldException("Customer is null.");
         }
 
-        order.setActive(true);
         order.setUpdatedTime(date);
 
         return orderDao.update(order);
