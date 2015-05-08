@@ -37,6 +37,7 @@
                             <tr>
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="merchantNumber.label"/></th>
+                                <th><spring:message code="site.merchant.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="Site.label"/></th>
@@ -75,11 +76,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                     }
                 ]
             },
@@ -99,29 +100,30 @@
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
+                {'name': 'merchantName', 'targets': 2, 'data': 'merchantName'},
                 {
-                    'name': 'amount', 'targets': 2, 'data': 'amount',
+                    'name': 'amount', 'targets': 3, 'data': 'amount',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'currency', 'targets': 3, 'data': 'currencyName',
+                    'name': 'currency', 'targets': 4, 'data': 'currencyName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'site', 'targets': 4, 'data': 'siteName',
+                    'name': 'siteName', 'targets': 5, 'data': 'siteName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'customer', 'targets': 5, 'data': 'customerName',
+                    'name': 'customer', 'targets': 6, 'data': 'customerName',
                     'searchable': false, 'orderable': false
                 },
-                {'name': 'createdTime', 'targets': 6, 'searchable': false, 'data': 'createdTime'},
+                {'name': 'createdTime', 'targets': 7, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'orderStatus', 'targets': 7, 'searchable': false,
+                    'name': 'orderStatus', 'targets': 8, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
                 },
                 {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<a href="' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '">' +
