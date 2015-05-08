@@ -485,15 +485,15 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
-            try {
-                orderService.update(payment.getOrder());
-            } catch (MissingRequiredFieldException e) {
-                e.printStackTrace();
-                throw new IntervalServerException("500", "Cannot change order status to be paid.");
-            } catch (NotUniqueException e) {
-                e.printStackTrace();
-                throw new IntervalServerException("500", "Cannot change order status to be paid.");
-            }
+//            try {
+//                orderService.update(payment.getOrder());
+//            } catch (MissingRequiredFieldException e) {
+//                e.printStackTrace();
+//                throw new IntervalServerException("500", "Cannot change order status to be paid.");
+//            } catch (NotUniqueException e) {
+//                e.printStackTrace();
+//                throw new IntervalServerException("500", "Cannot change order status to be paid.");
+//            }
         }
 
         PaymentStatus paymentStatus = null;
