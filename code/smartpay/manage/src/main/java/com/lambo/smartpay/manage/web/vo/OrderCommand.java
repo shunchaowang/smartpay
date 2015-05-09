@@ -7,6 +7,8 @@ public class OrderCommand {
 
     private Long id;
     private String merchantNumber;
+    private String merchantName;
+
     private Float amount;
     private String goodsName;
     private String goodsAmount;
@@ -15,6 +17,7 @@ public class OrderCommand {
     private String remark;
     private Long siteId;
     private String siteName;
+    private String siteUrl;
     private Long customerId;
     private String customerName;
     private String createdTime;
@@ -33,6 +36,12 @@ public class OrderCommand {
     }
     public void setMerchantNumber(String merchantNumber) {
         this.merchantNumber = merchantNumber;
+    }
+    public String getMerchantName() {
+        return merchantName;
+    }
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
     public Float getAmount() {
@@ -86,6 +95,12 @@ public class OrderCommand {
     }
     public void setSiteName(String siteName) {
         this.siteName = siteName;
+    }
+    public String getSiteUrl() {
+        return siteUrl;
+    }
+    public void setSiteUrl(String siteUrl) {
+        this.siteUrl = siteUrl;
     }
     //
     public Long getCustomerId() {

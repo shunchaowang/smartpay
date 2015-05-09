@@ -9,6 +9,8 @@ public class ShipmentCommand {
     private Long orderId;
     private String carrier;
     private String trackingNumber;
+    private String shipmentStatusName;
+
 
     public Long getId() {
         return id;
@@ -40,5 +42,13 @@ public class ShipmentCommand {
 
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
+    }
+
+    public String getShipmentStatusName() {
+        return shipmentStatusName;
+    }
+
+    public void setShipmentStatusName(String shipmentStatusName) {
+        this.shipmentStatusName = shipmentStatusName;
     }
 }

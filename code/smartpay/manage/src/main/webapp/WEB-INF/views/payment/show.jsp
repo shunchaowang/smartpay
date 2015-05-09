@@ -32,30 +32,67 @@
                     </div>
                     <div class="widget-content">
                         <div class="row">
-                            <div class="col-sm-8">
+                            <div class="col-sm-4">
                                 <table class="table table-bordered">
-                                    <c:if test="${not empty paymentCommand.merchantName}">
+                                    <tr>
+                                        <td colspan="2" align="left">&nbsp;&nbsp;&nbsp;<spring:message
+                                                code="order.details.label"/>:</td>
+                                    </tr>
+                                    <c:if test="${not empty orderCommand.merchantName}">
                                         <tr>
                                             <td><spring:message code="Merchant.label"/></td>
-                                            <td>${paymentCommand.merchantName}</td>
+                                            <td>${orderCommand.merchantName}</td>
                                         </tr>
                                     </c:if>
-                                    <c:if test="${not empty paymentCommand.merchantNumber}">
+                                    <c:if test="${not empty orderCommand.merchantNumber}">
                                         <tr>
                                             <td><spring:message code="merchantNumber.label"/></td>
-                                            <td>${paymentCommand.merchantNumber}</td>
+                                            <td>${orderCommand.merchantNumber}</td>
                                         </tr>
                                     </c:if>
-                                    <c:if test="${not empty paymentCommand.siteName}">
+                                    <c:if test="${not empty orderCommand.siteUrl}">
                                         <tr>
                                             <td><spring:message code="Site.label"/></td>
-                                            <td>${paymentCommand.siteName}</td>
+                                            <td>${orderCommand.siteUrl}</td>
                                         </tr>
                                     </c:if>
-                                    <c:if test="${not empty paymentCommand.orderNumber}">
+                                    <c:if test="${not empty orderCommand.amount}">
                                         <tr>
-                                            <td><spring:message code="orderNumber.label"/></td>
-                                            <td>${paymentCommand.orderNumber}</td>
+                                            <td><spring:message code="amount.label"/></td>
+                                            <td>${orderCommand.amount}</td>
+                                        </tr>
+                                    </c:if>
+                                    <c:if test="${not empty orderCommand.currencyName}">
+                                        <tr>
+                                            <td><spring:message code="currency.label"/></td>
+                                            <td>${orderCommand.currencyName}</td>
+                                        </tr>
+                                    </c:if>
+                                    <c:if test="${not empty orderCommand.goodsName}">
+                                        <tr>
+                                            <td><spring:message code="goodsName.label"/></td>
+                                            <td>${orderCommand.goodsName}</td>
+                                        </tr>
+                                    </c:if>
+                                    <c:if test="${not empty orderCommand.goodsAmount}">
+                                        <tr>
+                                            <td><spring:message code="goodsAmount.label"/></td>
+                                            <td>${orderCommand.goodsAmount}</td>
+                                        </tr>
+                                    </c:if>
+                                </table>
+                            </div>
+                            <div class="col-sm-4">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td colspan="2" align="left">&nbsp;&nbsp;&nbsp;<spring:message
+                                                code="payment.details.label"/>:</td>
+                                    </tr>
+                                    <c:if test="${not empty paymentCommand.bankName}">
+                                        <tr>
+                                            <td><spring:message
+                                                    code="bankName.label"/></td>
+                                            <td>${paymentCommand.bankName}</td>
                                         </tr>
                                     </c:if>
                                     <c:if test="${not empty paymentCommand.bankTransactionNumber}">
@@ -63,24 +100,6 @@
                                             <td><spring:message
                                                     code="bankTransactionNumber.label"/></td>
                                             <td>${paymentCommand.bankTransactionNumber}</td>
-                                        </tr>
-                                    </c:if>
-                                    <c:if test="${not empty paymentCommand.amount}">
-                                        <tr>
-                                            <td><spring:message code="amount.label"/></td>
-                                            <td>${paymentCommand.amount}</td>
-                                        </tr>
-                                    </c:if>
-                                    <c:if test="${not empty paymentCommand.currencyName}">
-                                        <tr>
-                                            <td><spring:message code="currency.label"/></td>
-                                            <td>${paymentCommand.currencyName}</td>
-                                        </tr>
-                                    </c:if>
-                                    <c:if test="${not empty paymentCommand.bankName}">
-                                        <tr>
-                                            <td><spring:message code="bankName.label"/></td>
-                                            <td>${paymentCommand.bankName}</td>
                                         </tr>
                                     </c:if>
                                     <c:if test="${not empty paymentCommand.bankReturnCode}">
@@ -117,13 +136,13 @@
                                     </c:if>
                                     <c:if test="${not empty paymentCommand.billAddress1}">
                                         <tr>
-                                            <td><spring:message code="address.label"/></td>
+                                            <td><spring:message code="address.label"/>1</td>
                                             <td>${paymentCommand.billAddress1}</td>
                                         </tr>
                                     </c:if>
                                     <c:if test="${not empty paymentCommand.billAddress2}">
                                         <tr>
-                                            <td><spring:message code="address.label"/></td>
+                                            <td><spring:message code="address.label"/>2</td>
                                             <td>${paymentCommand.billAddress2}</td>
                                         </tr>
                                     </c:if>
@@ -159,7 +178,58 @@
                                     </c:if>
                                 </table>
                             </div>
+                            <div class="col-sm-4">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td colspan="2" align="left">&nbsp;&nbsp;&nbsp;<spring:message
+                                                code="shipment.details.label"/>:</td>
+                                    </tr>
+                                    <tr>
+                                        <td><spring:message
+                                                code="status.label"/></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty shipmentCommand.shipmentStatusName}">
+                                                    ${shipmentCommand.shipmentStatusName}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <spring:message code="noinfo.label"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><spring:message
+                                                code="carrier.label"/></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty shipmentCommand.carrier}">
+                                                    ${shipmentCommand.carrier}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <spring:message code="noinfo.label"/>
+                                                </c:otherwise>
+                                            </c:choose></td>
+                                    </tr>
+                                    <tr>
+                                        <td><spring:message
+                                                code="trackingNumber.label"/></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty
+                                                shipmentCommand.trackingNumber}">
+                                                    ${shipmentCommand.trackingNumber}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <spring:message code="noinfo.label"/>
+                                                </c:otherwise>
+                                            </c:choose></td>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
+
                         <!-- button area -->
 
                         <div class="row">

@@ -12,7 +12,9 @@ import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
+import com.lambo.smartpay.manage.web.vo.OrderCommand;
 import com.lambo.smartpay.manage.web.vo.PaymentCommand;
+import com.lambo.smartpay.manage.web.vo.ShipmentCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import org.apache.commons.lang3.StringUtils;
@@ -158,7 +160,11 @@ public class PaymentController {
             throw new BadRequestException("400", "Site  " + id + " not found.");
         }
         PaymentCommand paymentCommand = createPaymentCommand(payment);
+        ShipmentCommand shipmentCommand = createShipmentCommand(payment);
+        OrderCommand orderCommand = createOrderCommand(payment);
         model.addAttribute("paymentCommand", paymentCommand);
+        model.addAttribute("shipmentCommand", shipmentCommand);
+        model.addAttribute("orderCommand", orderCommand);
 
         model.addAttribute("action", "show");
         return "main";
@@ -298,7 +304,6 @@ public class PaymentController {
         PaymentCommand.setSiteId(payment.getOrder().getSite().getId());
         PaymentCommand.setSiteName(payment.getOrder().getSite().getName());
 
-
         if (payment.getSuccessTime() != null) {
             PaymentCommand.setSuccessTime(payment.getSuccessTime().toString());
         }
@@ -313,6 +318,38 @@ public class PaymentController {
         PaymentCommand.setBillCountry(payment.getBillCountry());
 
         return PaymentCommand;
+    }
+
+
+    private ShipmentCommand createShipmentCommand(Payment payment) {
+        ShipmentCommand shipmentCommnand = new ShipmentCommand();
+
+        if ((payment.getOrder().getShipments() != null) && (payment.getOrder().getShipments()
+                .size()>0)){
+            logger.debug("~~~~~~~" + payment.getOrder().getShipments().size());
+            shipmentCommnand.setCarrier(payment.getOrder().getShipments().iterator().next().getCarrier());
+            shipmentCommnand.setTrackingNumber(payment.getOrder().getShipments().iterator().next
+                    ().getTrackingNumber());
+            shipmentCommnand.setShipmentStatusName(payment.getOrder().getShipments().iterator().next
+                    ().getShipmentStatus().getName());
+        }
+
+        return shipmentCommnand;
+    }
+
+    private OrderCommand createOrderCommand(Payment payment) {
+        OrderCommand orderCommand = new OrderCommand();
+
+        Order order = payment.getOrder();
+        orderCommand.setMerchantName(order.getSite().getMerchant().getName());
+        orderCommand.setSiteUrl(order.getSite().getUrl());
+        orderCommand.setMerchantNumber(order.getSite().getMerchant().getIdentity());
+        orderCommand.setAmount(order.getAmount());
+        orderCommand.setCurrencyName(order.getCurrency().getName());
+        orderCommand.setGoodsName(order.getGoodsName());
+        orderCommand.setGoodsAmount(order.getGoodsAmount());
+
+        return orderCommand;
     }
 }
 
