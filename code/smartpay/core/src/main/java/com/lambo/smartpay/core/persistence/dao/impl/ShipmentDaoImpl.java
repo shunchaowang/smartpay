@@ -217,14 +217,45 @@ public class ShipmentDaoImpl extends GenericDaoImpl<Shipment, Long>
             }
         }
         // check shipment order id
-        if (shipment.getOrder() != null && shipment.getOrder().getId() != null) {
-            Predicate orderPredicate = builder.equal(
-                    root.join("order").<Long>get("id"),
-                    builder.literal(shipment.getOrder().getId()));
-            if (predicate == null) {
-                predicate = orderPredicate;
-            } else {
-                predicate = builder.and(predicate, orderPredicate);
+        if (shipment.getOrder() != null) {
+            if (shipment.getOrder().getId() != null) {
+                Predicate orderPredicate = builder.equal(
+                        root.join("order").<Long>get("id"),
+                        builder.literal(shipment.getOrder().getId()));
+                if (predicate == null) {
+                    predicate = orderPredicate;
+                } else {
+                    predicate = builder.and(predicate, orderPredicate);
+                }
+            }
+
+            // check for site
+            if (shipment.getOrder().getSite() != null) {
+                if (shipment.getOrder().getSite().getId() != null) {
+                    Predicate sitePredicate = builder.equal(
+                            root.join("order").join("site").<Long>get("id"),
+                            builder.literal(shipment.getOrder().getSite().getId()));
+                    if (predicate == null) {
+                        predicate = sitePredicate;
+                    } else {
+                        predicate = builder.and(predicate, sitePredicate);
+                    }
+                }
+
+                // check for merchant
+                if (shipment.getOrder().getSite().getMerchant() != null) {
+                    if (shipment.getOrder().getSite().getMerchant().getId() != null) {
+                        Predicate merchantPredicate = builder.equal(
+                                root.join("order").join("site").join("merchant").<Long>get("id"),
+                                builder.literal(
+                                        shipment.getOrder().getSite().getMerchant().getId()));
+                        if (predicate == null) {
+                            predicate = merchantPredicate;
+                        } else {
+                            predicate = builder.and(predicate, merchantPredicate);
+                        }
+                    }
+                }
             }
         }
 
