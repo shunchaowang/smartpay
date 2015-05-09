@@ -69,6 +69,7 @@ import java.util.Locale;
  */
 @Controller
 @RequestMapping("/")
+@SessionAttributes("orderCommand")
 public class HomeController {
 
     private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -424,9 +425,9 @@ public class HomeController {
 
         // formulate params sending to hooppay
 
-        //HttpSession session = request.getSession();
-        //OrderCommand orderCommand = (OrderCommand) session.getAttribute("orderCommand");
-        OrderCommand orderCommand = createOrderCommand(request);
+        HttpSession session = request.getSession();
+        OrderCommand orderCommand = (OrderCommand) session.getAttribute("orderCommand");
+        //OrderCommand orderCommand = createOrderCommand(request);
         logger.debug("orderCommand: " + orderCommand.getMerNo());
         // we need to check if the merchant or the site is frozen
         // if so decline the payment request
@@ -489,10 +490,12 @@ public class HomeController {
 //                orderService.update(payment.getOrder());
 //            } catch (MissingRequiredFieldException e) {
 //                e.printStackTrace();
-//                throw new IntervalServerException("500", "Cannot change order status to be paid.");
+//                throw new IntervalServerException("500", "Cannot change order status to be paid
+// .");
 //            } catch (NotUniqueException e) {
 //                e.printStackTrace();
-//                throw new IntervalServerException("500", "Cannot change order status to be paid.");
+//                throw new IntervalServerException("500", "Cannot change order status to be paid
+// .");
 //            }
         }
 
