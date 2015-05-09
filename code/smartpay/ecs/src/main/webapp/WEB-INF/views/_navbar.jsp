@@ -46,13 +46,6 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="${rootURL}order/index">
-                            <span> >>
-                            <spring:message code="info.label" arguments="${order}"/>
-                            </span>
-                        </a>
-                    </li>
-                    <li class="">
                         <a href="${rootURL}shipment/index">
                             <span> >>
                             <spring:message code="info.label" arguments="${shipment}"/>

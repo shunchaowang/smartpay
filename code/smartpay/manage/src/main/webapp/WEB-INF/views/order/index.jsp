@@ -38,13 +38,12 @@
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="merchantNumber.label"/></th>
                                 <th><spring:message code="site.merchant.label"/></th>
+                                <th><spring:message code="Site.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="Site.label"/></th>
                                 <th><spring:message code="Customer.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="status.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -102,15 +101,15 @@
                 },
                 {'name': 'merchantName', 'targets': 2, 'data': 'merchantName'},
                 {
-                    'name': 'amount', 'targets': 3, 'data': 'amount',
+                    'name': 'siteName', 'targets': 3, 'data': 'siteName',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'currency', 'targets': 4, 'data': 'currencyName',
+                    'name': 'amount', 'targets': 4, 'data': 'amount',
                     'searchable': false, 'orderable': false
                 },
                 {
-                    'name': 'siteName', 'targets': 5, 'data': 'siteName',
+                    'name': 'currency', 'targets': 5, 'data': 'currencyName',
                     'searchable': false, 'orderable': false
                 },
                 {
@@ -121,25 +120,6 @@
                 {
                     'name': 'orderStatus', 'targets': 8, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
-                },
-                {
-                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="show-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.show.label"/>'
-                                + '</button></a>';
-                        /*
-                         + '<a href="' + "
-                        ${rootURL}${controller}" + '/edit/'
-                         + row['id'] + '">' +
-                         '<button type="button" name="edit-button" class="tableButton"'
-                         + '">' + '
-                        <spring:message code="action.edit.label"/>'
-                         + '</button></a>'
-                         */
-                    }
                 }
             ]
         });

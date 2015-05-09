@@ -41,7 +41,6 @@
                                 <th><spring:message code="returnCode.label"/></th>
                                 <th><spring:message code="paymentStatusName.label"/></th>
                                 <th><spring:message code="paymentTypeName.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -143,16 +142,6 @@
                     'searchable': false,
                     'orderable': false,
                     'data': 'paymentTypeName'
-                },
-                {
-                    'name': 'operation', 'targets': 12, 'searchable': false, 'orderable': false,
-                    'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="btn btn-default"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>';
-                    }
                 }
             ]
         });

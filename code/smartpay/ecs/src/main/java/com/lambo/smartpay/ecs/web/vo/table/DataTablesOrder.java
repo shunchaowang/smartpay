@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
@@ -47,8 +48,10 @@ public class DataTablesOrder {
                 new String[]{order.getCustomer().getAddress1(), order.getCustomer().getCity(),
                         order.getCustomer().getState(), order.getCustomer().getZipCode(),
                         order.getCustomer().getCountry()}, " ");
-        Locale locale = LocaleContextHolder.getLocale();
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        //Locale locale = LocaleContextHolder.getLocale();
+        //DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         createdTime = dateFormat.format(order.getCreatedTime());
         orderStatusId = order.getOrderStatus().getId();
         orderStatusName = order.getOrderStatus().getName();

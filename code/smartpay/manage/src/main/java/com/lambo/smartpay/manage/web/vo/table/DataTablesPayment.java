@@ -4,7 +4,9 @@ import com.lambo.smartpay.core.persistence.entity.Payment;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Created by linly on 3/29/2015.
@@ -37,7 +39,9 @@ public class DataTablesPayment {
     public DataTablesPayment(Payment payment) {
         //
         Locale locale = LocaleContextHolder.getLocale();
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        //DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        //DateFormat dateFormat = new DateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         //
         id = payment.getId();
@@ -64,7 +68,7 @@ public class DataTablesPayment {
         merchantName = payment.getOrder().getSite().getMerchant().getName();
         merchantNumber = payment.getOrder().getMerchantNumber();
         siteId = payment.getOrder().getSite().getId();
-        siteName = payment.getOrder().getSite().getName();
+        siteName = payment.getOrder().getSite().getUrl();
     }
 
     public Long getId() {
