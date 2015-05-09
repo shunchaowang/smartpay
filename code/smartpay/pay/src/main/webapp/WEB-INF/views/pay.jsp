@@ -254,6 +254,28 @@
                             <form:input path="billCountry" type="hidden"
                                         name='billCountry' id='billCountry'
                                         value='${orderCommand.shipCountry}'/>
+
+                            <!-- hidden params for order info -->
+                            <input name="merNo" type="hidden" value="${orderCommand.merNo}"/>
+                            <input name="referer" type="hidden" value="${orderCommand.referer}"/>
+                            <input name="orderNo" type="hidden" value="${orderCommand.orderNo}"/>
+                            <input name="returnURL" type="hidden"
+                                   value="${orderCommand.returnUrl}"/>
+                            <input name="amount" type="hidden" value="${orderCommand.amount}"/>
+                            <input name="currency" type="hidden" value="${orderCommand.currency}"/>
+                            <input name="productType" type="hidden" value="${orderCommand.productType}"/>
+                            <input name="goodsName" type="hidden" value="${orderCommand.goodsName}"/>
+                            <input name="goodsNumber" type="hidden" value="${orderCommand.goodsNumber}"/>
+                            <input name="goodsPrice" type="hidden" value="${orderCommand.goodsPrice}"/>
+                            <input name="email" type="hidden" value="${orderCommand.email}"/>
+                            <input name="phone" type="hidden" value="${orderCommand.phone}"/>
+                            <input name="shipFirstName" type="hidden" value="${orderCommand.shipFirstName}"/>
+                            <input name="shipLastName" type="hidden" value="${orderCommand.shipLastName}"/>
+                            <input name="shipAddress" type="hidden" value="${orderCommand.shipAddress}"/>
+                            <input name="shipCity" type="hidden" value="${orderCommand.shipCity}"/>
+                            <input name="shipState" type="hidden" value="${orderCommand.shipState}"/>
+                            <input name="shipCountry" type="hidden" value="${orderCommand.shipCountry}"/>
+                            <input name="shipZipCode" type="hidden" value="${orderCommand.shipZipCode}"/>
                         </form:form>
 
                     </div>
