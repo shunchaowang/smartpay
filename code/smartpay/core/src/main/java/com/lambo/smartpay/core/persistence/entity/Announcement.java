@@ -25,6 +25,9 @@ public class Announcement implements Serializable {
     @Column(name = "ANMT_ID")
     private Long id;
 
+    @Column(name = "ANMT_TITLE", length = 32, nullable = false)
+    private String title;
+
     @Column(name = "ANMT_CONTENT", nullable = false)
     private String content;
 
@@ -41,6 +44,14 @@ public class Announcement implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {
