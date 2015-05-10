@@ -7,6 +7,7 @@ import com.lambo.smartpay.core.service.CurrencyService;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.UserService;
+import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderAmount;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCurrency;
@@ -122,22 +123,17 @@ public class CountController {
     }
 
 
-
     @RequestMapping(value = "/countBySite", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
     String countBySite() {
 
-        /*
         SecurityUser currentUser = UserResource.getCurrentUser();
         if (currentUser == null) {
             return "403";
         }
-
-        */
-
-
+        
         Locale locale = LocaleContextHolder.getLocale();
         NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
         DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
@@ -145,7 +141,7 @@ public class CountController {
 
         // find all site, and get count based on site
         Site site = new Site();
-        //site.setMerchant(currentUser.getMerchant());
+        site.setMerchant(currentUser.getMerchant());
 
         List<Site> sites = siteService.findByCriteria(site);
         List<DataTablesOrderAmount> amounts = new ArrayList<>();
