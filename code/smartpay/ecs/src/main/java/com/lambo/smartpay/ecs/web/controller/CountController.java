@@ -133,7 +133,7 @@ public class CountController {
         if (currentUser == null) {
             return "403";
         }
-        
+
         Locale locale = LocaleContextHolder.getLocale();
         NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
         DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
