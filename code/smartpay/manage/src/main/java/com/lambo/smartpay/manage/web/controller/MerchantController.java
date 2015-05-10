@@ -338,8 +338,8 @@ public class MerchantController {
         Locale locale = LocaleContextHolder.getLocale();
         //TODO verify required fields
         // check uniqueness
-        if (merchantService.findByName(merchantCommand.getName()) != null) {
-            String fieldLabel = messageSource.getMessage("name.label", null, locale);
+        if (merchantService.findByIdentity(merchantCommand.getIdentity()) != null) {
+            String fieldLabel = messageSource.getMessage("identity.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, merchantCommand.getName()}, locale));

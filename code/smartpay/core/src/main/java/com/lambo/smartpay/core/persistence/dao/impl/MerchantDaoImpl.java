@@ -28,34 +28,11 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
     private static final Logger logger = LoggerFactory.getLogger(MerchantDaoImpl.class);
 
     /**
-     * Find merchant by name.
+     * Find merchant by unique identity.
      *
-     * @param name name of the merchant.
+     * @param identity identity of the merchant.
      * @return return the object if found, null if not found.
      */
-    @Override
-    public Merchant findByName(String name) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Merchant> query = builder.createQuery(Merchant.class);
-
-        Root<Merchant> root = query.from(Merchant.class);
-        query.select(root);
-
-        Path<String> path = root.get("name");
-        Predicate predicate = builder.equal(path, name);
-        query.where(predicate);
-
-        TypedQuery<Merchant> typedQuery = entityManager.createQuery(query);
-
-        logger.debug("findByName query is " + typedQuery);
-        try {
-            return typedQuery.getSingleResult();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     @Override
     public Merchant findByIdentity(String identity) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();

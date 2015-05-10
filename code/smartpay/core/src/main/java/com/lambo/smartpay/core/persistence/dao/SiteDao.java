@@ -8,8 +8,6 @@ import com.lambo.smartpay.core.persistence.entity.Site;
  */
 public interface SiteDao extends GenericQueryDao<Site, Long> {
 
-    Site findByName(String name);
-
     Site findByIdentity(String identity);
 
     Site findByUrl(String url);

@@ -171,8 +171,16 @@ public class SiteController {
         Locale locale = LocaleContextHolder.getLocale();
         //TODO verify required fields
         // check uniqueness
-        if (merchantService.findByName(siteCommand.getName()) != null) {
-            String fieldLabel = messageSource.getMessage("name.label", null, locale);
+        if (siteService.findByIdentity(siteCommand.getIdentity()) != null) {
+            String fieldLabel = messageSource.getMessage("identity.label", null, locale);
+            model.addAttribute("message",
+                    messageSource.getMessage("not.unique.message",
+                            new String[]{fieldLabel, siteCommand.getName()}, locale));
+            model.addAttribute("siteCommand", siteCommand);
+            model.addAttribute("action", "create");
+        }
+        if (siteService.findByUrl(siteCommand.getUrl()) != null) {
+            String fieldLabel = messageSource.getMessage("site.url.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, siteCommand.getName()}, locale));

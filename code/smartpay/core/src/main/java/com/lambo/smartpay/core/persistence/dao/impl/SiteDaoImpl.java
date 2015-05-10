@@ -27,36 +27,6 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
 
     private static final Logger logger = LoggerFactory.getLogger(SiteDaoImpl.class);
 
-    /**
-     * Find site by name.
-     *
-     * @param name name of the site to find.
-     * @return site with the name specific of null if not found.
-     */
-    @Override
-    public Site findByName(String name) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Site> query = builder.createQuery(Site.class);
-
-        Root<Site> root = query.from(Site.class);
-        query.select(root);
-
-        Path<String> path = root.get("name");
-        Predicate predicate = builder.equal(path, name);
-        query.where(predicate);
-
-        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
-
-        logger.debug("findByName query is " + typedQuery);
-        try {
-            return typedQuery.getSingleResult();
-        } catch (NoResultException e) {
-            logger.info("Cannot find site with name " + name);
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     @Override
     public Site findByUrl(String url) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();

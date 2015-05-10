@@ -33,21 +33,6 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
     @Autowired
     private SiteStatusDao siteStatusDao;
 
-    /**
-     * Find site by the unique name.
-     *
-     * @param name
-     * @return
-     */
-    @Override
-    public Site findByName(String name) {
-        if (StringUtils.isBlank(name)) {
-            logger.debug("Name is blank.");
-            return null;
-        }
-        return siteDao.findByName(name);
-    }
-
     @Override
     public Site findByUrl(String url) {
         if (StringUtils.isBlank(url)) {
@@ -83,11 +68,19 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         if (StringUtils.isBlank(site.getName())) {
             throw new MissingRequiredFieldException("Site name is blank.");
         }
+        if (StringUtils.isBlank(site.getIdentity())) {
+            throw new MissingRequiredFieldException("Site identity is blank.");
+        }
+        if (siteDao.findByIdentity(site.getIdentity()) != null) {
+            throw new NotUniqueException("Site with identity " + site.getIdentity()
+                    + " already exists.");
+        }
         if (StringUtils.isBlank(site.getUrl())) {
             throw new MissingRequiredFieldException("Site URL is blank.");
         }
-        if (site.getActive() == null) {
-            throw new MissingRequiredFieldException("Site active is null.");
+        if (siteDao.findByIdentity(site.getUrl()) != null) {
+            throw new NotUniqueException("Site with url " + site.getUrl()
+                    + " already exists.");
         }
         if (site.getSiteStatus() == null) {
             throw new MissingRequiredFieldException("Site status is null.");
@@ -96,14 +89,8 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
             throw new MissingRequiredFieldException("Site Merchant is null.");
         }
 
-
-        // check uniqueness on sitename
-        if (siteDao.findByName(site.getName()) != null) {
-            throw new NotUniqueException("Site with sitename " + site.getName()
-                    + " already exists.");
-        }
-
         site.setCreatedTime(Calendar.getInstance().getTime());
+        site.setActive(true);
         return siteDao.create(site);
     }
 
@@ -142,9 +129,6 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         if (StringUtils.isBlank(site.getUrl())) {
             throw new MissingRequiredFieldException("Site URL is blank.");
         }
-        if (site.getCreatedTime() == null) {
-            throw new MissingRequiredFieldException("Site created time is null.");
-        }
         if (site.getActive() == null) {
             throw new MissingRequiredFieldException("Site active is null.");
         }
@@ -152,13 +136,13 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
             throw new MissingRequiredFieldException("Site status is null.");
         }
         if (site.getMerchant() == null) {
-            throw new MissingRequiredFieldException("Site Merchent is null.");
+            throw new MissingRequiredFieldException("Site merchant is null.");
         }
 
-        // check uniqueness on sitename
+        // check uniqueness on identity
         Site currentSite = siteDao.get(site.getId());
-        if (!site.getName().equals(currentSite.getName())) {
-            throw new MissingRequiredFieldException("Site name cannot be changed.");
+        if (!site.getIdentity().equals(currentSite.getIdentity())) {
+            throw new MissingRequiredFieldException("Site identity cannot be changed.");
         }
 
         // set updated time if not set

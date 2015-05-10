@@ -12,8 +12,6 @@ import com.lambo.smartpay.core.persistence.entity.Merchant;
  */
 public interface MerchantService extends GenericQueryService<Merchant, Long> {
 
-    Merchant findByName(String name);
-
     Merchant findByIdentity(String identity);
 
     /**

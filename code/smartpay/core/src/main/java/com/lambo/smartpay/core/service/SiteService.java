@@ -9,14 +9,6 @@ import com.lambo.smartpay.core.persistence.entity.Site;
  */
 public interface SiteService extends GenericQueryService<Site, Long> {
 
-    /**
-     * Find site by the unique site name.
-     *
-     * @param name
-     * @return
-     */
-    Site findByName(String name);
-
     Site findByIdentity(String identity);
 
     Site findByUrl(String url);

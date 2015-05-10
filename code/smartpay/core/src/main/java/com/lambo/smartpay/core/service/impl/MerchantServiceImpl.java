@@ -18,10 +18,10 @@ import com.lambo.smartpay.core.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -36,15 +36,15 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
     //TODO WE WANT TO MAKE CONTROLLER FILE ALL REQUIRED FIELDS, AND SERVICE CHECK ONLY
     private static final Logger logger = LoggerFactory.getLogger(MerchantServiceImpl.class);
 
-    @Autowired
+    @Resource
     private MerchantDao merchantDao;
-    @Autowired
+    @Resource
     private MerchantStatusDao merchantStatusDao;
-    @Autowired
+    @Resource
     private CredentialDao credentialDao;
-    @Autowired
+    @Resource
     private FeeDao feeDao;
-    @Autowired
+    @Resource
     private EncryptionDao encryptionDao;
 
     /**
@@ -67,8 +67,11 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         if (StringUtils.isBlank(merchant.getName())) {
             throw new MissingRequiredFieldException("Merchant name is null.");
         }
-        if (merchantDao.findByName(merchant.getName()) != null) {
-            throw new NotUniqueException("Merchant with name " + merchant.getName() +
+        if (StringUtils.isBlank(merchant.getIdentity())) {
+            throw new MissingRequiredFieldException("Merchant identity is null.");
+        }
+        if (merchantDao.findByIdentity(merchant.getIdentity()) != null) {
+            throw new NotUniqueException("Merchant with identity " + merchant.getIdentity() +
                     " already exists.");
         }
         // check credential, commission fee and return fee
@@ -165,7 +168,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         if (StringUtils.isBlank(merchant.getName())) {
             throw new MissingRequiredFieldException("Merchant name is null.");
         }
-
         // check credential, commission fee and return fee
         if (merchant.getCredential() == null) {
             throw new MissingRequiredFieldException("Merchant credential is null.");
@@ -185,7 +187,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         }
         // set active default to be active and created time for credential
         merchant.getCredential().setUpdatedTime(date);
-        merchant.getCredential().setActive(true);
 
         // check commission fee
         if (merchant.getCommissionFee() == null) {
@@ -198,7 +199,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
             throw new MissingRequiredFieldException("Merchant commission fee type is null.");
         }
         // set active default to be active and created time
-        merchant.getCommissionFee().setActive(true);
         merchant.getCommissionFee().setUpdatedTime(date);
 
         // check return fee
@@ -217,8 +217,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
 
         // set createdTime
         merchant.setUpdatedTime(date);
-        // set merchant status to be normal when creating
-        merchant.setActive(true);
 
         // generate encryption key for the merchant
         if (merchant.getEncryption() == null) {
@@ -231,10 +229,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
             throw new MissingRequiredFieldException("Merchant encryption key is null.");
         }
         merchant.getEncryption().setUpdatedTime(date);
-        merchant.getEncryption().setActive(true);
-        // key generation should be done by web
-//        String key = RandomStringUtils.randomNumeric(ResourceProperties.ENCRYPTION_KEY_LENGTH);
-//        merchant.getEncryption().setKey(key);
+
         return merchantDao.update(merchant);
     }
 
@@ -250,15 +245,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         }
         merchantDao.delete(id);
         return merchant;
-    }
-
-    @Override
-    public Merchant findByName(String name) {
-        if (StringUtils.isBlank(name)) {
-            logger.info("Name is null.");
-            return null;
-        }
-        return merchantDao.findByName(name);
     }
 
     @Override

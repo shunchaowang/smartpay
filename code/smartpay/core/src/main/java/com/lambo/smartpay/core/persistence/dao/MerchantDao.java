@@ -8,12 +8,10 @@ import com.lambo.smartpay.core.persistence.entity.Merchant;
 public interface MerchantDao extends GenericQueryDao<Merchant, Long> {
 
     /**
-     * Find merchant by name.
+     * Find merchant by the unique identity.
      *
-     * @param name name of the merchant.
+     * @param identity identity of the merchant.
      * @return return the object if found, null if not found.
      */
-    Merchant findByName(String name);
-
     Merchant findByIdentity(String identity);
 }
