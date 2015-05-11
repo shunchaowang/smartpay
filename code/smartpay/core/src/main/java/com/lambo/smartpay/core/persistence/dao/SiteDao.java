@@ -12,4 +12,6 @@ public interface SiteDao extends GenericQueryDao<Site, Long> {
 
     Site findByUrl(String url);
 
+    Site findByReturnUrl(String returnUrl);
+
 }

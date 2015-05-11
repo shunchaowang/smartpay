@@ -52,6 +52,30 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
     }
 
     @Override
+    public Site findByReturnUrl(String returnUrl) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
+
+        Root<Site> root = query.from(Site.class);
+        query.select(root);
+
+        Path<String> path = root.get("returnUrl");
+        Predicate predicate = builder.equal(path, returnUrl);
+        query.where(predicate);
+
+        TypedQuery<Site> typedQuery = entityManager.createQuery(query);
+
+        logger.debug("findByReturnUrl query is " + typedQuery);
+        try {
+            return typedQuery.getSingleResult();
+        } catch (NoResultException e) {
+            logger.info("Cannot find site with return url " + returnUrl);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public Site findByIdentity(String identity) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Site> query = builder.createQuery(Site.class);

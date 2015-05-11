@@ -28,14 +28,6 @@ import java.util.Properties;
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        super.addViewControllers(registry);
-        registry.addViewController("login/form").setViewName("login");
-        registry.addViewController("home").setViewName("home");
-        registry.addViewController("admin").setViewName("admin");
-    }
-
-    @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
@@ -80,11 +72,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         bean.setPrefix("/WEB-INF/views/");
         bean.setSuffix(".jsp");
         return bean;
-    }
-
-    @Bean(name = "multipartResolver")
-    public CommonsMultipartResolver getMultipartResolver() {
-        return new CommonsMultipartResolver();
     }
 
     @Bean(name = "messageSource")

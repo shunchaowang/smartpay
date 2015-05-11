@@ -41,6 +41,9 @@ public class Site implements Serializable {
     @Column(name = "SITE_URL", length = 128, nullable = false)
     private String url;
 
+    @Column(name = "SITE_RETURN_URL", length = 255, nullable = false)
+    private String returnUrl;
+
     @Column(name = "SITE_LOGO_IMAGE", nullable = true)
     @Lob
     private byte[] logoImage;
@@ -168,5 +171,13 @@ public class Site implements Serializable {
 
     public void setIdentity(String identity) {
         this.identity = identity;
+    }
+
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
     }
 }

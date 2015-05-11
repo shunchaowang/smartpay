@@ -51,7 +51,6 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         encodingFilter.setEncoding("UTF-8");
         // encoding filter must be the first one
         return new Filter[]{encodingFilter,
-                new DelegatingFilterProxy("springSecurityFilterChain"),
                 new OpenEntityManagerInViewFilter()};
     }
 

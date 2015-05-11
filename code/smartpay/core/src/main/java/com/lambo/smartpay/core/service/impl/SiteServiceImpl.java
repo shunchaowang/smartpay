@@ -43,6 +43,15 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
     }
 
     @Override
+    public Site findByReturnUrl(String returnUrl) {
+        if (StringUtils.isBlank(returnUrl)) {
+            logger.debug("Url is blank.");
+            return null;
+        }
+        return siteDao.findByReturnUrl(returnUrl);
+    }
+
+    @Override
     public Site findByIdentity(String identity) {
         if (StringUtils.isBlank(identity)) {
             logger.debug("Identity is blank.");
@@ -78,8 +87,19 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         if (StringUtils.isBlank(site.getUrl())) {
             throw new MissingRequiredFieldException("Site URL is blank.");
         }
-        if (siteDao.findByIdentity(site.getUrl()) != null) {
+        if (StringUtils.isBlank(site.getReturnUrl())) {
+            throw new MissingRequiredFieldException("Site return URL is blank.");
+        }
+        if (siteDao.findByIdentity(site.getIdentity()) != null) {
+            throw new NotUniqueException("Site with identity " + site.getIdentity()
+                    + " already exists.");
+        }
+        if (siteDao.findByUrl(site.getUrl()) != null) {
             throw new NotUniqueException("Site with url " + site.getUrl()
+                    + " already exists.");
+        }
+        if (siteDao.findByReturnUrl(site.getReturnUrl()) != null) {
+            throw new NotUniqueException("Site with return url " + site.getReturnUrl()
                     + " already exists.");
         }
         if (site.getSiteStatus() == null) {
@@ -129,6 +149,9 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         if (StringUtils.isBlank(site.getUrl())) {
             throw new MissingRequiredFieldException("Site URL is blank.");
         }
+        if (StringUtils.isBlank(site.getReturnUrl())) {
+            throw new MissingRequiredFieldException("Site return URL is blank.");
+        }
         if (site.getActive() == null) {
             throw new MissingRequiredFieldException("Site active is null.");
         }
@@ -143,6 +166,19 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         Site currentSite = siteDao.get(site.getId());
         if (!site.getIdentity().equals(currentSite.getIdentity())) {
             throw new MissingRequiredFieldException("Site identity cannot be changed.");
+        }
+
+        // if change site url or return url
+        if (!site.getUrl().equals(currentSite.getUrl())) {
+            if (siteDao.findByUrl(site.getUrl()) != null) {
+                throw new NotUniqueException("Site url " + site.getUrl() + " already exists.");
+            }
+        }
+        if (!site.getReturnUrl().equals(currentSite.getReturnUrl())) {
+            if (siteDao.findByReturnUrl(site.getReturnUrl()) != null) {
+                throw new NotUniqueException("Site return url " + site.getReturnUrl() + " already" +
+                        " exists.");
+            }
         }
 
         // set updated time if not set

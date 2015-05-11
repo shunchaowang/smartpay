@@ -13,37 +13,6 @@
             <spring:message code="application.name"/>
         </a>
     </div>
-    <!-- end of navbar-header -->
-    <sec:authorize access="isAuthenticated()">
-        <!-- navbar -->
-        <spring:message code='Order.label' var="order"/>
-        <spring:message code='Payment.label' var="payment"/>
-
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <ul class="nav navbar-nav">
-
-                <!-- merchant management goes here -->
-                <!-- admin can view merchant list, add merchant -->
-                <!-- merchant admin can view merchant detail -->
-                <!-- admin menu starts -->
-                <li>
-                    <a href="${rootURL}order/list">
-                        <spring:message code="manage.label" arguments="${order}"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="${rootURL}payment/list">
-                        <spring:message code="manage.label" arguments="${payment}"/>
-                    </a>
-                </li>
-            </ul>
-            <!-- include profile here -->
-
-            <jsp:include page="_profile.jsp"/>
-
-        </div>
-        <!-- end navbar-collapse -->
-    </sec:authorize>
 </div>
 <!-- end container-fluid -->
 

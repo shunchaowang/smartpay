@@ -103,7 +103,7 @@
                     <div class="container-fluid table-bordered col-sm-8">
                         <h3><spring:message code="paymentInfo.label"/></h3>
 
-                        <form:form action="${rootURL}payByCard" method="POST"
+                        <form:form action="${pageContext.request.contextPath}/payByCard" method="POST"
                                    commandName="paymentCommand"
                                    cssClass="form-horizontal" id="pay-form">
                             <table class="table table-hover">

@@ -13,6 +13,8 @@ public interface SiteService extends GenericQueryService<Site, Long> {
 
     Site findByUrl(String url);
 
+    Site findByReturnUrl(String returnUrl);
+
     Site freezeSite(Long id) throws NoSuchEntityException;
 
     Site unfreezeSite(Long id) throws NoSuchEntityException;

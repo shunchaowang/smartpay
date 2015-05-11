@@ -295,6 +295,31 @@ public class HomeController {
             }
         }
 
+        // if order status is already paid, don't allow duplicated submission
+        Order order = orderService.findByMerchantNumber(orderNo);
+        OrderStatus paidOrderStatus = null;
+        try {
+            paidOrderStatus =
+                    orderStatusService.findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", "Cannot find order status.");
+        }
+        if (order != null && order.getOrderStatus().equals(paidOrderStatus)) {
+            String succeed = "0";
+            String errcode = "1004. Do Not Allow Duplicated Submission.";
+            String resultMd5Info = MDUtil.getMD5Str(merchantKey + merNo + orderNo + amount +
+                    currency + succeed);
+            try {
+                response.sendRedirect(returnURL + "&succeed=" + succeed + "&amount=" +
+                        amount + "&orderNo=" + orderNo
+                        + "&currency=" + currency + "&errcode=" + errcode + "&md5info=" +
+                        resultMd5Info);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         OrderCommand orderCommand = createOrderCommand(request);
 
         // Order and Customer should be created here
@@ -358,7 +383,6 @@ public class HomeController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        Order order = orderService.findByMerchantNumber(orderNo);
 
         // if order does not exist create new
         if (order == null) {
