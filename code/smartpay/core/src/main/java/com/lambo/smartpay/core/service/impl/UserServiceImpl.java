@@ -3,6 +3,7 @@ package com.lambo.smartpay.core.service.impl;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.dao.MerchantDao;
 import com.lambo.smartpay.core.persistence.dao.UserDao;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,6 +32,9 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
     @Autowired
     private UserDao userDao;
 
+    @Resource
+    private MerchantDao merchantDao;
+
     /**
      * Find user by the unique username.
      *
@@ -42,6 +48,26 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
             return null;
         }
         return userDao.findByUsername(username);
+    }
+
+    /**
+     * Find user by unique combination of merchantIdentity and username.
+     *
+     * @param merchantIdentity unique identity of merchant, null means manage system user
+     * @param username         username of user
+     * @return User if found, null if not
+     */
+    @Override
+    public User findByMerchantIdentityAndUsername(String merchantIdentity, String username) {
+
+        if (StringUtils.isBlank(username)) {
+            logger.debug("Username is blank.");
+            return null;
+        }
+
+        CriteriaQuery<User> query = userDao.createCriteriaQuery();
+
+        return null;
     }
 
     @Override
