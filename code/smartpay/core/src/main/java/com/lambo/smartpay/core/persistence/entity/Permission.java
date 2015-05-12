@@ -1,12 +1,15 @@
 package com.lambo.smartpay.core.persistence.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
@@ -42,6 +45,10 @@ public class Permission implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
     private Set<User> users;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = true)
+    @JoinColumn(name = "PRMS_MENU_ID", nullable = true)
+    private MenuItem menuItem;
 
     public String getDescription() {
         return description;
@@ -97,5 +104,13 @@ public class Permission implements Serializable {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public MenuItem getMenuItem() {
+        return menuItem;
+    }
+
+    public void setMenuItem(MenuItem menuItem) {
+        this.menuItem = menuItem;
     }
 }
