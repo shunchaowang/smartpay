@@ -53,6 +53,5 @@ src="${rootURL}assets/vendor/select2/js/select2.min.js"></script>
 -->
 
 <!-- customized css and js -->
-<link type="text/css" rel="stylesheet" href="${rootURL}assets/css/style.css"/>
-<link type="text/css" rel="stylesheet" href="${rootURL}assets/css/media.css"/>
+<link type="text/css" rel="stylesheet" href="${rootURL}assets/css/app.css"/>
 <script type="text/javascript" src="${rootURL}assets/js/app.js"></script>
