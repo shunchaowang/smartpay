@@ -34,6 +34,12 @@ public class Payment implements Serializable {
     @Column(name = "PYMT_AMOUNT", nullable = false)
     private Float amount;
 
+    @Column(name = "PYMT_FEE", nullable = false)
+    private Float fee;
+
+    @Column(name = "PYMT_CLIENT_IP", nullable = false)
+    private String clientIp;
+
     @Column(name = "PYMT_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
@@ -314,5 +320,21 @@ public class Payment implements Serializable {
 
     public void setClaims(Set<Claim> claims) {
         this.claims = claims;
+    }
+
+    public Float getFee() {
+        return fee;
+    }
+
+    public void setFee(Float fee) {
+        this.fee = fee;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 }
