@@ -83,6 +83,14 @@ public class User implements Serializable {
     )
     private Set<Role> roles;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "USER_PERMISSION_MAPPINGS",
+            joinColumns = {@JoinColumn(name = "UPMP_USER_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "UPMP_PERMISSION_ID", nullable = false,
+                    updatable = false)}
+    )
+    private Set<Permission> permissions;
+
     public Long getId() {
         return id;
     }
@@ -193,5 +201,14 @@ public class User implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(
+            Set<Permission> permissions) {
+        this.permissions = permissions;
     }
 }

@@ -1,14 +1,11 @@
 package com.lambo.smartpay.core.persistence.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -40,13 +37,11 @@ public class Permission implements Serializable {
     @Column(name = "PRMS_CODE", nullable = false)
     private String code;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "ROLE_PERMISSION_MAPPINGS",
-            joinColumns = {@JoinColumn(name = "RPMP_PRMS_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "RPMP_ROLE_ID", nullable = false, updatable
-                    = false)}
-    )
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
     private Set<Role> roles;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
+    private Set<User> users;
 
     public String getDescription() {
         return description;
@@ -94,5 +89,13 @@ public class Permission implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 }
