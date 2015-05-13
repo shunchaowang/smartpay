@@ -303,13 +303,12 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     }
 
     @Override
-    public CriteriaQuery<T> createCriteriaQuery() {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        return builder.createQuery(type);
+    public CriteriaBuilder getCriteriaBuilder() {
+        return entityManager.getCriteriaBuilder();
     }
 
     @Override
-    public TypedQuery<T> createTypedQuery(CriteriaQuery<T> criteriaQuery) {
+    public TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
         return entityManager.createQuery(criteriaQuery);
     }
 }

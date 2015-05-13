@@ -17,17 +17,7 @@ public interface UserService extends GenericQueryService<User, Long> {
      * @param username
      * @return
      */
-    //todo tbr
     User findByUsername(String username);
-
-    /**
-     * Find user by unique combination of merchantIdentity and username.
-     *
-     * @param merchantIdentity unique identity of merchant
-     * @param username         username of user
-     * @return User if found, null if not
-     */
-    User findByMerchantIdentityAndUsername(String merchantIdentity, String username);
 
     User findByEmail(String email);
 }

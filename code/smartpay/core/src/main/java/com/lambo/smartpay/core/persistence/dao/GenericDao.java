@@ -1,6 +1,7 @@
 package com.lambo.smartpay.core.persistence.dao;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.List;
@@ -72,8 +73,8 @@ public interface GenericDao<T, PK extends Serializable> {
      */
     List<T> findAllByCriteria(TypedQuery<T> typedQuery);
 
-    CriteriaQuery<T> createCriteriaQuery();
+    CriteriaBuilder getCriteriaBuilder();
 
-    TypedQuery<T> createTypedQuery(CriteriaQuery<T> criteriaQuery);
+    TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery);
 
 }

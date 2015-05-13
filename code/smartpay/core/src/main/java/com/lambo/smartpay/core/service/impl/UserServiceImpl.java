@@ -3,7 +3,6 @@ package com.lambo.smartpay.core.service.impl;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.dao.MerchantDao;
 import com.lambo.smartpay.core.persistence.dao.UserDao;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
@@ -11,12 +10,16 @@ import com.lambo.smartpay.core.util.ResourceProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,14 +32,12 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
+    @Resource
     private UserDao userDao;
 
-    @Resource
-    private MerchantDao merchantDao;
-
     /**
-     * Find user by the unique username.
+     * Find user by the unique username for manage, or merchant identity/username for ecs.
+     * Username is stored at merchantIdentity/username, on manage it's username without merchant.
      *
      * @param username
      * @return
@@ -47,27 +48,23 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
             logger.debug("Username is blank.");
             return null;
         }
-        return userDao.findByUsername(username);
-    }
 
-    /**
-     * Find user by unique combination of merchantIdentity and username.
-     *
-     * @param merchantIdentity unique identity of merchant, null means manage system user
-     * @param username         username of user
-     * @return User if found, null if not
-     */
-    @Override
-    public User findByMerchantIdentityAndUsername(String merchantIdentity, String username) {
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        query.select(root);
 
-        if (StringUtils.isBlank(username)) {
-            logger.debug("Username is blank.");
+        Path<String> path = root.get("username");
+        Predicate predicate = builder.equal(path, username);
+        query.where(predicate);
+        TypedQuery<User> typedQuery = userDao.createQuery(query);
+
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
-
-        CriteriaQuery<User> query = userDao.createCriteriaQuery();
-
-        return null;
     }
 
     @Override
