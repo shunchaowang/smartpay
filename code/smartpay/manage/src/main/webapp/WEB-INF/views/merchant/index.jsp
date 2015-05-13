@@ -1,52 +1,49 @@
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-    <spring:message code="Fee.label" var="fee"/>
-</c:if>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
-                <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="index.label" arguments="${entity}"/>
-            </a>
-        </div>
+<spring:message code="${controller}.label" var="entity"/>
+<spring:message code="fee.label" var="fee"/>
+
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <a href="${rootURL}">
+                    <i class="glyphicon glyphicon-home"></i>
+                    <spring:message code="home.label"/>
+                </a>
+            </li>
+            <li class="active">
+                <a href="${rootURL}${controller}/${action}" class="current">
+                    <i class="glyphicon glyphicon-list"></i>
+                    <spring:message code="index.label" arguments="${entity}"/>
+                </a>
+            </li>
+        </ol>
     </div>
-
-    <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="merchant-table">
-                            <thead>
-                            <tr>
-                                <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="identity.label"/></th>
-                                <th><spring:message code="name.label"/></th>
-                                <th><spring:message code="address.label"/></th>
-                                <th><spring:message code="contact.label"/></th>
-                                <th><spring:message code="tel.label"/></th>
-                                <th><spring:message code="email.label"/></th>
-                                <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="status.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h4><i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </h4>
+        </div>
+        <div class="col-sm-12">
+            <table class="table display table-bordered data-table" id="merchant-table">
+                <thead>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="identity.label"/></th>
+                    <th><spring:message code="name.label"/></th>
+                    <th><spring:message code="address.label"/></th>
+                    <th><spring:message code="contact.label"/></th>
+                    <th><spring:message code="tel.label"/></th>
+                    <th><spring:message code="email.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -61,9 +58,9 @@
             'serverSide': true,
             'paging': true,
             "paginationType": "full_numbers",
-            "order": [[0, "desc"]],
-            "jQueryUI": true,
-            'dom': 'T<""if>rt<"F"lp>',
+            "order": [[1, "desc"]],
+            //"jQueryUI": true,
+            /*'dom': 'T<""if>rt<"F"lp>',*/
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
@@ -78,7 +75,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}${controller}/listAll",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -89,7 +86,7 @@
                     'name': 'identity', 'targets': 1, 'data': 'identity'
                 },
                 {
-                    'name': 'name', 'targets': 2, 'data': 'name',
+                    'name': 'name', 'targets': 2, 'data': 'name', 'orderable': false,
                     'render': function (data, type, row) {
                         return '<a href=' + "${rootURL}${controller}" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
@@ -107,7 +104,7 @@
                     'name': 'tel', 'targets': 5, 'searchable': false, 'orderable': false,
                     'data': 'tel'
                 },
-                {'name': 'email', 'targets': 6, 'data': 'email'},
+                {'name': 'email', 'targets': 6, 'data': 'email', 'orderable': false},
                 {
                     'name': 'createdTime', 'targets': 7, 'searchable': false,
                     'data': 'createdTime'

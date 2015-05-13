@@ -19,6 +19,7 @@ import com.lambo.smartpay.core.service.FeeTypeService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.MerchantStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.DataTablesParams;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.IntervalServerException;
@@ -27,7 +28,6 @@ import com.lambo.smartpay.manage.web.vo.MerchantCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,11 +82,6 @@ public class MerchantController {
         return "merchant";
     }
 
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Merchant";
-    }
-
     @ModelAttribute("merchantStatuses")
     public List<MerchantStatus> merchantStatuses() {
         return merchantStatusService.getAll();
@@ -113,94 +108,30 @@ public class MerchantController {
     }
 
     // index view
-    @RequestMapping(value = {"/index{domain}"},
-            method = RequestMethod.GET)
-    public String index(@PathVariable("domain") String domain, Model model) {
-        if (domain.equals("All")) {
-            model.addAttribute("action", "indexAll");
-        } else if (domain.equals("Normal")) {
-            model.addAttribute("domain", "NormalMerchant");
-            model.addAttribute("action", "indexNormal");
-        } else if (domain.equals("Frozen")) {
-            model.addAttribute("domain", "FrozenMerchant");
-            model.addAttribute("action", "indexFrozen");
-        } else {
-            throw new BadRequestException("400", "Domain does not exist.");
-        }
+    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
+    public String index() {
         return "main";
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(@PathVariable("domain") String domain, HttpServletRequest request) {
+    public String list(HttpServletRequest request) {
 
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
+        DataTablesParams params = new DataTablesParams(request);
 
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Merchant> merchants = null;
-        Long recordsTotal = null;
-        Long recordsFiltered = null;
-        if (domain.equals("All")) {
-            merchants = merchantService
-                    .findByCriteria(search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            // count total and filtered
-            recordsTotal = merchantService.countAll();
-            recordsFiltered = merchantService.countByCriteria(search);
-        } else if (domain.equals("Normal")) {
-            MerchantStatus normalMerchantStatus = null;
-            try {
-                normalMerchantStatus = merchantStatusService
-                        .findByCode(ResourceProperties.MERCHANT_STATUS_NORMAL_CODE);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new IntervalServerException("500", "Cannot find normal merchant status.");
-            }
-            Merchant merchantCriteria = new Merchant();
-            merchantCriteria.setMerchantStatus(normalMerchantStatus);
-            merchants = merchantService
-                    .findByCriteria(merchantCriteria, search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            // count total and filtered
-            recordsTotal = merchantService.countByCriteria(merchantCriteria);
-            recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
-        } else if (domain.equals("Frozen")) {
-            MerchantStatus frozenMerchantStatus = null;
-            try {
-                frozenMerchantStatus = merchantStatusService
-                        .findByCode(ResourceProperties.MERCHANT_STATUS_FROZEN_CODE);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new IntervalServerException("500", "Cannot find normal merchant status.");
-            }
-            Merchant merchantCriteria = new Merchant();
-            merchantCriteria.setMerchantStatus(frozenMerchantStatus);
-            merchants = merchantService
-                    .findByCriteria(merchantCriteria, search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            // count total and filtered
-            recordsTotal = merchantService.countByCriteria(merchantCriteria);
-            recordsFiltered = merchantService.countByCriteria(merchantCriteria, search);
-        } else {
-            throw new BadRequestException("400", "Domain does not exist.");
-        }
+        List<Merchant> merchants = merchantService.findByCriteria(params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = merchantService.countAll();
+        Long recordsFiltered = merchantService.countByCriteria(params.getSearch());
 
         if (merchants == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");

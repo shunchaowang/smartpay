@@ -36,7 +36,8 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">
-                    <img alt="Brand" src="">
+                    <!--<img alt="Brand" src="">-->
+                    <spring:message code="application.name"/>
                 </a>
             </div>
             <!-- end of navbar header -->
