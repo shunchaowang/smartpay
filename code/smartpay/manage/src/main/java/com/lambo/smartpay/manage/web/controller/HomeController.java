@@ -5,9 +5,14 @@ import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
+import com.lambo.smartpay.manage.config.SecurityUser;
+import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.vo.PasswordCommand;
+import com.lambo.smartpay.manage.web.vo.UserCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,11 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import com.lambo.smartpay.manage.web.vo.PasswordCommand;
-import com.lambo.smartpay.manage.config.SecurityUser;
-import org.springframework.context.MessageSource;
-import com.lambo.smartpay.manage.web.exception.BadRequestException;
-import com.lambo.smartpay.manage.web.vo.UserCommand;
 
 import java.text.DateFormat;
 import java.util.Locale;
@@ -41,10 +41,9 @@ public class HomeController {
     private MessageSource messageSource;
 
 
-
     @RequestMapping(value = {"/", "/index"})
-    public ModelAndView home() {
-        //view.addObject("action", "index");
+    public ModelAndView home(Model model) {
+        model.addAttribute("_view", "index");
         return new ModelAndView("main");
     }
 
@@ -62,7 +61,7 @@ public class HomeController {
 
         PasswordCommand passwordCommand = new PasswordCommand();
         model.addAttribute("passwordCommand", passwordCommand);
-        model.addAttribute("action", "changePassword");
+        model.addAttribute("_view", "changePassword");
         return "main";
     }
 
@@ -79,7 +78,7 @@ public class HomeController {
         if (!passwordCommand.getPassword().equals(passwordCommand.getConfirmPassword())) {
             model.addAttribute("message",
                     messageSource.getMessage("password.not.match.message", null, locale));
-            model.addAttribute("action", "changePassword");
+            model.addAttribute("_view", "changePassword");
             return "main";
         }
 
@@ -87,7 +86,7 @@ public class HomeController {
                 .getPassword())) {
             model.addAttribute("message",
                     messageSource.getMessage("password.not.correct.message", null, locale));
-            model.addAttribute("action", "changePassword");
+            model.addAttribute("_view", "changePassword");
             return "main";
         }
         User user = null;
@@ -111,13 +110,14 @@ public class HomeController {
         model.addAttribute("action", "index");
         return "main";
     }
+
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String profile(Model model) {
 
         User user = null;
         try {
             user = userService.get(UserResource.getCurrentUser().getId());
-        }catch (NoSuchEntityException e) {
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Cannot find user.");
         }
@@ -125,7 +125,7 @@ public class HomeController {
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
-        model.addAttribute("action", "profile");
+        model.addAttribute("_view", "profile");
         return "main";
     }
 
@@ -161,7 +161,7 @@ public class HomeController {
                         messageSource.getMessage("not.unique.message",
                                 new String[]{fieldLabel, userCommand.getEmail()}, locale));
                 model.addAttribute("userCommand", userCommand);
-                model.addAttribute("action", "profile");
+                model.addAttribute("_view", "profile");
                 return "main";
             }
         }
