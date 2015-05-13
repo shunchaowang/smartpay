@@ -6,8 +6,7 @@
 <head>
     <jsp:include page="_import.jsp"/>
 </head>
-<body>
-<jsp:include page="_header.jsp"/>
+<body class="container-fluid">
 <jsp:include page="_navbar.jsp"/>
 
 <div class='col-sm-12' id='notification'>
@@ -26,7 +25,7 @@
 <!-- content area -->
 <jsp:include page="${_view}.jsp"/>
 
-<div class="row-fluid">
+<div class="navbar navbar-default navbar-fixed-bottom">
     <jsp:include page="_footer.jsp"/>
 </div>
 </body>

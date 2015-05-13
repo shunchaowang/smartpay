@@ -21,6 +21,7 @@ import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
+ * username must be in email format.
  */
 @Entity
 @Table(name = "USERS")

@@ -36,7 +36,7 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
     private UserDao userDao;
 
     /**
-     * Find user by the unique username for manage, or merchant identity/username for ecs.
+     * Find user by the unique username of email format.
      * Username is stored at merchantIdentity/username, on manage it's username without merchant.
      *
      * @param username
