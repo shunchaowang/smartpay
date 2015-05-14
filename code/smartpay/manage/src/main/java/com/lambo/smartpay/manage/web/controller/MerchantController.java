@@ -76,40 +76,10 @@ public class MerchantController {
     @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "merchant";
-    }
-
-    @ModelAttribute("merchantStatuses")
-    public List<MerchantStatus> merchantStatuses() {
-        return merchantStatusService.getAll();
-    }
-
-    @ModelAttribute("credentialTypes")
-    public List<CredentialType> credentialTypes() {
-        return credentialTypeService.getAll();
-    }
-
-    @ModelAttribute("credentialStatuses")
-    public List<CredentialStatus> credentialStatuses() {
-        return credentialStatusService.getAll();
-    }
-
-    @ModelAttribute("encryptionTypes")
-    public List<EncryptionType> encryptionTypes() {
-        return encryptionTypeService.getAll();
-    }
-
-    @ModelAttribute("feeTypes")
-    public List<FeeType> feeTypes() {
-        return feeTypeService.getAll();
-    }
-
     // index view
     @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("_view", "merchant/index");
         return "main";
     }
 
@@ -126,7 +96,10 @@ public class MerchantController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<Merchant> merchants = merchantService.findByCriteria(params.getSearch(),
+        Merchant merchantCriteria = new Merchant();
+        merchantCriteria.setActive(true);
+        List<Merchant> merchants = merchantService.findByCriteria(merchantCriteria,
+                params.getSearch(),
                 Integer.valueOf(params.getOffset()),
                 Integer.valueOf(params.getMax()), params.getOrder(),
                 ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
@@ -164,7 +137,7 @@ public class MerchantController {
         MerchantCommand merchantCommand = createMerchantCommand(merchant);
         model.addAttribute("merchantCommand", merchantCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "merchant/show");
         return "main";
     }
 
@@ -246,15 +219,18 @@ public class MerchantController {
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
         MerchantCommand command = new MerchantCommand();
-        Long count = merchantService.countAll();
-        String identity = "M" + String.format("%07d", count);
-        while (merchantService.findByIdentity(identity) != null) {
-            count++;
-            identity = "M" + String.format("%07d", count);
-        }
-        command.setIdentity(identity);
         model.addAttribute("merchantCommand", command);
-        model.addAttribute("action", "create");
+        List<MerchantStatus> merchantStatuses = merchantStatusService.getAll();
+        model.addAttribute("merchantStatuses", merchantStatuses);
+        List<CredentialType> credentialTypes = credentialTypeService.getAll();
+        model.addAttribute("credentialTypes", credentialTypes);
+        List<CredentialStatus> credentialStatuses = credentialStatusService.getAll();
+        model.addAttribute("credentialStatuses", credentialStatuses);
+        List<EncryptionType> encryptionTypes = encryptionTypeService.getAll();
+        model.addAttribute("encryptionTypes", encryptionTypes);
+        List<FeeType> feeTypes = feeTypeService.getAll();
+        model.addAttribute("feeTypes", feeTypes);
+        model.addAttribute("_view", "merchant/create");
         return "main";
     }
 
@@ -263,21 +239,18 @@ public class MerchantController {
                        @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
         model.addAttribute("merchantCommand", new MerchantCommand());
 
-        logger.debug("create site here");
-
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
         //TODO verify required fields
-        // check uniqueness
-        if (merchantService.findByIdentity(merchantCommand.getIdentity()) != null) {
-            String fieldLabel = messageSource.getMessage("identity.label", null, locale);
-            model.addAttribute("message",
-                    messageSource.getMessage("not.unique.message",
-                            new String[]{fieldLabel, merchantCommand.getName()}, locale));
-            model.addAttribute("merchantCommand", merchantCommand);
-            model.addAttribute("action", "create");
-        }
 
+        // set identity
+        Long count = merchantService.countAll();
+        String identity = "M" + String.format("%07d", count);
+        while (merchantService.findByIdentity(identity) != null) {
+            count++;
+            identity = "M" + String.format("%07d", count);
+        }
+        merchantCommand.setIdentity(identity);
         Merchant merchant = createMerchant(merchantCommand);
         try {
             merchantService.create(merchant);
@@ -288,8 +261,7 @@ public class MerchantController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-        model.addAttribute("action", "indexAll");
-        return "main";
+        return "redirect:/merchant/index";
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -306,7 +278,7 @@ public class MerchantController {
         MerchantCommand merchantCommand = createMerchantCommand(merchant);
 
         model.addAttribute("merchantCommand", merchantCommand);
-        model.addAttribute("action", "edit");
+        model.addAttribute("_view", "merchant/edit");
         return "main";
     }
 
@@ -324,7 +296,7 @@ public class MerchantController {
         MerchantCommand merchantCommand = createMerchantCommand(merchant);
 
         model.addAttribute("merchantCommand", merchantCommand);
-        model.addAttribute("action", "editFee");
+        model.addAttribute("_view", "merchant/editFee");
         model.addAttribute("domain", "Fee");
         return "main";
     }
@@ -351,7 +323,7 @@ public class MerchantController {
             throw new IntervalServerException("500", e.getMessage());
         }
 
-        model.addAttribute("action", "indexAll");
+        model.addAttribute("_view", "merchant/indexAll");
         return "main";
     }
 
@@ -375,7 +347,7 @@ public class MerchantController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-        model.addAttribute("action", "indexAll");
+        model.addAttribute("_view", "merchant/indexAll");
         return "main";
     }
 

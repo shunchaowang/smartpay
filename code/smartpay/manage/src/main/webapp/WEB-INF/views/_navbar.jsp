@@ -8,7 +8,7 @@
     <!-- define domain related vars -->
     <spring:message code='merchant.label' var="merchant"/>
     <spring:message code='operator.label' var="operator"/>
-    <spring:message code='Credential.label' var="merchantCredential"/>
+    <spring:message code='credential.label' var="credential"/>
     <spring:message code='transaction.label' var="transaction"/>
     <spring:message code='site.label' var="site"/>
     <spring:message code='user.label' var="user"/>
@@ -35,7 +35,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="${rootURL}">
                     <!--<img alt="Brand" src="">-->
                     <spring:message code="application.name"/>
                 </a>
@@ -45,11 +45,6 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a href="${rootURL}"><i class="icon icon-home"></i>
-                            <span><spring:message code="home.label"/></span>
-                        </a>
-                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">

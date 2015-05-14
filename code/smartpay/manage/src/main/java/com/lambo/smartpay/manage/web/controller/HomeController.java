@@ -43,7 +43,8 @@ public class HomeController {
 
 
     @RequestMapping(value = {"/", "/index"})
-    public ModelAndView home() {
+    public ModelAndView home(Model model) {
+        model.addAttribute("_view", "index");
         return new ModelAndView("main");
     }
 
@@ -61,7 +62,7 @@ public class HomeController {
 
         PasswordCommand passwordCommand = new PasswordCommand();
         model.addAttribute("passwordCommand", passwordCommand);
-        model.addAttribute("action", "changePassword");
+        model.addAttribute("_view", "changePassword");
         return "main";
     }
 
@@ -78,7 +79,7 @@ public class HomeController {
         if (!passwordCommand.getPassword().equals(passwordCommand.getConfirmPassword())) {
             model.addAttribute("message",
                     messageSource.getMessage("password.not.match.message", null, locale));
-            model.addAttribute("action", "changePassword");
+            model.addAttribute("_view", "changePassword");
             return "main";
         }
 
@@ -86,7 +87,7 @@ public class HomeController {
                 .getPassword())) {
             model.addAttribute("message",
                     messageSource.getMessage("password.not.correct.message", null, locale));
-            model.addAttribute("action", "changePassword");
+            model.addAttribute("_view", "changePassword");
             return "main";
         }
         User user = null;
@@ -107,7 +108,7 @@ public class HomeController {
             throw new BadRequestException("400", "Not unique.");
         }
         securityUser.setPassword(user.getPassword());
-        model.addAttribute("action", "index");
+        model.addAttribute("_view", "index");
         return "main";
     }
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
@@ -124,7 +125,7 @@ public class HomeController {
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
-        model.addAttribute("action", "profile");
+        model.addAttribute("_view", "profile");
         return "main";
     }
 
@@ -160,7 +161,7 @@ public class HomeController {
                         messageSource.getMessage("not.unique.message",
                                 new String[]{fieldLabel, userCommand.getEmail()}, locale));
                 model.addAttribute("userCommand", userCommand);
-                model.addAttribute("action", "profile");
+                model.addAttribute("_view", "profile");
                 return "main";
             }
         }

@@ -1,7 +1,6 @@
 <%@include file="../taglib.jsp" %>
 
-<spring:message code="${controller}.label" var="entity"/>
-<spring:message code="fee.label" var="fee"/>
+<spring:message code="merchant.label" var="entity"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -13,7 +12,7 @@
                 </a>
             </li>
             <li class="active">
-                <a href="${rootURL}${controller}/${action}" class="current">
+                <a href="${rootURL}merchant/index" class="current">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
                 </a>
@@ -21,11 +20,6 @@
         </ol>
     </div>
     <div class="row">
-        <div class="col-sm-12">
-            <h4><i class="glyphicon glyphicon-list"></i>
-                <spring:message code="index.label" arguments="${entity}"/>
-            </h4>
-        </div>
         <div class="col-sm-12">
             <table class="table display table-bordered data-table" id="merchant-table">
                 <thead>
@@ -47,7 +41,10 @@
         </div>
     </div>
 </div>
-
+<div class="confirmDialog" id="confirm-dialog" title="Empty the recycle bin?">
+    <p>These
+        items will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         var merchantTable = $('#merchant-table').DataTable({
@@ -75,7 +72,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}merchant/list",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -88,7 +85,7 @@
                 {
                     'name': 'name', 'targets': 2, 'data': 'name', 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}merchant" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -116,15 +113,15 @@
                 {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                        return '<a href="' + "${rootURL}merchant" + '/edit/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="tableButton"'
                                 + '">' + '<spring:message code="action.edit.label"/>'
                                 + '</button></a>' + ' '
-                                + '<a href="' + "${rootURL}${controller}" + '/editFee/'
+                                + '<a href="' + "${rootURL}merchant" + '/editFee/'
                                 + row['id'] + '">' +
                                 '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="setting.label" arguments="${fee}"/>'
+                                + '">' + '<spring:message code="setting.label"/>'
                                 + '</button></a>' + ' '
                                 + '<button type="button" name="delete-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">' +
@@ -138,10 +135,23 @@
         // add live handler for remove button
         merchantTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
+            $("#confirm-dialog").dialog({
+                resizable: false,
+                height: 140,
+                modal: true,
+                buttons: {
+                    "Delete all items": function () {
+                        $(this).dialog("close");
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
             var id = this.value;
             $.ajax({
                 type: 'POST',
-                url: "${rootURL}${controller}" + '/delete',
+                url: "${rootURL}merchant" + '/delete',
                 data: {id: id},
                 dataType: 'JSON',
                 error: function (error) {
@@ -167,7 +177,7 @@
             var id = this.value;
             $.ajax({
                 type: 'POST',
-                url: "${rootURL}${controller}" + '/freeze',
+                url: "${rootURL}merchant" + '/freeze',
                 data: {id: id},
                 dataType: 'JSON',
                 error: function (error) {
@@ -193,7 +203,7 @@
             var id = this.value;
             $.ajax({
                 type: 'POST',
-                url: "${rootURL}${controller}" + '/unfreeze',
+                url: "${rootURL}merchant" + '/unfreeze',
                 data: {id: id},
                 dataType: 'JSON',
                 error: function (error) {
