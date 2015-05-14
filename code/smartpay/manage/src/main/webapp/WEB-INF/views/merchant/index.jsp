@@ -1,6 +1,14 @@
 <%@include file="../taglib.jsp" %>
 
 <spring:message code="merchant.label" var="entity"/>
+<spring:message code="delete.confirm.message" arguments="${entity}" var="deleteMsg"/>
+<spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
+<spring:message code="action.delete.label" var="deleteLabel"/>
+<spring:message code="action.cancel.label" var="cancelLabel"/>
+<spring:message code="action.freeze.label" var="freezeLabel"/>
+<spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
+<spring:message code="action.archive.label" var="archiveLabel"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -12,7 +20,7 @@
                 </a>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/index" class="current">
+                <a href="${rootURL}merchant/index">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
                 </a>
@@ -33,6 +41,8 @@
                     <th><spring:message code="email.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -41,10 +51,10 @@
         </div>
     </div>
 </div>
-<div class="confirmDialog" id="confirm-dialog" title="Empty the recycle bin?">
-    <p>These
-        items will be permanently deleted and cannot be recovered. Are you sure?</p>
+<div class="confirmDialog" id="confirm-dialog">
 </div>
+<div id="dialog-area"></div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var merchantTable = $('#merchant-table').DataTable({
@@ -110,89 +120,81 @@
                     'name': 'merchantStatus', 'targets': 8, 'searchable': false,
                     'orderable': false, 'data': 'merchantStatus'
                 },
+                {'name': 'status', 'targets': 9, 'visible': false, 'data': 'merchantStatusCode'},
+                {'name': 'active', 'targets': 10, 'visible': false, 'data': 'active'},
                 {
-                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 11, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}merchant" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' + ' '
-                                + '<a href="' + "${rootURL}merchant" + '/editFee/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="setting.label"/>'
-                                + '</button></a>' + ' '
-                                + '<button type="button" name="delete-button"'
-                                + ' class="tableButton" value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
-                                '</button>';
+                        var operations = '<button type="button" name="edit-button" '
+                                + 'class="btn btn-default" value="' + row['id'] + '">'
+                                + '<spring:message code="action.edit.label"/>'
+                                + '</button>';
+                        if (row['merchantStatusCode'] == '200') { // if the merchant is active
+                            operations += '<button type="button" name="freeze-button"'
+                                    + ' data-identity="' + row['identity'] + '"'
+                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                    "${freezeLabel}"
+                                    + '</button>';
+                        } else if (row['merchantStatusCode'] == '500') {
+                            // if the merchant is deactivated
+                            operations += '<button type="button" name="unfreeze-button"'
+                                    + ' data-identity="' + row['identity'] + '"'
+                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                    "${unfreezeLabel}"
+                                    + '</button>';
+                        }
+                        operations += '<button type="button" name="archive-button"'
+                                + ' data-identity="' + row['identity'] + '"'
+                                + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                "${archiveLabel}"
+                                + '</button>';
+                        return operations;
                     }
                 }
             ]
-        });
-
-        // add live handler for remove button
-        merchantTable.on('click', 'button[type=button][name=delete-button]', function (event) {
-            event.preventDefault();
-            $("#confirm-dialog").dialog({
-                resizable: false,
-                height: 140,
-                modal: true,
-                buttons: {
-                    "Delete all items": function () {
-                        $(this).dialog("close");
-                    },
-                    Cancel: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-            var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}merchant" + '/delete',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
-                },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    merchantTable.ajax.reload();
-                }
-            });
         });
 
         // add live handler for freeze button
         merchantTable.on('click', 'button[type=button][name=freeze-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}merchant" + '/freeze',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${freezeMsg}" + ' ' + identity;
+                    $(this).html(content);
                 },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    merchantTable.ajax.reload();
+                buttons: {
+                    "${freezeLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}merchant" + '/freeze',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                merchantTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
                 }
             });
         });
@@ -222,5 +224,81 @@
                 }
             });
         });
+
+        // add live handler for edit button
+        merchantTable.on('click', 'button[type=button][name=edit-button]', function
+                (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}merchant/edit",
+                data: {
+                    merchantId: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var basicInfoDialog = $("#basic-info-dialog").dialog({
+                        autoOpen: false,
+                        height: 'auto',
+                        width: 'auto',
+                        modal: true,
+                        close: function () {
+                            basicInfoDialog.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#cancel-button").click(function (event) {
+                        event.preventDefault();
+                        basicInfoDialog.dialog("close");
+                    });
+
+                    $("#save-button").click(function (event) {
+                        event.preventDefault();
+                        if (!$("#basic-info-form").valid()) {
+                            return;
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "${rootURL}merchant/edit",
+                            data: {
+                                id: $("#merchantId").val(),
+                                name: $("#name").val(),
+                                merchantStatus: $("#merchantStatusId").val(),
+                                email: $("#email").val(),
+                                contact: $("#contact").val(),
+                                address: $("#address").val(),
+                                tel: $("#tel").val(),
+                                credentialContent: $("#credentialContent").val(),
+                                credentialStatus: $("#credentialStatusId").val(),
+                                credentialExpirationTime: $("#credentialExpirationTime").val(),
+                                credentialType: $("#credentialTypeId").val()
+                            },
+                            dataType: "json",
+                            error: function (data) {
+                                alert("There was an error");
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                basicInfoDialog.dialog("close");
+                                merchantTable.ajax.reload();
+                            }
+                        });
+                    });
+                }
+            });
+        });
+
     });
 </script>

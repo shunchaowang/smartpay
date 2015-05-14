@@ -1,5 +1,11 @@
 package com.lambo.smartpay.manage.web.vo;
 
+import com.lambo.smartpay.core.persistence.entity.Merchant;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.text.DateFormat;
+import java.util.Locale;
+
 /**
  * Created by swang on 3/16/2015.
  */
@@ -49,13 +55,67 @@ public class MerchantCommand {
     private Long returnFeeTypeId;
     private String returnFeeTypeName;
 
-    public Long getId() { return id; }
+    public MerchantCommand() {
+    }
+
+    public MerchantCommand(Merchant merchant) {
+
+        id = merchant.getId();
+        identity = merchant.getIdentity();
+        merchantStatusId = merchant.getMerchantStatus().getId();
+        merchantStatusName = merchant.getMerchantStatus().getName();
+        name = merchant.getName();
+        active = merchant.getActive();
+        address = merchant.getAddress();
+        contact = merchant.getContact();
+        tel = merchant.getTel();
+        email = merchant.getEmail();
+        remark = merchant.getRemark();
+
+        // Credential info
+        credentialContent = merchant.getCredential().getContent();
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        credentialExpirationTime =
+                dateFormat.format(merchant.getCredential().getExpirationDate());
+        credentialRemark = merchant.getCredential().getRemark();
+        credentialStatusId = merchant.getCredential().getCredentialStatus()
+                .getId();
+        credentialStatusName = merchant.getCredential().getCredentialStatus().getName();
+        credentialTypeId = merchant.getCredential().getCredentialType().getId();
+        credentialTypeName = merchant.getCredential().getCredentialType().getName();
+
+        // Encryption info
+        encryptionKey = merchant.getEncryption().getKey();
+        encryptionRemark = merchant.getEncryption().getRemark();
+        encryptionTypeId = merchant.getEncryption().getEncryptionType().getId();
+        encryptionTypeName = merchant.getEncryption().getEncryptionType().getName();
+
+        // Commission Fee
+        commissionFeeRemark = merchant.getCommissionFee().getRemark();
+        commissionFeeTypeId = merchant.getCommissionFee().getFeeType().getId();
+        commissionFeeTypeName = merchant.getCommissionFee().getFeeType().getName();
+        commissionFeeValue = merchant.getCommissionFee().getValue();
+
+        // Return Fee
+        returnFeeRemark = merchant.getReturnFee().getRemark();
+        returnFeeTypeId = merchant.getReturnFee().getFeeType().getId();
+        returnFeeTypeName = merchant.getReturnFee().getFeeType().getName();
+        returnFeeValue = merchant.getReturnFee().getValue();
+
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getIdentity() { return identity; }
+    public String getIdentity() {
+        return identity;
+    }
 
     public void setIdentity(String identity) {
         this.identity = identity;

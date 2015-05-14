@@ -318,6 +318,7 @@ public class HomeController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return "403";
         }
 
         OrderCommand orderCommand = createOrderCommand(request);

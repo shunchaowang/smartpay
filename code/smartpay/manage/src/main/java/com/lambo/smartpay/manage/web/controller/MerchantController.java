@@ -28,6 +28,7 @@ import com.lambo.smartpay.manage.web.vo.MerchantCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
@@ -134,7 +136,7 @@ public class MerchantController {
             e.printStackTrace();
             throw new BadRequestException("400", "Merchant  " + id + " not found.");
         }
-        MerchantCommand merchantCommand = createMerchantCommand(merchant);
+        MerchantCommand merchantCommand = new MerchantCommand(merchant);
         model.addAttribute("merchantCommand", merchantCommand);
 
         model.addAttribute("_view", "merchant/show");
@@ -161,7 +163,7 @@ public class MerchantController {
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Merchant.label", null, locale);
+        String label = messageSource.getMessage("merchant.label", null, locale);
         try {
             merchant = merchantService.freezeMerchant(id);
         } catch (NoSuchEntityException e) {
@@ -198,7 +200,7 @@ public class MerchantController {
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Merchant.label", null, locale);
+        String label = messageSource.getMessage("merchant.label", null, locale);
         try {
             merchant = merchantService.unfreezeMerchant(id);
         } catch (NoSuchEntityException e) {
@@ -264,10 +266,15 @@ public class MerchantController {
         return "redirect:/merchant/index";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public ModelAndView edit(HttpServletRequest request) {
 
-        Merchant merchant;
+        String merchantId = request.getParameter("merchantId");
+        if (StringUtils.isBlank(merchantId)) {
+            throw new BadRequestException("400", "Merchant id is blank.");
+        }
+        Long id = Long.valueOf(merchantId);
+        Merchant merchant = null;
         try {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
@@ -275,17 +282,64 @@ public class MerchantController {
             throw new BadRequestException("400", "User " + id + " not found.");
         }
 
-        MerchantCommand merchantCommand = createMerchantCommand(merchant);
+        MerchantCommand merchantCommand = new MerchantCommand(merchant);
+        List<MerchantStatus> merchantStatuses = merchantStatusService.getAll();
+        List<CredentialType> credentialTypes = credentialTypeService.getAll();
+        List<CredentialStatus> credentialStatuses = credentialStatusService.getAll();
 
-        model.addAttribute("merchantCommand", merchantCommand);
-        model.addAttribute("_view", "merchant/edit");
-        return "main";
+        ModelAndView view = new ModelAndView("merchant/_basicInfoDialog");
+        view.addObject("merchantCommand", merchantCommand);
+        view.addObject("merchantStatuses", merchantStatuses);
+        view.addObject("credentialStatuses", credentialStatuses);
+        view.addObject("credentialTypes", credentialTypes);
+        return view;
     }
 
-    @RequestMapping(value = "/editFee/{id}", method = RequestMethod.GET)
-    public String editFee(@PathVariable("id") Long id, Model model) {
+    /**
+     * Edit basic info for the merchant.
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/edit", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String saveBasicInfo(HttpServletRequest request) {
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("merchant.label", null, locale);
+        Merchant merchant = editMerchantBasicInfo(request);
+        try {
+            merchant = merchantService.update(merchant);
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, merchant.getIdentity()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, merchant.getIdentity()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
 
-        Merchant merchant;
+        String deletedMessage = messageSource.getMessage("saved.message",
+                new String[]{label, merchant.getIdentity()}, locale);
+        response.setMessage(deletedMessage);
+        return JsonUtil.toJson(response);
+    }
+
+    @RequestMapping(value = "/editFee", method = RequestMethod.GET)
+    public ModelAndView editFee(HttpServletRequest request) {
+
+        String merchantId = request.getParameter("merchantId");
+        if (StringUtils.isBlank(merchantId)) {
+            throw new BadRequestException("400", "Merchant id is blank.");
+        }
+        Long id = Long.valueOf(merchantId);
+        Merchant merchant = null;
         try {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
@@ -293,62 +347,27 @@ public class MerchantController {
             throw new BadRequestException("400", "User " + id + " not found.");
         }
 
-        MerchantCommand merchantCommand = createMerchantCommand(merchant);
+        MerchantCommand merchantCommand = new MerchantCommand(merchant);
+        List<MerchantStatus> merchantStatuses = merchantStatusService.getAll();
 
-        model.addAttribute("merchantCommand", merchantCommand);
-        model.addAttribute("_view", "merchant/editFee");
-        model.addAttribute("domain", "Fee");
-        return "main";
+        ModelAndView view = new ModelAndView("merchant/_feeDialog");
+        view.addObject("merchantCommand", merchantCommand);
+        view.addObject("merchantStatuses", merchantStatuses);
+        return view;
     }
 
+    /**
+     * Edit transaction fees for the merchant.
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/editFee", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String saveFee(HttpServletRequest request) {
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(Model model,
-                       @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
-
-        model.addAttribute("merchantCommand", merchantCommand);
-
-        // message locale
-        Locale locale = LocaleContextHolder.getLocale();
-
-        Merchant merchant = setMerchant(merchantCommand);
-
-        try {
-            merchantService.update(merchant);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
-        } catch (NotUniqueException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
-        }
-
-        model.addAttribute("_view", "merchant/indexAll");
-        return "main";
-    }
-
-    @RequestMapping(value = "/editFee", method = RequestMethod.POST)
-    public String editFee(Model model,
-                          @ModelAttribute("merchantCommand") MerchantCommand merchantCommand) {
-
-        model.addAttribute("merchantCommand", merchantCommand);
-
-        // message locale
-        Locale locale = LocaleContextHolder.getLocale();
-
-        Merchant merchant = setMerchantFee(merchantCommand);
-
-        try {
-            merchantService.update(merchant);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
-        } catch (NotUniqueException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
-        }
-        model.addAttribute("_view", "merchant/indexAll");
-        return "main";
+        return null;
     }
 
     /**
@@ -371,7 +390,7 @@ public class MerchantController {
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Merchant.label", null, locale);
+        String label = messageSource.getMessage("merchant.label", null, locale);
         try {
             merchant = merchantService.delete(id);
 
@@ -388,6 +407,91 @@ public class MerchantController {
         response.setMessage(deletedMessage);
         return JsonUtil.toJson(response);
     }
+
+    private Merchant editMerchantBasicInfo(HttpServletRequest request) {
+        Merchant merchant = null;
+        try {
+            merchant = merchantService.get(Long.valueOf(request.getParameter("id")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        merchant.setName(request.getParameter("name"));
+        merchant.setEmail(request.getParameter("email"));
+        merchant.setAddress(request.getParameter("address"));
+        merchant.setContact(request.getParameter("contact"));
+        merchant.setTel(request.getParameter("tel"));
+        merchant.setRemark(request.getParameter("remark"));
+        Long merchantStatusId = Long.valueOf(request.getParameter("merchantStatus"));
+        MerchantStatus merchantStatus = null;
+        try {
+            merchantStatus = merchantStatusService.get(merchantStatusId);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+        merchant.setMerchantStatus(merchantStatus);
+
+        // set credential
+        Credential credential = merchant.getCredential();
+        credential.setContent(request.getParameter("credentialContent"));
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        Date date = Calendar.getInstance(locale).getTime();
+        try {
+            date = dateFormat.parse(request.getParameter("credentialExpirationTime"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        credential.setExpirationDate(date);
+        CredentialStatus credentialStatus = null;
+        try {
+            credentialStatus = credentialStatusService
+                    .get(Long.valueOf(request.getParameter("credentialStatus")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        credential.setCredentialStatus(credentialStatus);
+        CredentialType credentialType = null;
+        try {
+            credentialType = credentialTypeService
+                    .get(Long.valueOf(request.getParameter("credentialType")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        credential.setCredentialType(credentialType);
+
+        return merchant;
+    }
+
+    private Merchant editMerchantFee(HttpServletRequest request) {
+        Merchant merchant = null;
+        try {
+            merchant = merchantService.get(Long.valueOf(request.getParameter("id")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        merchant.setName(request.getParameter("name"));
+        merchant.setEmail(request.getParameter("email"));
+        merchant.setAddress(request.getParameter("address"));
+        merchant.setContact(request.getParameter("contact"));
+        merchant.setTel(request.getParameter("tel"));
+        merchant.setRemark(request.getParameter("remark"));
+        Long merchantStatusId = Long.valueOf(request.getParameter("merchantStatus"));
+        MerchantStatus merchantStatus = null;
+        try {
+            merchantStatus = merchantStatusService.get(merchantStatusId);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+        merchant.setMerchantStatus(merchantStatus);
+
+        return merchant;
+    }
+
+    ///////////////////////////////////////////
 
 
     private Credential createCredential(MerchantCommand merchantCommand) {
@@ -550,7 +654,6 @@ public class MerchantController {
         merchant.setIdentity(merchantCommand.getIdentity());
         merchant.setMerchantStatus(merchantStatus);
         merchant.setName(merchantCommand.getName());
-        merchant.setActive(true);
         merchant.setAddress(merchantCommand.getAddress());
         merchant.setContact(merchantCommand.getContact());
         merchant.setTel(merchantCommand.getTel());
@@ -589,10 +692,8 @@ public class MerchantController {
         }
 
         //set merchant basic info
-        merchant.setIdentity(merchantCommand.getIdentity());
         merchant.setMerchantStatus(merchantStatus);
         merchant.setName(merchantCommand.getName());
-        merchant.setActive(true);
         merchant.setAddress(merchantCommand.getAddress());
         merchant.setContact(merchantCommand.getContact());
         merchant.setTel(merchantCommand.getTel());
@@ -629,62 +730,4 @@ public class MerchantController {
         return merchant;
     }
 
-    private MerchantCommand createMerchantCommand(Merchant merchant) {
-        MerchantCommand merchantCommand = new MerchantCommand();
-
-        if (merchant.getId() != null) {
-            merchantCommand.setId(merchant.getId());
-        }
-        if (merchant.getIdentity() != null) {
-            merchantCommand.setIdentity(merchant.getIdentity());
-        }
-
-        merchantCommand.setMerchantStatusId(merchant.getMerchantStatus().getId());
-        merchantCommand.setMerchantStatusName(merchant.getMerchantStatus().getName());
-        merchantCommand.setName(merchant.getName());
-        merchantCommand.setName(merchant.getName());
-        merchantCommand.setActive(merchant.getActive());
-        merchantCommand.setAddress(merchant.getAddress());
-        merchantCommand.setContact(merchant.getContact());
-        merchantCommand.setTel(merchant.getTel());
-        merchantCommand.setEmail(merchant.getEmail());
-        merchantCommand.setRemark(merchant.getRemark());
-
-        // Credential info
-        merchantCommand.setCredentialContent(merchant.getCredential().getContent());
-        Locale locale = LocaleContextHolder.getLocale();
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-        merchantCommand.setCredentialExpirationTime(
-                dateFormat.format(merchant.getCredential().getExpirationDate()));
-        merchantCommand.setCredentialRemark(merchant.getCredential().getRemark());
-        merchantCommand.setCredentialStatusId(merchant.getCredential().getCredentialStatus()
-                .getId());
-        merchantCommand
-                .setCredentialStatusName(merchant.getCredential().getCredentialStatus().getName());
-        merchantCommand.setCredentialTypeId(merchant.getCredential().getCredentialType().getId());
-        merchantCommand
-                .setCredentialTypeName(merchant.getCredential().getCredentialType().getName());
-
-        // Encryption info
-        merchantCommand.setEncryptionKey(merchant.getEncryption().getKey());
-        merchantCommand.setEncryptionRemark(merchant.getEncryption().getRemark());
-        merchantCommand.setEncryptionTypeId(merchant.getEncryption().getEncryptionType().getId());
-        merchantCommand
-                .setEncryptionTypeName(merchant.getEncryption().getEncryptionType().getName());
-
-        // Commission Fee
-        merchantCommand.setCommissionFeeRemark(merchant.getCommissionFee().getRemark());
-        merchantCommand.setCommissionFeeTypeId(merchant.getCommissionFee().getFeeType().getId());
-        merchantCommand
-                .setCommissionFeeTypeName(merchant.getCommissionFee().getFeeType().getName());
-        merchantCommand.setCommissionFeeValue(merchant.getCommissionFee().getValue());
-
-        // Return Fee
-        merchantCommand.setReturnFeeRemark(merchant.getReturnFee().getRemark());
-        merchantCommand.setReturnFeeTypeId(merchant.getReturnFee().getFeeType().getId());
-        merchantCommand.setReturnFeeTypeName(merchant.getReturnFee().getFeeType().getName());
-        merchantCommand.setReturnFeeValue(merchant.getReturnFee().getValue());
-
-        return merchantCommand;
-    }
 }

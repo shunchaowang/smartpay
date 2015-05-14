@@ -11,8 +11,12 @@
                     <spring:message code="home.label"/>
                 </a>
             </li>
+            <a href="${rootURL}merchant/index">
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </a>
             <li class="active">
-                <a href="${rootURL}merchant/create" class="current">
+                <a href="${rootURL}merchant/create">
                     <i class="glyphicon glyphicon-wrench"></i>
                     <spring:message code="create.label" arguments="${entity}"/>
                 </a>
