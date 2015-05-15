@@ -13,7 +13,7 @@
 
                     <div class="row">
                         <label class="col-sm-1 control-label" for="name">
-                            <span class="required-indicator">*</span>
+                            <span>*</span>
                             <spring:message code="name.label"/>
                         </label>
 
@@ -22,7 +22,7 @@
                                    required="" value="${merchantCommand.name}"/>
                         </div>
                         <label class="col-sm-1 control-label" for="merchantStatusId">
-                            <span class="required-indicator">*</span>
+                            <span>*</span>
                             <spring:message code="status.label"/>
                         </label>
 
@@ -93,7 +93,7 @@
                     <!-- credential -->
                     <div class="row">
                         <label class="col-sm-1 control-label" for="credentialContent">
-                            <span class="required-indicator">*</span>
+                            <span>*</span>
                             <spring:message code="content.label"/>
                         </label>
 
@@ -104,7 +104,7 @@
                                    value="${merchantCommand.credentialContent}"/>
                         </div>
                         <label class="col-sm-1 control-label" for="credentialStatusId">
-                            <span class="required-indicator">*</span>
+                            <span>*</span>
                             <spring:message code="status.label"/>
                         </label>
 
@@ -134,7 +134,7 @@
                     <div class="row">
                         <label class="col-sm-1 control-label"
                                for="credentialExpirationTime">
-                            <span class="required-indicator">*</span>
+                            <span>*</span>
                             <spring:message code="validation.label"/>
                         </label>
 
@@ -145,7 +145,7 @@
                                    value="${merchantCommand.credentialExpirationTime}"/>
                         </div>
                         <label class="col-sm-1 control-label" for="credentialTypeId">
-                            <span class="required-indicator">*</span>
+                            <span>*</span>
                             <spring:message code="type.label"/>
                         </label>
 
@@ -184,6 +184,7 @@
                             </textarea>
                         </div>
                     </div>
+                    <br>
 
                     <div class='form-group'>
                         <div class="col-sm-2 col-sm-offset-2">
@@ -217,26 +218,26 @@
                     required: true,
                     minlength: 3,
                     maxlength: 32
+                },
+                merchantStatusId: {
+                    required: true
+                },
+                credentialContent: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 16
+                },
+                credentialStatusId: {
+                    required: true
+                },
+                credentialExpirationTime: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 16
+                },
+                credentialTypeId: {
+                    required: true
                 }
-            },
-            merchantStatusId: {
-                required: true
-            },
-            credentialContent: {
-                required: true,
-                minlength: 5,
-                maxlength: 16
-            },
-            credentialStatusId: {
-                required: true
-            },
-            credentialExpirationTime: {
-                required: true,
-                minlength: 3,
-                maxlength: 16
-            },
-            credentialTypeId: {
-                required: true,
             }
         });
     });

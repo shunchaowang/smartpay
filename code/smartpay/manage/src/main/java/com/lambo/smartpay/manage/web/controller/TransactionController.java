@@ -17,7 +17,7 @@ import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.EncryptionCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
-import com.lambo.smartpay.manage.web.vo.table.DataTablesTransaction;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchantSetting;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -120,13 +119,13 @@ public class TransactionController {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        List<DataTablesTransaction> dataTablesTransactions = new ArrayList<>();
+        List<DataTablesMerchantSetting> dataTablesTransactions = new ArrayList<>();
         for (Merchant merchant : merchants) {
-            DataTablesTransaction tablesTransaction = new DataTablesTransaction(merchant);
+            DataTablesMerchantSetting tablesTransaction = new DataTablesMerchantSetting(merchant);
             dataTablesTransactions.add(tablesTransaction);
         }
 
-        DataTablesResultSet<DataTablesTransaction> resultSet = new DataTablesResultSet<>();
+        DataTablesResultSet<DataTablesMerchantSetting> resultSet = new DataTablesResultSet<>();
         resultSet.setData(dataTablesTransactions);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());

@@ -5,9 +5,10 @@ import com.lambo.smartpay.core.persistence.entity.Merchant;
 /**
  * Created by swang on 3/20/2015.
  */
-public class DataTablesTransaction {
+public class DataTablesMerchantSetting {
 
     private Long id;
+    private String identity;
     private String name;
     private Long encryptionId;
     private String encryptionType;
@@ -19,8 +20,9 @@ public class DataTablesTransaction {
     private String returnFeeType;
     private Float returnFeeValue;
 
-    public DataTablesTransaction(Merchant merchant) {
+    public DataTablesMerchantSetting(Merchant merchant) {
         id = merchant.getId();
+        identity = merchant.getIdentity();
         name = merchant.getName();
         encryptionId = merchant.getEncryption().getId();
         encryptionKey = merchant.getEncryption().getKey();
@@ -121,5 +123,13 @@ public class DataTablesTransaction {
 
     public void setReturnFeeValue(Float returnFeeValue) {
         this.returnFeeValue = returnFeeValue;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 }

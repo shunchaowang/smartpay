@@ -43,7 +43,7 @@
 
                             <div class="control-group">
                                 <label class="col-sm-3 control-label" for="identity">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="identity.label"/>
                                 </label>
 
@@ -57,7 +57,7 @@
                             </div>
                             <div class="control-group">
                                 <label class="col-sm-3 control-label" for="name">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="name.label"/>
                                 </label>
 
@@ -119,7 +119,7 @@
                             <!-- merchant status -->
                             <div class="control-group">
                                 <label class="col-sm-3 control-label" for="merchantStatusId">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="status.label"/>
                                 </label>
 
@@ -162,7 +162,7 @@
                             <!-- credential type -->
                             <div class="control-group">
                                 <label class="col-sm-3 control-label" for="credentialTypeId">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="type.label"/>
                                 </label>
 
@@ -184,7 +184,7 @@
                             <!-- credential -->
                             <div class="control-group">
                                 <label class="col-sm-3 control-label" for="credentialContent">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="content.label"/>
                                 </label>
 
@@ -199,7 +199,7 @@
                             <div class="control-group">
                                 <label class="col-sm-3 control-label"
                                        for="credentialExpirationTime">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="validation.label"/>
                                 </label>
 
@@ -216,7 +216,7 @@
                             <!-- credential status -->
                             <div class="control-group">
                                 <label class="col-sm-3 control-label" for="credentialStatusId">
-                                    <span class="required-indicator">*</span>
+                                    <span>*</span>
                                     <spring:message code="status.label"/>
                                 </label>
 

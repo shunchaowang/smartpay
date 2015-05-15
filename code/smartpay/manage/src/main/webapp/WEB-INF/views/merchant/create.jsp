@@ -11,10 +11,12 @@
                     <spring:message code="home.label"/>
                 </a>
             </li>
+            <li>
             <a href="${rootURL}merchant/index">
                 <i class="glyphicon glyphicon-list"></i>
                 <spring:message code="index.label" arguments="${entity}"/>
             </a>
+            </li>
             <li class="active">
                 <a href="${rootURL}merchant/create">
                     <i class="glyphicon glyphicon-wrench"></i>
@@ -36,7 +38,7 @@
                 </div>
                 <div class="row">
                     <label class="col-sm-1 control-label" for="name">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="name.label"/>
                     </label>
 
@@ -46,7 +48,7 @@
                                     placeholder="Name"/>
                     </div>
                     <label class="col-sm-1 control-label" for="merchantStatusId">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="status.label"/>
                     </label>
 
@@ -125,7 +127,7 @@
                 </div>
                 <div class="row">
                     <label class="col-sm-1 control-label" for="credentialContent">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="content.label"/>
                     </label>
 
@@ -136,7 +138,7 @@
                                     placeholder="Content"/>
                     </div>
                     <label class="col-sm-1 control-label" for="credentialStatusId">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="status.label"/>
                     </label>
 
@@ -157,7 +159,7 @@
                 <div class="row">
                     <label class="col-sm-1 control-label"
                            for="credentialExpirationTime">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="validation.label"/>
                     </label>
 
@@ -167,7 +169,7 @@
                                     cssClass="form-control datepicker" required=""/>
                     </div>
                     <label class="col-sm-1 control-label" for="credentialTypeId">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="type.label"/>
                     </label>
 
@@ -192,7 +194,7 @@
                 </div>
                 <div class="row">
                     <label class="col-sm-1 control-label" for="encryptionKey">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="key.label"/>
                     </label>
 
@@ -202,7 +204,7 @@
                                     placeholder="Key"/>
                     </div>
                     <label class="col-sm-1 control-label" for="encryptionTypeId">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="type.label"/>
                     </label>
 
@@ -228,7 +230,7 @@
                 </div>
                 <div class="row">
                     <label class="col-sm-1 control-label" for="commissionFeeValue">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="value.label"/>
                     </label>
 
@@ -239,7 +241,7 @@
                                     placeholder="Value"/>
                     </div>
                     <label class="col-sm-1 control-label" for="commissionFeeTypeId">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="type.label"/>
                     </label>
 
@@ -264,7 +266,7 @@
 
                 <div class="row">
                     <label class="col-sm-1 control-label" for="returnFeeValue">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="value.label"/>
                     </label>
 
@@ -274,7 +276,7 @@
                                     placeholder="Value"/>
                     </div>
                     <label class="col-sm-1 control-label" for="returnFeeTypeId">
-                        <span class="required-indicator">*</span>
+                        <span>*</span>
                         <spring:message code="type.label"/>
                     </label>
 

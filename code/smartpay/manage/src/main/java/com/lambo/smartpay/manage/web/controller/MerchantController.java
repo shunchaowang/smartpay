@@ -26,6 +26,7 @@ import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.MerchantCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchant;
+import com.lambo.smartpay.manage.web.vo.table.DataTablesMerchantSetting;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +86,20 @@ public class MerchantController {
         return "main";
     }
 
+    // fee view
+    @RequestMapping(value = {"/setting"}, method = RequestMethod.GET)
+    public String setting(Model model) {
+        model.addAttribute("_view", "merchant/setting");
+        return "main";
+    }
+
+    // archive view
+    @RequestMapping(value = {"/archive"}, method = RequestMethod.GET)
+    public String archive(Model model) {
+        model.addAttribute("_view", "merchant/archive");
+        return "main";
+    }
+
     // ajax for DataTables
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -125,6 +140,89 @@ public class MerchantController {
 
         return JsonUtil.toJson(resultSet);
     }
+
+    // ajax for DataTables of merchant settings
+    @RequestMapping(value = "/listSetting", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listSetting(HttpServletRequest request) {
+
+        DataTablesParams params = new DataTablesParams(request);
+
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        Merchant merchantCriteria = new Merchant();
+        merchantCriteria.setActive(true);
+        List<Merchant> merchants = merchantService.findByCriteria(merchantCriteria,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = merchantService.countAll();
+        Long recordsFiltered = merchantService.countByCriteria(params.getSearch());
+
+        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesMerchantSetting> dataTablesMerchantSettings = new ArrayList<>();
+        for (Merchant merchant : merchants) {
+            DataTablesMerchantSetting merchantSetting = new DataTablesMerchantSetting(merchant);
+            dataTablesMerchantSettings.add(merchantSetting);
+        }
+
+        DataTablesResultSet<DataTablesMerchantSetting> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesMerchantSettings);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
+    // ajax for DataTables
+    @RequestMapping(value = "/listArchive", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listArchive(HttpServletRequest request) {
+
+        DataTablesParams params = new DataTablesParams(request);
+
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        Merchant merchantCriteria = new Merchant();
+        merchantCriteria.setActive(false);
+        List<Merchant> merchants = merchantService.findByCriteria(merchantCriteria,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = merchantService.countAll();
+        Long recordsFiltered = merchantService.countByCriteria(params.getSearch());
+
+        if (merchants == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
+        for (Merchant merchant : merchants) {
+            DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
+            dataTablesMerchants.add(tablesMerchant);
+        }
+
+        DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesMerchants);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
 
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
     public String show(@PathVariable("id") Long id, Model model) {
@@ -216,6 +314,82 @@ public class MerchantController {
         response.setMessage(unfrozenMessage);
         return JsonUtil.toJson(response);
     }
+
+    /**
+     * ajax calls to unfreeze a merchant by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/archiveMerchant", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String archive(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        Merchant merchant;
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("merchant.label", null, locale);
+        try {
+            merchant = merchantService.archiveMerchant(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notUnfrozenMessage = messageSource.getMessage("not.archive.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notUnfrozenMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String unfrozenMessage = messageSource.getMessage("archive.message",
+                new String[]{label, merchant.getName()}, locale);
+        response.setMessage(unfrozenMessage);
+        return JsonUtil.toJson(response);
+    }
+
+
+    /**
+     * ajax calls to unfreeze a merchant by id.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/restoreMerchant", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String restore(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("400", "id is null.");
+        }
+
+        Merchant merchant;
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("merchant.label", null, locale);
+        try {
+            merchant = merchantService.restoreMerchant(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            String notUnfrozenMessage = messageSource.getMessage("not.restore.message",
+                    new String[]{label, id.toString()}, locale);
+            response.setMessage(notUnfrozenMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String unfrozenMessage = messageSource.getMessage("restore.message",
+                new String[]{label, merchant.getName()}, locale);
+        response.setMessage(unfrozenMessage);
+        return JsonUtil.toJson(response);
+    }
+
 
 
     @RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -325,14 +499,14 @@ public class MerchantController {
             throw new BadRequestException("400", e.getMessage());
         }
 
-        String deletedMessage = messageSource.getMessage("saved.message",
+        String message = messageSource.getMessage("saved.message",
                 new String[]{label, merchant.getIdentity()}, locale);
-        response.setMessage(deletedMessage);
+        response.setMessage(message);
         return JsonUtil.toJson(response);
     }
 
-    @RequestMapping(value = "/editFee", method = RequestMethod.GET)
-    public ModelAndView editFee(HttpServletRequest request) {
+    @RequestMapping(value = "/editSetting", method = RequestMethod.GET)
+    public ModelAndView editSetting(HttpServletRequest request) {
 
         String merchantId = request.getParameter("merchantId");
         if (StringUtils.isBlank(merchantId)) {
@@ -344,15 +518,17 @@ public class MerchantController {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+            throw new BadRequestException("400", "Merchant " + id + " not found.");
         }
 
         MerchantCommand merchantCommand = new MerchantCommand(merchant);
-        List<MerchantStatus> merchantStatuses = merchantStatusService.getAll();
+        List<EncryptionType> encryptionTypes = encryptionTypeService.getAll();
+        List<FeeType> feeTypes = feeTypeService.getAll();
 
-        ModelAndView view = new ModelAndView("merchant/_feeDialog");
+        ModelAndView view = new ModelAndView("merchant/_settingDialog");
         view.addObject("merchantCommand", merchantCommand);
-        view.addObject("merchantStatuses", merchantStatuses);
+        view.addObject("encryptionTypes", encryptionTypes);
+        view.addObject("feeTypes", feeTypes);
         return view;
     }
 
@@ -362,12 +538,34 @@ public class MerchantController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/editFee", method = RequestMethod.POST,
+    @RequestMapping(value = "/editSetting", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String saveFee(HttpServletRequest request) {
+    public String saveSetting(HttpServletRequest request) {
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("merchant.label", null, locale);
+        Merchant merchant = editMerchantSetting(request);
+        try {
+            merchant = merchantService.update(merchant);
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, merchant.getIdentity()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, merchant.getIdentity()}, locale);
+            response.setMessage(notDeleteMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
 
-        return null;
+        String message = messageSource.getMessage("saved.message",
+                new String[]{label, merchant.getIdentity()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
     }
 
     /**
@@ -464,7 +662,7 @@ public class MerchantController {
         return merchant;
     }
 
-    private Merchant editMerchantFee(HttpServletRequest request) {
+    private Merchant editMerchantSetting(HttpServletRequest request) {
         Merchant merchant = null;
         try {
             merchant = merchantService.get(Long.valueOf(request.getParameter("id")));
@@ -472,27 +670,30 @@ public class MerchantController {
             e.printStackTrace();
             throw new BadRequestException("400", e.getMessage());
         }
-        merchant.setName(request.getParameter("name"));
-        merchant.setEmail(request.getParameter("email"));
-        merchant.setAddress(request.getParameter("address"));
-        merchant.setContact(request.getParameter("contact"));
-        merchant.setTel(request.getParameter("tel"));
-        merchant.setRemark(request.getParameter("remark"));
-        Long merchantStatusId = Long.valueOf(request.getParameter("merchantStatus"));
-        MerchantStatus merchantStatus = null;
+        EncryptionType encryptionType = null;
+        FeeType commissionFeeType = null;
+        FeeType returnFeeType = null;
         try {
-            merchantStatus = merchantStatusService.get(merchantStatusId);
+            encryptionType = encryptionTypeService
+                    .get(Long.valueOf(request.getParameter("encryptionType")));
+            commissionFeeType = feeTypeService
+                    .get(Long.valueOf(request.getParameter("commissionFeeType")));
+            returnFeeType = feeTypeService
+                    .get(Long.valueOf(request.getParameter("returnFeeType")));
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
+            throw new BadRequestException("400", e.getMessage());
         }
-        merchant.setMerchantStatus(merchantStatus);
+        merchant.getEncryption().setKey(request.getParameter("encryptionKey"));
+        merchant.getEncryption().setEncryptionType(encryptionType);
+        merchant.getCommissionFee().setValue(
+                Float.valueOf(request.getParameter("commissionFeeValue")));
+        merchant.getCommissionFee().setFeeType(commissionFeeType);
+        merchant.getReturnFee().setValue(Float.valueOf(request.getParameter("returnFeeValue")));
+        merchant.getReturnFee().setFeeType(returnFeeType);
 
         return merchant;
     }
-
-    ///////////////////////////////////////////
-
 
     private Credential createCredential(MerchantCommand merchantCommand) {
         Credential credential = new Credential();
@@ -523,34 +724,6 @@ public class MerchantController {
         return credential;
     }
 
-    private Credential setCredential(MerchantCommand merchantCommand, Merchant merchant) {
-        Credential credential = merchant.getCredential();
-        // default credential status would be Approved 500
-        CredentialStatus credentialStatus = null;
-        CredentialType credentialType = null;
-        try {
-            credentialStatus = credentialStatusService
-                    .get(merchantCommand.getCredentialStatusId());
-            credentialType = credentialTypeService.get(merchantCommand.getCredentialTypeId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-
-        Locale locale = LocaleContextHolder.getLocale();
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-        Date date = Calendar.getInstance(locale).getTime();
-        try {
-            date = dateFormat.parse(merchantCommand.getCredentialExpirationTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        credential.setExpirationDate(date);
-        credential.setCredentialStatus(credentialStatus);
-        credential.setCredentialType(credentialType);
-        credential.setContent(merchantCommand.getCredentialContent());
-        return credential;
-    }
-
     private Encryption createEncryption(MerchantCommand merchantCommand) {
         Encryption encryption = new Encryption();
         EncryptionType encryptionType = null;
@@ -562,20 +735,6 @@ public class MerchantController {
         encryption.setEncryptionType(encryptionType);
         encryption.setKey(merchantCommand.getEncryptionKey());
         encryption.setActive(true);
-        return encryption;
-    }
-
-    //set encryption
-    private Encryption setEncryption(MerchantCommand merchantCommand, Merchant merchant) {
-        Encryption encryption = merchant.getEncryption();
-        EncryptionType encryptionType = null;
-        try {
-            encryptionType = encryptionTypeService.get(merchantCommand.getEncryptionTypeId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        encryption.setEncryptionType(encryptionType);
-        encryption.setKey(merchantCommand.getEncryptionKey());
         return encryption;
     }
 
@@ -594,38 +753,8 @@ public class MerchantController {
         return fee;
     }
 
-    //set commission fee
-    private Fee setCommissionFee(MerchantCommand merchantCommand, Merchant merchant) {
-        Fee fee = merchant.getCommissionFee();
-        FeeType feeType = null;
-        try {
-            feeType = feeTypeService.get(merchantCommand.getCommissionFeeTypeId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        fee.setValue(merchantCommand.getCommissionFeeValue());
-        fee.setFeeType(feeType);
-
-        return fee;
-    }
-
     private Fee createReturnFee(MerchantCommand merchantCommand) {
         Fee fee = new Fee();
-        FeeType feeType = null;
-        try {
-            feeType = feeTypeService.get(merchantCommand.getReturnFeeTypeId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        fee.setActive(true);
-        fee.setValue(merchantCommand.getReturnFeeValue());
-        fee.setFeeType(feeType);
-
-        return fee;
-    }
-
-    private Fee setReturnFee(MerchantCommand merchantCommand, Merchant merchant) {
-        Fee fee = merchant.getReturnFee();
         FeeType feeType = null;
         try {
             feeType = feeTypeService.get(merchantCommand.getReturnFeeTypeId());
@@ -672,62 +801,4 @@ public class MerchantController {
         merchant.setReturnFee(returnFee);
         return merchant;
     }
-
-    private Merchant setMerchant(MerchantCommand merchantCommand) {
-        Merchant merchant = null;
-        MerchantStatus merchantStatus = null;
-        try {
-            merchant = merchantService.get(merchantCommand.getId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "Merchant " + merchantCommand.getId()
-                    + "is null.");
-        }
-        try {
-            merchantStatus = merchantStatusService.get(merchantCommand.getMerchantStatusId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "Merchant status " + merchantCommand
-                    .getMerchantStatusId() + "is null.");
-        }
-
-        //set merchant basic info
-        merchant.setMerchantStatus(merchantStatus);
-        merchant.setName(merchantCommand.getName());
-        merchant.setAddress(merchantCommand.getAddress());
-        merchant.setContact(merchantCommand.getContact());
-        merchant.setTel(merchantCommand.getTel());
-        merchant.setEmail(merchantCommand.getEmail());
-        merchant.setRemark(merchantCommand.getRemark());
-
-        //set merchant credential
-        Credential credential = setCredential(merchantCommand, merchant);
-        merchant.setCredential(credential);
-
-        return merchant;
-    }
-
-    private Merchant setMerchantFee(MerchantCommand merchantCommand) {
-        Merchant merchant = null;
-        try {
-            merchant = merchantService.get(merchantCommand.getId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "Merchant " + merchantCommand.getId()
-                    + "is null.");
-        }
-
-        //set merchant encryption
-        Encryption encryption = setEncryption(merchantCommand, merchant);
-        merchant.setEncryption(encryption);
-
-        //set merchant commissionFee&returnFee
-        Fee commissionFee = setCommissionFee(merchantCommand, merchant);
-        Fee returnFee = setReturnFee(merchantCommand, merchant);
-        merchant.setCommissionFee(commissionFee);
-        merchant.setReturnFee(returnFee);
-
-        return merchant;
-    }
-
 }

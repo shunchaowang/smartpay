@@ -190,7 +190,8 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         if (merchant.getId() == null && StringUtils.isBlank(merchant.getName())
                 && StringUtils.isBlank(merchant.getIdentity())
                 && StringUtils.isBlank(merchant.getEmail()) &&
-                merchant.getMerchantStatus() == null) {
+                merchant.getMerchantStatus() == null
+                && merchant.getActive() == null) {
             return true;
         }
         return false;

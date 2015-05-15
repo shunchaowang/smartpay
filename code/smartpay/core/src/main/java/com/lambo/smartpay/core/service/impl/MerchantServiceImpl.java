@@ -212,7 +212,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
             throw new MissingRequiredFieldException("Merchant return fee type is null.");
         }
         // set active default to be active and created time
-        merchant.getReturnFee().setActive(true);
         merchant.getReturnFee().setUpdatedTime(date);
 
         // set createdTime
@@ -302,6 +301,51 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         MerchantStatus merchantStatus = merchantStatusDao.findByCode(ResourceProperties
                 .MERCHANT_STATUS_NORMAL_CODE);
         merchant.setMerchantStatus(merchantStatus);
+        merchant = merchantDao.update(merchant);
+        return merchant;
+    }
+
+    /**
+     * Archive a Merchant by updating the Merchant to be deactivated.
+     * The Credential should have already been approved prior the call.
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public Merchant archiveMerchant(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Merchant merchant = merchantDao.get(id);
+        if (merchant == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        merchant.setActive(false);
+        merchant = merchantDao.update(merchant);
+        return merchant;
+    }
+
+    /**
+     * Restore a Merchant by updating the Merchant to be active.
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public Merchant restoreMerchant(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        Merchant merchant = merchantDao.get(id);
+        if (merchant == null) {
+            throw new NoSuchEntityException("Merchant with id " + id +
+                    " does not exist.");
+        }
+        merchant.setActive(true);
         merchant = merchantDao.update(merchant);
         return merchant;
     }

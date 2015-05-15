@@ -1,8 +1,8 @@
 <%@include file="../taglib.jsp" %>
 
 <spring:message code="merchant.label" var="entity"/>
-<spring:message code="delete.confirm.message" arguments="${entity}" var="deleteMsg"/>
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
 <spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
 <spring:message code="action.cancel.label" var="cancelLabel"/>
@@ -29,7 +29,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <table class="table display table-bordered data-table" id="merchant-table">
+            <table class="table table-bordered" id="merchant-table">
                 <thead>
                 <tr>
                     <th><spring:message code="id.label"/></th>
@@ -203,24 +203,43 @@
         merchantTable.on('click', 'button[type=button][name=unfreeze-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            $.ajax({
-                type: 'POST',
-                url: "${rootURL}merchant" + '/unfreeze',
-                data: {id: id},
-                dataType: 'JSON',
-                error: function (error) {
-                    alert('There was an error');
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${unfreezeMsg}" + ' ' + identity;
+                    $(this).html(content);
                 },
-                success: function (data) {
-                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                            "<button type='button' class='close' data-dismiss='alert'>" +
-                            "<span aria-hidden='true'>&times;</span>" +
-                            "<span class='sr-only'>"
-                            + "<spring:message code='action.close.label'/> "
-                            + "</span></button>"
-                            + data.message + "</div>";
-                    $('#notification').append(alert);
-                    merchantTable.ajax.reload();
+                buttons: {
+                    "${unfreezeLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}merchant" + '/unfreeze',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                merchantTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
                 }
             });
         });
@@ -296,6 +315,51 @@
                             }
                         });
                     });
+                }
+            });
+        });
+
+        // add live handler for unfreeze button
+        merchantTable.on('click', 'button[type=button][name=archive-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${archiveMsg}" + ' ' + identity;
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${archiveLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}merchant" + '/archiveMerchant',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                merchantTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
                 }
             });
         });

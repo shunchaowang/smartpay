@@ -33,6 +33,23 @@ public interface MerchantService extends GenericQueryService<Merchant, Long> {
     Merchant unfreezeMerchant(Long id) throws NoSuchEntityException;
 
     /**
+     * Archive a Merchant by updating the Merchant to be deactivated.
+     * The Credential should have already been approved prior the call.
+     *
+     * @param id
+     * @return
+     */
+    Merchant archiveMerchant(Long id) throws NoSuchEntityException;
+
+    /**
+     * Restore a Merchant by updating the Merchant to be active.
+     *
+     * @param id
+     * @return
+     */
+    Merchant restoreMerchant(Long id) throws NoSuchEntityException;
+
+    /**
      * Update the credential/certificate of the Merchant.
      *
      * @param credential
