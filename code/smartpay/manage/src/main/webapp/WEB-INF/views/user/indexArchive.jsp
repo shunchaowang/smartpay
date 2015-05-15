@@ -1,11 +1,10 @@
 <%@include file="../taglib.jsp" %>
 
-<spring:message code="merchant.label" var="entity"/>
-<spring:message code="delete.confirm.message" arguments="${entity}" var="deleteMsg"/>
+<spring:message code="${target}.label" var="entity"/>
+<spring:message code="restore.confirm.message" arguments="${entity}" var="restoreMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.restore.label" var="restoreLabel"/>
-<spring:message code="restore.confirm.message" arguments="${entity}" var="restoreMsg"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -16,33 +15,26 @@
                     <spring:message code="home.label"/>
                 </a>
             </li>
-            <li>
-                <a href="${rootURL}merchant/index">
+            <li class="active">
+                <a href="${rootURL}user/index/${target}">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
-                </a>
-            </li>
-            <li class="active">
-                <a href="${rootURL}merchant/index/archive">
-                    <i class="glyphicon glyphicon-briefcase"></i>
-                    <spring:message code="archive.label" arguments="${entity}"/>
                 </a>
             </li>
         </ol>
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <table class="table table-bordered" id="merchant-table">
+            <table class="table table-bordered" id="user-table">
                 <thead>
                 <tr>
                     <th><spring:message code="id.label"/></th>
-                    <th><spring:message code="identity.label"/></th>
-                    <th><spring:message code="name.label"/></th>
-                    <th><spring:message code="address.label"/></th>
-                    <th><spring:message code="contact.label"/></th>
-                    <th><spring:message code="tel.label"/></th>
+                    <th><spring:message code="username.label"/></th>
+                    <th><spring:message code="firstName.label"/></th>
+                    <th><spring:message code="lastName.label"/></th>
                     <th><spring:message code="email.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="merchant.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
@@ -54,11 +46,10 @@
 </div>
 <div class="confirmDialog" id="confirm-dialog">
 </div>
-<div id="dialog-area"></div>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var merchantTable = $('#merchant-table').DataTable({
+        var userTable = $('#user-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -66,24 +57,22 @@
             'serverSide': true,
             'paging': true,
             "paginationType": "full_numbers",
-            "order": [[1, "desc"]],
-            //"jQueryUI": true,
-            /*'dom': 'T<""if>rt<"F"lp>',*/
+            "order": [[0, "desc"]],
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
                     }
                 ]
             },
             'ajax': {
-                'url': "${rootURL}merchant/list/archive",
+                'url': "${rootURL}user/list/${target}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -91,42 +80,40 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'identity', 'targets': 1, 'data': 'identity'
+                    'name': 'username', 'targets': 1, 'data': 'username',
+                    'orderable': false
                 },
                 {
-                    'name': 'name', 'targets': 2, 'data': 'name', 'orderable': false
+                    'name': 'firstName', 'targets': 2, 'data': 'firstName', 'searchable': false,
+                    'orderable': false
                 },
                 {
-                    'name': 'address', 'targets': 3, 'searchable': false, 'orderable': false,
-                    'data': 'address'
+                    'name': 'lastName', 'targets': 3, 'data': 'lastName', 'searchable': false,
+                    'orderable': false
                 },
                 {
-                    'name': 'contact', 'targets': 4, 'searchable': false, 'orderable': false,
-                    'data': 'contact'
+                    'name': 'email', 'targets': 4, 'data': 'email', 'searchable': false,
+                    'orderable': false
+                },
+                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
+                {
+                    'name': 'merchant', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'merchant'
                 },
                 {
-                    'name': 'tel', 'targets': 5, 'searchable': false, 'orderable': false,
-                    'data': 'tel'
-                },
-                {'name': 'email', 'targets': 6, 'data': 'email', 'orderable': false},
-                {
-                    'name': 'createdTime', 'targets': 7, 'searchable': false,
-                    'data': 'createdTime'
+                    'name': 'userStatus', 'targets': 7, 'searchable': false,
+                    'orderable': false, 'data': 'userStatus'
                 },
                 {
-                    'name': 'merchantStatus', 'targets': 8, 'searchable': false,
-                    'orderable': false, 'data': 'merchantStatus'
-                },
-                {
-                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="restore-button"'
-                                + ' data-identity="' + row['identity'] + '"'
+                                + ' data-identity="' + row['username'] + '"'
                                 + ' class="btn btn-default" value="' + row['id'] + '">' +
                                 "${restoreLabel}"
                                 + '</button>'
                                 + '<button type="button" name="delete-button"'
-                                + ' data-identity="' + row['identity'] + '"'
+                                + ' data-identity="' + row['username'] + '"'
                                 + ' class="btn btn-default" value="' + row['id'] + '">' +
                                 "${deleteLabel}"
                                 + '</button>';
@@ -136,17 +123,17 @@
         });
 
         // add live handler for restore button
-        merchantTable.on('click', 'button[type=button][name=restore-button]', function (event) {
+        userTable.on('click', 'button[type=button][name=restore-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            var identity = $(this).data("identity");
+            var username = $(this).data("username");
             $("#confirm-dialog").dialog({
                 resizable: true,
                 height: 'auto',
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${restoreMsg}" + ' ' + identity;
+                    var content = "${restoreMsg}" + ' ' + username;
                     $(this).html(content);
                 },
                 buttons: {
@@ -154,7 +141,7 @@
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
-                            url: "${rootURL}merchant" + '/restore',
+                            url: "${rootURL}user" + '/restore',
                             data: {id: id},
                             dataType: 'JSON',
                             error: function (error) {
@@ -169,7 +156,7 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                merchantTable.ajax.reload();
+                                userTable.ajax.reload();
                             }
                         });
                     },
@@ -181,17 +168,17 @@
         });
 
         // add live handler for delete button
-        merchantTable.on('click', 'button[type=button][name=delete-button]', function (event) {
+        userTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            var identity = $(this).data("identity");
+            var username = $(this).data("username");
             $("#confirm-dialog").dialog({
                 resizable: true,
                 height: 'auto',
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${deleteMsg}" + ' ' + identity;
+                    var content = "${deleteMsg}" + ' ' + username;
                     $(this).html(content);
                 },
                 buttons: {
@@ -199,7 +186,7 @@
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
-                            url: "${rootURL}merchant" + '/delete',
+                            url: "${rootURL}user" + '/delete',
                             data: {id: id},
                             dataType: 'JSON',
                             error: function (error) {
@@ -214,7 +201,7 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                merchantTable.ajax.reload();
+                                userTable.ajax.reload();
                             }
                         });
                     },

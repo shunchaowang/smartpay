@@ -87,15 +87,15 @@ public class MerchantController {
     }
 
     // fee view
-    @RequestMapping(value = {"/setting"}, method = RequestMethod.GET)
-    public String setting(Model model) {
+    @RequestMapping(value = {"/index/setting"}, method = RequestMethod.GET)
+    public String indexSetting(Model model) {
         model.addAttribute("_view", "merchant/setting");
         return "main";
     }
 
     // archive view
-    @RequestMapping(value = {"/archive"}, method = RequestMethod.GET)
-    public String archive(Model model) {
+    @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
+    public String indexArchive(Model model) {
         model.addAttribute("_view", "merchant/archive");
         return "main";
     }
@@ -142,7 +142,7 @@ public class MerchantController {
     }
 
     // ajax for DataTables of merchant settings
-    @RequestMapping(value = "/listSetting", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/setting", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listSetting(HttpServletRequest request) {
@@ -183,7 +183,7 @@ public class MerchantController {
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/listArchive", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/archive", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String listArchive(HttpServletRequest request) {
@@ -321,7 +321,7 @@ public class MerchantController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/archiveMerchant", method = RequestMethod.POST,
+    @RequestMapping(value = "/archive", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
@@ -359,7 +359,7 @@ public class MerchantController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/restoreMerchant", method = RequestMethod.POST,
+    @RequestMapping(value = "/restore", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
@@ -505,7 +505,7 @@ public class MerchantController {
         return JsonUtil.toJson(response);
     }
 
-    @RequestMapping(value = "/editSetting", method = RequestMethod.GET)
+    @RequestMapping(value = "/edit/setting", method = RequestMethod.GET)
     public ModelAndView editSetting(HttpServletRequest request) {
 
         String merchantId = request.getParameter("merchantId");
@@ -538,7 +538,7 @@ public class MerchantController {
      * @param request
      * @return
      */
-    @RequestMapping(value = "/editSetting", method = RequestMethod.POST,
+    @RequestMapping(value = "/edit/setting", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String saveSetting(HttpServletRequest request) {

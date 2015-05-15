@@ -1,6 +1,8 @@
 <%@include file="../taglib.jsp" %>
 
-<spring:message code="merchant.label" var="entity"/>
+<spring:message code="${target}.label" var="entity"/>
+
+
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
 <spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
 <spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
@@ -20,7 +22,7 @@
                 </a>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/index">
+                <a href="${rootURL}user/index/${target}">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
                 </a>
@@ -29,17 +31,16 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <table class="table table-bordered" id="merchant-table">
+            <table class="table table-bordered" id="user-table">
                 <thead>
                 <tr>
                     <th><spring:message code="id.label"/></th>
-                    <th><spring:message code="identity.label"/></th>
-                    <th><spring:message code="name.label"/></th>
-                    <th><spring:message code="address.label"/></th>
-                    <th><spring:message code="contact.label"/></th>
-                    <th><spring:message code="tel.label"/></th>
+                    <th><spring:message code="username.label"/></th>
+                    <th><spring:message code="firstName.label"/></th>
+                    <th><spring:message code="lastName.label"/></th>
                     <th><spring:message code="email.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="merchant.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
@@ -56,7 +57,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var merchantTable = $('#merchant-table').DataTable({
+        var userTable = $('#user-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -64,24 +65,22 @@
             'serverSide': true,
             'paging': true,
             "paginationType": "full_numbers",
-            "order": [[1, "desc"]],
-            //"jQueryUI": true,
-            /*'dom': 'T<""if>rt<"F"lp>',*/
+            "order": [[0, "desc"]],
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7]
                     }
                 ]
             },
             'ajax': {
-                'url': "${rootURL}merchant/list",
+                'url': "${rootURL}user/list/${target}",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -89,60 +88,52 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'identity', 'targets': 1, 'data': 'identity'
-                },
-                {
-                    'name': 'name', 'targets': 2, 'data': 'name', 'orderable': false,
+                    'name': 'username', 'targets': 1, 'data': 'username',
+                    'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}merchant" + '/show/'
+                        return '<a href=' + "${rootURL}user" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
+                {'name': 'firstName', 'targets': 2, 'data': 'firstName','searchable': false,
+                    'orderable': false},
+                {'name': 'lastName', 'targets': 3, 'data': 'lastName', 'searchable': false,
+                    'orderable': false},
+                {'name': 'email', 'targets': 4, 'data': 'email','searchable': false,
+                    'orderable': false},
+                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
                 {
-                    'name': 'address', 'targets': 3, 'searchable': false, 'orderable': false,
-                    'data': 'address'
+                    'name': 'merchant', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'merchant'
                 },
                 {
-                    'name': 'contact', 'targets': 4, 'searchable': false, 'orderable': false,
-                    'data': 'contact'
+                    'name': 'userStatus', 'targets': 7, 'searchable': false,
+                    'orderable': false, 'data': 'userStatus'
                 },
+                {'name': 'status', 'targets': 8, 'visible': false, 'data': 'userStatusCode'},
                 {
-                    'name': 'tel', 'targets': 5, 'searchable': false, 'orderable': false,
-                    'data': 'tel'
-                },
-                {'name': 'email', 'targets': 6, 'data': 'email', 'orderable': false},
-                {
-                    'name': 'createdTime', 'targets': 7, 'searchable': false,
-                    'data': 'createdTime'
-                },
-                {
-                    'name': 'merchantStatus', 'targets': 8, 'searchable': false,
-                    'orderable': false, 'data': 'merchantStatus'
-                },
-                {'name': 'status', 'targets': 9, 'visible': false, 'data': 'merchantStatusCode'},
-                {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         var operations = '<button type="button" name="edit-button" '
                                 + 'class="btn btn-default" value="' + row['id'] + '">'
                                 + '<spring:message code="action.edit.label"/>'
                                 + '</button>';
-                        if (row['merchantStatusCode'] == '200') { // if the merchant is active
+                        if (row['userStatusCode'] == '100') { // if the user is normal
                             operations += '<button type="button" name="freeze-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
+                                    + ' data-identity="' + row['username'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${freezeLabel}"
                                     + '</button>';
-                        } else if (row['merchantStatusCode'] == '500') {
-                            // if the merchant is deactivated
+                        } else if (row['userStatusCode'] == '501') {
+                            // if the user is frozen
                             operations += '<button type="button" name="unfreeze-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
+                                    + ' data-identity="' + row['username'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${unfreezeLabel}"
                                     + '</button>';
                         }
                         operations += '<button type="button" name="archive-button"'
-                                + ' data-identity="' + row['identity'] + '"'
+                                + ' data-identity="' + row['username'] + '"'
                                 + ' class="btn btn-default" value="' + row['id'] + '">' +
                                 "${archiveLabel}"
                                 + '</button>';
@@ -153,17 +144,17 @@
         });
 
         // add live handler for freeze button
-        merchantTable.on('click', 'button[type=button][name=freeze-button]', function (event) {
+        userTable.on('click', 'button[type=button][name=freeze-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            var identity = $(this).data("identity");
+            var username = $(this).data("username");
             $("#confirm-dialog").dialog({
                 resizable: true,
                 height: 'auto',
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${freezeMsg}" + ' ' + identity;
+                    var content = "${freezeMsg}" + ' ' + username;
                     $(this).html(content);
                 },
                 buttons: {
@@ -171,7 +162,7 @@
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
-                            url: "${rootURL}merchant" + '/freeze',
+                            url: "${rootURL}user" + '/freeze',
                             data: {id: id},
                             dataType: 'JSON',
                             error: function (error) {
@@ -186,7 +177,7 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                merchantTable.ajax.reload();
+                                userTable.ajax.reload();
                             }
                         });
                     },
@@ -198,17 +189,17 @@
         });
 
         // add live handler for unfreeze button
-        merchantTable.on('click', 'button[type=button][name=unfreeze-button]', function (event) {
+        userTable.on('click', 'button[type=button][name=unfreeze-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            var identity = $(this).data("identity");
+            var username = $(this).data("username");
             $("#confirm-dialog").dialog({
                 resizable: true,
                 height: 'auto',
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${unfreezeMsg}" + ' ' + identity;
+                    var content = "${unfreezeMsg}" + ' ' + username;
                     $(this).html(content);
                 },
                 buttons: {
@@ -216,7 +207,7 @@
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
-                            url: "${rootURL}merchant" + '/unfreeze',
+                            url: "${rootURL}user" + '/unfreeze',
                             data: {id: id},
                             dataType: 'JSON',
                             error: function (error) {
@@ -231,7 +222,7 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                merchantTable.ajax.reload();
+                                userTable.ajax.reload();
                             }
                         });
                     },
@@ -243,12 +234,12 @@
         });
 
         // add live handler for edit button
-        merchantTable.on('click', 'button[type=button][name=edit-button]', function
+        userTable.on('click', 'button[type=button][name=edit-button]', function
                 (event) {
             event.preventDefault();
             $.ajax({
                 type: 'get',
-                url: "${rootURL}merchant/edit",
+                url: "${rootURL}user/edit",
                 data: {
                     merchantId: this.value
                 },
@@ -259,41 +250,34 @@
                     $('#dialog-area').append(data);
 
                     // define dialog
-                    var basicInfoDialog = $("#basic-info-dialog").dialog({
+                    var userDialog = $("#user-dialog").dialog({
                         autoOpen: false,
                         height: 'auto',
                         width: 'auto',
                         modal: true,
                         close: function () {
-                            basicInfoDialog.dialog("destroy").remove();
+                            userDialog.dialog("destroy").remove();
                         }
                     }).dialog("open");
 
                     $("#cancel-button").click(function (event) {
                         event.preventDefault();
-                        basicInfoDialog.dialog("close");
+                        userDialog.dialog("close");
                     });
 
                     $("#save-button").click(function (event) {
                         event.preventDefault();
-                        if (!$("#basic-info-form").valid()) {
+                        if (!$("#user-form").valid()) {
                             return;
                         }
                         $.ajax({
                             type: "POST",
-                            url: "${rootURL}merchant/edit",
+                            url: "${rootURL}user/edit",
                             data: {
-                                id: $("#merchantId").val(),
-                                name: $("#name").val(),
-                                merchantStatus: $("#merchantStatusId").val(),
-                                email: $("#email").val(),
-                                contact: $("#contact").val(),
-                                address: $("#address").val(),
-                                tel: $("#tel").val(),
-                                credentialContent: $("#credentialContent").val(),
-                                credentialStatus: $("#credentialStatusId").val(),
-                                credentialExpirationTime: $("#credentialExpirationTime").val(),
-                                credentialType: $("#credentialTypeId").val()
+                                id: $("#userId").val(),
+                                firstName: $("#firstName").val(),
+                                lastName: $("#lastName").val(),
+                                email: $("#email").val()
                             },
                             dataType: "json",
                             error: function (data) {
@@ -308,8 +292,8 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                basicInfoDialog.dialog("close");
-                                merchantTable.ajax.reload();
+                                userDialog.dialog("close");
+                                userDialog.ajax.reload();
                             }
                         });
                     });
@@ -318,17 +302,17 @@
         });
 
         // add live handler for unfreeze button
-        merchantTable.on('click', 'button[type=button][name=archive-button]', function (event) {
+        userTable.on('click', 'button[type=button][name=archive-button]', function (event) {
             event.preventDefault();
             var id = this.value;
-            var identity = $(this).data("identity");
+            var username = $(this).data("username");
             $("#confirm-dialog").dialog({
                 resizable: true,
                 height: 'auto',
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${archiveMsg}" + ' ' + identity;
+                    var content = "${archiveMsg}" + ' ' + username;
                     $(this).html(content);
                 },
                 buttons: {
@@ -336,7 +320,7 @@
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
-                            url: "${rootURL}merchant" + '/archive',
+                            url: "${rootURL}user" + '/archive',
                             data: {id: id},
                             dataType: 'JSON',
                             error: function (error) {
@@ -351,7 +335,7 @@
                                         + "</span></button>"
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
-                                merchantTable.ajax.reload();
+                                userTable.ajax.reload();
                             }
                         });
                     },

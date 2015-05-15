@@ -1,6 +1,10 @@
 package com.lambo.smartpay.core.service;
 
+import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.util.ResourceProperties;
+
+import java.util.List;
 
 /**
  * There are 3 built-in roles in system, admin for the administration of the system, they can do
@@ -20,4 +24,28 @@ public interface UserService extends GenericQueryService<User, Long> {
     User findByUsername(String username);
 
     User findByEmail(String email);
+
+    /**
+     * Archive a user.
+     *
+     * @param id
+     * @return
+     */
+    User archiveUser(Long id) throws NoSuchEntityException;
+
+    /**
+     * Restore a user.
+     *
+     * @param id
+     * @return
+     */
+    User restoreUser(Long id) throws NoSuchEntityException;
+
+    Long countByCriteriaWithExclusion(User includedUser, User excludedUser, String search);
+
+    Long countByCriteriaWithExclusion(User includedUser, User excludedUser);
+
+    List<User> findByCriteriaWithExclusion(User includedUser, User excludedUser, String search,
+                                           Integer start, Integer length,
+                                           String order, ResourceProperties.JpaOrderDir orderDir);
 }

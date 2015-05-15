@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+    <spring:message code="user.label" var="entity"/>
+
+
+
+
+
 
 <div id="content">
     <div id="content-header">

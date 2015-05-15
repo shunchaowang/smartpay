@@ -77,4 +77,6 @@ public interface GenericDao<T, PK extends Serializable> {
 
     TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery);
 
+    TypedQuery<PK> createCountQuery(CriteriaQuery<PK> criteriaQuery);
+
 }

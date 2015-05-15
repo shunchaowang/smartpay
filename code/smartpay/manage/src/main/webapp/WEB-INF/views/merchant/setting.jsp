@@ -19,7 +19,7 @@
                 </a>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/setting">
+                <a href="${rootURL}merchant/index/setting">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="manage.label" arguments="${transaction}"/>
                 </a>
@@ -87,7 +87,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}merchant/listSetting",
+                'url': "${rootURL}merchant/list/setting",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -152,7 +152,7 @@
             event.preventDefault();
             $.ajax({
                 type: 'get',
-                url: "${rootURL}merchant/editSetting",
+                url: "${rootURL}merchant/edit/setting",
                 data: {
                     merchantId: this.value
                 },
@@ -185,7 +185,7 @@
                         }
                         $.ajax({
                             type: "POST",
-                            url: "${rootURL}merchant/editSetting",
+                            url: "${rootURL}merchant/edit/setting",
                             data: {
                                 id: $("#merchantId").val(),
                                 encryptionKey: $("#encryptionKey").val(),

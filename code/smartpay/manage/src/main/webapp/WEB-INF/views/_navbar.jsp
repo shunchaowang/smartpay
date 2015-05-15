@@ -13,14 +13,19 @@
     <spring:message code='site.label' var="site"/>
     <spring:message code='user.label' var="user"/>
     <spring:message code='admin.label' var="admin"/>
-    <spring:message code='admin.label' arguments="${merchant}" var="merchantAdmin"/>
+    <spring:message code='merchantAdmin.label' var="merchantAdmin"/>
+    <spring:message code='merchantOperator.label' var="merchantOperator"/>
     <spring:message code='transaction.label' var="transaction"/>
     <spring:message code='order.label' var="order"/>
     <spring:message code='payment.label' var="payment"/>
     <spring:message code='shipment.label' var="shipment"/>
     <spring:message code='refund.label' var="refund"/>
     <spring:message code='complain.label' var="complain"/>
-    <spring:message code='action.refuse.label' var="refuse"/>
+    <spring:message code='refuse.label' var="refuse"/>
+    <spring:message code='announcement.label' var="announcement"/>
+    <spring:message code='log.label' var="log"/>
+    <spring:message code='system.label' var="system"/>
+    <spring:message code='permission.label' var="permission"/>
 
     <c:set var="username" value="<%=UserResource.getCurrentUser().getUsername()%>" scope="session"/>
 
@@ -64,13 +69,13 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}merchant/setting">
+                                <a href="${rootURL}merchant/index/setting">
                                     <spring:message code="manage.label" arguments="${transaction}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}merchant/archive">
+                                <a href="${rootURL}merchant/index/archive">
                                     <spring:message code="archive.label" arguments="${merchant}"/>
                                 </a>
                             </li>
@@ -86,24 +91,233 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="${rootURL}site/index">
-                                    <spring:message code="index.label" arguments="${merchant}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}site/audit">
-                                    <spring:message code="manage.label" arguments="${site}"/>
+                                <a href="${rootURL}site/index/all">
+                                    <spring:message code="index.label" arguments="${site}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}site/archive">
+                                <a href="${rootURL}site/audit">
+                                    <spring:message code="audit.label" arguments="${site}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}site/index/archive">
                                     <spring:message code="archive.label" arguments="${site}"/>
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <!-- end of site management -->
+
+                    <!-- user management -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <spring:message code="manage.label" arguments="${user}"/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="${rootURL}user/create/operator">
+                                    <spring:message code="create.label" arguments="${operator}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}user/index/operator">
+                                    <spring:message code="index.label" arguments="${operator}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}user/create/merchantAdmin">
+                                    <spring:message code="create.label"
+                                                    arguments="${merchantAdmin}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}user/index/merchantAdmin">
+                                    <spring:message code="index.label"
+                                                    arguments="${merchantAdmin}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}user/index/merchantOperator">
+                                    <spring:message code="index.label"
+                                                    arguments="${merchantOperator}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}user/permission">
+                                    <spring:message code="manage.label" arguments="${permission}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}user/index/archive">
+                                    <spring:message code="archive.label" arguments="${user}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- order management -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <spring:message code="manage.label" arguments="${order}"/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="${rootURL}order/create">
+                                    <spring:message code="create.label" arguments="${order}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}order/index/all">
+                                    <spring:message code="index.label" arguments="${order}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}shipment/create">
+                                    <spring:message code="create.label" arguments="${shipment}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}shipment/index/all">
+                                    <spring:message code="index.label" arguments="${shipment}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}order/index/archive">
+                                    <spring:message code="archive.label" arguments="${order}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}shipment/index/archive">
+                                    <spring:message code="archive.label" arguments="${shipment}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- payment management -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <spring:message code="manage.label" arguments="${payment}"/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="${rootURL}payment/create">
+                                    <spring:message code="create.label" arguments="${payment}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}payment/index/all">
+                                    <spring:message code="index.label" arguments="${payment}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}refund/create">
+                                    <spring:message code="create.label" arguments="${refund}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}refund/index/all">
+                                    <spring:message code="index.label" arguments="${refund}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}refund/audit">
+                                    <spring:message code="audit.label" arguments="${refund}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}payment/index/archive">
+                                    <spring:message code="archive.label" arguments="${payment}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}refund/index/archive">
+                                    <spring:message code="archive.label" arguments="${refund}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- claim management -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <spring:message code="manage.label" arguments="${complain}"/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="${rootURL}claim/create">
+                                    <spring:message code="create.label" arguments="${refuse}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}claim/index/all">
+                                    <spring:message code="index.label" arguments="${refuse}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}claim/audit">
+                                    <spring:message code="audit.label" arguments="${refuse}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}claim/index/archive">
+                                    <spring:message code="archive.label" arguments="${refuse}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- system management -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <spring:message code="manage.label" arguments="${system}"/>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="${rootURL}announcement/create">
+                                    <spring:message code="create.label"
+                                                    arguments="${announcement}"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="${rootURL}announcement/index/all">
+                                    <spring:message code="index.label" arguments="${announcement}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}log/index">
+                                    <spring:message code="index.label" arguments="${log}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}announcement/index/archive">
+                                    <spring:message code="archive.label"
+                                                    arguments="${announcement}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

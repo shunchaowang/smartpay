@@ -12,6 +12,8 @@ import com.lambo.smartpay.core.service.RoleService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.config.SecurityUser;
+import com.lambo.smartpay.manage.util.DataTablesParams;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
@@ -64,83 +66,103 @@ public class UserController {
     @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "user";
-    }
+    @RequestMapping(value = {"/index/{target}"}, method = RequestMethod.GET)
+    public String index(Model model, @PathVariable("target") String target) {
 
-    @ModelAttribute("userStatuses")
-    public List<UserStatus> userStatuses() {
-        return userStatusService.getAll();
-    }
+        if (StringUtils.isBlank(target)
+                || (!target.equals("operator") && !target.equals("merchantAdmin")
+                && !target.equals("merchantOperator") && !target.equals("archive"))) {
+            return "404";
+        }
 
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = {"/indexAdmin"}, method = RequestMethod.GET)
-    public String indexAdmin(Model model) {
-        model.addAttribute("domain", "Admin");
+        model.addAttribute("target", target);
+        model.addAttribute("_view", "user/index" + StringUtils.capitalize(target));
         return "main";
     }
 
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = {"/indexAdminOperator"}, method = RequestMethod.GET)
-    public String indexAdminOperator(Model model) {
-        model.addAttribute("domain", "AdminOperator");
-        model.addAttribute("action", "index");
-        return "main";
-    }
-
-    @RequestMapping(value = {"", "/", "/index", "/indexMerchantAdmin"}, method = RequestMethod.GET)
-    public String indexMerchantAdmin(Model model) {
-        model.addAttribute("domain", "MerchantAdmin");
-        return "main";
-    }
-
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/listAdmin", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/{target}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
-    String listAdmin(HttpServletRequest request) {
+    String list(HttpServletRequest request, @PathVariable("target") String target) {
 
-        // create Role object for query criteria
-        Role criteriaRole;
+        if (StringUtils.isBlank(target)
+                || (!target.equals("operator") && !target.equals("merchantAdmin")
+                && !target.equals("merchantOperator") && !target.equals("archive"))) {
+            return "404";
+        }
+
+        // exclude current user
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            return "403";
+        }
+
+        Role role = null;
+        Role operatorRole = null;
+        Role merchantAdminRole = null;
+        Role merchantOperatorRole = null;
         try {
-            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+            operatorRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
+            merchantAdminRole = roleService
+                    .findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
+            merchantOperatorRole = roleService
+                    .findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "No role found.");
         }
-        // create User criteria and attached the role
-        User criteriaUser = new User();
-        criteriaUser.setRoles(new HashSet<Role>());
-        criteriaUser.getRoles().add(criteriaRole);
 
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
+        Boolean active = true;
 
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+        switch (target) {
+            case "operator":
+                role = operatorRole;
+                break;
+            case "merchantAdmin":
+                role = merchantAdminRole;
+                break;
+            case "merchantOperator":
+                role = merchantOperatorRole;
+                break;
+            case "archive":
+                active = false;
+                break;
+            default:
+                return "403";
+        }
 
-        // parse search keyword
-        String search = request.getParameter("search[value]");
+        // formulate criteria query
+        // if active == false means archive, no role
+        // support ad hoc search on username only
+        // support order on id and createdTime only
+        User includedUser = new User();
+        includedUser.setActive(active);
+        if (role != null) {
+            includedUser.setRoles(new HashSet<Role>());
+            includedUser.getRoles().add(role);
+        }
 
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
+        DataTablesParams params = new DataTablesParams(request);
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
-                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
+        List<User> users = userService.findByCriteriaWithExclusion(
+                includedUser,
+                securityUser,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
 
         // count total records
-        Long recordsTotal = userService.countByCriteria(criteriaUser);
+        Long recordsTotal = userService
+                .countByCriteriaWithExclusion(includedUser, securityUser);
         // count records filtered
-        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
+        Long recordsFiltered = userService
+                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -161,134 +183,6 @@ public class UserController {
         return JsonUtil.toJson(result);
     }
 
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/listAdminOperator", method = RequestMethod.GET,
-            produces = "application/json;charset=UTF-8")
-    public
-    @ResponseBody
-    String listAdminOperator(HttpServletRequest request) {
-
-        // create Role object for query criteria
-        Role criteriaRole;
-        try {
-            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "No role found.");
-        }
-        // create User criteria and attached the role
-        User criteriaUser = new User();
-        criteriaUser.setRoles(new HashSet<Role>());
-        criteriaUser.getRoles().add(criteriaRole);
-
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
-
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
-        }
-
-        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
-                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
-        // count total records
-        Long recordsTotal = userService.countByCriteria(criteriaUser);
-        // count records filtered
-        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
-
-        if (users == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
-
-        for (User user : users) {
-            DataTablesUser tableUser = new DataTablesUser(user);
-            dataTablesUsers.add(tableUser);
-        }
-
-        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
-        result.setData(dataTablesUsers);
-        result.setRecordsFiltered(recordsFiltered.intValue());
-        result.setRecordsTotal(recordsTotal.intValue());
-
-        return JsonUtil.toJson(result);
-    }
-
-    @RequestMapping(value = "/listMerchantAdmin", method = RequestMethod.GET,
-            produces = "application/json;charset=UTF-8")
-    public
-    @ResponseBody
-    String listMerchantAdmin(HttpServletRequest request) {
-
-        // create Role object for query criteria
-        Role criteriaRole;
-        try {
-            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new BadRequestException("400", "No role found.");
-        }
-        // create User criteria and attached the role
-        User criteriaUser = new User();
-        criteriaUser.setRoles(new HashSet<Role>());
-        criteriaUser.getRoles().add(criteriaRole);
-
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
-
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
-        }
-
-        List<User> users = userService.findByCriteria(criteriaUser, search, start, length,
-                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
-        // count total records
-        Long recordsTotal = userService.countByCriteria(criteriaUser);
-        // count records filtered
-        Long recordsFiltered = userService.countByCriteria(criteriaUser, search);
-
-        if (users == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-
-        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
-
-        for (User user : users) {
-            DataTablesUser tableUser = new DataTablesUser(user);
-            dataTablesUsers.add(tableUser);
-        }
-
-        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
-        result.setData(dataTablesUsers);
-        result.setRecordsFiltered(recordsFiltered.intValue());
-        result.setRecordsTotal(recordsTotal.intValue());
-
-        return JsonUtil.toJson(result);
-    }
 
     @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/createAdmin", method = RequestMethod.GET)
@@ -557,7 +451,7 @@ public class UserController {
         User user;
 
         if (id == 0) {
-                user = UserResource.getCurrentUser();
+            user = UserResource.getCurrentUser();
         } else {
             try {
                 user = userService.get(id);
