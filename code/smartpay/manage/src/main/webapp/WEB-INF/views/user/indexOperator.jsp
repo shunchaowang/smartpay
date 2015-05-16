@@ -1,7 +1,7 @@
 <%@include file="../taglib.jsp" %>
 
 <spring:message code="${target}.label" var="entity"/>
-
+<spring:message code="user.label" var="userLabel"/>
 
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
 <spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
@@ -16,16 +16,16 @@
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                <a href="${rootURL}">
                     <i class="glyphicon glyphicon-home"></i>
                     <spring:message code="home.label"/>
-                </a>
+            </li>
+            <li>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="manage.label" arguments="${userLabel}"/>
             </li>
             <li class="active">
-                <a href="${rootURL}user/index/${target}">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
-                </a>
             </li>
         </ol>
     </div>
@@ -40,7 +40,6 @@
                     <th><spring:message code="lastName.label"/></th>
                     <th><spring:message code="email.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
-                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
@@ -94,32 +93,37 @@
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
-                {'name': 'firstName', 'targets': 2, 'data': 'firstName','searchable': false,
-                    'orderable': false},
-                {'name': 'lastName', 'targets': 3, 'data': 'lastName', 'searchable': false,
-                    'orderable': false},
-                {'name': 'email', 'targets': 4, 'data': 'email','searchable': false,
-                    'orderable': false},
+                {
+                    'name': 'firstName', 'targets': 2, 'data': 'firstName', 'searchable': false,
+                    'orderable': false
+                },
+                {
+                    'name': 'lastName', 'targets': 3, 'data': 'lastName', 'searchable': false,
+                    'orderable': false
+                },
+                {
+                    'name': 'email', 'targets': 4, 'data': 'email', 'searchable': false,
+                    'orderable': false
+                },
                 {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
                 {
                     'name': 'userStatus', 'targets': 6, 'searchable': false,
                     'orderable': false, 'data': 'userStatus'
                 },
-                {'name': 'status', 'targets': 7, 'visible': false, 'data': 'userStatusCode'},
                 {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         var operations = '<button type="button" name="edit-button" '
                                 + 'class="btn btn-default" value="' + row['id'] + '">'
                                 + '<spring:message code="action.edit.label"/>'
                                 + '</button>';
-                        if (row['userStatusCode'] == '100') { // if the user is normal
+                        if (row['userStatus'] == 'Normal') { // if the user is normal
                             operations += '<button type="button" name="freeze-button"'
                                     + ' data-identity="' + row['username'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${freezeLabel}"
                                     + '</button>';
-                        } else if (row['userStatusCode'] == '501') {
+                        } else if (row['userStatus'] == 'Frozen') {
                             // if the user is frozen
                             operations += '<button type="button" name="unfreeze-button"'
                                     + ' data-identity="' + row['username'] + '"'

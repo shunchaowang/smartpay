@@ -20,7 +20,6 @@ public class DataTablesMerchant {
     private String email;
     private String createdTime;
     private String merchantStatus;
-    private String merchantStatusCode;
     private Boolean active;
 
     public DataTablesMerchant(Merchant merchant) {
@@ -35,7 +34,6 @@ public class DataTablesMerchant {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         createdTime = dateFormat.format(merchant.getCreatedTime());
         merchantStatus = merchant.getMerchantStatus().getName();
-        merchantStatusCode = merchant.getMerchantStatus().getCode();
         active = merchant.getActive();
     }
 
@@ -119,11 +117,4 @@ public class DataTablesMerchant {
         this.active = active;
     }
 
-    public String getMerchantStatusCode() {
-        return merchantStatusCode;
-    }
-
-    public void setMerchantStatusCode(String merchantStatusCode) {
-        this.merchantStatusCode = merchantStatusCode;
-    }
 }

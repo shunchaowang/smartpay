@@ -2,6 +2,9 @@ package com.lambo.smartpay.manage.config;
 
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,11 +20,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
+
     @Autowired
     private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        logger.debug("username: " + username);
         User user = userService.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("Username " + username + " not found.");

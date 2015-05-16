@@ -20,7 +20,6 @@ public class DataTablesSite implements Serializable {
     private String siteStatus;
     private String merchant;
 
-
     public DataTablesSite(Site site) {
         id = site.getId();
         identity = site.getIdentity();
@@ -86,7 +85,4 @@ public class DataTablesSite implements Serializable {
     public void setMerchant(String merchant) {
         this.merchant = merchant;
     }
-
-
-
 }

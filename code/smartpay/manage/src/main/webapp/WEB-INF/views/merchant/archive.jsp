@@ -6,27 +6,23 @@
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.restore.label" var="restoreLabel"/>
 <spring:message code="restore.confirm.message" arguments="${entity}" var="restoreMsg"/>
+<spring:message code="status.normal.label" var="normalStatus"/>
+<spring:message code="status.frozen.label" var="frozenStatus"/>
 
 <div class="container-fluid">
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                <a href="${rootURL}">
-                    <i class="glyphicon glyphicon-home"></i>
-                    <spring:message code="home.label"/>
-                </a>
+                <i class="glyphicon glyphicon-home"></i>
+                <spring:message code="home.label"/>
             </li>
             <li>
-                <a href="${rootURL}merchant/index">
-                    <i class="glyphicon glyphicon-list"></i>
-                    <spring:message code="index.label" arguments="${entity}"/>
-                </a>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="manage.label" arguments="${entity}"/>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/index/archive">
-                    <i class="glyphicon glyphicon-briefcase"></i>
-                    <spring:message code="archive.label" arguments="${entity}"/>
-                </a>
+                <i class="glyphicon glyphicon-briefcase"></i>
+                <spring:message code="archive.label" arguments="${entity}"/>
             </li>
         </ol>
     </div>
@@ -115,7 +111,14 @@
                 },
                 {
                     'name': 'merchantStatus', 'targets': 8, 'searchable': false,
-                    'orderable': false, 'data': 'merchantStatus'
+                    'orderable': false, 'data': 'merchantStatus',
+                    'render': function (data, type, row) {
+                        if (data == 'Normal') {
+                            return "${normalStatus}";
+                        } else if (data == 'Frozen') {
+                            return "${frozenStatus}";
+                        }
+                    }
                 },
                 {
                     'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,

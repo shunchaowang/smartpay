@@ -1,5 +1,6 @@
 <%@include file="../taglib.jsp" %>
 
+<spring:message code="user.label" var="userLabel"/>
 <spring:message code="${target}.label" var="entity"/>
 <spring:message code="restore.confirm.message" arguments="${entity}" var="restoreMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
@@ -10,16 +11,16 @@
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                <a href="${rootURL}">
-                    <i class="glyphicon glyphicon-home"></i>
-                    <spring:message code="home.label"/>
-                </a>
+                <i class="glyphicon glyphicon-home"></i>
+                <spring:message code="home.label"/>
+            </li>
+            <li>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="manage.label" arguments="${userLabel}"/>
             </li>
             <li class="active">
-                <a href="${rootURL}user/index/${target}">
-                    <i class="glyphicon glyphicon-list"></i>
-                    <spring:message code="index.label" arguments="${entity}"/>
-                </a>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="archive.label" arguments="${userLabel}"/>
             </li>
         </ol>
     </div>

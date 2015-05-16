@@ -64,7 +64,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}merchant/index">
-                                    <spring:message code="index.label" arguments="${merchant}"/>
+                                    <spring:message code="manage.label" arguments="${merchant}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -92,7 +92,7 @@
                         <ul class="dropdown-menu" role="menu">
                             <li>
                                 <a href="${rootURL}site/index/all">
-                                    <spring:message code="index.label" arguments="${site}"/>
+                                    <spring:message code="manage.label" arguments="${site}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -126,7 +126,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}user/index/operator">
-                                    <spring:message code="index.label" arguments="${operator}"/>
+                                    <spring:message code="manage.label" arguments="${operator}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -138,13 +138,13 @@
                             </li>
                             <li>
                                 <a href="${rootURL}user/index/merchantAdmin">
-                                    <spring:message code="index.label"
+                                    <spring:message code="manage.label"
                                                     arguments="${merchantAdmin}"/>
                                 </a>
                             </li>
                             <li>
                                 <a href="${rootURL}user/index/merchantOperator">
-                                    <spring:message code="index.label"
+                                    <spring:message code="manage.label"
                                                     arguments="${merchantOperator}"/>
                                 </a>
                             </li>
@@ -178,7 +178,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}order/index/all">
-                                    <spring:message code="index.label" arguments="${order}"/>
+                                    <spring:message code="manage.label" arguments="${order}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -189,7 +189,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}shipment/index/all">
-                                    <spring:message code="index.label" arguments="${shipment}"/>
+                                    <spring:message code="manage.label" arguments="${shipment}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -220,7 +220,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}payment/index/all">
-                                    <spring:message code="index.label" arguments="${payment}"/>
+                                    <spring:message code="manage.label" arguments="${payment}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -231,7 +231,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}refund/index/all">
-                                    <spring:message code="index.label" arguments="${refund}"/>
+                                    <spring:message code="manage.label" arguments="${refund}"/>
                                 </a>
                             </li>
                             <li>
@@ -267,7 +267,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}claim/index/all">
-                                    <spring:message code="index.label" arguments="${refuse}"/>
+                                    <spring:message code="manage.label" arguments="${refuse}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -300,7 +300,7 @@
                             </li>
                             <li>
                                 <a href="${rootURL}announcement/index/all">
-                                    <spring:message code="index.label" arguments="${announcement}"/>
+                                    <spring:message code="manage.label" arguments="${announcement}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>

@@ -10,6 +10,7 @@ import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.manage.util.DataTablesParams;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.IntervalServerException;
@@ -58,134 +59,52 @@ public class SiteController {
     @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "site";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Site";
-    }
-
-    @ModelAttribute("siteStatuses")
-    public List<SiteStatus> siteStatuses() {
-        return siteStatusService.getAll();
-    }
-
-    @ModelAttribute("allMerchants")
-    public List<Merchant> allMerchants() {
-        return merchantService.getAll();
-    }
-
-    @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
-    public String index(@PathVariable("domain") String domain, Model model) {
-        if (domain.equals("All")) {
-            model.addAttribute("action", "indexAll");
-        } else if (domain.equals("Approved")) {
-            model.addAttribute("domain", "ApprovedSite");
-            model.addAttribute("action", "indexApproved");
-        } else if (domain.equals("Frozen")) {
-            model.addAttribute("domain", "FrozenSite");
-            model.addAttribute("action", "indexFrozen");
-        } else if (domain.equals("Created")) {
-            model.addAttribute("domain", "CreatedSite");
-            model.addAttribute("action", "indexCreated");
-        } else {
-            throw new BadRequestException("400", "Domain does not exist.");
+    @RequestMapping(value = {"/index/{target}"}, method = RequestMethod.GET)
+    public String index(@PathVariable("target") String target, Model model) {
+        if (StringUtils.isBlank(target) || (!target.equals("all") && !target.equals("archive"))) {
+            return "404";
         }
+        model.addAttribute("target", target);
+        model.addAttribute("_view", "site/index" + StringUtils.capitalize(target));
         return "main";
     }
 
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/{target}", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(@PathVariable("domain") String domain, HttpServletRequest request) {
+    public String list(@PathVariable("target") String target, HttpServletRequest request) {
 
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
+        if (StringUtils.isBlank(target) || (!target.equals("all") && !target.equals("archive"))) {
+            throw new BadRequestException("400", "Domain does not exist.");
+        }
 
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+        DataTablesParams params = new DataTablesParams(request);
 
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        //
-        List<Site> sites = null;
-        Long recordsTotal = null;
-        Long recordsFiltered = null;
-
-        if (domain.equals("All")) {
-            sites = siteService
-                    .findByCriteria(search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            recordsTotal = siteService.countAll();
-            recordsFiltered = siteService.countByCriteria(search);
-        } else if (domain.equals("Approved")) {
-            SiteStatus status = null;
-            try {
-                status = siteStatusService
-                        .findByCode(ResourceProperties.SITE_STATUS_APPROVED_CODE);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "Cannot find site status "
-                        + ResourceProperties.SITE_STATUS_APPROVED_CODE);
-            }
-            Site siteCriteria = new Site();
-            siteCriteria.setSiteStatus(status);
-            sites = siteService
-                    .findByCriteria(siteCriteria, search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            recordsTotal = siteService.countByCriteria(siteCriteria);
-            recordsFiltered = siteService.countByCriteria(siteCriteria, search);
-        } else if (domain.equals("Frozen")) {
-            SiteStatus status = null;
-            try {
-                status = siteStatusService
-                        .findByCode(ResourceProperties.SITE_STATUS_FROZEN_CODE);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "Cannot find site status "
-                        + ResourceProperties.SITE_STATUS_FROZEN_CODE);
-            }
-            Site siteCriteria = new Site();
-            siteCriteria.setSiteStatus(status);
-            sites = siteService
-                    .findByCriteria(siteCriteria, search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            recordsTotal = siteService.countByCriteria(siteCriteria);
-            recordsFiltered = siteService.countByCriteria(siteCriteria, search);
-        } else if (domain.equals("Created")) {
-            SiteStatus status = null;
-            try {
-                status = siteStatusService
-                        .findByCode(ResourceProperties.SITE_STATUS_CREATED_CODE);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "Cannot find site status "
-                        + ResourceProperties.SITE_STATUS_CREATED_CODE);
-            }
-            Site siteCriteria = new Site();
-            siteCriteria.setSiteStatus(status);
-            sites = siteService
-                    .findByCriteria(siteCriteria, search, start, length, order,
-                            ResourceProperties.JpaOrderDir.valueOf(orderDir));
-            recordsTotal = siteService.countByCriteria(siteCriteria);
-            recordsFiltered = siteService.countByCriteria(siteCriteria, search);
-        } else {
-            throw new BadRequestException("400", "Domain does not exist.");
+        Boolean active = null;
+        switch (target) {
+            case "all":
+                active = true;
+                break;
+            case "archive":
+                active = false;
+                break;
+            default:
+                return "403";
         }
+        Site siteCriteria = new Site();
+        siteCriteria.setActive(active);
+        List<Site> sites = siteService.findByCriteria(siteCriteria,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        Long recordsTotal = siteService.countByCriteria(siteCriteria);
+        Long recordsFiltered = siteService.countByCriteria(siteCriteria, params.getSearch());
 
         if (sites == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");

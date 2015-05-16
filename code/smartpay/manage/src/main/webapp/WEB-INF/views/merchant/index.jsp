@@ -9,21 +9,23 @@
 <spring:message code="action.freeze.label" var="freezeLabel"/>
 <spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
 <spring:message code="action.archive.label" var="archiveLabel"/>
+<spring:message code="status.normal.label" var="normalStatus"/>
+<spring:message code="status.frozen.label" var="frozenStatus"/>
 
 <div class="container-fluid">
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                <a href="${rootURL}">
                     <i class="glyphicon glyphicon-home"></i>
                     <spring:message code="home.label"/>
-                </a>
+            </li>
+            <li>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="manage.label" arguments="${entity}"/>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/index">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
-                </a>
             </li>
         </ol>
     </div>
@@ -40,7 +42,6 @@
                     <th><spring:message code="tel.label"/></th>
                     <th><spring:message code="email.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
-                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
@@ -117,23 +118,29 @@
                 },
                 {
                     'name': 'merchantStatus', 'targets': 8, 'searchable': false,
-                    'orderable': false, 'data': 'merchantStatus'
+                    'orderable': false, 'data': 'merchantStatus',
+                    'render': function (data, type, row) {
+                        if (data == 'Normal') {
+                            return "${normalStatus}";
+                        } else if (data == 'Frozen') {
+                            return "${frozenStatus}";
+                        }
+                    }
                 },
-                {'name': 'status', 'targets': 9, 'visible': false, 'data': 'merchantStatusCode'},
                 {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         var operations = '<button type="button" name="edit-button" '
                                 + 'class="btn btn-default" value="' + row['id'] + '">'
                                 + '<spring:message code="action.edit.label"/>'
                                 + '</button>';
-                        if (row['merchantStatusCode'] == '200') { // if the merchant is active
+                        if (row['merchantStatus'] == 'Normal') { // if the merchant is active
                             operations += '<button type="button" name="freeze-button"'
                                     + ' data-identity="' + row['identity'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${freezeLabel}"
                                     + '</button>';
-                        } else if (row['merchantStatusCode'] == '500') {
+                        } else if (row['merchantStatus'] == 'Frozen') {
                             // if the merchant is deactivated
                             operations += '<button type="button" name="unfreeze-button"'
                                     + ' data-identity="' + row['identity'] + '"'

@@ -1,8 +1,52 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+    <spring:message code="site.label" var="entity"/>
+
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <a href="${rootURL}">
+                    <i class="glyphicon glyphicon-home"></i>
+                    <spring:message code="home.label"/>
+                </a>
+            </li>
+            <li class="active">
+                <a href="${rootURL}site/index/all">
+                    <i class="glyphicon glyphicon-list"></i>
+                    <spring:message code="index.label" arguments="${entity}"/>
+                </a>
+            </li>
+        </ol>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="site-table">
+                <thead>
+                <tr>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="identity.label"/></th>
+                    <th><spring:message code="name.label"/></th>
+                    <th><spring:message code="site.merchant.label"/></th>
+                    <th><spring:message code="site.url.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
+                </tr>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="confirmDialog" id="confirm-dialog">
+</div>
+
+
+
+
 
 <div id="content">
     <div id="content-header">
@@ -11,7 +55,7 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
+            <a href="${rootURL}site/${action}" class="current">
                 <spring:message code="index.label" arguments="${entity}"/>
             </a>
         </div>

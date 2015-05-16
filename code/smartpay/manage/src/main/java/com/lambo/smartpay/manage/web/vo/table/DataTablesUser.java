@@ -21,7 +21,6 @@ public class DataTablesUser implements Serializable {
     private String email;
     private String createdTime;
     private String userStatus;
-    private String userStatusCode;
     private Boolean active;
     private String merchant;
 
@@ -35,7 +34,6 @@ public class DataTablesUser implements Serializable {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         createdTime = dateFormat.format(user.getCreatedTime());
         userStatus = user.getUserStatus().getName();
-        userStatusCode = user.getUserStatus().getCode();
         active = user.getActive();
         if (user.getMerchant() != null) {
             merchant = user.getMerchant().getIdentity();
@@ -96,14 +94,6 @@ public class DataTablesUser implements Serializable {
 
     public void setUserStatus(String userStatus) {
         this.userStatus = userStatus;
-    }
-
-    public String getUserStatusCode() {
-        return userStatusCode;
-    }
-
-    public void setUserStatusCode(String userStatusCode) {
-        this.userStatusCode = userStatusCode;
     }
 
     public Boolean getActive() {
