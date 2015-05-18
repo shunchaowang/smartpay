@@ -2,16 +2,16 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-DROP SCHEMA IF EXISTS `smartpay` ;
-CREATE SCHEMA IF NOT EXISTS `smartpay` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
-USE `smartpay` ;
+DROP SCHEMA IF EXISTS `smartpay2` ;
+CREATE SCHEMA IF NOT EXISTS `smartpay2` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `smartpay2` ;
 
 -- -----------------------------------------------------
--- Table `smartpay`.`MERCHANT_STATUSES`
+-- Table `smartpay2`.`MERCHANT_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`MERCHANT_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`MERCHANT_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`MERCHANT_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`MERCHANT_STATUSES` (
   `MCST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `MCST_NAME` VARCHAR(32) NOT NULL,
   `MCST_DESCRIPTION` TEXT NULL,
@@ -25,11 +25,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CREDENTIAL_STATUSES`
+-- Table `smartpay2`.`CREDENTIAL_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CREDENTIAL_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`CREDENTIAL_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CREDENTIAL_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CREDENTIAL_STATUSES` (
   `CRST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CRST_NAME` VARCHAR(32) NOT NULL,
   `CRST_DESCRIPTION` TEXT NULL,
@@ -43,11 +43,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CREDENTIAL_TYPES`
+-- Table `smartpay2`.`CREDENTIAL_TYPES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CREDENTIAL_TYPES` ;
+DROP TABLE IF EXISTS `smartpay2`.`CREDENTIAL_TYPES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CREDENTIAL_TYPES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CREDENTIAL_TYPES` (
   `CRTP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CRTP_NAME` VARCHAR(32) NOT NULL,
   `CRTP_DESCRIPTION` TEXT NULL,
@@ -61,11 +61,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CREDENTIALS`
+-- Table `smartpay2`.`CREDENTIALS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CREDENTIALS` ;
+DROP TABLE IF EXISTS `smartpay2`.`CREDENTIALS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CREDENTIALS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CREDENTIALS` (
   `CRDT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CRDT_CONTENT` VARCHAR(32) NOT NULL,
   `CRDT_EXPIRATION_TIME` DATETIME NOT NULL,
@@ -81,23 +81,23 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`CREDENTIALS` (
   UNIQUE INDEX `CRDT_ID_UNIQUE` (`CRDT_ID` ASC),
   CONSTRAINT `fk_CRDT_CRST`
     FOREIGN KEY (`CRDT_CRST_ID`)
-    REFERENCES `smartpay`.`CREDENTIAL_STATUSES` (`CRST_ID`)
+    REFERENCES `smartpay2`.`CREDENTIAL_STATUSES` (`CRST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_CRDT_CRTP`
     FOREIGN KEY (`CRDT_CRTP_ID`)
-    REFERENCES `smartpay`.`CREDENTIAL_TYPES` (`CRTP_ID`)
+    REFERENCES `smartpay2`.`CREDENTIAL_TYPES` (`CRTP_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`FEE_TYPES`
+-- Table `smartpay2`.`FEE_TYPES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`FEE_TYPES` ;
+DROP TABLE IF EXISTS `smartpay2`.`FEE_TYPES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`FEE_TYPES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`FEE_TYPES` (
   `FETP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `FETP_NAME` VARCHAR(32) NOT NULL,
   `FETP_DESCRIPTION` TEXT NULL,
@@ -111,11 +111,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`FEES`
+-- Table `smartpay2`.`FEES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`FEES` ;
+DROP TABLE IF EXISTS `smartpay2`.`FEES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`FEES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`FEES` (
   `FEE_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `FEE_VALUE` FLOAT NOT NULL,
   `FEE_REMARK` TEXT NULL,
@@ -128,18 +128,18 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`FEES` (
   UNIQUE INDEX `FEE_ID_UNIQUE` (`FEE_ID` ASC),
   CONSTRAINT `fk_FEE_FETP`
     FOREIGN KEY (`FEE_FETP_ID`)
-    REFERENCES `smartpay`.`FEE_TYPES` (`FETP_ID`)
+    REFERENCES `smartpay2`.`FEE_TYPES` (`FETP_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ENCRYPTION_TYPES`
+-- Table `smartpay2`.`ENCRYPTION_TYPES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ENCRYPTION_TYPES` ;
+DROP TABLE IF EXISTS `smartpay2`.`ENCRYPTION_TYPES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ENCRYPTION_TYPES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ENCRYPTION_TYPES` (
   `ENTP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ENTP_NAME` VARCHAR(32) NOT NULL,
   `ENTP_DESCRIPTION` TEXT NULL,
@@ -153,11 +153,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ENCRYPTIONS`
+-- Table `smartpay2`.`ENCRYPTIONS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ENCRYPTIONS` ;
+DROP TABLE IF EXISTS `smartpay2`.`ENCRYPTIONS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ENCRYPTIONS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ENCRYPTIONS` (
   `ENCR_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ENCR_KEY` VARCHAR(128) NOT NULL,
   `ENCR_CREATED_TIME` TIMESTAMP NOT NULL,
@@ -170,18 +170,18 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`ENCRYPTIONS` (
   UNIQUE INDEX `ENCR_ID_UNIQUE` (`ENCR_ID` ASC),
   CONSTRAINT `fk_ENCR_ENTP`
     FOREIGN KEY (`ENCR_ENTP_ID`)
-    REFERENCES `smartpay`.`ENCRYPTION_TYPES` (`ENTP_ID`)
+    REFERENCES `smartpay2`.`ENCRYPTION_TYPES` (`ENTP_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`MERCHANTS`
+-- Table `smartpay2`.`MERCHANTS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`MERCHANTS` ;
+DROP TABLE IF EXISTS `smartpay2`.`MERCHANTS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`MERCHANTS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`MERCHANTS` (
   `MCHT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `MCHT_IDENTITY` VARCHAR(32) NOT NULL,
   `MCHT_NAME` VARCHAR(32) NOT NULL,
@@ -206,42 +206,41 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`MERCHANTS` (
   INDEX `fk_MCHT_ENCR_idx` (`MCHT_ENCR_ID` ASC),
   INDEX `fk_MCHT_FEE_RETURN_idx` (`MCHT_FEE_RETURN_ID` ASC),
   UNIQUE INDEX `MCHT_ID_UNIQUE` (`MCHT_ID` ASC),
-  UNIQUE INDEX `MCHT_NAME_UNIQUE` (`MCHT_NAME` ASC),
   UNIQUE INDEX `MCHT_IDENTITY_UNIQUE` (`MCHT_IDENTITY` ASC),
   CONSTRAINT `fk_MCHT_MCST`
     FOREIGN KEY (`MCHT_MCST_ID`)
-    REFERENCES `smartpay`.`MERCHANT_STATUSES` (`MCST_ID`)
+    REFERENCES `smartpay2`.`MERCHANT_STATUSES` (`MCST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_MCHT_CRDT`
     FOREIGN KEY (`MCHT_CRDT_ID`)
-    REFERENCES `smartpay`.`CREDENTIALS` (`CRDT_ID`)
+    REFERENCES `smartpay2`.`CREDENTIALS` (`CRDT_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_MCHT_FEE_COMMISSION`
     FOREIGN KEY (`MCHT_FEE_COMMISSION_ID`)
-    REFERENCES `smartpay`.`FEES` (`FEE_ID`)
+    REFERENCES `smartpay2`.`FEES` (`FEE_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_MCHT_ENCR`
     FOREIGN KEY (`MCHT_ENCR_ID`)
-    REFERENCES `smartpay`.`ENCRYPTIONS` (`ENCR_ID`)
+    REFERENCES `smartpay2`.`ENCRYPTIONS` (`ENCR_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_MCHT_FEE_RTRN`
     FOREIGN KEY (`MCHT_FEE_RETURN_ID`)
-    REFERENCES `smartpay`.`FEES` (`FEE_ID`)
+    REFERENCES `smartpay2`.`FEES` (`FEE_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ACCOUNT_TYPES`
+-- Table `smartpay2`.`ACCOUNT_TYPES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ACCOUNT_TYPES` ;
+DROP TABLE IF EXISTS `smartpay2`.`ACCOUNT_TYPES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ACCOUNT_TYPES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ACCOUNT_TYPES` (
   `ACTP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ACTP_NAME` VARCHAR(32) NOT NULL,
   `ACTP_DESCRIPTION` TEXT NULL,
@@ -255,11 +254,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ACCOUNT_STATUSES`
+-- Table `smartpay2`.`ACCOUNT_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ACCOUNT_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`ACCOUNT_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ACCOUNT_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ACCOUNT_STATUSES` (
   `ACST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ACST_NAME` VARCHAR(32) NOT NULL,
   `ACST_DESCRIPTION` TEXT NULL,
@@ -273,11 +272,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ACCOUNTS`
+-- Table `smartpay2`.`ACCOUNTS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ACCOUNTS` ;
+DROP TABLE IF EXISTS `smartpay2`.`ACCOUNTS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ACCOUNTS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ACCOUNTS` (
   `ACNT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ACNT_CREATED_TIME` TIMESTAMP NOT NULL,
   `ACNT_UPDATED_TIME` TIMESTAMP NULL,
@@ -293,28 +292,28 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`ACCOUNTS` (
   UNIQUE INDEX `ACNT_ID_UNIQUE` (`ACNT_ID` ASC),
   CONSTRAINT `fk_ACNT_MCHT`
     FOREIGN KEY (`ACNT_MCHT_ID`)
-    REFERENCES `smartpay`.`MERCHANTS` (`MCHT_ID`)
+    REFERENCES `smartpay2`.`MERCHANTS` (`MCHT_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ACNT_ACTP`
     FOREIGN KEY (`ACNT_ACTP_ID`)
-    REFERENCES `smartpay`.`ACCOUNT_TYPES` (`ACTP_ID`)
+    REFERENCES `smartpay2`.`ACCOUNT_TYPES` (`ACTP_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ACNT_ACST`
     FOREIGN KEY (`ACNT_ACST_ID`)
-    REFERENCES `smartpay`.`ACCOUNT_STATUSES` (`ACST_ID`)
+    REFERENCES `smartpay2`.`ACCOUNT_STATUSES` (`ACST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`SITE_STATUSES`
+-- Table `smartpay2`.`SITE_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`SITE_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`SITE_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`SITE_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`SITE_STATUSES` (
   `SIST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `SIST_NAME` VARCHAR(32) NOT NULL,
   `SIST_DESCRIPTION` TEXT NULL,
@@ -328,15 +327,16 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`SITES`
+-- Table `smartpay2`.`SITES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`SITES` ;
+DROP TABLE IF EXISTS `smartpay2`.`SITES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`SITES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`SITES` (
   `SITE_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `SITE_IDENTITY` VARCHAR(32) NOT NULL,
   `SITE_NAME` VARCHAR(32) NOT NULL,
   `SITE_URL` VARCHAR(128) NOT NULL,
+  `SITE_RETURN_URL` VARCHAR(255) NOT NULL,
   `SITE_LOGO_IMAGE` BLOB NULL,
   `SITE_REMARK` TEXT NULL,
   `SITE_CREATED_TIME` TIMESTAMP NOT NULL,
@@ -350,25 +350,26 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`SITES` (
   UNIQUE INDEX `SITE_ID_UNIQUE` (`SITE_ID` ASC),
   UNIQUE INDEX `SITE_URL_UNIQUE` (`SITE_URL` ASC),
   UNIQUE INDEX `site_IDENTITY_UNIQUE` (`SITE_IDENTITY` ASC),
+  UNIQUE INDEX `SITE_RETURN_URL_UNIQUE` (`SITE_RETURN_URL` ASC),
   CONSTRAINT `fk_SITE_SIST`
     FOREIGN KEY (`SITE_SIST_ID`)
-    REFERENCES `smartpay`.`SITE_STATUSES` (`SIST_ID`)
+    REFERENCES `smartpay2`.`SITE_STATUSES` (`SIST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_SITE_MCHT`
     FOREIGN KEY (`SITE_MCHT_ID`)
-    REFERENCES `smartpay`.`MERCHANTS` (`MCHT_ID`)
+    REFERENCES `smartpay2`.`MERCHANTS` (`MCHT_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`USER_STATUSES`
+-- Table `smartpay2`.`USER_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`USER_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`USER_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`USER_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`USER_STATUSES` (
   `USST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `USST_NAME` VARCHAR(32) NOT NULL,
   `USST_DESCRIPTION` TEXT NULL,
@@ -382,13 +383,13 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`USERS`
+-- Table `smartpay2`.`USERS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`USERS` ;
+DROP TABLE IF EXISTS `smartpay2`.`USERS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`USERS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`USERS` (
   `USER_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `USER_USERNAME` VARCHAR(32) NOT NULL,
+  `USER_USERNAME` VARCHAR(64) NOT NULL,
   `USER_PASSWORD` VARCHAR(127) NOT NULL,
   `USER_FIRST_NAME` VARCHAR(32) NOT NULL,
   `USER_LAST_NAME` VARCHAR(32) NOT NULL,
@@ -404,27 +405,26 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`USERS` (
   INDEX `fk_USER_MCHT_idx` (`USER_MCHT_ID` ASC),
   INDEX `fk_USER_USST_idx` (`USER_USST_ID` ASC),
   UNIQUE INDEX `USER_ID_UNIQUE` (`USER_ID` ASC),
-  UNIQUE INDEX `USER_USERNAME_UNIQUE` (`USER_USERNAME` ASC),
   UNIQUE INDEX `USER_EMAIL_UNIQUE` (`USER_EMAIL` ASC),
   CONSTRAINT `fk_USER_MCHT`
     FOREIGN KEY (`USER_MCHT_ID`)
-    REFERENCES `smartpay`.`MERCHANTS` (`MCHT_ID`)
+    REFERENCES `smartpay2`.`MERCHANTS` (`MCHT_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_USER_USST`
     FOREIGN KEY (`USER_USST_ID`)
-    REFERENCES `smartpay`.`USER_STATUSES` (`USST_ID`)
+    REFERENCES `smartpay2`.`USER_STATUSES` (`USST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ROLES`
+-- Table `smartpay2`.`ROLES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ROLES` ;
+DROP TABLE IF EXISTS `smartpay2`.`ROLES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ROLES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ROLES` (
   `ROLE_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ROLE_NAME` VARCHAR(64) NOT NULL,
   `ROLE_DESCRIPTION` TEXT NULL,
@@ -438,29 +438,72 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`PERMISSIONS`
+-- Table `smartpay2`.`MENU_CATEGORIES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`PERMISSIONS` ;
+DROP TABLE IF EXISTS `smartpay2`.`MENU_CATEGORIES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`PERMISSIONS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`MENU_CATEGORIES` (
+  `MNCG_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `MNCG_NAME` VARCHAR(64) NOT NULL,
+  `MNCG_INDEX` INT NOT NULL,
+  PRIMARY KEY (`MNCG_ID`),
+  UNIQUE INDEX `MNCG_ID_UNIQUE` (`MNCG_ID` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay2`.`MENU_ITEMS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`MENU_ITEMS` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`MENU_ITEMS` (
+  `MENU_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `MENU_NAME` VARCHAR(64) NOT NULL,
+  `MENU_INDEX` INT UNSIGNED NOT NULL,
+  `MENU_TARGET` VARCHAR(127) NOT NULL,
+  `MENU_MNCG_ID` BIGINT UNSIGNED NULL,
+  PRIMARY KEY (`MENU_ID`),
+  UNIQUE INDEX `MN_ID_UNIQUE` (`MENU_ID` ASC),
+  INDEX `FK_MENU_MNCG_ID_idx` (`MENU_MNCG_ID` ASC),
+  CONSTRAINT `FK_MENU_MNCG_ID`
+    FOREIGN KEY (`MENU_MNCG_ID`)
+    REFERENCES `smartpay2`.`MENU_CATEGORIES` (`MNCG_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay2`.`PERMISSIONS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`PERMISSIONS` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`PERMISSIONS` (
   `PRMS_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `PRMS_NAME` VARCHAR(64) NOT NULL,
   `PRMS_DESCRIPTION` TEXT NULL,
   `PRMS_ACTIVE` TINYINT NOT NULL,
   `PRMS_CODE` VARCHAR(8) NOT NULL,
+  `PRMS_MENU_ID` BIGINT UNSIGNED NULL,
   PRIMARY KEY (`PRMS_ID`),
   UNIQUE INDEX `PRMS_ID_UNIQUE` (`PRMS_ID` ASC),
   UNIQUE INDEX `PRMS_NAME_UNIQUE` (`PRMS_NAME` ASC),
-  UNIQUE INDEX `PRMS_CODE_UNIQUE` (`PRMS_CODE` ASC))
+  UNIQUE INDEX `PRMS_CODE_UNIQUE` (`PRMS_CODE` ASC),
+  INDEX `FK_PRMS_MENU_ID_idx` (`PRMS_MENU_ID` ASC),
+  CONSTRAINT `FK_PRMS_MENU_ID`
+    FOREIGN KEY (`PRMS_MENU_ID`)
+    REFERENCES `smartpay2`.`MENU_ITEMS` (`MENU_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ORDER_STATUSES`
+-- Table `smartpay2`.`ORDER_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ORDER_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`ORDER_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ORDER_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ORDER_STATUSES` (
   `ORST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ORST_NAME` VARCHAR(32) NOT NULL,
   `ORST_DESCRIPTION` TEXT NULL,
@@ -474,11 +517,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CURRENCIES`
+-- Table `smartpay2`.`CURRENCIES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CURRENCIES` ;
+DROP TABLE IF EXISTS `smartpay2`.`CURRENCIES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CURRENCIES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CURRENCIES` (
   `CRCY_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CRCY_NAME` VARCHAR(32) NOT NULL,
   `CRCY_DESCRIPTION` TEXT NULL,
@@ -492,11 +535,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CUSTOMER_STATUSES`
+-- Table `smartpay2`.`CUSTOMER_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CUSTOMER_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`CUSTOMER_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CUSTOMER_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CUSTOMER_STATUSES` (
   `CSST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CSST_NAME` VARCHAR(32) NOT NULL,
   `CSST_DESCRIPTION` TEXT NULL,
@@ -510,11 +553,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CUSTOMER_LOGIN_STATUSES`
+-- Table `smartpay2`.`CUSTOMER_LOGIN_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CUSTOMER_LOGIN_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`CUSTOMER_LOGIN_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CUSTOMER_LOGIN_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CUSTOMER_LOGIN_STATUSES` (
   `CSLS_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CSLS_NAME` VARCHAR(32) NOT NULL,
   `CSLS_DESCRIPTION` TEXT NULL,
@@ -528,11 +571,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CUSTOMER_LOGINS`
+-- Table `smartpay2`.`CUSTOMER_LOGINS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CUSTOMER_LOGINS` ;
+DROP TABLE IF EXISTS `smartpay2`.`CUSTOMER_LOGINS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CUSTOMER_LOGINS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CUSTOMER_LOGINS` (
   `CSLG_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CSLG_LOGIN_EMAIL` VARCHAR(32) NOT NULL,
   `CSLG_LOGIN_PASSWORD` VARCHAR(32) NOT NULL,
@@ -550,18 +593,18 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`CUSTOMER_LOGINS` (
   UNIQUE INDEX `CSLG_LOGIN_EMAIL_UNIQUE` (`CSLG_LOGIN_EMAIL` ASC),
   CONSTRAINT `fk_CSLG_CSLG`
     FOREIGN KEY (`CSLG_CSLS_ID`)
-    REFERENCES `smartpay`.`CUSTOMER_LOGIN_STATUSES` (`CSLS_ID`)
+    REFERENCES `smartpay2`.`CUSTOMER_LOGIN_STATUSES` (`CSLS_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CUSTOMERS`
+-- Table `smartpay2`.`CUSTOMERS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CUSTOMERS` ;
+DROP TABLE IF EXISTS `smartpay2`.`CUSTOMERS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CUSTOMERS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CUSTOMERS` (
   `CSTM_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CSTM_FIRST_NAME` VARCHAR(32) NOT NULL,
   `CSTM_LAST_NAME` VARCHAR(32) NOT NULL,
@@ -586,23 +629,23 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`CUSTOMERS` (
   UNIQUE INDEX `CSTM_EMAIL_UNIQUE` (`CSTM_EMAIL` ASC),
   CONSTRAINT `fk_CSTM_CSST`
     FOREIGN KEY (`CSTM_CSST_ID`)
-    REFERENCES `smartpay`.`CUSTOMER_STATUSES` (`CSST_ID`)
+    REFERENCES `smartpay2`.`CUSTOMER_STATUSES` (`CSST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_CSTM_CSLG`
     FOREIGN KEY (`CSTM_CSLG_ID`)
-    REFERENCES `smartpay`.`CUSTOMER_LOGINS` (`CSLG_ID`)
+    REFERENCES `smartpay2`.`CUSTOMER_LOGINS` (`CSLG_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ORDERS`
+-- Table `smartpay2`.`ORDERS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ORDERS` ;
+DROP TABLE IF EXISTS `smartpay2`.`ORDERS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ORDERS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ORDERS` (
   `ORDR_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ORDR_MERCHANT_NUMBER` VARCHAR(32) NOT NULL,
   `ORDR_AMOUNT` FLOAT NOT NULL,
@@ -624,33 +667,33 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`ORDERS` (
   UNIQUE INDEX `ORDR_ID_UNIQUE` (`ORDR_ID` ASC),
   CONSTRAINT `fk_ORDR_SITE`
     FOREIGN KEY (`ORDR_SITE_ID`)
-    REFERENCES `smartpay`.`SITES` (`SITE_ID`)
+    REFERENCES `smartpay2`.`SITES` (`SITE_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ORDR_ORST`
     FOREIGN KEY (`ORDR_ORST_ID`)
-    REFERENCES `smartpay`.`ORDER_STATUSES` (`ORST_ID`)
+    REFERENCES `smartpay2`.`ORDER_STATUSES` (`ORST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ORDR_CRCY`
     FOREIGN KEY (`ORDR_CRCY_ID`)
-    REFERENCES `smartpay`.`CURRENCIES` (`CRCY_ID`)
+    REFERENCES `smartpay2`.`CURRENCIES` (`CRCY_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_ORDR_CSTM`
     FOREIGN KEY (`ORDR_CSTM_ID`)
-    REFERENCES `smartpay`.`CUSTOMERS` (`CSTM_ID`)
+    REFERENCES `smartpay2`.`CUSTOMERS` (`CSTM_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`PAYMENT_STATUSES`
+-- Table `smartpay2`.`PAYMENT_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`PAYMENT_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`PAYMENT_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`PAYMENT_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`PAYMENT_STATUSES` (
   `PYST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `PYST_NAME` VARCHAR(32) NOT NULL,
   `PYST_DESCRIPTION` TEXT NULL,
@@ -664,11 +707,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`PAYMENT_TYPES`
+-- Table `smartpay2`.`PAYMENT_TYPES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`PAYMENT_TYPES` ;
+DROP TABLE IF EXISTS `smartpay2`.`PAYMENT_TYPES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`PAYMENT_TYPES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`PAYMENT_TYPES` (
   `PYTP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `PYTP_NAME` VARCHAR(32) NOT NULL,
   `PYTP_DESCRIPTION` TEXT NULL,
@@ -682,16 +725,18 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`PAYMENTS`
+-- Table `smartpay2`.`PAYMENTS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`PAYMENTS` ;
+DROP TABLE IF EXISTS `smartpay2`.`PAYMENTS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`PAYMENTS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`PAYMENTS` (
   `PYMT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `PYMT_AMOUNT` FLOAT NOT NULL,
   `PYMT_CREATED_TIME` TIMESTAMP NOT NULL,
   `PYMT_UPDATED_TIME` TIMESTAMP NULL,
   `PYMT_SUCCESS_TIME` TIMESTAMP NULL,
+  `PYMT_FEE` FLOAT NOT NULL,
+  `PYMT_CLIENT_IP` VARCHAR(45) NOT NULL,
   `PYMT_BANK_TRANSACTION_NUMBER` VARCHAR(128) NOT NULL,
   `PYMT_BANK_NAME` VARCHAR(128) NULL,
   `PYMT_BANK_RETURN_CODE` VARCHAR(128) NOT NULL,
@@ -719,33 +764,33 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`PAYMENTS` (
   UNIQUE INDEX `PYMT_ID_UNIQUE` (`PYMT_ID` ASC),
   CONSTRAINT `fk_PYMT_PYST`
     FOREIGN KEY (`PYMT_PYST_ID`)
-    REFERENCES `smartpay`.`PAYMENT_STATUSES` (`PYST_ID`)
+    REFERENCES `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_PYMT_PYTP`
     FOREIGN KEY (`PYMT_PYTP_ID`)
-    REFERENCES `smartpay`.`PAYMENT_TYPES` (`PYTP_ID`)
+    REFERENCES `smartpay2`.`PAYMENT_TYPES` (`PYTP_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_PYMT_ORDR`
     FOREIGN KEY (`PYMT_ORDR_ID`)
-    REFERENCES `smartpay`.`ORDERS` (`ORDR_ID`)
+    REFERENCES `smartpay2`.`ORDERS` (`ORDR_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_PYMT_CRCY`
     FOREIGN KEY (`PYMT_CRCY_ID`)
-    REFERENCES `smartpay`.`CURRENCIES` (`CRCY_ID`)
+    REFERENCES `smartpay2`.`CURRENCIES` (`CRCY_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`SHIPMENT_STATUSES`
+-- Table `smartpay2`.`SHIPMENT_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`SHIPMENT_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`SHIPMENT_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`SHIPMENT_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`SHIPMENT_STATUSES` (
   `SHST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `SHST_NAME` VARCHAR(32) NOT NULL,
   `SHST_DESCRIPTION` TEXT NULL,
@@ -759,11 +804,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`SHIPMENTS`
+-- Table `smartpay2`.`SHIPMENTS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`SHIPMENTS` ;
+DROP TABLE IF EXISTS `smartpay2`.`SHIPMENTS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`SHIPMENTS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`SHIPMENTS` (
   `SHMT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `SHMT_CARRIER` VARCHAR(32) NOT NULL,
   `SHMT_TRACKING_NUMBER` VARCHAR(64) NOT NULL,
@@ -787,23 +832,23 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`SHIPMENTS` (
   UNIQUE INDEX `SHMT_ID_UNIQUE` (`SHMT_ID` ASC),
   CONSTRAINT `fk_SHMT_SHST`
     FOREIGN KEY (`SHMT_SHST_ID`)
-    REFERENCES `smartpay`.`SHIPMENT_STATUSES` (`SHST_ID`)
+    REFERENCES `smartpay2`.`SHIPMENT_STATUSES` (`SHST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_SHMP_ORDR`
     FOREIGN KEY (`SHMT_ORDR_ID`)
-    REFERENCES `smartpay`.`ORDERS` (`ORDR_ID`)
+    REFERENCES `smartpay2`.`ORDERS` (`ORDR_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`RETURN_STATUSES`
+-- Table `smartpay2`.`RETURN_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`RETURN_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`RETURN_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`RETURN_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`RETURN_STATUSES` (
   `RTST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `RTST_NAME` VARCHAR(32) NOT NULL,
   `RTST_DESCRIPTION` TEXT NULL,
@@ -817,11 +862,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`REFUND_STATUSES`
+-- Table `smartpay2`.`REFUND_STATUSES`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`REFUND_STATUSES` ;
+DROP TABLE IF EXISTS `smartpay2`.`REFUND_STATUSES` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`REFUND_STATUSES` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`REFUND_STATUSES` (
   `RFST_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `RFST_NAME` VARCHAR(32) NOT NULL,
   `RFST_DESCRIPTION` TEXT NULL,
@@ -835,11 +880,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`RETURNS`
+-- Table `smartpay2`.`RETURNS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`RETURNS` ;
+DROP TABLE IF EXISTS `smartpay2`.`RETURNS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`RETURNS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`RETURNS` (
   `RTRN_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `RTRN_MERCHANT_NUMBER` VARCHAR(32) NOT NULL,
   `RTRN_GOODS_NAME` VARCHAR(128) NOT NULL,
@@ -856,23 +901,23 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`RETURNS` (
   UNIQUE INDEX `RTRN_ID_UNIQUE` (`RTRN_ID` ASC),
   CONSTRAINT `fk_RTRN_RTST`
     FOREIGN KEY (`RTRN_RTST_ID`)
-    REFERENCES `smartpay`.`RETURN_STATUSES` (`RTST_ID`)
+    REFERENCES `smartpay2`.`RETURN_STATUSES` (`RTST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_RTRN_ORDR`
     FOREIGN KEY (`RTRN_ORDR_ID`)
-    REFERENCES `smartpay`.`ORDERS` (`ORDR_ID`)
+    REFERENCES `smartpay2`.`ORDERS` (`ORDR_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`REFUNDS`
+-- Table `smartpay2`.`REFUNDS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`REFUNDS` ;
+DROP TABLE IF EXISTS `smartpay2`.`REFUNDS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`REFUNDS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`REFUNDS` (
   `RFND_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `RFND_AMOUNT` FLOAT NOT NULL,
   `RFND_CREATED_TIME` TIMESTAMP NOT NULL,
@@ -903,28 +948,28 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`REFUNDS` (
   UNIQUE INDEX `RFND_ID_UNIQUE` (`RFND_ID` ASC),
   CONSTRAINT `fk_RFND_RFST`
     FOREIGN KEY (`RFND_RFST_ID`)
-    REFERENCES `smartpay`.`REFUND_STATUSES` (`RFST_ID`)
+    REFERENCES `smartpay2`.`REFUND_STATUSES` (`RFST_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_RFND_ORDR`
     FOREIGN KEY (`RFND_ORDR_ID`)
-    REFERENCES `smartpay`.`ORDERS` (`ORDR_ID`)
+    REFERENCES `smartpay2`.`ORDERS` (`ORDR_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_RFND_CRCY`
     FOREIGN KEY (`RFND_CRCY_ID`)
-    REFERENCES `smartpay`.`CURRENCIES` (`CRCY_ID`)
+    REFERENCES `smartpay2`.`CURRENCIES` (`CRCY_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ROLE_PERMISSION_MAPPINGS`
+-- Table `smartpay2`.`ROLE_PERMISSION_MAPPINGS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ROLE_PERMISSION_MAPPINGS` ;
+DROP TABLE IF EXISTS `smartpay2`.`ROLE_PERMISSION_MAPPINGS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ROLE_PERMISSION_MAPPINGS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ROLE_PERMISSION_MAPPINGS` (
   `RPMP_ROLE_ID` BIGINT UNSIGNED NOT NULL,
   `RPMP_PRMS_ID` BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (`RPMP_ROLE_ID`, `RPMP_PRMS_ID`),
@@ -932,23 +977,23 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`ROLE_PERMISSION_MAPPINGS` (
   INDEX `fk_RPMP_ROLE_idx` (`RPMP_ROLE_ID` ASC),
   CONSTRAINT `fk_RPMP_ROLE`
     FOREIGN KEY (`RPMP_ROLE_ID`)
-    REFERENCES `smartpay`.`ROLES` (`ROLE_ID`)
+    REFERENCES `smartpay2`.`ROLES` (`ROLE_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_RPMP_PRMS`
     FOREIGN KEY (`RPMP_PRMS_ID`)
-    REFERENCES `smartpay`.`PERMISSIONS` (`PRMS_ID`)
+    REFERENCES `smartpay2`.`PERMISSIONS` (`PRMS_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`USER_ROLE_MAPPINGS`
+-- Table `smartpay2`.`USER_ROLE_MAPPINGS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`USER_ROLE_MAPPINGS` ;
+DROP TABLE IF EXISTS `smartpay2`.`USER_ROLE_MAPPINGS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`USER_ROLE_MAPPINGS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`USER_ROLE_MAPPINGS` (
   `URMP_USER_ID` BIGINT UNSIGNED NOT NULL,
   `URMP_ROLE_ID` BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (`URMP_USER_ID`, `URMP_ROLE_ID`),
@@ -956,23 +1001,23 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`USER_ROLE_MAPPINGS` (
   INDEX `fk_URMP_USER_idx` (`URMP_USER_ID` ASC),
   CONSTRAINT `fk_URMP_USER`
     FOREIGN KEY (`URMP_USER_ID`)
-    REFERENCES `smartpay`.`USERS` (`USER_ID`)
+    REFERENCES `smartpay2`.`USERS` (`USER_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_URMP_ROLE`
     FOREIGN KEY (`URMP_ROLE_ID`)
-    REFERENCES `smartpay`.`ROLES` (`ROLE_ID`)
+    REFERENCES `smartpay2`.`ROLES` (`ROLE_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`CLAIMS`
+-- Table `smartpay2`.`CLAIMS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`CLAIMS` ;
+DROP TABLE IF EXISTS `smartpay2`.`CLAIMS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`CLAIMS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`CLAIMS` (
   `CLAM_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CLAM_REMARK` TEXT NULL,
   `CLAM_ATTACHMENT` BLOB NULL,
@@ -985,18 +1030,18 @@ CREATE TABLE IF NOT EXISTS `smartpay`.`CLAIMS` (
   INDEX `fk_CLAIMS_PAYMENTS1_idx` (`CLAM_PYMT_ID` ASC),
   CONSTRAINT `fk_CLAIMS_PAYMENTS`
     FOREIGN KEY (`CLAM_PYMT_ID`)
-    REFERENCES `smartpay`.`PAYMENTS` (`PYMT_ID`)
+    REFERENCES `smartpay2`.`PAYMENTS` (`PYMT_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`LOGS`
+-- Table `smartpay2`.`LOGS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`LOGS` ;
+DROP TABLE IF EXISTS `smartpay2`.`LOGS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`LOGS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`LOGS` (
   `LOG_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `LOG_USERNAME` VARCHAR(127) NOT NULL,
   `LOG_CONTENT` TEXT NOT NULL,
@@ -1008,17 +1053,42 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay`.`ANNOUNCEMENTS`
+-- Table `smartpay2`.`ANNOUNCEMENTS`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay`.`ANNOUNCEMENTS` ;
+DROP TABLE IF EXISTS `smartpay2`.`ANNOUNCEMENTS` ;
 
-CREATE TABLE IF NOT EXISTS `smartpay`.`ANNOUNCEMENTS` (
+CREATE TABLE IF NOT EXISTS `smartpay2`.`ANNOUNCEMENTS` (
   `ANMT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `ANMT_CONTENT` TEXT NOT NULL,
   `ANMT_CREATED_TIME` TIMESTAMP NOT NULL,
   `ANMT_ACTIVE` TINYINT NOT NULL,
+  `ANMT_TITLE` VARCHAR(32) NOT NULL,
   PRIMARY KEY (`ANMT_ID`),
   UNIQUE INDEX `LOG_ID_UNIQUE` (`ANMT_ID` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay2`.`USER_PERMISSION_MAPPINGS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`USER_PERMISSION_MAPPINGS` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`USER_PERMISSION_MAPPINGS` (
+  `UPMP_USER_ID` BIGINT UNSIGNED NOT NULL,
+  `UPMP_PERMISSION_ID` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`UPMP_USER_ID`, `UPMP_PERMISSION_ID`),
+  INDEX `fk_UPMP_USER_idx` (`UPMP_USER_ID` ASC),
+  INDEX `fk_UPMP_PERMISSION_idx` (`UPMP_PERMISSION_ID` ASC),
+  CONSTRAINT `fk_UPMP_USER`
+    FOREIGN KEY (`UPMP_USER_ID`)
+    REFERENCES `smartpay2`.`USERS` (`USER_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_UPMP_PERMISSION`
+    FOREIGN KEY (`UPMP_PERMISSION_ID`)
+    REFERENCES `smartpay2`.`PERMISSIONS` (`PRMS_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -1027,255 +1097,256 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`MERCHANT_STATUSES`
+-- Data for table `smartpay2`.`MERCHANT_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`MERCHANT_STATUSES` (`MCST_ID`, `MCST_NAME`, `MCST_DESCRIPTION`, `MCST_ACTIVE`, `MCST_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '200');
-INSERT INTO `smartpay`.`MERCHANT_STATUSES` (`MCST_ID`, `MCST_NAME`, `MCST_DESCRIPTION`, `MCST_ACTIVE`, `MCST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '500');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`MERCHANT_STATUSES` (`MCST_ID`, `MCST_NAME`, `MCST_DESCRIPTION`, `MCST_ACTIVE`, `MCST_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '200');
+INSERT INTO `smartpay2`.`MERCHANT_STATUSES` (`MCST_ID`, `MCST_NAME`, `MCST_DESCRIPTION`, `MCST_ACTIVE`, `MCST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '500');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`CREDENTIAL_STATUSES`
+-- Data for table `smartpay2`.`CREDENTIAL_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Submitted', 'The credential is submitted for approval.', 1, '400');
-INSERT INTO `smartpay`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Approved', 'The credential is approved.', 1, '500');
-INSERT INTO `smartpay`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Denied', 'The credential is denied.', 1, '502');
-INSERT INTO `smartpay`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Expired', 'The credential has expired.', 1, '404');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Submitted', 'The credential is submitted for approval.', 1, '400');
+INSERT INTO `smartpay2`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Approved', 'The credential is approved.', 1, '500');
+INSERT INTO `smartpay2`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Denied', 'The credential is denied.', 1, '502');
+INSERT INTO `smartpay2`.`CREDENTIAL_STATUSES` (`CRST_ID`, `CRST_NAME`, `CRST_DESCRIPTION`, `CRST_ACTIVE`, `CRST_CODE`) VALUES (NULL, 'Expired', 'The credential has expired.', 1, '404');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`CREDENTIAL_TYPES`
+-- Data for table `smartpay2`.`CREDENTIAL_TYPES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`CREDENTIAL_TYPES` (`CRTP_ID`, `CRTP_NAME`, `CRTP_DESCRIPTION`, `CRTP_ACTIVE`, `CRTP_CODE`) VALUES (NULL, 'Certificate', 'Certificate', 1, '100');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`CREDENTIAL_TYPES` (`CRTP_ID`, `CRTP_NAME`, `CRTP_DESCRIPTION`, `CRTP_ACTIVE`, `CRTP_CODE`) VALUES (NULL, 'Certificate', 'Certificate', 1, '100');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`FEE_TYPES`
+-- Data for table `smartpay2`.`FEE_TYPES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Static', 'Static amount for every transaction', 1, '100');
-INSERT INTO `smartpay`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Percentage', 'Percentage based on the transaction amount', 1, '101');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Static', 'Static amount for every transaction', 1, '100');
+INSERT INTO `smartpay2`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Percentage', 'Percentage based on the transaction amount', 1, '101');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`ENCRYPTION_TYPES`
+-- Data for table `smartpay2`.`ENCRYPTION_TYPES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`ENCRYPTION_TYPES` (`ENTP_ID`, `ENTP_NAME`, `ENTP_DESCRIPTION`, `ENTP_ACTIVE`, `ENTP_CODE`) VALUES (NULL, 'MD5', 'MD5 Algorithm', 1, '100');
-INSERT INTO `smartpay`.`ENCRYPTION_TYPES` (`ENTP_ID`, `ENTP_NAME`, `ENTP_DESCRIPTION`, `ENTP_ACTIVE`, `ENTP_CODE`) VALUES (NULL, 'SHA', 'SHA Algorithm', 1, '101');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`ENCRYPTION_TYPES` (`ENTP_ID`, `ENTP_NAME`, `ENTP_DESCRIPTION`, `ENTP_ACTIVE`, `ENTP_CODE`) VALUES (NULL, 'MD5', 'MD5 Algorithm', 1, '100');
+INSERT INTO `smartpay2`.`ENCRYPTION_TYPES` (`ENTP_ID`, `ENTP_NAME`, `ENTP_DESCRIPTION`, `ENTP_ACTIVE`, `ENTP_CODE`) VALUES (NULL, 'SHA', 'SHA Algorithm', 1, '101');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`ACCOUNT_TYPES`
+-- Data for table `smartpay2`.`ACCOUNT_TYPES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`ACCOUNT_TYPES` (`ACTP_ID`, `ACTP_NAME`, `ACTP_DESCRIPTION`, `ACTP_ACTIVE`, `ACTP_CODE`) VALUES (NULL, 'Bank', 'The account is the bank account number.', 1, '100');
-INSERT INTO `smartpay`.`ACCOUNT_TYPES` (`ACTP_ID`, `ACTP_NAME`, `ACTP_DESCRIPTION`, `ACTP_ACTIVE`, `ACTP_CODE`) VALUES (NULL, 'Card', 'The account is a bank card.', 1, '200');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`ACCOUNT_TYPES` (`ACTP_ID`, `ACTP_NAME`, `ACTP_DESCRIPTION`, `ACTP_ACTIVE`, `ACTP_CODE`) VALUES (NULL, 'Bank', 'The account is the bank account number.', 1, '100');
+INSERT INTO `smartpay2`.`ACCOUNT_TYPES` (`ACTP_ID`, `ACTP_NAME`, `ACTP_DESCRIPTION`, `ACTP_ACTIVE`, `ACTP_CODE`) VALUES (NULL, 'Card', 'The account is a bank card.', 1, '200');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`ACCOUNT_STATUSES`
+-- Data for table `smartpay2`.`ACCOUNT_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`ACCOUNT_STATUSES` (`ACST_ID`, `ACST_NAME`, `ACST_DESCRIPTION`, `ACST_ACTIVE`, `ACST_CODE`) VALUES (NULL, 'Normal', 'The merchant account is normal.', 1, '200');
-INSERT INTO `smartpay`.`ACCOUNT_STATUSES` (`ACST_ID`, `ACST_NAME`, `ACST_DESCRIPTION`, `ACST_ACTIVE`, `ACST_CODE`) VALUES (NULL, 'Frozen', 'The merchant account is frozen.', 1, '400');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`ACCOUNT_STATUSES` (`ACST_ID`, `ACST_NAME`, `ACST_DESCRIPTION`, `ACST_ACTIVE`, `ACST_CODE`) VALUES (NULL, 'Normal', 'The merchant account is normal.', 1, '200');
+INSERT INTO `smartpay2`.`ACCOUNT_STATUSES` (`ACST_ID`, `ACST_NAME`, `ACST_DESCRIPTION`, `ACST_ACTIVE`, `ACST_CODE`) VALUES (NULL, 'Frozen', 'The merchant account is frozen.', 1, '400');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`SITE_STATUSES`
+-- Data for table `smartpay2`.`SITE_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Created', 'Created and wait for approval', 1, '400');
-INSERT INTO `smartpay`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Approved', 'Approved to operation', 1, '500');
-INSERT INTO `smartpay`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '401');
-INSERT INTO `smartpay`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Declined', 'Declined', 1, '501');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Created', 'Created and wait for approval', 1, '400');
+INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Approved', 'Approved to operation', 1, '500');
+INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '401');
+INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Declined', 'Declined', 1, '501');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`USER_STATUSES`
+-- Data for table `smartpay2`.`USER_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (1, 'Normal', 'Normal', 1, '100');
-INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (2, 'Deactived', 'Deactived', 1, '400');
-INSERT INTO `smartpay`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (3, 'Frozen', 'Frozen', 1, '501');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (1, 'Normal', 'Normal', 1, '100');
+INSERT INTO `smartpay2`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (2, 'Deactived', 'Deactived', 1, '400');
+INSERT INTO `smartpay2`.`USER_STATUSES` (`USST_ID`, `USST_NAME`, `USST_DESCRIPTION`, `USST_ACTIVE`, `USST_CODE`) VALUES (3, 'Frozen', 'Frozen', 1, '501');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`USERS`
+-- Data for table `smartpay2`.`USERS`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`USERS` (`USER_ID`, `USER_USERNAME`, `USER_PASSWORD`, `USER_FIRST_NAME`, `USER_LAST_NAME`, `USER_EMAIL`, `USER_PROFILE_IMAGE`, `USER_REMARK`, `USER_CREATED_TIME`, `USER_UPDATED_TIME`, `USER_ACTIVE`, `USER_MCHT_ID`, `USER_USST_ID`) VALUES (1, 'admin', '$2a$10$Ce2HJja0Trha0ee3.rMqQewIzJMVe87.jNi5zF5gDdsyvHjJsnwOm', 'Admin', 'Admin', 'ironaire@gmail.com', NULL, NULL, now(), NULL, 1, NULL, 1);
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`USERS` (`USER_ID`, `USER_USERNAME`, `USER_PASSWORD`, `USER_FIRST_NAME`, `USER_LAST_NAME`, `USER_EMAIL`, `USER_PROFILE_IMAGE`, `USER_REMARK`, `USER_CREATED_TIME`, `USER_UPDATED_TIME`, `USER_ACTIVE`, `USER_MCHT_ID`, `USER_USST_ID`) VALUES (1, 'admin', '$2a$10$Ce2HJja0Trha0ee3.rMqQewIzJMVe87.jNi5zF5gDdsyvHjJsnwOm', 'Admin', 'Admin', 'ironaire@gmail.com', NULL, NULL, now(), NULL, 1, NULL, 1);
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`ROLES`
+-- Data for table `smartpay2`.`ROLES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (1, 'ROLE_ADMIN', 'System Admin', 1, '100');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (2, 'ROLE_MERCHANT_ADMIN', 'Merchant Admin', 1, '200');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (3, 'ROLE_MERCHANT_OPERATOR', 'Merchant Operator', 1, '201');
-INSERT INTO `smartpay`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (4, 'ROLE_ADMIN_OPERATOR', 'Admin Operator', 1, '101');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (1, 'ROLE_ADMIN', 'System Admin', 1, '100');
+INSERT INTO `smartpay2`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (2, 'ROLE_MERCHANT_ADMIN', 'Merchant Admin', 1, '200');
+INSERT INTO `smartpay2`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (3, 'ROLE_MERCHANT_OPERATOR', 'Merchant Operator', 1, '201');
+INSERT INTO `smartpay2`.`ROLES` (`ROLE_ID`, `ROLE_NAME`, `ROLE_DESCRIPTION`, `ROLE_ACTIVE`, `ROLE_CODE`) VALUES (4, 'ROLE_ADMIN_OPERATOR', 'Admin Operator', 1, '101');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`ORDER_STATUSES`
+-- Data for table `smartpay2`.`ORDER_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Initiated', 'The order is initiated.', 1, '400');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Confirmed', 'The order is confirmed.', 1, '500');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Paid', 'The order is paid.', 1, '401');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Preparing for Shipment', 'The order is parpared for shipment, cannot be cancel at this stage.', 1, '501');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Cancelled', 'The order is cancelled.', 1, '402');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Shipped', 'The order is shipped.', 1, '502');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Delivered', 'The order is delivered.', 1, '503');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Returned', 'The order is returned.', 1, '403');
-INSERT INTO `smartpay`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Refunded', 'The order is refunded.', 1, '504');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Initiated', 'The order is initiated.', 1, '400');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Confirmed', 'The order is confirmed.', 1, '500');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Paid', 'The order is paid.', 1, '401');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Preparing for Shipment', 'The order is parpared for shipment, cannot be cancel at this stage.', 1, '501');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Cancelled', 'The order is cancelled.', 1, '402');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Shipped', 'The order is shipped.', 1, '502');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Delivered', 'The order is delivered.', 1, '503');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Returned', 'The order is returned.', 1, '403');
+INSERT INTO `smartpay2`.`ORDER_STATUSES` (`ORST_ID`, `ORST_NAME`, `ORST_DESCRIPTION`, `ORST_ACTIVE`, `ORST_CODE`) VALUES (NULL, 'Refunded', 'The order is refunded.', 1, '504');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`CURRENCIES`
+-- Data for table `smartpay2`.`CURRENCIES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'USD', 'US Dollar', 1, '100');
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'RMB', 'Chinese Yuan', 1, '101');
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'GBP', 'England', 1, '102');
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'EUR', 'Europe', 1, '103');
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'JPY', 'Japan', 1, '104');
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'CAD', 'Canada', 1, '105');
-INSERT INTO `smartpay`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'AUD', 'Australia', 1, '106');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'USD', 'US Dollar', 1, '100');
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'RMB', 'Chinese Yuan', 1, '101');
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'GBP', 'England', 1, '102');
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'EUR', 'Europe', 1, '103');
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'JPY', 'Japan', 1, '104');
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'CAD', 'Canada', 1, '105');
+INSERT INTO `smartpay2`.`CURRENCIES` (`CRCY_ID`, `CRCY_NAME`, `CRCY_DESCRIPTION`, `CRCY_ACTIVE`, `CRCY_CODE`) VALUES (NULL, 'AUD', 'Australia', 1, '106');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`CUSTOMER_STATUSES`
+-- Data for table `smartpay2`.`CUSTOMER_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`CUSTOMER_STATUSES` (`CSST_ID`, `CSST_NAME`, `CSST_DESCRIPTION`, `CSST_ACTIVE`, `CSST_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '200');
-INSERT INTO `smartpay`.`CUSTOMER_STATUSES` (`CSST_ID`, `CSST_NAME`, `CSST_DESCRIPTION`, `CSST_ACTIVE`, `CSST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '500');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`CUSTOMER_STATUSES` (`CSST_ID`, `CSST_NAME`, `CSST_DESCRIPTION`, `CSST_ACTIVE`, `CSST_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '200');
+INSERT INTO `smartpay2`.`CUSTOMER_STATUSES` (`CSST_ID`, `CSST_NAME`, `CSST_DESCRIPTION`, `CSST_ACTIVE`, `CSST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '500');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`CUSTOMER_LOGIN_STATUSES`
+-- Data for table `smartpay2`.`CUSTOMER_LOGIN_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`CUSTOMER_LOGIN_STATUSES` (`CSLS_ID`, `CSLS_NAME`, `CSLS_DESCRIPTION`, `CSLS_ACTIVE`, `CSLS_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '500');
-INSERT INTO `smartpay`.`CUSTOMER_LOGIN_STATUSES` (`CSLS_ID`, `CSLS_NAME`, `CSLS_DESCRIPTION`, `CSLS_ACTIVE`, `CSLS_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '200');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`CUSTOMER_LOGIN_STATUSES` (`CSLS_ID`, `CSLS_NAME`, `CSLS_DESCRIPTION`, `CSLS_ACTIVE`, `CSLS_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '500');
+INSERT INTO `smartpay2`.`CUSTOMER_LOGIN_STATUSES` (`CSLS_ID`, `CSLS_NAME`, `CSLS_DESCRIPTION`, `CSLS_ACTIVE`, `CSLS_CODE`) VALUES (NULL, 'Normal', 'Normal', 1, '200');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`PAYMENT_STATUSES`
+-- Data for table `smartpay2`.`PAYMENT_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Approved', 'Approved', 1, '500');
-INSERT INTO `smartpay`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Declined', 'Declined', 1, '501');
-INSERT INTO `smartpay`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim Pending', 'Claim Pending', 1, '400');
-INSERT INTO `smartpay`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim In Process', 'Claim In Process', 1, '401');
-INSERT INTO `smartpay`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim Resolved', 'Claim Resolved', 1, '502');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Approved', 'Approved', 1, '500');
+INSERT INTO `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Declined', 'Declined', 1, '501');
+INSERT INTO `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim Pending', 'Claim Pending', 1, '400');
+INSERT INTO `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim In Process', 'Claim In Process', 1, '401');
+INSERT INTO `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim Failed', 'Claim Failed', 1, '502');
+INSERT INTO `smartpay2`.`PAYMENT_STATUSES` (`PYST_ID`, `PYST_NAME`, `PYST_DESCRIPTION`, `PYST_ACTIVE`, `PYST_CODE`) VALUES (NULL, 'Claim Successful', 'Claim Successful', 1, '200');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`PAYMENT_TYPES`
+-- Data for table `smartpay2`.`PAYMENT_TYPES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`PAYMENT_TYPES` (`PYTP_ID`, `PYTP_NAME`, `PYTP_DESCRIPTION`, `PYTP_ACTIVE`, `PYTP_CODE`) VALUES (NULL, 'Credit Card', 'Credit Card', 1, '100');
-INSERT INTO `smartpay`.`PAYMENT_TYPES` (`PYTP_ID`, `PYTP_NAME`, `PYTP_DESCRIPTION`, `PYTP_ACTIVE`, `PYTP_CODE`) VALUES (NULL, 'Debit Card', 'Debit Card', 1, '101');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`PAYMENT_TYPES` (`PYTP_ID`, `PYTP_NAME`, `PYTP_DESCRIPTION`, `PYTP_ACTIVE`, `PYTP_CODE`) VALUES (NULL, 'Credit Card', 'Credit Card', 1, '100');
+INSERT INTO `smartpay2`.`PAYMENT_TYPES` (`PYTP_ID`, `PYTP_NAME`, `PYTP_DESCRIPTION`, `PYTP_ACTIVE`, `PYTP_CODE`) VALUES (NULL, 'Debit Card', 'Debit Card', 1, '101');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`SHIPMENT_STATUSES`
+-- Data for table `smartpay2`.`SHIPMENT_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Shipped', 'Shipped', 1, '500');
-INSERT INTO `smartpay`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Delivered', 'Delivered', 1, '501');
-INSERT INTO `smartpay`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Lost', 'Lost', 1, '400');
-INSERT INTO `smartpay`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Damaged', 'Damaged', 1, '401');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Shipped', 'Shipped', 1, '500');
+INSERT INTO `smartpay2`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Delivered', 'Delivered', 1, '501');
+INSERT INTO `smartpay2`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Lost', 'Lost', 1, '400');
+INSERT INTO `smartpay2`.`SHIPMENT_STATUSES` (`SHST_ID`, `SHST_NAME`, `SHST_DESCRIPTION`, `SHST_ACTIVE`, `SHST_CODE`) VALUES (NULL, 'Damaged', 'Damaged', 1, '401');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`RETURN_STATUSES`
+-- Data for table `smartpay2`.`RETURN_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`RETURN_STATUSES` (`RTST_ID`, `RTST_NAME`, `RTST_DESCRIPTION`, `RTST_ACTIVE`, `RTST_CODE`) VALUES (NULL, 'Shipped', 'Shipped', 1, '400');
-INSERT INTO `smartpay`.`RETURN_STATUSES` (`RTST_ID`, `RTST_NAME`, `RTST_DESCRIPTION`, `RTST_ACTIVE`, `RTST_CODE`) VALUES (NULL, 'Delivered', 'Delivered', 1, '401');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`RETURN_STATUSES` (`RTST_ID`, `RTST_NAME`, `RTST_DESCRIPTION`, `RTST_ACTIVE`, `RTST_CODE`) VALUES (NULL, 'Shipped', 'Shipped', 1, '400');
+INSERT INTO `smartpay2`.`RETURN_STATUSES` (`RTST_ID`, `RTST_NAME`, `RTST_DESCRIPTION`, `RTST_ACTIVE`, `RTST_CODE`) VALUES (NULL, 'Delivered', 'Delivered', 1, '401');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`REFUND_STATUSES`
+-- Data for table `smartpay2`.`REFUND_STATUSES`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Issued', 'Issued', 1, '500');
-INSERT INTO `smartpay`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Funded', 'Funded', 1, '501');
-INSERT INTO `smartpay`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Initiated', 'Initiated', 1, '401');
-INSERT INTO `smartpay`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Approved', 'Approved', 1, '502');
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Issued', 'Issued', 1, '500');
+INSERT INTO `smartpay2`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Funded', 'Funded', 1, '501');
+INSERT INTO `smartpay2`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Initiated', 'Initiated', 1, '401');
+INSERT INTO `smartpay2`.`REFUND_STATUSES` (`RFST_ID`, `RFST_NAME`, `RFST_DESCRIPTION`, `RFST_ACTIVE`, `RFST_CODE`) VALUES (NULL, 'Approved', 'Approved', 1, '502');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay`.`USER_ROLE_MAPPINGS`
+-- Data for table `smartpay2`.`USER_ROLE_MAPPINGS`
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `smartpay`;
-INSERT INTO `smartpay`.`USER_ROLE_MAPPINGS` (`URMP_USER_ID`, `URMP_ROLE_ID`) VALUES (1, 1);
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`USER_ROLE_MAPPINGS` (`URMP_USER_ID`, `URMP_ROLE_ID`) VALUES (1, 1);
 
 COMMIT;
 
