@@ -1,7 +1,6 @@
 <%@include file="../taglib.jsp" %>
 
 <spring:message code="user.label" var="userLabel"/>
-<spring:message code="${target}.label" var="entity"/>
 <spring:message code="restore.confirm.message" arguments="${entity}" var="restoreMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
 <spring:message code="action.cancel.label" var="cancelLabel"/>
@@ -73,7 +72,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}user/list/${target}",
+                'url': "${rootURL}user/list/archive",
                 'type': "GET",
                 'dataType': 'json'
             },

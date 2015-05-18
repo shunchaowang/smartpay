@@ -80,31 +80,31 @@ public class MerchantController {
     private MessageSource messageSource;
 
     // index view
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index(Model model) {
-        model.addAttribute("_view", "merchant/index");
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String indexAll(Model model) {
+        model.addAttribute("_view", "merchant/indexAll");
         return "main";
     }
 
     // fee view
     @RequestMapping(value = {"/index/setting"}, method = RequestMethod.GET)
     public String indexSetting(Model model) {
-        model.addAttribute("_view", "merchant/setting");
+        model.addAttribute("_view", "merchant/indexSetting");
         return "main";
     }
 
     // archive view
     @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
     public String indexArchive(Model model) {
-        model.addAttribute("_view", "merchant/archive");
+        model.addAttribute("_view", "merchant/indexArchive");
         return "main";
     }
 
     // ajax for DataTables
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(HttpServletRequest request) {
+    public String listAll(HttpServletRequest request) {
 
         DataTablesParams params = new DataTablesParams(request);
 

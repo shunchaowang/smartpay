@@ -58,12 +58,7 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="${rootURL}merchant/create">
-                                    <spring:message code="create.label" arguments="${merchant}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}merchant/index">
+                                <a href="${rootURL}merchant/index/all">
                                     <spring:message code="manage.label" arguments="${merchant}"/>
                                 </a>
                             </li>
@@ -120,22 +115,11 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="${rootURL}user/create/operator">
-                                    <spring:message code="create.label" arguments="${operator}"/>
-                                </a>
-                            </li>
-                            <li>
                                 <a href="${rootURL}user/index/operator">
                                     <spring:message code="manage.label" arguments="${operator}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}user/create/merchantAdmin">
-                                    <spring:message code="create.label"
-                                                    arguments="${merchantAdmin}"/>
-                                </a>
-                            </li>
                             <li>
                                 <a href="${rootURL}user/index/merchantAdmin">
                                     <spring:message code="manage.label"
@@ -172,21 +156,11 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="${rootURL}order/create">
-                                    <spring:message code="create.label" arguments="${order}"/>
-                                </a>
-                            </li>
-                            <li>
                                 <a href="${rootURL}order/index/all">
                                     <spring:message code="manage.label" arguments="${order}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}shipment/create">
-                                    <spring:message code="create.label" arguments="${shipment}"/>
-                                </a>
-                            </li>
                             <li>
                                 <a href="${rootURL}shipment/index/all">
                                     <spring:message code="manage.label" arguments="${shipment}"/>
@@ -214,21 +188,11 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="${rootURL}payment/create">
-                                    <spring:message code="create.label" arguments="${payment}"/>
-                                </a>
-                            </li>
-                            <li>
                                 <a href="${rootURL}payment/index/all">
                                     <spring:message code="manage.label" arguments="${payment}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}refund/create">
-                                    <spring:message code="create.label" arguments="${refund}"/>
-                                </a>
-                            </li>
                             <li>
                                 <a href="${rootURL}refund/index/all">
                                     <spring:message code="manage.label" arguments="${refund}"/>
@@ -261,11 +225,6 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="${rootURL}claim/create">
-                                    <spring:message code="create.label" arguments="${refuse}"/>
-                                </a>
-                            </li>
-                            <li>
                                 <a href="${rootURL}claim/index/all">
                                     <spring:message code="manage.label" arguments="${refuse}"/>
                                 </a>
@@ -292,12 +251,6 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}announcement/create">
-                                    <spring:message code="create.label"
-                                                    arguments="${announcement}"/>
-                                </a>
-                            </li>
                             <li>
                                 <a href="${rootURL}announcement/index/all">
                                     <spring:message code="manage.label" arguments="${announcement}"/>

@@ -197,7 +197,7 @@
     </div>
     <div class="row">
         <div class="col-sm-2 col-sm-offset-2">
-            <a href="${rootURL}merchant/index">
+            <a href="${rootURL}merchant/index/all">
                 <button type="button" class="btn btn-default">
                     <spring:message code="action.return.label"/>
                 </button>

@@ -7,22 +7,16 @@
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                <a href="${rootURL}">
                     <i class="glyphicon glyphicon-home"></i>
                     <spring:message code="home.label"/>
-                </a>
             </li>
             <li>
-                <a href="${rootURL}merchant/index">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="index.label" arguments="${entity}"/>
-                </a>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/index/setting">
                     <i class="glyphicon glyphicon-list"></i>
                     <spring:message code="manage.label" arguments="${transaction}"/>
-                </a>
             </li>
         </ol>
     </div>

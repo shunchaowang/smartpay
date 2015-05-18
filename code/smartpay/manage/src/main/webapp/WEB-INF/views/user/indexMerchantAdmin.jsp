@@ -1,6 +1,6 @@
 <%@include file="../taglib.jsp" %>
 
-<spring:message code="${target}.label" var="entity"/>
+<spring:message code="merchantAdmin.label" var="entity"/>
 <spring:message code="user.label" var="userLabel"/>
 
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
@@ -79,7 +79,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}user/list/${target}",
+                'url': "${rootURL}user/list/merchantAdmin",
                 'type': "GET",
                 'dataType': 'json'
             },

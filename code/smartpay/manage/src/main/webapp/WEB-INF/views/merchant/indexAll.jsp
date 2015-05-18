@@ -16,19 +16,31 @@
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                    <i class="glyphicon glyphicon-home"></i>
-                    <spring:message code="home.label"/>
+                <i class="glyphicon glyphicon-home"></i>
+                <spring:message code="home.label"/>
             </li>
             <li>
                 <i class="glyphicon glyphicon-list"></i>
                 <spring:message code="manage.label" arguments="${entity}"/>
             </li>
             <li class="active">
-                    <i class="glyphicon glyphicon-list"></i>
-                    <spring:message code="index.label" arguments="${entity}"/>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
             </li>
         </ol>
     </div>
+    <div class="row">
+        <div class="col-sm-2 pull-left">
+            <a href="${rootURL}merchant/create">
+                <button class="btn btn-default">
+                    <i class="glyphicon glyphicon-wrench"></i>
+                    <spring:message code="create.label" arguments="${entity}"/>
+                </button>
+            </a>
+        </div>
+    </div>
+    <br>
+
     <div class="row">
         <div class="col-sm-12">
             <table class="table table-bordered" id="merchant-table">
@@ -82,7 +94,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}merchant/list",
+                'url': "${rootURL}merchant/list/all",
                 'type': "GET",
                 'dataType': 'json'
             },

@@ -21,7 +21,6 @@ import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,31 +65,156 @@ public class UserController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping(value = {"/index/{target}"}, method = RequestMethod.GET)
-    public String index(Model model, @PathVariable("target") String target) {
+//    @RequestMapping(value = {"/index/{target}"}, method = RequestMethod.GET)
+//    public String index(Model model, @PathVariable("target") String target) {
+//
+//        if (StringUtils.isBlank(target)
+//                || (!target.equals("operator") && !target.equals("merchantAdmin")
+//                && !target.equals("merchantOperator") && !target.equals("archive"))) {
+//            return "404";
+//        }
+//
+//        model.addAttribute("target", target);
+//        model.addAttribute("_view", "user/index" + StringUtils.capitalize(target));
+//        return "main";
+//    }
 
-        if (StringUtils.isBlank(target)
-                || (!target.equals("operator") && !target.equals("merchantAdmin")
-                && !target.equals("merchantOperator") && !target.equals("archive"))) {
-            return "404";
-        }
+    @RequestMapping(value = {"/index/operator"}, method = RequestMethod.GET)
+    public String indexOperator(Model model) {
 
-        model.addAttribute("target", target);
-        model.addAttribute("_view", "user/index" + StringUtils.capitalize(target));
+        model.addAttribute("_view", "user/indexOperator");
         return "main";
     }
 
-    @RequestMapping(value = "/list/{target}", method = RequestMethod.GET,
+    @RequestMapping(value = {"/index/merchantAdmin"}, method = RequestMethod.GET)
+    public String indexMerchantAdmin(Model model) {
+
+        model.addAttribute("_view", "user/indexMerchantAdmin");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/index/merchantOperator"}, method = RequestMethod.GET)
+    public String indexMerchantOperator(Model model) {
+
+        model.addAttribute("_view", "user/indexMerchantOperator");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
+    public String indexArchive(Model model) {
+
+        model.addAttribute("_view", "user/indexArchive");
+        return "main";
+    }
+
+//    @RequestMapping(value = "/list/{target}", method = RequestMethod.GET,
+//            produces = "application/json;charset=UTF-8")
+//    public
+//    @ResponseBody
+//    String list(HttpServletRequest request, @PathVariable("target") String target) {
+//
+//        if (StringUtils.isBlank(target)
+//                || (!target.equals("operator") && !target.equals("merchantAdmin")
+//                && !target.equals("merchantOperator") && !target.equals("archive"))) {
+//            return "404";
+//        }
+//
+//        // exclude current user
+//        SecurityUser securityUser = UserResource.getCurrentUser();
+//        if (securityUser == null) {
+//            return "403";
+//        }
+//
+//        Role role = null;
+//        Role operatorRole = null;
+//        Role merchantAdminRole = null;
+//        Role merchantOperatorRole = null;
+//        try {
+//            operatorRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
+//            merchantAdminRole = roleService
+//                    .findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
+//            merchantOperatorRole = roleService
+//                    .findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+//        } catch (NoSuchEntityException e) {
+//            e.printStackTrace();
+//            throw new BadRequestException("400", "No role found.");
+//        }
+//
+//        Boolean active = true;
+//
+//        switch (target) {
+//            case "operator":
+//                role = operatorRole;
+//                break;
+//            case "merchantAdmin":
+//                role = merchantAdminRole;
+//                break;
+//            case "merchantOperator":
+//                role = merchantOperatorRole;
+//                break;
+//            case "archive":
+//                active = false;
+//                break;
+//            default:
+//                return "403";
+//        }
+//
+//        // formulate criteria query
+//        // if active == false means archive, no role
+//        // support ad hoc search on username only
+//        // support order on id and createdTime only
+//        User includedUser = new User();
+//        includedUser.setActive(active);
+//        if (role != null) {
+//            includedUser.setRoles(new HashSet<Role>());
+//            includedUser.getRoles().add(role);
+//        }
+//
+//        DataTablesParams params = new DataTablesParams(request);
+//        if (params.getOffset() == null || params.getMax() == null
+//                || params.getOrder() == null || params.getOrderDir() == null) {
+//            throw new BadRequestException("400", "Bad Request.");
+//        }
+//
+//        List<User> users = userService.findByCriteriaWithExclusion(
+//                includedUser,
+//                securityUser,
+//                params.getSearch(),
+//                Integer.valueOf(params.getOffset()),
+//                Integer.valueOf(params.getMax()), params.getOrder(),
+//                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+//
+//        // count total records
+//        Long recordsTotal = userService
+//                .countByCriteriaWithExclusion(includedUser, securityUser);
+//        // count records filtered
+//        Long recordsFiltered = userService
+//                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
+//
+//        if (users == null || recordsTotal == null || recordsFiltered == null) {
+//            throw new RemoteAjaxException("500", "Internal Server Error.");
+//        }
+//
+//        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+//
+//        for (User user : users) {
+//            DataTablesUser tableUser = new DataTablesUser(user);
+//            dataTablesUsers.add(tableUser);
+//        }
+//
+//        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
+//        result.setData(dataTablesUsers);
+//        result.setRecordsFiltered(recordsFiltered.intValue());
+//        result.setRecordsTotal(recordsTotal.intValue());
+//
+//        return JsonUtil.toJson(result);
+//    }
+
+    @RequestMapping(value = "/list/operator", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
-    String list(HttpServletRequest request, @PathVariable("target") String target) {
-
-        if (StringUtils.isBlank(target)
-                || (!target.equals("operator") && !target.equals("merchantAdmin")
-                && !target.equals("merchantOperator") && !target.equals("archive"))) {
-            return "404";
-        }
+    String listOperator(HttpServletRequest request) {
 
         // exclude current user
         SecurityUser securityUser = UserResource.getCurrentUser();
@@ -98,38 +222,12 @@ public class UserController {
             return "403";
         }
 
-        Role role = null;
         Role operatorRole = null;
-        Role merchantAdminRole = null;
-        Role merchantOperatorRole = null;
         try {
             operatorRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
-            merchantAdminRole = roleService
-                    .findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
-            merchantOperatorRole = roleService
-                    .findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "No role found.");
-        }
-
-        Boolean active = true;
-
-        switch (target) {
-            case "operator":
-                role = operatorRole;
-                break;
-            case "merchantAdmin":
-                role = merchantAdminRole;
-                break;
-            case "merchantOperator":
-                role = merchantOperatorRole;
-                break;
-            case "archive":
-                active = false;
-                break;
-            default:
-                return "403";
         }
 
         // formulate criteria query
@@ -137,11 +235,194 @@ public class UserController {
         // support ad hoc search on username only
         // support order on id and createdTime only
         User includedUser = new User();
-        includedUser.setActive(active);
-        if (role != null) {
-            includedUser.setRoles(new HashSet<Role>());
-            includedUser.getRoles().add(role);
+        includedUser.setActive(true);
+        includedUser.setRoles(new HashSet<Role>());
+        includedUser.getRoles().add(operatorRole);
+
+        DataTablesParams params = new DataTablesParams(request);
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
+            throw new BadRequestException("400", "Bad Request.");
         }
+
+        List<User> users = userService.findByCriteriaWithExclusion(
+                includedUser,
+                securityUser,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+
+        // count total records
+        Long recordsTotal = userService
+                .countByCriteriaWithExclusion(includedUser, securityUser);
+        // count records filtered
+        Long recordsFiltered = userService
+                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
+
+        if (users == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+
+        for (User user : users) {
+            DataTablesUser tableUser = new DataTablesUser(user);
+            dataTablesUsers.add(tableUser);
+        }
+
+        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
+        result.setData(dataTablesUsers);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/list/merchantAdmin", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listMerchantAdmin(HttpServletRequest request) {
+
+        Role merchantAdminRole = null;
+        try {
+            merchantAdminRole = roleService
+                    .findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role found.");
+        }
+
+        // formulate criteria query
+        // if active == false means archive, no role
+        // support ad hoc search on username only
+        // support order on id and createdTime only
+        User includedUser = new User();
+        includedUser.setActive(true);
+        includedUser.setRoles(new HashSet<Role>());
+        includedUser.getRoles().add(merchantAdminRole);
+
+        DataTablesParams params = new DataTablesParams(request);
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        List<User> users = userService.findByCriteria(
+                includedUser,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+
+        // count total records
+        Long recordsTotal = userService
+                .countByCriteria(includedUser);
+        // count records filtered
+        Long recordsFiltered = userService
+                .countByCriteria(includedUser, params.getSearch());
+
+        if (users == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+
+        for (User user : users) {
+            DataTablesUser tableUser = new DataTablesUser(user);
+            dataTablesUsers.add(tableUser);
+        }
+
+        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
+        result.setData(dataTablesUsers);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/list/merchantOperator", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String list(HttpServletRequest request) {
+
+        Role merchantOperatorRole = null;
+        try {
+            merchantOperatorRole = roleService
+                    .findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "No role found.");
+        }
+
+        // formulate criteria query
+        // if active == false means archive, no role
+        // support ad hoc search on username only
+        // support order on id and createdTime only
+        User includedUser = new User();
+        includedUser.setActive(true);
+        includedUser.setRoles(new HashSet<Role>());
+        includedUser.getRoles().add(merchantOperatorRole);
+
+        DataTablesParams params = new DataTablesParams(request);
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        List<User> users = userService.findByCriteria(
+                includedUser,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+
+        // count total records
+        Long recordsTotal = userService
+                .countByCriteria(includedUser);
+        // count records filtered
+        Long recordsFiltered = userService
+                .countByCriteria(includedUser, params.getSearch());
+
+        if (users == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
+
+        for (User user : users) {
+            DataTablesUser tableUser = new DataTablesUser(user);
+            dataTablesUsers.add(tableUser);
+        }
+
+        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
+        result.setData(dataTablesUsers);
+        result.setRecordsFiltered(recordsFiltered.intValue());
+        result.setRecordsTotal(recordsTotal.intValue());
+
+        return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/list/archive", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listArchive(HttpServletRequest request) {
+
+        // exclude current user
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            return "403";
+        }
+
+        // formulate criteria query
+        // if active == false means archive, no role
+        // support ad hoc search on username only
+        // support order on id and createdTime only
+        User includedUser = new User();
+        includedUser.setActive(false);
 
         DataTablesParams params = new DataTablesParams(request);
         if (params.getOffset() == null || params.getMax() == null
@@ -195,8 +476,8 @@ public class UserController {
     }
 
     @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/createAdminOperator", method = RequestMethod.GET)
-    public String createAdminOperator(Model model) {
+    @RequestMapping(value = "/create/operator", method = RequestMethod.GET)
+    public String createOperator(Model model) {
 
         model.addAttribute("domain", "AdminOperator");
         model.addAttribute("action", "create");

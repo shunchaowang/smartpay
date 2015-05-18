@@ -1,6 +1,6 @@
 <%@include file="../taglib.jsp" %>
 
-<spring:message code="${target}.label" var="entity"/>
+<spring:message code="operator.label" var="entity"/>
 <spring:message code="user.label" var="userLabel"/>
 
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
@@ -29,6 +29,17 @@
             </li>
         </ol>
     </div>
+    <div class="row">
+        <div class="col-sm-2 pull-left">
+            <a href="${rootURL}user/create/operator">
+                <button class="btn btn-default">
+                    <i class="glyphicon glyphicon-wrench"></i>
+                    <spring:message code="create.label" arguments="${entity}"/>
+                </button>
+            </a>
+        </div>
+    </div>
+    <br>
     <div class="row">
         <div class="col-sm-12">
             <table class="table table-bordered" id="user-table">
@@ -78,7 +89,7 @@
                 ]
             },
             'ajax': {
-                'url': "${rootURL}user/list/${target}",
+                'url': "${rootURL}user/list/operator",
                 'type': "GET",
                 'dataType': 'json'
             },
