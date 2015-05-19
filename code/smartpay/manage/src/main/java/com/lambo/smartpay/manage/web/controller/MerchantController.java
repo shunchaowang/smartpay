@@ -437,7 +437,7 @@ public class MerchantController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-        return "redirect:/merchant/index";
+        return "redirect:/merchant/index/all";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
