@@ -34,7 +34,8 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     @Override
     protected Class<?>[] getServletConfigClasses() {
         logger.info("Loading mvc config.");
-        return new Class<?>[]{MvcConfig.class, SecurityConfig.class};
+        return new Class<?>[]
+                {MvcConfig.class, SecurityConfig.class, CustomMethodSecurityConfig.class};
     }
 
     @Override

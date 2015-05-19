@@ -1,4 +1,4 @@
-package com.lambo.smartpay.ecs.web.exception;
+package com.lambo.smartpay.manage.web.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,10 @@ public class GlobalExceptionHandler {
         return view;
     }
 
+
     @ExceptionHandler(value = {AccessDeniedException.class})
-    public String accessDenied() {
+    public String accessDenied(AccessDeniedException exception) {
+        logger.debug("in access denied: " + exception.getMessage());
         return "403";
     }
 
