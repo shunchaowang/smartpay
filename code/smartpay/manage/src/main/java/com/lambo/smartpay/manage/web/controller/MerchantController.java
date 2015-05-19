@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -94,6 +95,7 @@ public class MerchantController {
     }
 
     // archive view
+    //TODO @PreAuthorize("isAuthenticated() and hasPermission('', 'isAdmin')")
     @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
     public String indexArchive(Model model) {
         model.addAttribute("_view", "merchant/indexArchive");
