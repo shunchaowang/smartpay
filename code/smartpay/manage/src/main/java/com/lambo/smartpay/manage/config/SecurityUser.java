@@ -2,6 +2,7 @@ package com.lambo.smartpay.manage.config;
 
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.util.ResourceProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +30,13 @@ public class SecurityUser extends User implements UserDetails {
             this.setMerchant(user.getMerchant());
             this.setActive(user.getActive());
             this.setRoles(user.getRoles());
-            this.setMerchant(user.getMerchant());
+            // set user's permissions
+            this.setPermissions(user.getPermissions());
+            // add user's roles' permission to permissions
+            for (Role role : user.getRoles()) {
+                this.getPermissions().addAll(role.getPermissions());
+            }
+            this.setUserStatus(user.getUserStatus());
         }
     }
 
@@ -75,6 +82,9 @@ public class SecurityUser extends User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        if (this.getUserStatus().getCode().equals(ResourceProperties.USER_STATUS_FROZEN_CODE)) {
+            return false;
+        }
         return true;
     }
 }
