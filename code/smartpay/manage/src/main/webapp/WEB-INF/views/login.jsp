@@ -36,7 +36,8 @@
                     </label>
 
                     <div class="col-sm-4">
-                        <input type="text" name="username" class="form-control" placeholder="Email">
+                        <input type="text" name="username" class="form-control"
+                               placeholder="Username">
                     </div>
                 </div>
                 <div class="form-group">
