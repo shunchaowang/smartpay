@@ -39,7 +39,7 @@
                                    commandName="userCommand" id="new-user-form">
 
                             <!-- user status -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="username">
                                     <spring:message code="username.label"/>
                                     <span class="required-indicator">*</span>
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
                             <!-- first name -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="firstName">
                                     <spring:message code="firstName.label"/>
                                     <span class="required-indicator">*</span>
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                             <!-- last name -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="lastName">
                                     <spring:message code="lastName.label"/>
                                     <span class="required-indicator">*</span>
@@ -79,7 +79,7 @@
                                 </div>
                             </div>
                             <!-- email -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="email">
                                     <spring:message code="email.label"/>
                                     <span class="required-indicator">*</span>
@@ -92,7 +92,7 @@
                             </div>
 
                             <!-- remark -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="remark">
                                     <spring:message code="remark.label"/>
                                 </label>

@@ -20,7 +20,7 @@
     <form class="form-horizontal" id="new-refund-form">
         <input id="orderId" name="orderId" value="${orderId}" type="hidden"/>
         <!-- amount -->
-        <div class="control-group">
+        <div class="form-group">
             <label class="col-sm-1 control-label" for="amount">
                 <spring:message code="amount.label"/>
                 <span class="required-indicator">*</span>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <!-- tracking number -->
-        <div class="control-group">
+        <div class="form-group">
             <label class="col-sm-1 control-label" for="remark">
                 <spring:message code="remark.label"/>
                 <span class="required-indicator">*</span>

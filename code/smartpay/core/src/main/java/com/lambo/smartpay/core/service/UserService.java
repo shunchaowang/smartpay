@@ -41,6 +41,8 @@ public interface UserService extends GenericQueryService<User, Long> {
      */
     User restoreUser(Long id) throws NoSuchEntityException;
 
+    /*
+
     Long countByCriteriaWithExclusion(User includedUser, User excludedUser, String search);
 
     Long countByCriteriaWithExclusion(User includedUser, User excludedUser);
@@ -48,4 +50,21 @@ public interface UserService extends GenericQueryService<User, Long> {
     List<User> findByCriteriaWithExclusion(User includedUser, User excludedUser, String search,
                                            Integer start, Integer length,
                                            String order, ResourceProperties.JpaOrderDir orderDir);
+
+    User findUserWithoutMerchantByUsername(String username);
+
+    User findUserWithoutMerchantByEmail(String email);
+
+    User findUserWithMerchantByUsername(String username, String merchantIdentity);
+
+    User findUserWithMerchantByEmail(String email, String merchantIdentity);
+
+    Long countUserWithoutMerchantByUsername(String username);
+
+    Long countUserWithoutMerchantByEmail(String email);
+
+    Long countUserWithMerchantByUsername(String username, String merchantIdentity);
+
+    Long countUserWithMerchantByEmail(String email, String merchantIdentity);
+    */
 }

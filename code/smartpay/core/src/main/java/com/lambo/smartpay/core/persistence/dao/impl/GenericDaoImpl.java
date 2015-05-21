@@ -35,8 +35,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
     @Override
     public T create(T persistentObject) {
-        entityManager.persist(persistentObject);
         try {
+            entityManager.persist(persistentObject);
             return persistentObject;
         } catch (Exception e) {
             e.printStackTrace();

@@ -36,7 +36,7 @@
                             <form:input size="80" path="id" id="id" type="hidden"
                                         value="${siteCommand.id}"/>
                             <!-- site merchant -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="merchant">
                                     <spring:message code="site.merchant.label"/>
                                 </label>
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
                             <!-- site identity -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="identity">
                                     <spring:message code="identity.label"/>
                                 </label>
@@ -62,7 +62,7 @@
                                 </div>
                             </div>
                             <!-- name -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="name">
                                     <spring:message code="name.label"/>
                                 </label>
@@ -73,7 +73,7 @@
                                 </div>
                             </div>
                             <!-- url -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="url">
                                     <spring:message code="site.url.label"/>
                                     <span class="required-indicator">*</span>
@@ -86,7 +86,7 @@
                                 </div>
                             </div>
                             <!-- site status -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="siteStatusId">
                                     <spring:message code="status.label"/>
                                     <span class="required-indicator">*</span>
@@ -108,7 +108,7 @@
                                 </div>
                             </div>
                             <!-- remark -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="remark">
                                     <spring:message code="remark.label"/>
                                 </label>

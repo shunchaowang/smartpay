@@ -27,8 +27,6 @@
     <spring:message code='system.label' var="system"/>
     <spring:message code='permission.label' var="permission"/>
 
-    <c:set var="username" value="<%=UserResource.getCurrentUser().getUsername()%>" scope="session"/>
-
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -265,6 +263,34 @@
                             <li class="divider"></li>
                             <li>
                                 <a href="${rootURL}announcement/index/archive">
+                                    <spring:message code="archive.label"
+                                                    arguments="${announcement}"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- system management -->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-expanded="false">
+                            <spring:message code="statistics.label" />
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="${rootURL}search/index/all">
+                                    <spring:message code="manage.label" arguments="${announcement}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}search/index">
+                                    <spring:message code="index.label" arguments="${log}"/>
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="${rootURL}search/index/archive">
                                     <spring:message code="archive.label"
                                                     arguments="${announcement}"/>
                                 </a>

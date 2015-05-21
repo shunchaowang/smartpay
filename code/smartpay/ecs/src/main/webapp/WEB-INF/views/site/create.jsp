@@ -39,7 +39,7 @@
                                         value="${siteCommand.id}"/>
 
                             <!-- identity -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="identity">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="identity.label"/>
@@ -52,7 +52,7 @@
                             </div>
 
                             <!-- name -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="name">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="name.label"/>
@@ -65,7 +65,7 @@
                             </div>
 
                             <!-- url -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="url">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="site.url.label"/>
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                             <!-- remark -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="remark">
                                     <spring:message code="remark.label"/>
                                 </label>

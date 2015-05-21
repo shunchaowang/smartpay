@@ -87,7 +87,7 @@ public class User implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_PERMISSION_MAPPINGS",
             joinColumns = {@JoinColumn(name = "UPMP_USER_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "UPMP_PERMISSION_ID", nullable = false,
+            inverseJoinColumns = {@JoinColumn(name = "UPMP_PRMS_ID", nullable = false,
                     updatable = false)}
     )
     private Set<Permission> permissions;

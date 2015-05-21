@@ -40,7 +40,7 @@
                                    action="${rootURL}changePassword"
                                    id="change-password">
                             <form:input path="id" type='hidden' value="${passwordCommand.id}"/>
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="control-label col-sm-3">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="currentPassword.label"/>
@@ -51,7 +51,7 @@
                                                 class="text"/>
                                 </div>
                             </div>
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="control-label col-sm-3">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="password.label"/>
@@ -62,7 +62,7 @@
                                                 id="password"/>
                                 </div>
                             </div>
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="control-label col-sm-3">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="confirmPassword.label"/>

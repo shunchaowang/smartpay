@@ -4,6 +4,7 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.dao.UserDao;
+import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
@@ -81,8 +82,7 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
         }
         return userDao.findByEmail(email);
     }
-
-    @Transactional
+    
     @Override
     public User create(User user) throws MissingRequiredFieldException, NotUniqueException {
         if (user == null) {
@@ -103,23 +103,10 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
         if (StringUtils.isBlank(user.getLastName())) {
             throw new MissingRequiredFieldException("User last name is blank.");
         }
-        if (user.getActive() == null) {
-            throw new MissingRequiredFieldException("User active is null.");
-        }
         if (user.getUserStatus() == null) {
             throw new MissingRequiredFieldException("User status is null.");
         }
-
-        // check uniqueness on username and email
-        if (userDao.findByUsername(user.getUsername()) != null) {
-            throw new NotUniqueException("User with username " + user.getUsername()
-                    + " already exists.");
-        }
-        if (userDao.findByEmail(user.getEmail()) != null) {
-            throw new NotUniqueException("User with email " + user.getEmail()
-                    + " already exists.");
-        }
-
+        user.setActive(true);
         user.setCreatedTime(Calendar.getInstance().getTime());
         return userDao.create(user);
     }
@@ -168,27 +155,10 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
         if (StringUtils.isBlank(user.getLastName())) {
             throw new MissingRequiredFieldException("User last name is blank.");
         }
-        if (user.getActive() == null) {
-            throw new MissingRequiredFieldException("User active is null.");
-        }
         if (user.getUserStatus() == null) {
             throw new MissingRequiredFieldException("User status is null.");
         }
-        if (user.getCreatedTime() == null) {
-            throw new MissingRequiredFieldException("User created time is null.");
-        }
 
-        // check uniqueness on username and email
-        User currentUser = userDao.get(user.getId());
-        if (!user.getUsername().equals(currentUser.getUsername())) {
-            throw new MissingRequiredFieldException("User username cannot be changed.");
-        }
-        // if the email already in the system
-        if ((!user.getEmail().equals(currentUser.getEmail()))
-                && (userDao.findByEmail(user.getEmail()) != null)) {
-            throw new NotUniqueException("User with email " + user.getEmail() + " already exists.");
-
-        }
         // set updated time if not set
         user.setUpdatedTime(Calendar.getInstance().getTime());
         return userDao.update(user);
@@ -303,6 +273,244 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
         return userDao.update(user);
     }
 
+    /*
+    @Override
+    public User findUserWithoutMerchantByUsername(String username) {
+        if (StringUtils.isBlank(username)) {
+            logger.debug("Username is blank.");
+            return null;
+        }
+
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        query.select(root);
+
+        Path<String> path = root.get("username");
+        Predicate predicate = builder.equal(path, username);
+        Path<Merchant> merchantPath = root.get("merchant");
+        Predicate merchantPredicate = builder.isNull(merchantPath);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<User> typedQuery = userDao.createQuery(query);
+
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public User findUserWithoutMerchantByEmail(String email) {
+        if (StringUtils.isBlank(email)) {
+            logger.debug("Email is blank.");
+            return null;
+        }
+
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        query.select(root);
+
+        Path<String> path = root.get("email");
+        Predicate predicate = builder.equal(path, email);
+        Path<Merchant> merchantPath = root.get("merchant");
+        Predicate merchantPredicate = builder.isNull(merchantPath);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<User> typedQuery = userDao.createQuery(query);
+
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public User findUserWithMerchantByUsername(String username, String merchantIdentity) {
+        if (StringUtils.isBlank(username)) {
+            logger.debug("Username is blank.");
+            return null;
+        }
+        if (StringUtils.isBlank(merchantIdentity)) {
+            logger.debug("Merchant identity is blank.");
+            return null;
+        }
+
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        query.select(root);
+
+        Path<String> path = root.get("username");
+        Predicate predicate = builder.equal(path, username);
+        Path<String> merchantPath = root.join("merchant").get("identity");
+        Predicate merchantPredicate = builder.equal(merchantPath, merchantIdentity);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<User> typedQuery = userDao.createQuery(query);
+
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public User findUserWithMerchantByEmail(String email, String merchantIdentity) {
+        if (StringUtils.isBlank(email)) {
+            logger.debug("Username is blank.");
+            return null;
+        }
+        if (StringUtils.isBlank(merchantIdentity)) {
+            logger.debug("Merchant identity is blank.");
+            return null;
+        }
+
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        query.select(root);
+
+        Path<String> path = root.get("email");
+        Predicate predicate = builder.equal(path, email);
+        Path<String> merchantPath = root.join("merchant").get("identity");
+        Predicate merchantPredicate = builder.equal(merchantPath, merchantIdentity);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<User> typedQuery = userDao.createQuery(query);
+
+        try {
+            return typedQuery.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Long countUserWithoutMerchantByUsername(String username) {
+
+        if (StringUtils.isBlank(username)) {
+            logger.debug("Username is blank.");
+            return null;
+        }
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<User> root = query.from(User.class);
+        query.select(builder.count(root));
+
+        Path<String> path = root.get("username");
+        Predicate predicate = builder.equal(path, username);
+        Path<Merchant> merchantPath = root.get("merchant");
+        Predicate merchantPredicate = builder.isNull(merchantPath);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<Long> typedQuery = userDao.createCountQuery(query);
+
+        try {
+            return userDao.countAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Long countUserWithoutMerchantByEmail(String email) {
+        if (StringUtils.isBlank(email)) {
+            logger.debug("Email is blank.");
+            return null;
+        }
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<User> root = query.from(User.class);
+        query.select(builder.count(root));
+
+        Path<String> path = root.get("email");
+        Predicate predicate = builder.equal(path, email);
+        Path<Merchant> merchantPath = root.get("merchant");
+        Predicate merchantPredicate = builder.isNull(merchantPath);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<Long> typedQuery = userDao.createCountQuery(query);
+
+        try {
+            return userDao.countAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Long countUserWithMerchantByUsername(String username, String merchantIdentity) {
+        if (StringUtils.isBlank(username)) {
+            logger.debug("Email is blank.");
+            return null;
+        }
+        if (StringUtils.isBlank(merchantIdentity)) {
+            logger.debug("Merchant identity is blank.");
+            return null;
+        }
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<User> root = query.from(User.class);
+        query.select(builder.count(root));
+
+        Path<String> path = root.get("username");
+        Predicate predicate = builder.equal(path, username);
+        Path<String> merchantPath = root.join("merchant").get("identity");
+        Predicate merchantPredicate = builder.equal(merchantPath, merchantIdentity);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<Long> typedQuery = userDao.createCountQuery(query);
+
+        try {
+            return userDao.countAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Long countUserWithMerchantByEmail(String email, String merchantIdentity) {
+        if (StringUtils.isBlank(email)) {
+            logger.debug("Email is blank.");
+            return null;
+        }
+        if (StringUtils.isBlank(merchantIdentity)) {
+            logger.debug("Merchant identity is blank.");
+            return null;
+        }
+        CriteriaBuilder builder = userDao.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<User> root = query.from(User.class);
+        query.select(builder.count(root));
+
+        Path<String> path = root.get("email");
+        Predicate predicate = builder.equal(path, email);
+        Path<String> merchantPath = root.join("merchant").get("identity");
+        Predicate merchantPredicate = builder.equal(merchantPath, merchantIdentity);
+        predicate = builder.and(predicate, merchantPredicate);
+        query.where(predicate);
+        TypedQuery<Long> typedQuery = userDao.createCountQuery(query);
+
+        try {
+            return userDao.countAllByCriteria(typedQuery);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public Long countByCriteriaWithExclusion(User includedUser,
                                              User excludedUser, String search) {
@@ -415,6 +623,7 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
             return null;
         }
     }
+*/
 
     /**
      * Test if T is blank for the query.
