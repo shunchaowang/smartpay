@@ -480,8 +480,11 @@ public class UserController {
     public String createOperator(Model model) {
 
         model.addAttribute("domain", "AdminOperator");
+        model.addAttribute("controller", "user");
         model.addAttribute("action", "create");
+        model.addAttribute("_view", "user/create");
         model.addAttribute("userCommand", new UserCommand());
+        model.addAttribute("userStatuses", userStatusService.getAll());
         return "main";
     }
 
@@ -612,7 +615,7 @@ public class UserController {
             e.printStackTrace();
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
-        return "main";
+        return "redirect:/user/index/operator";
     }
 
     @RequestMapping(value = "/createMerchantAdmin", method = RequestMethod.POST)
