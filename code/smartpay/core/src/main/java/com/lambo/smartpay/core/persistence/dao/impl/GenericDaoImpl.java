@@ -302,6 +302,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         }
     }
 
+    /*
     @Override
     public CriteriaBuilder getCriteriaBuilder() {
         return entityManager.getCriteriaBuilder();
@@ -316,4 +317,5 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     public TypedQuery<PK> createCountQuery(CriteriaQuery<PK> criteriaQuery) {
         return entityManager.createQuery(criteriaQuery);
     }
+    */
 }

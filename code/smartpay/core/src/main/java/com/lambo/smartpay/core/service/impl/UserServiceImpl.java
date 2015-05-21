@@ -56,6 +56,7 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
             return null;
         }
 
+        /*
         CriteriaBuilder builder = userDao.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root<User> root = query.from(User.class);
@@ -72,6 +73,8 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
             e.printStackTrace();
             return null;
         }
+        */
+        return userDao.findByUsername(username);
     }
 
     @Override
