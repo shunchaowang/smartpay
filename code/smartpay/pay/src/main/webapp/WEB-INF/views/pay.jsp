@@ -62,7 +62,9 @@
                 <div class="container">
                     <table class='table table-banner2 text-justify '>
                         <tr bgcolor="black">
-                            <td><h3><span style="color:#bce8f1">SSL ONLINE CREDIT CARD PAYMENT</span></h3></td>
+                            <td><h3><span
+                                    style="color:#bce8f1">SSL ONLINE CREDIT CARD PAYMENT</span></h3>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -103,7 +105,8 @@
                     <div class="container-fluid table-bordered col-sm-8">
                         <h3><spring:message code="paymentInfo.label"/></h3>
 
-                        <form:form action="${pageContext.request.contextPath}/payByCard" method="POST"
+                        <form:form action="${pageContext.request.contextPath}/payByCard"
+                                   method="POST"
                                    commandName="paymentCommand"
                                    cssClass="form-horizontal" id="pay-form">
                             <table class="table table-hover">

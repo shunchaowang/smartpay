@@ -46,7 +46,7 @@ public class RefundDaoImpl extends GenericDaoImpl<Refund, Long> implements Refun
         } catch (NoResultException e) {
             logger.info("Cannot find shipment with bank transaction number " +
                     bankTransactionNumber);
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -108,7 +108,7 @@ public class RefundDaoImpl extends GenericDaoImpl<Refund, Long> implements Refun
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -193,7 +193,7 @@ public class RefundDaoImpl extends GenericDaoImpl<Refund, Long> implements Refun
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }

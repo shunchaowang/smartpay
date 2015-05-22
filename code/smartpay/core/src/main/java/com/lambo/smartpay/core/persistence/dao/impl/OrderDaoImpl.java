@@ -44,7 +44,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -106,7 +106,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -189,7 +189,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
