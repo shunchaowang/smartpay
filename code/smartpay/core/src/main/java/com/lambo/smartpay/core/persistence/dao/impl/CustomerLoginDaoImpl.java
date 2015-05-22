@@ -51,7 +51,7 @@ public class CustomerLoginDaoImpl extends GenericDaoImpl<CustomerLogin, Long>
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class CustomerLoginDaoImpl extends GenericDaoImpl<CustomerLogin, Long>
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -171,7 +171,7 @@ public class CustomerLoginDaoImpl extends GenericDaoImpl<CustomerLogin, Long>
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }

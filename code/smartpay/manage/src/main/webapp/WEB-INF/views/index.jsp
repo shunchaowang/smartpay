@@ -36,6 +36,7 @@
             <a href="${rootURL}admin">Administration</a>
         </sec:authorize>
     </h3>
+
     <h3>
         PageContext: ${pageContext.request.contextPath}
         <br>

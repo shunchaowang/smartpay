@@ -1,4 +1,3 @@
-<%@ page import="com.lambo.smartpay.manage.web.controller.UserResource" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
 
@@ -251,7 +250,8 @@
                         <ul class="dropdown-menu" role="menu">
                             <li>
                                 <a href="${rootURL}announcement/index/all">
-                                    <spring:message code="manage.label" arguments="${announcement}"/>
+                                    <spring:message code="manage.label"
+                                                    arguments="${announcement}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -273,13 +273,14 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">
-                            <spring:message code="statistics.label" />
+                            <spring:message code="statistics.label"/>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
                                 <a href="${rootURL}search/index/all">
-                                    <spring:message code="manage.label" arguments="${announcement}"/>
+                                    <spring:message code="manage.label"
+                                                    arguments="${announcement}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>

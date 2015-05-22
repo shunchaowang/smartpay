@@ -37,7 +37,7 @@
 
             <div class="controls">
                 <textarea rows="4" cols="50" name="remark" id="remark"
-                       class="text" required=""></textarea>
+                          class="text" required=""></textarea>
             </div>
         </div>
         <!-- buttons -->

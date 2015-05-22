@@ -105,10 +105,10 @@
                         var operation = '';
                         if (row['siteStatus'] == 'Created') {
                             operation = '<a href="' + "${rootURL}${controller}" + '/edit/'
-                            + row['id'] + '">' +
-                            '<button class="tableButton" type="button" name="edit-button" '
-                            + '">' + '<spring:message code="action.edit.label"/>'
-                            + '</button></a>';
+                                    + row['id'] + '">' +
+                                    '<button class="tableButton" type="button" name="edit-button" '
+                                    + '">' + '<spring:message code="action.edit.label"/>'
+                                    + '</button></a>';
                         }
                         return operation;
                     }

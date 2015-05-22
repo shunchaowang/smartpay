@@ -24,7 +24,8 @@
 								<span class="icon">
 									<i class="icon icon-align-justify"></i>
 								</span>
-                        <h5><b><spring:message code='edit.label' arguments="${userProfile}"/></b></h5>
+                        <h5><b><spring:message code='edit.label' arguments="${userProfile}"/></b>
+                        </h5>
                     </div>
                     <div class="widget-content nopadding">
                         <form:form action="${rootURL}profile" method="POST"
