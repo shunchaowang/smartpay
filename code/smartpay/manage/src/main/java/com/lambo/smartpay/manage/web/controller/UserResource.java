@@ -1,9 +1,11 @@
 package com.lambo.smartpay.manage.web.controller;
 
+import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.MenuCategory;
 import com.lambo.smartpay.core.persistence.entity.MenuItem;
 import com.lambo.smartpay.core.persistence.entity.Permission;
 import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.service.PermissionService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.manage.web.vo.navigation.Menu;
@@ -11,10 +13,12 @@ import com.lambo.smartpay.manage.web.vo.navigation.SubMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,9 +33,20 @@ public class UserResource {
     private static final Logger logger = LoggerFactory.getLogger(UserResource.class);
 
     private static UserService userService;
+    private static PermissionService permissionService;
 
     public static SecurityUser getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails) principal).getUsername();
+            User loginUser = userService.findByUsername(username);
+            return new SecurityUser(loginUser);
+        }
+        return null;
+    }
+
+    public static SecurityUser getAuthenticatedUser(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
             String username = ((UserDetails) principal).getUsername();
             User loginUser = userService.findByUsername(username);
@@ -73,8 +88,27 @@ public class UserResource {
         return menus;
     }
 
+    public static Permission getPermission(String permission) {
+        if (!(permission instanceof String)) {
+            return null;
+        }
+        Permission permissionObject = null;
+        try {
+            permissionObject = permissionService.findByName((String) permission);
+        } catch (NoSuchEntityException e) {
+            logger.debug(e.getMessage());
+            return null;
+        }
+        return permissionObject;
+    }
+
     @Autowired
     public void setUserService(UserService userService) {
         UserResource.userService = userService;
+    }
+
+    @Resource
+    public void setPermissionService(PermissionService permissionService) {
+        UserResource.permissionService = permissionService;
     }
 }
