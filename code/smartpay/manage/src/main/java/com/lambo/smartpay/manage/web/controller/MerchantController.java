@@ -95,7 +95,7 @@ public class MerchantController {
     }
 
     // archive view
-    @PreAuthorize("isAuthenticated() and hasPermission('', 'isAdmin')")
+    //TODO @PreAuthorize("isAuthenticated() and hasPermission('', 'isAdmin')")
     @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
     public String indexArchive(Model model) {
         model.addAttribute("_view", "merchant/indexArchive");
