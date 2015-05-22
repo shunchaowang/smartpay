@@ -47,7 +47,7 @@ public class ShipmentDaoImpl extends GenericDaoImpl<Shipment, Long>
             return typedQuery.getSingleResult();
         } catch (NoResultException e) {
             logger.info("Cannot find shipment with tracking number " + trackingNumber);
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -96,7 +96,7 @@ public class ShipmentDaoImpl extends GenericDaoImpl<Shipment, Long>
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -168,7 +168,7 @@ public class ShipmentDaoImpl extends GenericDaoImpl<Shipment, Long>
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }

@@ -21,5 +21,6 @@
         src="${pageContext.request.contextPath}/assets/vendor/jquery-validation-1.13.1/localization/messages_${currentLocale}.min.js"></script>
 
 <!-- customized css and js -->
-<link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/app.css"/>
+<link type="text/css" rel="stylesheet"
+      href="${pageContext.request.contextPath}/assets/css/app.css"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/assets/js/app.js"></script>

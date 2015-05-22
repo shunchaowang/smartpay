@@ -229,11 +229,11 @@
                         var formData = new FormData();
 
                         var file = $("#file")[0].files[0];
-                        var fileSize = (file.size/1024/1024).toFixed(2);
-                        if(fileSize > 20) {
+                        var fileSize = (file.size / 1024 / 1024).toFixed(2);
+                        if (fileSize > 20) {
                             alert('The size of file ' + file.name + ' is ' +
-                            fileSize + 'M exceeding 20M limit ' +
-                            'file size.');
+                                    fileSize + 'M exceeding 20M limit ' +
+                                    'file size.');
                             return;
                         }
 

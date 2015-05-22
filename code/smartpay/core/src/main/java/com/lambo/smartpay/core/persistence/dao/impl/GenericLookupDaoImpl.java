@@ -23,7 +23,7 @@ import java.lang.reflect.Type;
 public abstract class GenericLookupDaoImpl<T, PK extends Serializable> extends GenericDaoImpl<T, PK>
         implements GenericLookupDao<T, PK> {
 
-    private final static Logger LOG = LoggerFactory.getLogger(GenericLookupDaoImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(GenericLookupDaoImpl.class);
 
     private Class<T> type;
 
@@ -32,7 +32,7 @@ public abstract class GenericLookupDaoImpl<T, PK extends Serializable> extends G
         Type t = getClass().getGenericSuperclass();
         ParameterizedType pt = (ParameterizedType) t;
         type = (Class<T>) pt.getActualTypeArguments()[0];
-        LOG.debug("Getting generic type parameter " + type.getName());
+        logger.debug("Getting generic type parameter " + type.getName());
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class GenericLookupDaoImpl<T, PK extends Serializable> extends G
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -90,7 +90,7 @@ public abstract class GenericLookupDaoImpl<T, PK extends Serializable> extends G
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }

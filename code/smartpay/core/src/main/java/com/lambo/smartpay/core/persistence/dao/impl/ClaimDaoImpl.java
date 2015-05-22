@@ -83,7 +83,7 @@ public class ClaimDaoImpl extends GenericDaoImpl<Claim, Long>
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -168,7 +168,7 @@ public class ClaimDaoImpl extends GenericDaoImpl<Claim, Long>
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }

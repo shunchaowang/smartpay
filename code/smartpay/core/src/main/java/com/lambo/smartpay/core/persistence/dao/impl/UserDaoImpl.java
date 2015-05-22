@@ -49,7 +49,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -73,7 +73,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
             return typedQuery.getSingleResult();
         } catch (NoResultException e) {
             logger.info("Cannot find user with email " + email);
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -122,7 +122,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -194,7 +194,7 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -329,20 +329,6 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
                 predicate = builder.and(predicate, merchantPredicate);
             }
         }
-
-        // check user role id
-        /*
-        if (user.getRole() != null && user.getRole().getId() != null) {
-            Predicate rolePredicate = builder.equal(
-                    root.join("role").<Long>get("id"),
-                    builder.literal(user.getRole().getId()));
-            if (predicate == null) {
-                predicate = rolePredicate;
-            } else {
-                predicate = builder.and(predicate, rolePredicate);
-            }
-        }
-        */
 
         // check role ids
         if (user.getRoles() != null && user.getRoles().size() > 0) {

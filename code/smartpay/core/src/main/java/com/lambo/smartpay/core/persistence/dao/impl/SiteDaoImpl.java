@@ -45,8 +45,8 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         try {
             return typedQuery.getSingleResult();
         } catch (NoResultException e) {
-            logger.info("Cannot find site with url " + url);
-            e.printStackTrace();
+            logger.debug("Cannot find site with url " + url);
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -69,8 +69,8 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         try {
             return typedQuery.getSingleResult();
         } catch (NoResultException e) {
-            logger.info("Cannot find site with return url " + returnUrl);
-            e.printStackTrace();
+            logger.debug("Cannot find site with return url " + returnUrl);
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -93,8 +93,8 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         try {
             return typedQuery.getSingleResult();
         } catch (NoResultException e) {
-            logger.info("Cannot find site with identity " + identity);
-            e.printStackTrace();
+            logger.debug("Cannot find site with identity " + identity);
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -143,7 +143,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -214,7 +214,7 @@ public class SiteDaoImpl extends GenericDaoImpl<Site, Long> implements SiteDao {
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }

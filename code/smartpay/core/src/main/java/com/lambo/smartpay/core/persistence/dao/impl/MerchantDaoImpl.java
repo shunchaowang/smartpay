@@ -51,7 +51,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         try {
             return typedQuery.getSingleResult();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
@@ -171,7 +171,7 @@ public class MerchantDaoImpl extends GenericDaoImpl<Merchant, Long> implements M
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.debug(e.getMessage());
             return null;
         }
     }
