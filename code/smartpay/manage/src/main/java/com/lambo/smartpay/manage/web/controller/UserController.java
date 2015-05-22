@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
+    @Resource
     private UserService userService;
     @Autowired
     private UserStatusService userStatusService;
@@ -573,9 +574,11 @@ public class UserController {
         } catch (MissingRequiredFieldException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            return "redirect:/404";
         } catch (NotUniqueException e) {
             logger.debug(e.getMessage());
             e.printStackTrace();
+            return "redirect:/404";
         }
         logger.debug("here goes user: " + user.getId());
         return "redirect:/user/index/operator";
@@ -672,9 +675,7 @@ public class UserController {
             logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
-        if (user.getRoles().contains(role)) {
-            domain = "Admin";
-        }
+
         model.addAttribute("domain", domain);
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
@@ -716,11 +717,7 @@ public class UserController {
             logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
-        if (user.getRoles().contains(role)) {
-            domain = "Admin";
-        } else {
-            model.addAttribute("merchants", merchantService.getAll());
-        }
+
         model.addAttribute("domain", domain);
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
@@ -758,9 +755,7 @@ public class UserController {
             logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
-        if (user.getRoles().contains(role)) {
-            domain = "Admin";
-        }
+
         model.addAttribute("domain", domain);
 
         // create command user and add to model and view

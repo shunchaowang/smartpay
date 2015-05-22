@@ -15,6 +15,7 @@ import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.MerchantStatus;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.util.ResourceProperties;
+import com.lambo.smartpay.core.util.TransactionDebugUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,8 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
     @Override
     public Merchant create(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
+
+        TransactionDebugUtil.transactionRequired("MerchantServiceImpl.create");
         Date date = Calendar.getInstance().getTime();
         if (merchant == null) {
             throw new MissingRequiredFieldException("Merchant is null.");

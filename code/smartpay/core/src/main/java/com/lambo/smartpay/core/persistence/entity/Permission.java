@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -40,7 +41,12 @@ public class Permission implements Serializable {
     @Column(name = "PRMS_CODE", nullable = false)
     private String code;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "ROLE_PERMISSION_MAPPINGS",
+            joinColumns = {@JoinColumn(name = "RPMP_PRMS_ID", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "RPMP_ROLE_ID", nullable = false, updatable
+                    = false)}
+    )
     private Set<Role> roles;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
@@ -74,14 +80,6 @@ public class Permission implements Serializable {
         this.name = name;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
     public Boolean getActive() {
         return active;
     }
@@ -98,12 +96,12 @@ public class Permission implements Serializable {
         this.code = code;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public MenuItem getMenuItem() {
@@ -112,5 +110,13 @@ public class Permission implements Serializable {
 
     public void setMenuItem(MenuItem menuItem) {
         this.menuItem = menuItem;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 }

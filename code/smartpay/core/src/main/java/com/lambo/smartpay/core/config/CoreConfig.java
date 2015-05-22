@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableScheduling
 @EnableAspectJAutoProxy
-//@EnableTransactionManagement
 @EnableCaching
 @ComponentScan(basePackages = {"com.lambo.smartpay.core.config"})
 public class CoreConfig {

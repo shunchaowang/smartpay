@@ -34,9 +34,6 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     public boolean hasPermission(Authentication authentication,
                                  Object target, Object permission) {
 
-        logger.debug("here username: " + ((UserDetails) (authentication.getPrincipal()))
-                .getUsername());
-        logger.debug("here permission: " + permission);
         SecurityUser user = getLogin(authentication);
         Permission permissionObject = getPermission(permission);
         if (user == null || permissionObject == null) {

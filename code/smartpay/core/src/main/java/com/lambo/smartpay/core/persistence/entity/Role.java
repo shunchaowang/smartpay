@@ -1,6 +1,5 @@
 package com.lambo.smartpay.core.persistence.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,7 +45,7 @@ public class Role implements Serializable {
     @Column(name = "ROLE_CODE", nullable = false)
     private String code;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ROLE_PERMISSION_MAPPINGS",
             joinColumns = {@JoinColumn(name = "RPMP_ROLE_ID", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "RPMP_PRMS_ID", nullable = false,

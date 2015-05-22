@@ -1,152 +1,135 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+    <spring:message code="site.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/indexAll">
-                <spring:message code="manage.label" arguments="${entity}"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="${action}.label" arguments="${entity}"/>
-            </a>
-        </div>
+            </li>
+            <li>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-wrench"></i>
+                <spring:message code="create.label" arguments="${entity}"/>
+            </li>
+        </ol>
     </div>
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title">
-								<span class="icon">
-									<i class="icon icon-align-justify"></i>
-								</span>
-                        <h5><b><spring:message code='create.label' arguments="${entity}"/></b></h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form:form action="${rootURL}${controller}/create" method="POST"
-                                   commandName="siteCommand" cssClass="form-horizontal"
-                                   id="new-site-form">
+    <div class="row">
+        <div class="col-sm-8">
+            <form:form action="${rootURL}site/create" method="POST"
+                       commandName="siteCommand" cssClass="form-horizontal"
+                       id="new-user-form">
 
-                            <form:input size="80" path="id" id="id" type="hidden"
-                                        value="${siteCommand.id}"/>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="merchant">
+                        <span class="required-indicator">*</span>
+                        <spring:message code="site.merchant.label"/>
+                    </label>
 
-                            <!-- site status -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="siteStatusId">
-                                    <spring:message code="site.merchant.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:select path="merchant" id="merchant" cssClass="text"
-                                                 required="" placeholder="Merchant">
-                                        <c:forEach items="${allMerchants}" var="merchant">
-                                            <form:option
-                                                    value="${merchant.id}">${merchant.name}</form:option>
-                                        </c:forEach>
-                                    </form:select>
-                                </div>
-                            </div>
-
-                            <!-- identity -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="identity">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="identity.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:input size="80" path="identity" id="identity"
-                                                cssClass="text"
-                                                value="${siteCommand.identity}"/>
-                                </div>
-                            </div>
-
-                            <!-- name -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="name">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="name.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:input size="80" path="name" id="name" cssClass="text"
-                                                value="${siteCommand.name}"/>
-                                </div>
-                            </div>
-                            <!-- url -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="url">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="site.url.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:input size="80" path="url" id="url" cssClass="text"
-                                                required=""
-                                                value="${siteCommand.url}"/>
-                                </div>
-                            </div>
-                            <!-- site status -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="siteStatusId">
-                                    <spring:message code="status.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:select path="siteStatusId" id="siteStatusId"
-                                                 cssClass="text"
-                                                 required="" placeholder="Status">
-                                        <c:forEach items="${siteStatuses}" var="status">
-                                            <form:option
-                                                    value="${status.id}">${status.name}</form:option>
-                                        </c:forEach>
-                                    </form:select>
-                                </div>
-                            </div>
-
-                            <!-- remark -->
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" for="remark">
-                                    <spring:message code="remark.label"/>
-                                </label>
-
-                                <div class="controls">
-                                    <form:textarea cols="100" rows="5" path="remark" id="remark"
-                                                   value="${siteCommand.remark}"/>
-                                </div>
-                            </div>
-                            <div class='form-actions col-lg-offset-2'>
-                                <button class='btn btn-success' id='create-button' type="submit">
-                                    <spring:message code='action.save.label'/>
-                                </button>
-                                <button class='btn btn-success' id='reset-button' type="reset">
-                                    <spring:message code='action.reset.label'/>
-                                </button>
-                            </div>
-                        </form:form>
+                    <div class="col-sm-4">
+                        <form:select path="merchant" id="merchant" cssClass="form-control"
+                                     required="" value="${siteCommand.merchant}">
+                            <c:forEach items="${merchants}" var="merchant">
+                                <form:option value="${merchant.id}">${merchant.name}</form:option>
+                            </c:forEach>
+                        </form:select>
                     </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="name">
+                        <span class="required-indicator">*</span>
+                        <spring:message code="name.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <form:input size="32" path="name" id="name" cssClass="form-control"
+                                    required="" value="${siteCommand.name}"
+                                    placeholder="Name"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="returnUrl">
+                        <span class="required-indicator">*</span>
+                        <spring:message code="site.returnUrl.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <form:input size="80" path="returnUrl" id="returnUrl"
+                                    cssClass="form-control"
+                                    required="" value="${siteCommand.returnUrl}"
+                                    placeholder="Return URL"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="url">
+                        <span class="required-indicator">*</span>
+                        <spring:message code="site.url.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <form:input size="80" path="url" id="url"
+                                    cssClass="form-control"
+                                    required="" value="${siteCommand.url}"
+                                    placeholder="URL"/>
+                    </div>
+                </div>
+                <!-- site status -->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="siteStatusId">
+                        <span class="required-indicator">*</span>
+                        <spring:message code="status.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <form:select path="siteStatusId" id="siteStatusId" cssClass="form-control"
+                                     required="" value="${siteCommand.siteStatusId}">
+                            <c:forEach items="${siteStatuses}" var="status">
+                                <form:option value="${status.id}">${status.name}</form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="remark">
+                        <spring:message code="remark.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <form:textarea cols="100" rows="5" path="remark" id="remark"
+                                       cssClass="form-control"/>
+                    </div>
+                </div>
+                <div class='form-group'>
+                    <div class="col-sm-2 col-sm-offset-2">
+                        <button class='btn btn-default' id='create-button' type="submit">
+                            <spring:message code='action.save.label'/>
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
+                        <button class='btn btn-default' id='reset-button' type="reset">
+                            <spring:message code='action.reset.label'/>
+                        </button>
+                    </div>
+                </div>
+            </form:form>
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
     $(document).ready(function () {
         $('#new-site-form').validate({
             rules: {
-                indentity: {required: true, minlength: 3, maxlength: 32},
+                merchant: {required: true},
                 name: {required: true, minlength: 3, maxlength: 32},
             }
         });
-
-        $('.datepicker').datepicker();
     });
 </script>

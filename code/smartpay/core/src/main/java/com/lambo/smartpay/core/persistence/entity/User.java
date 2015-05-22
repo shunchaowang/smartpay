@@ -79,8 +79,8 @@ public class User implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "USER_ROLE_MAPPINGS",
             joinColumns = {@JoinColumn(name = "URMP_USER_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "URMP_ROLE_ID", nullable = false, updatable
-                    = false)}
+            inverseJoinColumns = {@JoinColumn(name = "URMP_ROLE_ID", nullable = false,
+                    updatable = false)}
     )
     private Set<Role> roles;
 
@@ -208,8 +208,7 @@ public class User implements Serializable {
         return permissions;
     }
 
-    public void setPermissions(
-            Set<Permission> permissions) {
+    public void setPermissions(Set<Permission> permissions) {
         this.permissions = permissions;
     }
 }

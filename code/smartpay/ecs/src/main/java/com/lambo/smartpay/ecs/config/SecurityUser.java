@@ -1,5 +1,6 @@
 package com.lambo.smartpay.ecs.config;
 
+import com.lambo.smartpay.core.persistence.entity.Permission;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.util.ResourceProperties;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,6 +21,8 @@ public class SecurityUser extends User implements UserDetails {
 
     private static final long serialVersionUID = 1L;
     private Boolean nonLocked = false;
+
+    private Set<Permission> permissions;
 
     public SecurityUser(User user) {
         if (user != null) {
@@ -34,7 +38,6 @@ public class SecurityUser extends User implements UserDetails {
             this.setCreatedTime(user.getCreatedTime());
             this.setRemark(user.getRemark());
 
-
             if (user.getMerchant() != null) {
                 this.setMerchant(user.getMerchant());
                 // if the user's merchant is frozen, then the user should be locked,
@@ -44,16 +47,24 @@ public class SecurityUser extends User implements UserDetails {
                     nonLocked = true;
                 }
             }
+
+            permissions = new HashSet<>();
+            if (user.getRoles() != null) {
+                this.setRoles(user.getRoles());
+                for (Role role : user.getRoles()) {
+                    permissions.addAll(role.getPermissions());
+                }
+            }
         }
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        Set<Role> userRoles = this.getRoles();
+        Set<Role> roles = this.getRoles();
 
-        if (userRoles != null) {
-            for (Role role : userRoles) {
+        if (roles != null) {
+            for (Role role : roles) {
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
                 authorities.add(authority);
             }
@@ -91,5 +102,14 @@ public class SecurityUser extends User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Set<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(
+            Set<Permission> permissions) {
+        this.permissions = permissions;
     }
 }
