@@ -330,6 +330,20 @@ public class UserDaoImpl extends GenericDaoImpl<User, Long> implements UserDao {
             }
         }
 
+        // check user role id
+        /*
+        if (user.getRole() != null && user.getRole().getId() != null) {
+            Predicate rolePredicate = builder.equal(
+                    root.join("role").<Long>get("id"),
+                    builder.literal(user.getRole().getId()));
+            if (predicate == null) {
+                predicate = rolePredicate;
+            } else {
+                predicate = builder.and(predicate, rolePredicate);
+            }
+        }
+        */
+
         // check role ids
         if (user.getRoles() != null && user.getRoles().size() > 0) {
             // create set for role id

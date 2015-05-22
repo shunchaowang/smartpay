@@ -236,7 +236,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         if (!StringUtils.isBlank(payment.getBankTransactionNumber())) {
             Predicate bankTransactionNumberPredicate =
                     builder.like(root.<String>get("bankTransactionNumber"),
-                            builder.literal(payment.getBankAccountNumber()));
+                            builder.literal(payment.getBankTransactionNumber()));
             if (predicate == null) {
                 predicate = bankTransactionNumberPredicate;
             } else {

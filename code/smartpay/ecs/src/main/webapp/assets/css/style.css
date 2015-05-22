@@ -522,13 +522,13 @@ form {
     margin-bottom: 0;
 }
 
-.form-horizontal .control-group {
+.form-horizontal .form-group {
     border-top: 1px solid #ffffff;
     border-bottom: 1px solid #eeeeee;
     margin-bottom: 0;
 }
 
-.form-horizontal .control-group:last-child {
+.form-horizontal .form-group:last-child {
     border-bottom: 0;
 }
 

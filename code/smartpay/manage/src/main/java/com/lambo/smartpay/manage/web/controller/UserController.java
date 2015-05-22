@@ -21,12 +21,12 @@ import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,7 +53,7 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Autowired
+    @Resource
     private UserService userService;
     @Autowired
     private UserStatusService userStatusService;
@@ -245,9 +246,9 @@ public class UserController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<User> users = userService.findByCriteriaWithExclusion(
+
+        List<User> users = userService.findByCriteria(
                 includedUser,
-                securityUser,
                 params.getSearch(),
                 Integer.valueOf(params.getOffset()),
                 Integer.valueOf(params.getMax()), params.getOrder(),
@@ -255,10 +256,24 @@ public class UserController {
 
         // count total records
         Long recordsTotal = userService
-                .countByCriteriaWithExclusion(includedUser, securityUser);
+                .countByCriteria(includedUser);
         // count records filtered
         Long recordsFiltered = userService
-                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
+                .countByCriteria(includedUser, params.getSearch());
+//        List<User> users = userService.findByCriteriaWithExclusion(
+//                includedUser,
+//                securityUser,
+//                params.getSearch(),
+//                Integer.valueOf(params.getOffset()),
+//                Integer.valueOf(params.getMax()), params.getOrder(),
+//                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+//
+//        // count total records
+//        Long recordsTotal = userService
+//                .countByCriteriaWithExclusion(includedUser, securityUser);
+//        // count records filtered
+//        Long recordsFiltered = userService
+//                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -430,9 +445,9 @@ public class UserController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        List<User> users = userService.findByCriteriaWithExclusion(
+
+        List<User> users = userService.findByCriteria(
                 includedUser,
-                securityUser,
                 params.getSearch(),
                 Integer.valueOf(params.getOffset()),
                 Integer.valueOf(params.getMax()), params.getOrder(),
@@ -440,10 +455,26 @@ public class UserController {
 
         // count total records
         Long recordsTotal = userService
-                .countByCriteriaWithExclusion(includedUser, securityUser);
+                .countByCriteria(includedUser);
         // count records filtered
         Long recordsFiltered = userService
-                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
+                .countByCriteria(includedUser, params.getSearch());
+
+
+//        List<User> users = userService.findByCriteriaWithExclusion(
+//                includedUser,
+//                securityUser,
+//                params.getSearch(),
+//                Integer.valueOf(params.getOffset()),
+//                Integer.valueOf(params.getMax()), params.getOrder(),
+//                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+//
+//        // count total records
+//        Long recordsTotal = userService
+//                .countByCriteriaWithExclusion(includedUser, securityUser);
+//        // count records filtered
+//        Long recordsFiltered = userService
+//                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -464,55 +495,41 @@ public class UserController {
         return JsonUtil.toJson(result);
     }
 
-
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/createAdmin", method = RequestMethod.GET)
-    public String createAdmin(Model model) {
-
-        model.addAttribute("domain", "Admin");
-        model.addAttribute("action", "create");
-        model.addAttribute("userCommand", new UserCommand());
-        return "main";
-    }
-
-    @Secured({"ROLE_ADMIN"})
     @RequestMapping(value = "/create/operator", method = RequestMethod.GET)
     public String createOperator(Model model) {
 
-        model.addAttribute("domain", "AdminOperator");
-        model.addAttribute("action", "create");
+        model.addAttribute("_view", "user/createOperator");
         model.addAttribute("userCommand", new UserCommand());
+        model.addAttribute("userStatuses", userStatusService.getAll());
         return "main";
     }
 
-    @RequestMapping(value = "/createMerchantAdmin", method = RequestMethod.GET)
+    @RequestMapping(value = "/create/merchantAdmin", method = RequestMethod.GET)
     public String createMerchantAdmin(Model model) {
 
         List<Merchant> merchants = merchantService.getAll();
-        model.addAttribute("merchants", merchants);
-        model.addAttribute("domain", "MerchantAdmin");
-        model.addAttribute("action", "create");
+        model.addAttribute("_view", "user/createMerchantAdmin");
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
 
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/createAdmin", method = RequestMethod.POST)
-    public String saveAdmin(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
+    @RequestMapping(value = "/create/operator", method = RequestMethod.POST)
+    public String saveOperator(Model model, @ModelAttribute("userCommand") UserCommand
+            userCommand) {
 
-        // set subDomain to model
-        model.addAttribute("domain", "Admin");
-        // form role code based on the role parameter
-
-        Role role = null;
-        try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find admin role.");
-            e.printStackTrace();
-        }
         Locale locale = LocaleContextHolder.getLocale();
+        // check if username contains /
+        if (StringUtils.contains(userCommand.getUsername(), "/")) {
+            model.addAttribute("message",
+                    messageSource.getMessage("username.cannot.contain.slash.message",
+                            new String[]{}, locale));
+            model.addAttribute("userCommand", userCommand);
+            model.addAttribute("userStatuses", userStatusService.getAll());
+            model.addAttribute("_view", "user/createOperator");
+            return "main";
+        }
 
+        /*
         // check if username already taken
         if (userService.findByUsername(userCommand.getUsername()) != null) {
 
@@ -521,7 +538,8 @@ public class UserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("userStatuses", userStatusService.getAll());
+            model.addAttribute("_view", "user/createOperator");
             return "main";
         }
         // check if email already taken
@@ -532,71 +550,20 @@ public class UserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("userStatuses", userStatusService.getAll());
+            model.addAttribute("_view", "user/createOperator");
             return "main";
         }
+        */
         //TODO check if all required fields filled
-
-        // create User and set admin to user
-        User user = createUser(userCommand, role);
-        // set initial password
-        user.setPassword(passwordEncoder.encode(ResourceProperties.INITIAL_PASSWORD));
-        // persist user
-        try {
-            user = userService.create(user);
-        } catch (MissingRequiredFieldException e) {
-            logger.info(e.getMessage());
-            e.printStackTrace();
-        } catch (NotUniqueException e) {
-            logger.info(e.getMessage());
-            e.printStackTrace();
-        }
-        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
-        return "main";
-    }
-
-    @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value = "/createAdminOperator", method = RequestMethod.POST)
-    public String saveAdminOperator(Model model, @ModelAttribute("userCommand") UserCommand
-            userCommand) {
-
-        // set subDomain to model
-        model.addAttribute("domain", "AdminOperator");
-        // form role code based on the role parameter
 
         Role role = null;
         try {
             role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find admin role.");
+            logger.info("Cannot find merchant admin role.");
             e.printStackTrace();
         }
-        Locale locale = LocaleContextHolder.getLocale();
-
-        // check if username already taken
-        if (userService.findByUsername(userCommand.getUsername()) != null) {
-
-            String fieldLabel = messageSource.getMessage("username.label", null, locale);
-            model.addAttribute("message",
-                    messageSource.getMessage("not.unique.message",
-                            new String[]{fieldLabel, userCommand.getUsername()}, locale));
-            model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
-            return "main";
-        }
-        // check if email already taken
-        if (userService.findByEmail(userCommand.getEmail()) != null) {
-
-            String fieldLabel = messageSource.getMessage("email.label", null, locale);
-            model.addAttribute("message",
-                    messageSource.getMessage("not.unique.message",
-                            new String[]{fieldLabel, userCommand.getEmail()}, locale));
-            model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
-            return "main";
-        }
-        //TODO check if all required fields filled
-
         // create User and set admin to user
         User user = createUser(userCommand, role);
         // set initial password
@@ -605,17 +572,19 @@ public class UserController {
         try {
             user = userService.create(user);
         } catch (MissingRequiredFieldException e) {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             e.printStackTrace();
+            return "redirect:/404";
         } catch (NotUniqueException e) {
-            logger.info(e.getMessage());
+            logger.debug(e.getMessage());
             e.printStackTrace();
+            return "redirect:/404";
         }
-        //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
-        return "main";
+
+        return "redirect:/user/index/operator";
     }
 
-    @RequestMapping(value = "/createMerchantAdmin", method = RequestMethod.POST)
+    @RequestMapping(value = "/create/merchantAdmin", method = RequestMethod.POST)
     public String saveMerchantAdmin(Model model,
                                     @ModelAttribute("userCommand") UserCommand userCommand) {
 
@@ -706,9 +675,7 @@ public class UserController {
             logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
-        if (user.getRoles().contains(role)) {
-            domain = "Admin";
-        }
+
         model.addAttribute("domain", domain);
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
@@ -750,11 +717,7 @@ public class UserController {
             logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
-        if (user.getRoles().contains(role)) {
-            domain = "Admin";
-        } else {
-            model.addAttribute("merchants", merchantService.getAll());
-        }
+
         model.addAttribute("domain", domain);
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
@@ -792,9 +755,7 @@ public class UserController {
             logger.info("Cannot find admin role.");
             e.printStackTrace();
         }
-        if (user.getRoles().contains(role)) {
-            domain = "Admin";
-        }
+
         model.addAttribute("domain", domain);
 
         // create command user and add to model and view
@@ -877,9 +838,10 @@ public class UserController {
         user.setEmail(userCommand.getEmail());
         user.setRemark(userCommand.getRemark());
         // we set user to be active right now
-        user.setActive(true);
-        user.setRoles(new HashSet<Role>());
-        user.getRoles().add(role);
+        if (role != null) {
+            user.setRoles(new HashSet<Role>());
+            user.getRoles().add(role);
+        }
         // set user merchant if user is not admin
         if (userCommand.getMerchant() != null) {
             Merchant merchant = null;

@@ -989,30 +989,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay2`.`USER_ROLE_MAPPINGS`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay2`.`USER_ROLE_MAPPINGS` ;
-
-CREATE TABLE IF NOT EXISTS `smartpay2`.`USER_ROLE_MAPPINGS` (
-  `URMP_USER_ID` BIGINT UNSIGNED NOT NULL,
-  `URMP_ROLE_ID` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`URMP_USER_ID`, `URMP_ROLE_ID`),
-  INDEX `fk_URMP_ROLE_idx` (`URMP_ROLE_ID` ASC),
-  INDEX `fk_URMP_USER_idx` (`URMP_USER_ID` ASC),
-  CONSTRAINT `fk_URMP_USER`
-    FOREIGN KEY (`URMP_USER_ID`)
-    REFERENCES `smartpay2`.`USERS` (`USER_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_URMP_ROLE`
-    FOREIGN KEY (`URMP_ROLE_ID`)
-    REFERENCES `smartpay2`.`ROLES` (`ROLE_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `smartpay2`.`CLAIMS`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `smartpay2`.`CLAIMS` ;
@@ -1069,23 +1045,45 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `smartpay2`.`USER_ROLE_MAPPINGS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`USER_ROLE_MAPPINGS` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`USER_ROLE_MAPPINGS` (
+  `URMP_USER_ID` BIGINT UNSIGNED NOT NULL,
+  `URMP_ROLE_ID` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`URMP_USER_ID`, `URMP_ROLE_ID`),
+  INDEX `FK_ROLE_idx` (`URMP_ROLE_ID` ASC),
+  CONSTRAINT `FK_URMP_USER`
+    FOREIGN KEY (`URMP_USER_ID`)
+    REFERENCES `smartpay2`.`USERS` (`USER_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_URMP_ROLE`
+    FOREIGN KEY (`URMP_ROLE_ID`)
+    REFERENCES `smartpay2`.`ROLES` (`ROLE_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `smartpay2`.`USER_PERMISSION_MAPPINGS`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `smartpay2`.`USER_PERMISSION_MAPPINGS` ;
 
 CREATE TABLE IF NOT EXISTS `smartpay2`.`USER_PERMISSION_MAPPINGS` (
   `UPMP_USER_ID` BIGINT UNSIGNED NOT NULL,
-  `UPMP_PERMISSION_ID` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`UPMP_USER_ID`, `UPMP_PERMISSION_ID`),
-  INDEX `fk_UPMP_USER_idx` (`UPMP_USER_ID` ASC),
-  INDEX `fk_UPMP_PERMISSION_idx` (`UPMP_PERMISSION_ID` ASC),
-  CONSTRAINT `fk_UPMP_USER`
+  `UPMP_PRMS_ID` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`UPMP_USER_ID`, `UPMP_PRMS_ID`),
+  INDEX `FK_URMP_ROLE_idx` (`UPMP_PRMS_ID` ASC),
+  CONSTRAINT `FK_UPMP_USER`
     FOREIGN KEY (`UPMP_USER_ID`)
     REFERENCES `smartpay2`.`USERS` (`USER_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_UPMP_PERMISSION`
-    FOREIGN KEY (`UPMP_PERMISSION_ID`)
+  CONSTRAINT `FK_UPMP_PRMS`
+    FOREIGN KEY (`UPMP_PRMS_ID`)
     REFERENCES `smartpay2`.`PERMISSIONS` (`PRMS_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

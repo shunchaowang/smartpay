@@ -39,7 +39,7 @@
                                    id="edit-user-form">
                             <form:input size="80" path="id" id="id" type="hidden"
                                         value="${userCommand.id}"/>
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="username">
                                     <spring:message code="username.label"/>
                                 </label>
@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <!-- last name -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="lastName">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="lastName.label"/>
@@ -64,7 +64,7 @@
                                 </div>
                             </div>
                             <!-- first name -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="firstName">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="firstName.label"/>
@@ -77,7 +77,7 @@
                                 </div>
                             </div>
                             <!-- email -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="email">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="email.label"/>
@@ -90,7 +90,7 @@
                                 </div>
                             </div>
                             <!-- user status -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="userStatus">
                                     <span class="required-indicator">*</span>
                                     <spring:message code="status.label"/>
@@ -110,7 +110,7 @@
                             <!-- if create a merchant admin we need to have merchant selection -->
                             <c:if test="${domain == 'MerchantAdmin'}">
                                 <!-- user status -->
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-3 control-label" for="userStatus">
                                         <span class="required-indicator">*</span>
                                         <spring:message code="Merchant.label"/>
@@ -129,7 +129,7 @@
                                 </div>
                             </c:if>
                             <!-- remark -->
-                            <div class="control-group">
+                            <div class="form-group">
                                 <label class="col-sm-3 control-label" for="remark">
                                     <spring:message code="remark.label"/>
                                 </label>

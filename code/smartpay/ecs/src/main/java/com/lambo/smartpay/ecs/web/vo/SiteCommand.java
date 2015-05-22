@@ -14,6 +14,7 @@ public class SiteCommand {
     private String name;
 
     private String url;
+    private String returnUrl;
 
     private Date createdTime;
 
@@ -29,10 +30,6 @@ public class SiteCommand {
 
     private Long merchant;
     private String merchantName;
-
-    //operation
-    private String siteOperation;
-
 
     // set & get
     public Long getId() {
@@ -128,12 +125,19 @@ public class SiteCommand {
         this.siteStatusName = siteStatusName;
     }
 
-    public String getSiteOperation() {
-        return siteOperation;
+    public String getReturnUrl() {
+        return returnUrl;
     }
 
-    public void setSiteOperation(String siteOperation) {
-        this.siteOperation = siteOperation;
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
     }
 
+    public void setSiteStatusId(Long siteStatusId) {
+        this.siteStatusId = siteStatusId;
+    }
+
+    public void setMerchant(Long merchant) {
+        this.merchant = merchant;
+    }
 }

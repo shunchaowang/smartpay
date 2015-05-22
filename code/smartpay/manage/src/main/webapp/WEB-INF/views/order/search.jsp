@@ -36,7 +36,7 @@
                     <div class="widget-content nopadding">
                         <form class="form-horizontal">
                             <div class="row">
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-1" for="id">
                                         <spring:message code="id.label"/>
                                     </label>
@@ -45,7 +45,7 @@
                                         <input type="text" class="text" name="id" id="id"/>
                                     </div>
                                 </div>
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-1" for="merchantNumber">
                                         <spring:message code="merchantNumber.label"/>
                                     </label>
@@ -55,7 +55,7 @@
                                                id="merchantNumber"/>
                                     </div>
                                 </div>
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-1" for="orderStatus">
                                         <spring:message code="status.label"/>
                                     </label>
@@ -72,7 +72,7 @@
 
                             <div class="row">
                                 <!-- line of id, merchant number and status -->
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-1" for="site">
                                         <spring:message code="Site.label"/>
                                     </label>
@@ -85,7 +85,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-1" for="begin-date">
                                         <spring:message code="date.begin.label"/>
                                     </label>
@@ -96,7 +96,7 @@
                                                style="background:white;"/>
                                     </div>
                                 </div>
-                                <div class="control-group">
+                                <div class="form-group">
                                     <label class="col-sm-1" for="end-date">
                                         <spring:message code="date.end.label"/>
                                     </label>

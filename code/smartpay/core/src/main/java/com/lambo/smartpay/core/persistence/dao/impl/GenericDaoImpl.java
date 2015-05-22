@@ -35,8 +35,8 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
 
     @Override
     public T create(T persistentObject) {
-        entityManager.persist(persistentObject);
         try {
+            entityManager.persist(persistentObject);
             return persistentObject;
         } catch (Exception e) {
             e.printStackTrace();
@@ -302,7 +302,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
         }
     }
 
-    @Override
+    /*@Override
     public CriteriaBuilder getCriteriaBuilder() {
         return entityManager.getCriteriaBuilder();
     }
@@ -315,5 +315,5 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     @Override
     public TypedQuery<PK> createCountQuery(CriteriaQuery<PK> criteriaQuery) {
         return entityManager.createQuery(criteriaQuery);
-    }
+    }*/
 }

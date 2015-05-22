@@ -59,24 +59,16 @@ public class SiteController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping(value = {"/index/{target}"}, method = RequestMethod.GET)
-    public String index(@PathVariable("target") String target, Model model) {
-        if (StringUtils.isBlank(target) || (!target.equals("all") && !target.equals("archive"))) {
-            return "404";
-        }
-        model.addAttribute("target", target);
-        model.addAttribute("_view", "site/index" + StringUtils.capitalize(target));
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "site/indexAll");
         return "main";
     }
 
-    @RequestMapping(value = "/list/{target}", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(@PathVariable("target") String target, HttpServletRequest request) {
-
-        if (StringUtils.isBlank(target) || (!target.equals("all") && !target.equals("archive"))) {
-            throw new BadRequestException("400", "Domain does not exist.");
-        }
+    public String list(HttpServletRequest request) {
 
         DataTablesParams params = new DataTablesParams(request);
 
@@ -85,19 +77,8 @@ public class SiteController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        Boolean active = null;
-        switch (target) {
-            case "all":
-                active = true;
-                break;
-            case "archive":
-                active = false;
-                break;
-            default:
-                return "403";
-        }
         Site siteCriteria = new Site();
-        siteCriteria.setActive(active);
+        siteCriteria.setActive(true);
         List<Site> sites = siteService.findByCriteria(siteCriteria,
                 params.getSearch(),
                 Integer.valueOf(params.getOffset()),
@@ -128,8 +109,10 @@ public class SiteController {
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
 
-        model.addAttribute("action", "create");
+        model.addAttribute("_view", "site/create");
         model.addAttribute("siteCommand", new SiteCommand());
+        model.addAttribute("merchants", merchantService.getAll());
+        model.addAttribute("siteStatuses", siteStatusService.getAll());
         return "main";
     }
 
@@ -140,6 +123,13 @@ public class SiteController {
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
         //TODO verify required fields
+        Long count = siteService.countAll();
+        String identity = "S" + String.format("%07d", count);
+        while (siteService.findByIdentity(identity) != null) {
+            count++;
+            identity = "S" + String.format("%07d", count);
+        }
+        siteCommand.setIdentity(identity);
         // check uniqueness
         if (siteService.findByIdentity(siteCommand.getIdentity()) != null) {
             String fieldLabel = messageSource.getMessage("identity.label", null, locale);
@@ -147,7 +137,7 @@ public class SiteController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, siteCommand.getName()}, locale));
             model.addAttribute("siteCommand", siteCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("_view", "site/create");
         }
         if (siteService.findByUrl(siteCommand.getUrl()) != null) {
             String fieldLabel = messageSource.getMessage("site.url.label", null, locale);
@@ -155,7 +145,7 @@ public class SiteController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, siteCommand.getName()}, locale));
             model.addAttribute("siteCommand", siteCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("_view", "site/create");
         }
 
         Site site = createSite(siteCommand);
@@ -168,12 +158,12 @@ public class SiteController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-        String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+        String fieldLabel = messageSource.getMessage("site.label", null, locale);
         attributes.addFlashAttribute("message",
                 messageSource.getMessage("created.message",
                         new String[]{fieldLabel, siteCommand.getName()}, locale));
 
-        return "redirect:/site/indexAll";
+        return "redirect:/site/index/all";
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -391,16 +381,6 @@ public class SiteController {
         SiteStatus siteStatus = null;
         Merchant merchant = null;
 
-        //
-        if (siteCommand.getId() != null) {
-            try {
-                site = siteService.get(siteCommand.getId());
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //
         try {
             merchant = merchantService.get(siteCommand.getMerchant());
         } catch (NoSuchEntityException e) {
@@ -412,13 +392,12 @@ public class SiteController {
             e.printStackTrace();
         }
 
-        //
         site.setIdentity(siteCommand.getIdentity());
         site.setMerchant(merchant);
         site.setName(siteCommand.getName());
         site.setUrl(siteCommand.getUrl());
+        site.setReturnUrl(siteCommand.getReturnUrl());
         site.setSiteStatus(siteStatus);
-        site.setActive(true);
         site.setRemark(siteCommand.getRemark());
 
         return site;
