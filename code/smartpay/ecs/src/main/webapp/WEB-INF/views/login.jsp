@@ -15,12 +15,12 @@
 
 <div id="loginbox">
     <form id="loginform" class="form-vertical" action="${rootURL}login" method="post">
-        <div class="control-group normal_text">
+        <div class="form-group normal_text">
             <h3>
                 <spring:message code="login.title"/>
             </h3>
         </div>
-        <div class="control-group">
+        <div class="form-group">
             <div class="controls">
                 <div class="main_input_box">
                     <span class="add-on"><i class="glyphicon glyphicon-user"></i></span>
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div class="control-group">
+        <div class="form-group">
             <div class="controls">
                 <div class="main_input_box">
                     <span class="add-on"><i class="glyphicon glyphicon-lock"></i></span>

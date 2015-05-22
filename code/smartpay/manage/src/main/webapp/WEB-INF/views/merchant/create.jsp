@@ -25,7 +25,7 @@
                        commandName="merchantCommand" cssClass="form-horizontal"
                        id="new-merchant-form">
 
-                <div class="control-group">
+                <div class="form-group">
                     <h4>
                         <spring:message code="basic.info.label"/>
                     </h4>
@@ -114,7 +114,7 @@
                 </div>
                 <hr>
                 <!-- credential -->
-                <div class="control-group">
+                <div class="form-group">
                     <h4>
                         <spring:message code="credential.label"/>
                     </h4>
@@ -181,7 +181,7 @@
                 </div>
                 <hr>
                 <!-- encryption -->
-                <div class="control-group">
+                <div class="form-group">
                     <h4>
                         <spring:message code="encryption.label"/>
                     </h4>
@@ -217,7 +217,7 @@
                 <hr>
 
                 <!-- commission fee -->
-                <div class="control-group">
+                <div class="form-group">
                     <h4>
                         <spring:message code="commission.fee.label"/>
                     </h4>

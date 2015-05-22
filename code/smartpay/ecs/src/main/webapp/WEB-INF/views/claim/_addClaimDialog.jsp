@@ -19,7 +19,7 @@
     <form class="form-horizontal" id="new-claim-form" enctype="multipart/form-data">
         <input id="paymentId" name="paymentId" value="${paymentId}" type="hidden"/>
         <!-- amount -->
-        <div class="control-group">
+        <div class="form-group">
             <label class="col-sm-1 control-label" for="file">
                 <spring:message code="file.label"/>
             </label>
@@ -29,7 +29,7 @@
             </div>
         </div>
         <!-- tracking number -->
-        <div class="control-group">
+        <div class="form-group">
             <label class="col-sm-1 control-label" for="remark">
                 <spring:message code="remark.label"/>
                 <span class="required-indicator">*</span>
