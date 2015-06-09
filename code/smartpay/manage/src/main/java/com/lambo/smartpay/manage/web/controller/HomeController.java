@@ -5,35 +5,22 @@ import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFacto
-y;
-imp rt org.springframework.beans.factory.annotation.Autowired;
-i
-port o g.springframework.context.i18n.LocaleContextHolde
-;
-impo t org.springframework.security.crypto.passwor
-.Passw rdEncoder;
-import
-org.sp ingframework.stereotype.
-ontrol er;
-import org.springframework.ui.Model;
-import org.spr
-ngfram work.web.bind.annotation.ModelAttribute;
-i
-port o g.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import
-org.sp ingframework.web.servlet.ModelAndView;
-imp
-rt com lambo.smartpay.manage.web.vo.
-asswor Command;
-import com.lambo.smartpay.manage.config.Securi
-yUser;
-        import org.springframework.context.MessageSource;
-impor
- com.l mbo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.config.SecurityUser;
+import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.vo.PasswordCommand;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.text.DateFormat;
 import java.util.Locale;
@@ -52,7 +39,6 @@ public class HomeController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MessageSource messageSource;
-
 
 
     @RequestMapping(value = {"/", "/index"})
@@ -124,13 +110,14 @@ public class HomeController {
         model.addAttribute("_view", "index");
         return "main";
     }
+
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String profile(Model model) {
 
         User user = null;
         try {
             user = userService.get(UserResource.getCurrentUser().getId());
-        }catch (NoSuchEntityException e) {
+        } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "Cannot find user.");
         }
