@@ -19,7 +19,7 @@
                         </label>
 
                         <div class="col-sm-4">
-                            <input size="32" id="name" class="form-control"
+                            <input size="32" name="name" id="name" class="form-control"
                                    required="" value="${siteCommand.name}"/>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                         </label>
 
                         <div class="col-sm-4">
-                            <input size="80" id="returnUrl"
+                            <input size="80" id="returnUrl" name="returnUrl"
                                    class="form-control"
                                    required="" value="${siteCommand.returnUrl}"/>
                         </div>
@@ -42,7 +42,7 @@
                         </label>
 
                         <div class="col-sm-4">
-                            <input size="80" id="url"
+                            <input size="80" id="url" name="url"
                                    class="form-control"
                                    required="" value="${siteCommand.url}"/>
                         </div>
@@ -55,11 +55,11 @@
                         </label>
 
                         <div class="col-sm-4">
-                            <select id="siteStatusId" class="form-control"
+                            <select id="siteStatusId" class="form-control" name="siteStatusId"
                                     required="" value="${siteCommand.siteStatusId}">
                                 <c:forEach items="${siteStatuses}" var="status">
                                     <c:choose>
-                                        <c:when test="${status.id == siteCommand.merchantStatusId}">
+                                        <c:when test="${status.id == siteCommand.siteStatusId}">
                                             <option value="${status.id}" selected>
                                                     ${status.name}
                                             </option>
@@ -88,8 +88,13 @@
                     </div>
                     <div class='form-group'>
                         <div class="col-sm-2 col-sm-offset-2">
-                            <button class='btn btn-default' id='create-button' type="submit">
+                            <button class='btn btn-default' id='save-button' type="submit">
                                 <spring:message code='action.save.label'/>
+                            </button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class='btn btn-default' id='cancel-button'>
+                                <spring:message code='action.cancel.label'/>
                             </button>
                         </div>
                         <div class="col-sm-2">

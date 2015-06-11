@@ -231,7 +231,7 @@
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
                                 editDialog.dialog("close");
-                                editDialog.ajax.reload();
+                                siteTable.ajax.reload();
                             }
                         });
                     });

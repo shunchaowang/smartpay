@@ -183,38 +183,42 @@ public class SiteController {
             throw new BadRequestException("400", "Site " + id + " not found.");
         }
 
-        SiteCommand siteCommand = createSiteCommand(site);
+        SiteCommand siteCommand = new SiteCommand(site);
         ModelAndView view = new ModelAndView("site/_editDialog");
         view.addObject("siteCommand", siteCommand);
         view.addObject("siteStatuses", siteStatusService.getAll());
         return view;
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(Model model, RedirectAttributes attributes,
-                       @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+    @RequestMapping(value = "/edit", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String update(HttpServletRequest request) {
 
-        model.addAttribute("siteCommand", siteCommand);
-
-        // message locale
+        JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        Site site = createSite(siteCommand);
-
+        String label = messageSource.getMessage("site.label", null, locale);
+        Site site = editSite(request);
         try {
-            siteService.update(site);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
+            site = siteService.update(site);
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, site.getIdentity()}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, site.getIdentity()}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
         }
-        String fieldLabel = messageSource.getMessage("Site.label", null, locale);
-        attributes.addFlashAttribute("message",
-                messageSource.getMessage("saved.message",
-                        new String[]{fieldLabel, siteCommand.getName()}, locale));
 
-        return "redirect:/site/indexAll";
+        String message = messageSource.getMessage("saved.message",
+                new String[]{label, site.getIdentity()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST,
@@ -348,36 +352,11 @@ public class SiteController {
             e.printStackTrace();
             throw new BadRequestException("400", "Site  " + id + " not found.");
         }
-        SiteCommand siteCommand = createSiteCommand(site);
+        SiteCommand siteCommand = new SiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
 
         model.addAttribute("action", "show");
         return "main";
-    }
-
-    // create SiteCommand from User
-    private SiteCommand createSiteCommand(Site site) {
-        //
-        SiteCommand SiteCommand = new SiteCommand();
-        //
-        SiteCommand.setId(site.getId());
-        SiteCommand.setIdentity(site.getIdentity());
-        SiteCommand.setName(site.getName());
-        SiteCommand.setUrl(site.getUrl());
-        SiteCommand.setCreatedTime(site.getCreatedTime());
-        SiteCommand.setRemark(site.getRemark());
-        SiteCommand.setActive(site.getActive());
-
-        if (site.getMerchant() != null) {
-            SiteCommand.setMerchant(site.getMerchant().getId());
-            SiteCommand.setMerchantName(site.getMerchant().getName());
-        }
-
-        if (site.getSiteStatus() != null) {
-            SiteCommand.setSiteStatusId(site.getSiteStatus().getId());
-            SiteCommand.setSiteStatusName(site.getSiteStatus().getName());
-        }
-        return SiteCommand;
     }
 
     // create SiteCommand from User
@@ -406,6 +385,32 @@ public class SiteController {
         site.setSiteStatus(siteStatus);
         site.setRemark(siteCommand.getRemark());
 
+        return site;
+    }
+
+    private Site editSite(HttpServletRequest request) {
+
+        Site site = null;
+        try {
+            site = siteService.get(Long.valueOf(request.getParameter("id")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        site.setName(request.getParameter("name"));
+        logger.debug("ssssnnn: " + request.getParameter("name"));
+        site.setReturnUrl(request.getParameter("returnUrl"));
+        site.setUrl(request.getParameter("url"));
+        site.setRemark(request.getParameter("remark"));
+        Long siteStatusId = Long.valueOf(request.getParameter("siteStatus"));
+        SiteStatus siteStatus = null;
+        try {
+            siteStatus = siteStatusService.get(siteStatusId);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+        site.setSiteStatus(siteStatus);
         return site;
     }
 }
