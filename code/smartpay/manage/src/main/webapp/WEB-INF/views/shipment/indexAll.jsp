@@ -80,7 +80,7 @@
             },
 
             'ajax': {
-                'url': "${rootURL}shipment/list/all/list",
+                'url': "${rootURL}shipment/list/all",
                 'type': "GET",
                 'dataType': 'json'
             },

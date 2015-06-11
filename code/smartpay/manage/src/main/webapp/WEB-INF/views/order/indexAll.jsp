@@ -78,7 +78,7 @@
                 {
                     'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}" + 'order/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },

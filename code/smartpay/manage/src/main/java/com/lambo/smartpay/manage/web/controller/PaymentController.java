@@ -53,29 +53,19 @@ public class PaymentController {
     @Autowired
     private PaymentStatusService paymentStatusService;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "payment";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Payment";
-    }
-
     @ModelAttribute("paymentStatuses")
     public List<PaymentStatus> paymentStatuses() {
         logger.debug("payment status: " + paymentStatusService.countAll());
         return paymentStatusService.getAll();
     }
 
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "payment/indexAll");
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    @RequestMapping(value = {"/list/all"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {

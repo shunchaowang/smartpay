@@ -48,17 +48,6 @@ public class ShipmentController {
     @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "shipment";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Shipment";
-    }
-
     @ModelAttribute("paymentStatuses")
     public List<ShipmentStatus> shipmentStatuses() {
         return shipmentStatusService.getAll();

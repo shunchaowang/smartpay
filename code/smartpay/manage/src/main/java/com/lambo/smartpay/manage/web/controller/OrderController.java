@@ -53,15 +53,6 @@ public class OrderController {
     private OrderStatusService orderStatusService;
 
     // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "order";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Order";
-    }
 
     @ModelAttribute("orderStatuses")
     public List<OrderStatus> orderStatuses() {
