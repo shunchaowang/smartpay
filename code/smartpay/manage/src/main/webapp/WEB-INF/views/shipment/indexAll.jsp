@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<spring:message code="shipment.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="${action}.label" arguments="${entity}"/>
-            </a>
-        </div>
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </li>
+        </ol>
     </div>
+    <br>
 
     <!-- close of content-header -->
     <div class="container-fluid">
@@ -64,7 +64,6 @@
             'paging': true,
             "paginationType": "full_numbers",
             "order": [[0, "desc"]],
-            "jQueryUI": true,
             'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
@@ -81,7 +80,7 @@
             },
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}shipment/list/all/list",
                 'type': "GET",
                 'dataType': 'json'
             },

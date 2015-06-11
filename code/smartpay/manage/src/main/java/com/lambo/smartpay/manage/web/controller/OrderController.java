@@ -69,12 +69,20 @@ public class OrderController {
         return orderStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "order/indexAll");
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    /*
+    @RequestMapping(value = {"", "/indexAll"}, method = RequestMethod.GET)
+    public String index() {
+        return "main";
+    }
+    */
+
+    @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {
