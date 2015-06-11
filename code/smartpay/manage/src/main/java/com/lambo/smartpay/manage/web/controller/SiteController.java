@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +61,7 @@ public class SiteController {
     private MessageSource messageSource;
 
     @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
-    public String index( Model model) {
+    public String index(Model model) {
         model.addAttribute("_view", "site/indexAll");
         return "main";
     }
@@ -166,22 +167,27 @@ public class SiteController {
         return "redirect:/site/index/all";
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public ModelAndView edit(HttpServletRequest request) {
 
-        Site site;
+        String siteId = request.getParameter("siteId");
+        if (StringUtils.isBlank(siteId)) {
+            throw new BadRequestException("400", "Site id is blank.");
+        }
+        Long id = Long.valueOf(siteId);
+        Site site = null;
         try {
             site = siteService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+            throw new BadRequestException("400", "Site " + id + " not found.");
         }
 
         SiteCommand siteCommand = createSiteCommand(site);
-
-        model.addAttribute("siteCommand", siteCommand);
-        model.addAttribute("action", "edit");
-        return "main";
+        ModelAndView view = new ModelAndView("site/_editDialog");
+        view.addObject("siteCommand", siteCommand);
+        view.addObject("siteStatuses", siteStatusService.getAll());
+        return view;
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)

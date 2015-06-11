@@ -455,7 +455,7 @@ public class MerchantController {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+            throw new BadRequestException("400", "Merchant " + id + " not found.");
         }
 
         MerchantCommand merchantCommand = new MerchantCommand(merchant);

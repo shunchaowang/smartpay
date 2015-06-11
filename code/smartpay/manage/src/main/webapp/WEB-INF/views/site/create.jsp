@@ -129,6 +129,9 @@
             rules: {
                 merchant: {required: true},
                 name: {required: true, minlength: 3, maxlength: 32},
+                returnUrl: {required: true, minlength: 3, maxlength: 32},
+                url: {required: true, minlength: 3, maxlength: 32},
+                siteStatusId: {required: true}
             }
         });
     });
