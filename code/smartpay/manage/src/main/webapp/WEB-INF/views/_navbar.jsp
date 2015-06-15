@@ -89,12 +89,6 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}site/audit">
-                                    <spring:message code="audit.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
                                 <a href="${rootURL}site/index/archive">
                                     <spring:message code="archive.label" arguments="${site}"/>
                                 </a>

@@ -3,27 +3,20 @@
 
 <spring:message code="merchant.label" var="entity"/>
 
-
 <div class="container-fluid">
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                <a href="${rootURL}">
-                    <i class="glyphicon glyphicon-home"></i>
-                    <spring:message code="home.label"/>
-                </a>
+                <i class="glyphicon glyphicon-home"></i>
+                <spring:message code="home.label"/>
             </li>
             <li>
-                <a href="${rootURL}merchant/index">
-                    <i class="glyphicon glyphicon-list"></i>
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="manage.label" arguments="${entity}"/>
             </li>
             <li class="active">
-                <a href="${rootURL}merchant/show">
-                    <i class="glyphicon glyphicon-briefcase"></i>
-                    <spring:message code="show.label" arguments="${entity}"/>
-                </a>
+                <i class="glyphicon glyphicon-briefcase"></i>
+                <spring:message code="show.label" arguments="${entity}"/>
             </li>
         </ol>
     </div>

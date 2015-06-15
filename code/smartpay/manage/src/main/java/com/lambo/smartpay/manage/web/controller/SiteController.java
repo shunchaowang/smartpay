@@ -253,16 +253,24 @@ public class SiteController {
         return JsonUtil.toJson(response);
     }
 
-    @RequestMapping(value = "/audit", method = RequestMethod.POST,
+    @RequestMapping(value = "/approve", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String audit(@RequestParam(value = "id") Long id) {
+    public String approve(@RequestParam(value = "id") Long id) {
 
-        //Initiate
-        Site site;
+        if (id == null) {
+            return null;
+        }
+        Site site = null;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            return null;
+        }
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
+        String label = messageSource.getMessage("site.label", null, locale);
         String message = "";
         //Do approve
         try {
@@ -271,28 +279,72 @@ public class SiteController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             message = messageSource
-                    .getMessage("not.audit.message", new String[]{label, id.toString()}, locale);
+                    .getMessage("not.approve.message", new String[]{label, id.toString()}, locale);
             response.setMessage(message);
             throw new BadRequestException("400", e.getMessage());
         }
 
         message = messageSource
-                .getMessage("audit.message", new String[]{label, site.getName()}, locale);
+                .getMessage("approve.message", new String[]{label, site.getName()}, locale);
         response.setMessage(message);
         return JsonUtil.toJson(response);
     }
 
+    @RequestMapping(value = "/decline", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String decline(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            return null;
+        }
+        Site site = null;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            return null;
+        }
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("site.label", null, locale);
+        String message = "";
+        //Do approve
+        try {
+            site = siteService.declineSite(id);
+
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            message = messageSource
+                    .getMessage("not.decline.message", new String[]{label, id.toString()}, locale);
+            response.setMessage(message);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        message = messageSource
+                .getMessage("decline.message", new String[]{label, site.getName()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
+    }
 
     @RequestMapping(value = "/freeze", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String freeze(@RequestParam(value = "id") Long id) {
 
-        //Initiate
-        Site site;
+        if (id == null) {
+            return null;
+        }
+        Site site = null;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            return null;
+        }
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
+        String label = messageSource.getMessage("site.label", null, locale);
         String message = "";
         //Do approve
         try {
@@ -318,11 +370,19 @@ public class SiteController {
     @ResponseBody
     public String unfreeze(@RequestParam(value = "id") Long id) {
 
-        //Initiate
-        Site site;
+        if (id == null) {
+            return null;
+        }
+        Site site = null;
+        try {
+            site = siteService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            return null;
+        }
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Site.label", null, locale);
+        String label = messageSource.getMessage("site.label", null, locale);
         String message = "";
         //Do approve
         try {
@@ -355,7 +415,7 @@ public class SiteController {
         SiteCommand siteCommand = new SiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "site/show");
         return "main";
     }
 

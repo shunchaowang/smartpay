@@ -2,8 +2,10 @@
 <%@include file="../taglib.jsp" %>
 <spring:message code="site.label" var="entity"/>
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
 <spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
 <spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
+<spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.freeze.label" var="freezeLabel"/>
@@ -250,7 +252,7 @@
         });
 
         // add live handler for approve button
-        siteTable.on('click', 'button[type=button][name=approve-button', function(event) {
+        siteTable.on('click', 'button[type=button][name=approve-button]', function(event) {
             event.preventDefault();
             var id = this.value;
             var identity = $(this).data("identity");
@@ -260,11 +262,11 @@
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${freezeMsg}" + ' ' + identity;
+                    var content = "${approveMsg}" + ' ' + identity;
                     $(this).html(content);
                 },
                 buttons: {
-                    "${freezeLabel}": function () {
+                    "${approveLabel}": function () {
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
@@ -294,11 +296,140 @@
             });
         });
         // add live handler for decline button
-        siteTable.on('click', 'button[type=button][name=decline-button', function(event) {});
+        siteTable.on('click', 'button[type=button][name=decline-button]', function(event) {
+
+            event.preventDefault();
+            var id = this.value;
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${declineMsg}" + ' ' + identity;
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${declineLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}site" + '/decline',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                siteTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
         // add live handler for freeze button
-        siteTable.on('click', 'button[type=button][name=freeze-button', function(event) {});
+        siteTable.on('click', 'button[type=button][name=freeze-button]', function(event) {
+
+            event.preventDefault();
+            var id = this.value;
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${freezeMsg}" + ' ' + identity;
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${freezeLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}site" + '/freeze',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                siteTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
         // add live handler for unfreeze button
-        siteTable.on('click', 'button[type=button][name=unfreeze-button', function(event) {});
+        siteTable.on('click', 'button[type=button][name=unfreeze-button]', function(event) {
+
+            event.preventDefault();
+            var id = this.value;
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${unfreezeMsg}" + ' ' + identity;
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${unfreezeLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}site" + '/unfreeze',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                siteTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
 
         // add live handler for remove button
         siteTable.on('click', 'button[type=button][name=delete-button]', function (event) {
