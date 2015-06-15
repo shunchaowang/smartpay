@@ -8,7 +8,7 @@
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.freeze.label" var="freezeLabel"/>
 <spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
-<spring:message code="action.audit.label" var="auditLabel"/>
+<spring:message code="action.approve.label" var="approveLabel"/>
 <spring:message code="action.decline.label" var="declineLabel"/>
 <spring:message code="action.archive.label" var="archiveLabel"/>
 <spring:message code="status.created.label" var="createdStatus"/>
@@ -126,6 +126,10 @@
                     }
                 },
                 {
+                    // site can be edited, approved and declined under the status of Created;
+                    // site can be edited, frozen under the status of Approved;
+                    // site can be edited, unfrozen under the status of Frozen;
+                    // site can be edited, approved under the status of Declined
                     'name': 'operation', 'targets': 7, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
                         var operations = '<button type="button" name="edit-button" '
@@ -133,10 +137,10 @@
                                 + '<spring:message code="action.edit.label"/>'
                                 + '</button>';
                         if (row['siteStatus'] == 'Created') { // if the merchant is active
-                            operations += '<button type="button" name="audit-button"'
+                            operations += '<button type="button" name="approve-button"'
                                     + ' data-identity="' + row['identity'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    "${auditLabel}"
+                                    "${approveLabel}"
                                     + '</button>';
                             operations += '<button type="button" name="decline-button"'
                                     + ' data-identity="' + row['identity'] + '"'
@@ -156,6 +160,12 @@
                                     + ' data-identity="' + row['identity'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${freezeLabel}"
+                                    + '</button>';
+                        } else if (row['siteStatus'] == 'Declined') {
+                            operations += '<button type="button" name="approve-button"'
+                                    + ' data-identity="' + row['identity'] + '"'
+                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                    "${approveLabel}"
                                     + '</button>';
                         }
                         operations += '<button type="button" name="archive-button"'
@@ -238,6 +248,57 @@
                 }
             });
         });
+
+        // add live handler for approve button
+        siteTable.on('click', 'button[type=button][name=approve-button', function(event) {
+            event.preventDefault();
+            var id = this.value;
+            var identity = $(this).data("identity");
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${freezeMsg}" + ' ' + identity;
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${freezeLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}site" + '/approve',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                siteTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
+        // add live handler for decline button
+        siteTable.on('click', 'button[type=button][name=decline-button', function(event) {});
+        // add live handler for freeze button
+        siteTable.on('click', 'button[type=button][name=freeze-button', function(event) {});
+        // add live handler for unfreeze button
+        siteTable.on('click', 'button[type=button][name=unfreeze-button', function(event) {});
 
         // add live handler for remove button
         siteTable.on('click', 'button[type=button][name=delete-button]', function (event) {
