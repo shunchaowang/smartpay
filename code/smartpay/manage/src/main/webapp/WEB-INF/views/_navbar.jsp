@@ -125,7 +125,7 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}user/permission">
+                                <a href="${rootURL}user/manage/permission">
                                     <spring:message code="manage.label" arguments="${permission}"/>
                                 </a>
                             </li>

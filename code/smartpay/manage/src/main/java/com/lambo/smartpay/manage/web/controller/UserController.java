@@ -16,6 +16,7 @@ import com.lambo.smartpay.manage.config.SecurityUser;
 import com.lambo.smartpay.manage.util.DataTablesParams;
 import com.lambo.smartpay.manage.util.JsonUtil;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
+import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -66,24 +68,17 @@ public class UserController {
     @Autowired
     private MessageSource messageSource;
 
-//    @RequestMapping(value = {"/index/{target}"}, method = RequestMethod.GET)
-//    public String index(Model model, @PathVariable("target") String target) {
-//
-//        if (StringUtils.isBlank(target)
-//                || (!target.equals("operator") && !target.equals("merchantAdmin")
-//                && !target.equals("merchantOperator") && !target.equals("archive"))) {
-//            return "404";
-//        }
-//
-//        model.addAttribute("target", target);
-//        model.addAttribute("_view", "user/index" + StringUtils.capitalize(target));
-//        return "main";
-//    }
-
     @RequestMapping(value = {"/index/operator"}, method = RequestMethod.GET)
     public String indexOperator(Model model) {
 
         model.addAttribute("_view", "user/indexOperator");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/manage/permission"}, method = RequestMethod.GET)
+    public String managePermission(Model model) {
+
+        model.addAttribute("_view", "user/managePermission");
         return "main";
     }
 
@@ -107,109 +102,6 @@ public class UserController {
         model.addAttribute("_view", "user/indexArchive");
         return "main";
     }
-
-//    @RequestMapping(value = "/list/{target}", method = RequestMethod.GET,
-//            produces = "application/json;charset=UTF-8")
-//    public
-//    @ResponseBody
-//    String list(HttpServletRequest request, @PathVariable("target") String target) {
-//
-//        if (StringUtils.isBlank(target)
-//                || (!target.equals("operator") && !target.equals("merchantAdmin")
-//                && !target.equals("merchantOperator") && !target.equals("archive"))) {
-//            return "404";
-//        }
-//
-//        // exclude current user
-//        SecurityUser securityUser = UserResource.getCurrentUser();
-//        if (securityUser == null) {
-//            return "403";
-//        }
-//
-//        Role role = null;
-//        Role operatorRole = null;
-//        Role merchantAdminRole = null;
-//        Role merchantOperatorRole = null;
-//        try {
-//            operatorRole = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
-//            merchantAdminRole = roleService
-//                    .findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
-//            merchantOperatorRole = roleService
-//                    .findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
-//        } catch (NoSuchEntityException e) {
-//            e.printStackTrace();
-//            throw new BadRequestException("400", "No role found.");
-//        }
-//
-//        Boolean active = true;
-//
-//        switch (target) {
-//            case "operator":
-//                role = operatorRole;
-//                break;
-//            case "merchantAdmin":
-//                role = merchantAdminRole;
-//                break;
-//            case "merchantOperator":
-//                role = merchantOperatorRole;
-//                break;
-//            case "archive":
-//                active = false;
-//                break;
-//            default:
-//                return "403";
-//        }
-//
-//        // formulate criteria query
-//        // if active == false means archive, no role
-//        // support ad hoc search on username only
-//        // support order on id and createdTime only
-//        User includedUser = new User();
-//        includedUser.setActive(active);
-//        if (role != null) {
-//            includedUser.setRoles(new HashSet<Role>());
-//            includedUser.getRoles().add(role);
-//        }
-//
-//        DataTablesParams params = new DataTablesParams(request);
-//        if (params.getOffset() == null || params.getMax() == null
-//                || params.getOrder() == null || params.getOrderDir() == null) {
-//            throw new BadRequestException("400", "Bad Request.");
-//        }
-//
-//        List<User> users = userService.findByCriteriaWithExclusion(
-//                includedUser,
-//                securityUser,
-//                params.getSearch(),
-//                Integer.valueOf(params.getOffset()),
-//                Integer.valueOf(params.getMax()), params.getOrder(),
-//                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-//
-//        // count total records
-//        Long recordsTotal = userService
-//                .countByCriteriaWithExclusion(includedUser, securityUser);
-//        // count records filtered
-//        Long recordsFiltered = userService
-//                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
-//
-//        if (users == null || recordsTotal == null || recordsFiltered == null) {
-//            throw new RemoteAjaxException("500", "Internal Server Error.");
-//        }
-//
-//        List<DataTablesUser> dataTablesUsers = new ArrayList<>();
-//
-//        for (User user : users) {
-//            DataTablesUser tableUser = new DataTablesUser(user);
-//            dataTablesUsers.add(tableUser);
-//        }
-//
-//        DataTablesResultSet<DataTablesUser> result = new DataTablesResultSet<>();
-//        result.setData(dataTablesUsers);
-//        result.setRecordsFiltered(recordsFiltered.intValue());
-//        result.setRecordsTotal(recordsTotal.intValue());
-//
-//        return JsonUtil.toJson(result);
-//    }
 
     @RequestMapping(value = "/list/operator", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -247,22 +139,8 @@ public class UserController {
         }
 
 
-        List<User> users = userService.findByCriteria(
-                includedUser,
-                params.getSearch(),
-                Integer.valueOf(params.getOffset()),
-                Integer.valueOf(params.getMax()), params.getOrder(),
-                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-
-        // count total records
-        Long recordsTotal = userService
-                .countByCriteria(includedUser);
-        // count records filtered
-        Long recordsFiltered = userService
-                .countByCriteria(includedUser, params.getSearch());
-//        List<User> users = userService.findByCriteriaWithExclusion(
+//        List<User> users = userService.findByCriteria(
 //                includedUser,
-//                securityUser,
 //                params.getSearch(),
 //                Integer.valueOf(params.getOffset()),
 //                Integer.valueOf(params.getMax()), params.getOrder(),
@@ -270,10 +148,24 @@ public class UserController {
 //
 //        // count total records
 //        Long recordsTotal = userService
-//                .countByCriteriaWithExclusion(includedUser, securityUser);
+//                .countByCriteria(includedUser);
 //        // count records filtered
 //        Long recordsFiltered = userService
-//                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
+//                .countByCriteria(includedUser, params.getSearch());
+        List<User> users = userService.findByCriteriaWithExclusion(
+                includedUser,
+                securityUser,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+
+        // count total records
+        Long recordsTotal = userService
+                .countByCriteriaWithExclusion(includedUser, securityUser);
+        // count records filtered
+        Long recordsFiltered = userService
+                .countByCriteriaWithExclusion(includedUser, securityUser, params.getSearch());
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -507,8 +399,9 @@ public class UserController {
     @RequestMapping(value = "/create/merchantAdmin", method = RequestMethod.GET)
     public String createMerchantAdmin(Model model) {
 
-        List<Merchant> merchants = merchantService.getAll();
+        model.addAttribute("merchants", merchantService.getAll());
         model.addAttribute("_view", "user/createMerchantAdmin");
+        model.addAttribute("userStatuses", userStatusService.getAll());
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
@@ -561,7 +454,7 @@ public class UserController {
         try {
             role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find merchant admin role.");
+            logger.info("Cannot find admin operator role.");
             e.printStackTrace();
         }
         // create User and set admin to user
@@ -580,7 +473,6 @@ public class UserController {
             e.printStackTrace();
             return "redirect:/404";
         }
-        logger.debug("here goes user: " + user.getId());
         return "redirect:/user/index/operator";
     }
 
@@ -588,11 +480,18 @@ public class UserController {
     public String saveMerchantAdmin(Model model,
                                     @ModelAttribute("userCommand") UserCommand userCommand) {
 
-        // set subDomain to model
-        model.addAttribute("domain", "MerchantAdmin");
-
-        List<Merchant> merchants = merchantService.getAll();
-        model.addAttribute("merchants", merchants);
+        Locale locale = LocaleContextHolder.getLocale();
+        // check if username contains /
+        if (StringUtils.contains(userCommand.getUsername(), "/")) {
+            model.addAttribute("message",
+                    messageSource.getMessage("username.cannot.contain.slash.message",
+                            new String[]{}, locale));
+            model.addAttribute("userCommand", userCommand);
+            model.addAttribute("userStatuses", userStatusService.getAll());
+            model.addAttribute("merchants", merchantService.getAll());
+            model.addAttribute("_view", "user/createMerchantAdmin");
+            return "main";
+        }
 
         Role role = null;
         try {
@@ -601,28 +500,41 @@ public class UserController {
             logger.info("Cannot find merchant admin role.");
             e.printStackTrace();
         }
-        Locale locale = LocaleContextHolder.getLocale();
+
+        // retrieve merchant
+        Merchant merchant = null;
+        try {
+            merchant = merchantService.get(userCommand.getMerchant());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Cannot find merchant " + userCommand
+                    .getMerchant());
+        }
 
         // check if username already taken
-        if (userService.findByUsername(userCommand.getUsername()) != null) {
+        if (userService
+                .findUserWithMerchantByUsername(userCommand.getUsername(), merchant.getIdentity())
+                != null) {
 
             String fieldLabel = messageSource.getMessage("username.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("_view", "user/createMerchantAdmin");
             return "main";
         }
         // check if email already taken
-        if (userService.findByEmail(userCommand.getEmail()) != null) {
+        if (userService
+                .findUserWithMerchantByEmail(userCommand.getEmail(), merchant.getIdentity()) !=
+                null) {
 
             String fieldLabel = messageSource.getMessage("email.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("_view", "user/createMerchantAdmin");
             return "main";
         }
         //TODO check if all required fields filled
@@ -643,7 +555,7 @@ public class UserController {
         }
         //TODO SHOULD REDIRECT TO SHOW VIEW OF THE USER
 
-        return "main";
+        return "redirect:/user/index/merchantAdmin";
     }
 
     /**
@@ -652,11 +564,9 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/show/operator/{id}", method = RequestMethod.GET)
+    public String showOperator(@PathVariable("id") Long id, Model model) {
 
-        // set subDomain to model
-        model.addAttribute("action", "show");
         // get user by id
         User user = null;
         try {
@@ -666,64 +576,92 @@ public class UserController {
             throw new BadRequestException("400", "User " + id + " not found.");
         }
 
-        // set domain based on user's role
-        String domain = "MerchantAdmin";
-        Role role = null;
-        try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find admin role.");
-            e.printStackTrace();
-        }
-
-        model.addAttribute("domain", domain);
         // create command user and add to model and view
-        UserCommand userCommand = createUserCommand(user);
-        model.addAttribute("userCommand", userCommand);
+        model.addAttribute("_view", "user/showOperator");
+        model.addAttribute("userCommand", new UserCommand(user));
 
         return "main";
     }
 
     /**
-     * Edit a user.
+     * Show user action.
      *
      * @param id
      * @return
      */
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/show/merchantAdmin/{id}", method = RequestMethod.GET)
+    public String showMerchantAdmin(@PathVariable("id") Long id, Model model) {
 
-        model.addAttribute("action", "edit");
         // get user by id
-
-        User user;
-
-        if (id == 0) {
-            user = UserResource.getCurrentUser();
-        } else {
-            try {
-                user = userService.get(id);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new BadRequestException("400", "User " + id + " not found.");
-            }
-        }
-        // set domain based on user's role
-        String domain = "MerchantAdmin";
-        Role role = null;
+        User user = null;
         try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+            user = userService.get(id);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find admin role.");
             e.printStackTrace();
+            throw new BadRequestException("400", "User " + id + " not found.");
         }
 
-        model.addAttribute("domain", domain);
         // create command user and add to model and view
-        UserCommand userCommand = createUserCommand(user);
-        model.addAttribute("userCommand", userCommand);
+        model.addAttribute("_view", "user/showMerchantAdmin");
+        model.addAttribute("userCommand", new UserCommand(user));
 
         return "main";
+    }
+
+
+    /**
+     * Show user action.
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/show/merchantOperator/{id}", method = RequestMethod.GET)
+    public String showMerchantOperator(@PathVariable("id") Long id, Model model) {
+
+        // get user by id
+        User user = null;
+        try {
+            user = userService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User " + id + " not found.");
+        }
+
+        // create command user and add to model and view
+        model.addAttribute("_view", "user/showMerchantOperator");
+        model.addAttribute("userCommand", new UserCommand(user));
+
+        return "main";
+    }
+
+
+    /**
+     * Edit a user.
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public ModelAndView edit(HttpServletRequest request) {
+
+        String userId = request.getParameter("userId");
+        if (StringUtils.isBlank(userId)) {
+            throw new BadRequestException("400", "User id is blank.");
+        }
+        Long id = Long.valueOf(userId);
+        User user = null;
+        try {
+            user = userService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "User " + id + " not found.");
+        }
+
+        UserCommand userCommand = new UserCommand(user);
+        ModelAndView view = new ModelAndView("user/_editDialog");
+        view.addObject("userCommand", userCommand);
+        view.addObject("userStatuses", userStatusService.getAll());
+        return view;
     }
 
     /**
@@ -732,61 +670,109 @@ public class UserController {
      * @param userCommand
      * @return
      */
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String update(Model model, @ModelAttribute("userCommand") UserCommand userCommand) {
-
-        // if the email is change we need to check uniqueness
-        User user = null;
+    @RequestMapping(value = "/edit", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String update(HttpServletRequest request) {
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("user.label", null, locale);
+        User user = editUser(request);
         try {
-            user = userService.get(userCommand.getId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        if (user == null) {
-            throw new BadRequestException("400", "User not found.");
-        }
-
-        // set domain and action based on user's role
-        String domain = "MerchantAdmin";
-        Role role = null;
-        try {
-            role = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
-        } catch (NoSuchEntityException e) {
-            logger.info("Cannot find admin role.");
-            e.printStackTrace();
-        }
-
-        model.addAttribute("domain", domain);
-
-        // create command user and add to model and view
-        if (!userCommand.getEmail().equals(user.getEmail())) {
-            User emailUser = userService.findByEmail(userCommand.getEmail());
-            if (emailUser != null) {
-                // get locale and messages
-                Locale locale = LocaleContextHolder.getLocale();
-                String fieldLabel = messageSource.getMessage("email.label", null, locale);
-                model.addAttribute("message",
-                        messageSource.getMessage("not.unique.message",
-                                new String[]{fieldLabel, userCommand.getEmail()}, locale));
-                model.addAttribute("userCommand", userCommand);
-                model.addAttribute("action", "edit");
-                return "main";
-            }
-        }
-
-
-        // pass uniqueness check create the user
-        editUser(user, userCommand);
-
-        try {
-            userService.update(user);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
+            user = userService.update(user);
         } catch (NotUniqueException e) {
             e.printStackTrace();
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, user.getUsername()}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, user.getUsername()}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
         }
 
-        return "main";
+        String message = messageSource.getMessage("saved.message",
+                new String[]{label, user.getUsername()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
+    }
+
+    @RequestMapping(value = "/freeze", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String freeze(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            return null;
+        }
+        User user = null;
+        try {
+            user = userService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            return null;
+        }
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("user.label", null, locale);
+        String message = "";
+
+        try {
+            user = userService.freezeUser(id);
+
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            message = messageSource
+                    .getMessage("not.frozen.message", new String[]{label, id.toString()}, locale);
+            response.setMessage(message);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        message = messageSource
+                .getMessage("frozen.message", new String[]{label, user.getUsername()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
+    }
+
+
+    @RequestMapping(value = "/unfreeze", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String unfreeze(@RequestParam(value = "id") Long id) {
+
+        if (id == null) {
+            return null;
+        }
+        User user = null;
+        try {
+            user = userService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            return null;
+        }
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("user.label", null, locale);
+        String message = "";
+        //Do approve
+        try {
+            user = userService.unfreezeUser(id);
+
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            message = messageSource
+                    .getMessage("not.unfrozen.message", new String[]{label, id.toString()}, locale);
+            response.setMessage(message);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        message = messageSource
+                .getMessage("unfrozen.message", new String[]{label, user.getUsername()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
     }
 
     /**
@@ -866,44 +852,29 @@ public class UserController {
         return user;
     }
 
-    // create UserCommand from User
-    private UserCommand createUserCommand(User user) {
-        UserCommand userCommand = new UserCommand();
-        userCommand.setId(user.getId());
-        userCommand.setUsername(user.getUsername());
-        userCommand.setFirstName(user.getFirstName());
-        userCommand.setLastName(user.getLastName());
-        userCommand.setEmail(user.getEmail());
-        userCommand.setActive(user.getActive());
-        userCommand.setRemark(user.getRemark());
-        if (user.getMerchant() != null) {
-            userCommand.setMerchant(user.getMerchant().getId());
-            userCommand.setMerchantName(user.getMerchant().getName());
-        }
-
-        if (user.getUserStatus() != null) {
-            userCommand.setUserStatus(user.getUserStatus().getId());
-            userCommand.setUserStatusName(user.getUserStatus().getName());
-        }
-        return userCommand;
-    }
-
     // edit a User from a UserCommand
-    private void editUser(User user, UserCommand userCommand) {
+    private User editUser(HttpServletRequest request) {
 
-        user.setFirstName(userCommand.getFirstName());
-        user.setLastName(userCommand.getLastName());
-        user.setEmail(userCommand.getEmail());
-        user.setRemark(userCommand.getRemark());
-
-        // set UserStatus
+        User user = null;
+        try {
+            user = userService.get(Long.valueOf(request.getParameter("id")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        user.setFirstName(request.getParameter("firstName"));
+        user.setLastName(request.getParameter("lastName"));
+        user.setEmail(request.getParameter("email"));
+        user.setRemark(request.getParameter("remark"));
+        Long userStatusId = Long.valueOf(request.getParameter("userStatus"));
         UserStatus userStatus = null;
         try {
-            userStatus = userStatusService.get(userCommand.getUserStatus());
+            userStatus = userStatusService.get(userStatusId);
         } catch (NoSuchEntityException e) {
-            logger.info("Cannot find user status " + userCommand.getUserStatus());
             e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
         }
         user.setUserStatus(userStatus);
+        return user;
     }
 }

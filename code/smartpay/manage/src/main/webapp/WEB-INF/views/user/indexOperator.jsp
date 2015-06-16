@@ -100,7 +100,7 @@
                     'name': 'username', 'targets': 1, 'data': 'username',
                     'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}user" + '/show/'
+                        return '<a href=' + "${rootURL}user" + '/show/operator/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -130,20 +130,20 @@
                                 + '</button>';
                         if (row['userStatus'] == 'Normal') { // if the user is normal
                             operations += '<button type="button" name="freeze-button"'
-                                    + ' data-identity="' + row['username'] + '"'
+                                    + ' data-username="' + row['username'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${freezeLabel}"
                                     + '</button>';
                         } else if (row['userStatus'] == 'Frozen') {
                             // if the user is frozen
                             operations += '<button type="button" name="unfreeze-button"'
-                                    + ' data-identity="' + row['username'] + '"'
+                                    + ' data-username="' + row['username'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +
                                     "${unfreezeLabel}"
                                     + '</button>';
                         }
                         operations += '<button type="button" name="archive-button"'
-                                + ' data-identity="' + row['username'] + '"'
+                                + ' data-username="' + row['username'] + '"'
                                 + ' class="btn btn-default" value="' + row['id'] + '">' +
                                 "${archiveLabel}"
                                 + '</button>';
@@ -251,7 +251,7 @@
                 type: 'get',
                 url: "${rootURL}user/edit",
                 data: {
-                    merchantId: this.value
+                    userId: this.value
                 },
                 error: function () {
                     alert('There was an error.');
@@ -260,7 +260,7 @@
                     $('#dialog-area').append(data);
 
                     // define dialog
-                    var userDialog = $("#user-dialog").dialog({
+                    var userDialog = $("#edit-dialog").dialog({
                         autoOpen: false,
                         height: 'auto',
                         width: 'auto',
@@ -277,7 +277,7 @@
 
                     $("#save-button").click(function (event) {
                         event.preventDefault();
-                        if (!$("#user-form").valid()) {
+                        if (!$("#edit-form").valid()) {
                             return;
                         }
                         $.ajax({
@@ -287,7 +287,8 @@
                                 id: $("#userId").val(),
                                 firstName: $("#firstName").val(),
                                 lastName: $("#lastName").val(),
-                                email: $("#email").val()
+                                email: $("#email").val(),
+                                userStatus: $("#userStatus").val()
                             },
                             dataType: "json",
                             error: function (data) {
@@ -303,7 +304,7 @@
                                         + data.message + "</div>";
                                 $('#notification').append(alert);
                                 userDialog.dialog("close");
-                                userDialog.ajax.reload();
+                                userTable.ajax.reload();
                             }
                         });
                     });

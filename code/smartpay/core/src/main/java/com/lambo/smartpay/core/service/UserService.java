@@ -41,6 +41,22 @@ public interface UserService extends GenericQueryService<User, Long> {
      */
     User restoreUser(Long id) throws NoSuchEntityException;
 
+    /**
+     * Freeze a user.
+     *
+     * @param id
+     * @return
+     */
+    User freezeUser(Long id) throws NoSuchEntityException;
+
+    /**
+     * Unfreeze a user.
+     *
+     * @param id
+     * @return
+     */
+    User unfreezeUser(Long id) throws NoSuchEntityException;
+
     Long countByCriteriaWithExclusion(User includedUser, User excludedUser, String search);
 
     Long countByCriteriaWithExclusion(User includedUser, User excludedUser);

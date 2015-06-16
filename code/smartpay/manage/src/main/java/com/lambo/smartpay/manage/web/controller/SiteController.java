@@ -458,7 +458,6 @@ public class SiteController {
             throw new BadRequestException("400", e.getMessage());
         }
         site.setName(request.getParameter("name"));
-        logger.debug("ssssnnn: " + request.getParameter("name"));
         site.setReturnUrl(request.getParameter("returnUrl"));
         site.setUrl(request.getParameter("url"));
         site.setRemark(request.getParameter("remark"));

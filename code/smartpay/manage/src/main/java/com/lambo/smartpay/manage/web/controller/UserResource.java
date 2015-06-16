@@ -89,12 +89,12 @@ public class UserResource {
     }
 
     public static Permission getPermission(String permission) {
-        if (!(permission instanceof String)) {
+        if (permission == null || permission.equals("")) {
             return null;
         }
         Permission permissionObject = null;
         try {
-            permissionObject = permissionService.findByName((String) permission);
+            permissionObject = permissionService.findByName(permission);
         } catch (NoSuchEntityException e) {
             logger.debug(e.getMessage());
             return null;
