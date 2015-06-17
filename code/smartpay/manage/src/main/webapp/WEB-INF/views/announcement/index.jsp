@@ -1,8 +1,6 @@
-<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <c:if test="${domain != null}">
     <spring:message code="${domain}.label" var="entity"/>
-    <spring:message code="Site.label" var="site"/>
 </c:if>
 
 <div id="content">
@@ -12,17 +10,15 @@
                 <i class="icon icon-home"></i>
                 <spring:message code="home.label"/>
             </a>
-            <a href="${rootURL}${controller}/indexAll">
-                <spring:message code="manage.label" arguments="${site}"/>
-            </a>
             <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="index.label" arguments="${entity}"/>
+                <spring:message code="${action}.label" arguments="${entity}"/>
             </a>
         </div>
     </div>
-
+    <!-- reserved for notification -->
     <!-- close of content-header -->
     <div class="container-fluid">
+        <!— actual content —>
         <div class="row-fluid">
             <div class="col-sm-12">
                 <div class="widget-box">
@@ -31,16 +27,12 @@
                         <h5><spring:message code="index.label" arguments="${entity}"/></h5>
                     </div>
                     <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="site-table">
+                        <table class="table display table-bordered data-table" id="announcement-table">
                             <thead>
                             <tr>
                                 <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="identity.label"/></th>
-                                <th><spring:message code="name.label"/></th>
-                                <th><spring:message code="site.merchant.label"/></th>
-                                <th><spring:message code="site.url.label"/></th>
+                                <th><spring:message code="announcement.title.lable"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="status.label"/></th>
                                 <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
@@ -55,7 +47,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var siteTable = $('#site-table').DataTable({
+        var announcementTable = $('#announcement-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -63,65 +55,48 @@
             'serverSide': true,
             'paging': true,
             "paginationType": "full_numbers",
+            "bAutoWidth":true,
             "order": [[0, "desc"]],
             "jQueryUI": true,
-            'dom': 'T<""if>rt<"F"lp>',
-            "tableTools": {
-                "sSwfPath": "${tableTools}",
-                "aButtons": [
-                    {
-                        "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6]
-                    },
-                    {
-                        "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6]
-                    }
-                ]
-            },
+            'dom': '<""if>rt<"F"lp>',
             'ajax': {
-                'url': "${rootURL}${controller}/listFrozen",
+                'url': "${rootURL}${controller}/list",
                 'type': "GET",
                 'dataType': 'json'
             },
-
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {'name': 'identity', 'targets': 1, 'data': 'identity'},
+                {'name': 'id', 'targets': 0,  'data': 'id', 'searchable': false, 'visible': false},
                 {
-                    'name': 'name', 'targets': 2, 'data': 'name',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show${domain}/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
-                },
-                {'name': 'merchant', 'targets': 3, 'data': 'merchant'},
-                {'name': 'url', 'targets': 4, 'data': 'url'},
-                {'name': 'createdTime', 'targets': 5, 'searchable': false, 'data': 'createdTime'},
-                {
-                    'name': 'siteStatus', 'targets': 6, 'searchable': false,
-                    'orderable': false, 'data': 'siteStatus'
+                    'name': 'title', 'targets': 1, 'data': 'title',
+                    'searchable': false, 'orderable': false, "sWidth": "73%"
                 },
                 {
-                    'name': 'operation', 'targets': 7, 'searchable': false, 'orderable': false,
+                    'name': 'createdTime', 'targets': 2, 'data': 'createdTime',"sWidth": "12%"
+                },
+                {
+                    'name': 'operation', 'targets': 3, 'searchable': false, 'orderable': false,"sWidth": "15%",
                     'render': function (data, type, row) {
-                        return '<button type="button" name="unfreeze-button"'
+                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
+                                + row['id'] + '">' +
+                                '<button type="button" name="edit-button" class="tableButton"'
+                                + '">' + '<spring:message code="action.edit.label"/>'
+                                + '</button></a>' + ' '
+                                + '<button type="button" name="delete-button"'
                                 + ' class="tableButton" value="' + row['id'] + '">' +
-                                '<spring:message code="action.unfreeze.label"/>' +
+                                '<spring:message code="action.delete.label"/>' +
                                 '</button>';
                     }
                 }
             ]
         });
-
-        // add live handler for unfreeze button
-        siteTable.on('click', 'button[type=button][name=unfreeze-button]', function (event) {
+        // add live handler for remove button
+        announcementTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
             var id = this.value;
             $.ajax({
                 type: 'POST',
-                url: "${rootURL}${controller}" + '/unfreeze',
+                url: "${rootURL}${controller}" + '/delete',
                 data: {id: id},
                 dataType: 'JSON',
                 error: function (error) {
@@ -136,9 +111,10 @@
                             + "</span></button>"
                             + data.message + "</div>";
                     $('#notification').append(alert);
-                    siteTable.ajax.reload();
+                    announcementTable.ajax.reload();
                 }
             });
         });
     });
+
 </script>

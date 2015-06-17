@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-    <spring:message code="site.label" var="entity"/>
-
+<spring:message code="merchantAdmin.label" var="entity"/>
+<spring:message code="username.cannot.contain.slash.message" var="noSlashMsg"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -22,19 +22,19 @@
     </div>
     <div class="row">
         <div class="col-sm-8">
-            <form:form action="${rootURL}site/create" method="POST"
-                       commandName="siteCommand" cssClass="form-horizontal"
+            <form:form action="${rootURL}user/create/merchantAdmin" method="POST"
+                       commandName="userCommand" cssClass="form-horizontal"
                        id="new-user-form">
-
+                <!-- merchant -->
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="merchant">
                         <span class="required-indicator">*</span>
-                        <spring:message code="site.merchant.label"/>
+                        <spring:message code="merchant.label"/>
                     </label>
 
                     <div class="col-sm-4">
                         <form:select path="merchant" id="merchant" cssClass="form-control"
-                                     required="" value="${siteCommand.merchant}">
+                                     required="">
                             <c:forEach items="${merchants}" var="merchant">
                                 <form:option value="${merchant.id}">${merchant.name}</form:option>
                             </c:forEach>
@@ -42,54 +42,65 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="name">
+                    <label class="col-sm-2 control-label" for="username">
                         <span class="required-indicator">*</span>
-                        <spring:message code="name.label"/>
+                        <spring:message code="username.label"/>
                     </label>
 
                     <div class="col-sm-4">
-                        <form:input size="32" path="name" id="name" cssClass="form-control"
-                                    required="" value="${siteCommand.name}"
-                                    placeholder="Name"/>
+                        <form:input size="32" path="username" id="username"
+                                    cssClass="form-control" required=""
+                                    placeholder="Username"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="returnUrl">
+                    <label class="col-sm-2 control-label" for="email">
                         <span class="required-indicator">*</span>
-                        <spring:message code="site.returnUrl.label"/>
+                        <spring:message code="email.label"/>
                     </label>
 
                     <div class="col-sm-4">
-                        <form:input size="80" path="returnUrl" id="returnUrl"
+                        <form:input size="32" path="email" id="email" cssClass="form-control"
+                                    required=""
+                                    placeholder="Email"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="firstName">
+                        <span class="required-indicator">*</span>
+                        <spring:message code="firstName.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <form:input size="32" path="firstName" id="firstName"
                                     cssClass="form-control"
-                                    required="" value="${siteCommand.returnUrl}"
-                                    placeholder="Return URL"/>
+                                    required=""
+                                    placeholder="First Name"/>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="url">
+                    <label class="col-sm-2 control-label" for="lastName">
                         <span class="required-indicator">*</span>
-                        <spring:message code="site.url.label"/>
+                        <spring:message code="lastName.label"/>
                     </label>
 
                     <div class="col-sm-4">
-                        <form:input size="80" path="url" id="url"
-                                    cssClass="form-control"
-                                    required="" value="${siteCommand.url}"
-                                    placeholder="URL"/>
+                        <form:input size="32" path="lastName" id="lastName" cssClass="form-control"
+                                    required=""
+                                    placeholder="Last Name"/>
                     </div>
                 </div>
-                <!-- site status -->
+                <!-- user status -->
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="siteStatusId">
+                    <label class="col-sm-2 control-label" for="userStatus">
                         <span class="required-indicator">*</span>
                         <spring:message code="status.label"/>
                     </label>
 
                     <div class="col-sm-4">
-                        <form:select path="siteStatusId" id="siteStatusId" cssClass="form-control"
-                                     required="" value="${siteCommand.siteStatusId}">
-                            <c:forEach items="${siteStatuses}" var="status">
+                        <form:select path="userStatus" id="userStatus" cssClass="form-control"
+                                     required="">
+                            <c:forEach items="${userStatuses}" var="status">
                                 <form:option value="${status.id}">${status.name}</form:option>
                             </c:forEach>
                         </form:select>
@@ -122,16 +133,20 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#new-site-form').validate({
+        $.validator.addMethod("usernameCheck", function (value, element) {
+
+            // return true if the value does not contain /
+            return value.indexOf("/") < 0;
+        }, "${noSlashMsg}");
+        $('#new-user-form').validate({
             rules: {
-                merchant: {required: true},
-                name: {required: true, minlength: 3, maxlength: 32},
-                returnUrl: {required: true, minlength: 3, maxlength: 32},
-                url: {required: true, minlength: 3, maxlength: 32},
-                siteStatusId: {required: true}
+                username: {required: true, minlength: 3, maxlength: 32, usernameCheck: true},
+                firstName: {required: true, minlength: 1, maxlength: 32},
+                lastName: {required: true, minlength: 1, maxlength: 32},
+                email: {required: true, email: true, minlength: 3, maxlength: 32},
+                userStatus: {required: true}
             }
         });
     });

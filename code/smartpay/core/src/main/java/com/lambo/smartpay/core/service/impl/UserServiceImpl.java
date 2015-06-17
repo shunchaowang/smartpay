@@ -4,9 +4,11 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.dao.UserDao;
+import com.lambo.smartpay.core.persistence.dao.UserStatusDao;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
+import com.lambo.smartpay.core.persistence.entity.UserStatus;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.core.util.TransactionDebugUtil;
@@ -42,6 +44,8 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
 
     @Resource
     private UserDao userDao;
+    @Resource
+    private UserStatusDao userStatusDao;
 
     /**
      * Find user by the unique username of email format.
@@ -269,6 +273,54 @@ public class UserServiceImpl extends GenericQueryServiceImpl<User, Long> impleme
         }
         user.setActive(true);
         return userDao.update(user);
+    }
+
+    /**
+     * Freeze a user.
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public User freezeUser(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        User user = userDao.get(id);
+        if (user == null) {
+            throw new NoSuchEntityException("User with id " + id +
+                    " does not exist.");
+        }
+        UserStatus userStatus = userStatusDao.findByCode(ResourceProperties
+                .USER_STATUS_FROZEN_CODE);
+        user.setUserStatus(userStatus);
+        user = userDao.update(user);
+        return user;
+    }
+
+    /**
+     * Unfreeze a user.
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public User unfreezeUser(Long id) throws NoSuchEntityException {
+        if (id == null) {
+            throw new NoSuchEntityException("Id is null.");
+        }
+        User user = userDao.get(id);
+        if (user == null) {
+            throw new NoSuchEntityException("User with id " + id +
+                    " does not exist.");
+        }
+        UserStatus userStatus = userStatusDao.findByCode(ResourceProperties
+                .USER_STATUS_NORMAL_CODE);
+        user.setUserStatus(userStatus);
+        user = userDao.update(user);
+        return user;
     }
 
     @Override

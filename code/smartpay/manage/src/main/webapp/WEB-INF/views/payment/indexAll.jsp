@@ -1,20 +1,21 @@
+<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<spring:message code="payment.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/index" class="current">
-                <spring:message code="manage.label" arguments="${entity}"/>
-            </a>
-        </div>
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </li>
+        </ol>
     </div>
+    <br>
 
     <!-- close of content-header -->
     <div class="container-fluid">
@@ -35,7 +36,7 @@
                                 <th><spring:message code="bankName.label"/></th>
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="Site.label"/></th>
+                                <th><spring:message code="site.label"/></th>
                                 <th><spring:message code="site.merchant.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="returnCode.label"/></th>
@@ -63,7 +64,6 @@
             'paging': true,
             "paginationType": "full_numbers",
             "order": [[0, "desc"]],
-            "jQueryUI": true,
             'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
@@ -80,7 +80,7 @@
             },
 
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}payment/list/all",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -97,7 +97,7 @@
                 {
                     'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}" + 'payment/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
@@ -108,7 +108,7 @@
                 {
                     'name': 'amount', 'targets': 4, 'data': 'amount',
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
+                        return '<a href=' + "${rootURL}" + 'payment/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },

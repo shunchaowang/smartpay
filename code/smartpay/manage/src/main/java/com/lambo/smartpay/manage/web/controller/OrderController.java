@@ -53,15 +53,6 @@ public class OrderController {
     private OrderStatusService orderStatusService;
 
     // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "order";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Order";
-    }
 
     @ModelAttribute("orderStatuses")
     public List<OrderStatus> orderStatuses() {
@@ -69,12 +60,20 @@ public class OrderController {
         return orderStatusService.getAll();
     }
 
-    @RequestMapping(value = {"", "/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "order/indexAll");
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    /*
+    @RequestMapping(value = {"", "/indexAll"}, method = RequestMethod.GET)
+    public String index() {
+        return "main";
+    }
+    */
+
+    @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {

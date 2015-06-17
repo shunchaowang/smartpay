@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<spring:message code="refund.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/indexAll">
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-list"></i>
                 <spring:message code="index.label" arguments="${entity}"/>
-            </a>
-        </div>
+            </li>
+        </ol>
     </div>
+    <br>
+
 
     <!-- close of content-header -->
     <div class="container-fluid">
@@ -30,24 +31,28 @@
                         <table class="table display table-bordered data-table" id="refund-table">
                             <thead>
                             <tr>
-                                <th><spring:message code="Merchant.label"/></th>
-                                <th><spring:message code="Site.label"/></th>
+                                <th><spring:message code="merchant.label"/></th>
+                                <th><spring:message code="site.label"/></th>
+                                <th><spring:message code="refund.label"/><spring:message
+                                        code="id.label"/></th>
                                 <th>
-                                    <spring:message code="Refund.label"/><spring:message code="id.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Refund.label"/><spring:message code="amount.label"/>
+                                    <spring:message code="refund.label"/><spring:message
+                                        code="amount.label"/>
                                 </th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th>
-                                    <spring:message code="Order.label"/><spring:message code="merchantNumber.label"/>
+                                    <spring:message code="order.label"/><spring:message
+                                        code="merchantNumber.label"/>
                                 </th>
                                 <th>
-                                    <spring:message code="Order.label"/><spring:message code="amount.label"/>
+                                    <spring:message code="order.label"/><spring:message
+                                        code="amount.label"/>
                                 </th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="custom.label"/></th>
                                 <th><spring:message code="status.label"/></th>
+                                <th><spring:message code="action.operation.label"/></th>
+
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -70,7 +75,6 @@
             'paging': true,
             "paginationType": "full_numbers",
             "order": [[2, "desc"]],
-            "jQueryUI": true,
             'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
@@ -87,7 +91,7 @@
             },
 
             'ajax': {
-                'url': "${rootURL}${controller}/listAll",
+                'url': "${rootURL}refund/list/all",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -144,8 +148,50 @@
                     'searchable': false,
                     'orderable': false,
                     'data': 'refundStatusName'
+                },
+                {
+                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        var operations = '';
+                        if (row['refundStatus'] == 'Initiated') { // if the merchant is Initiated
+                            operations += '<button type="button" name="audit-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${auditLabel}"
+                            + '</button>';
+                        }
+                        return operations;
+                    }
                 }
             ]
+        });
+
+
+        // add live handler for add refund button
+        table.on('click', 'button[type=button][name=audit-button]', function
+                (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "${rootURL}refund/approveRefund",
+                data: {
+                    id: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                            "<button type='button' class='close' data-dismiss='alert'>" +
+                            "<span aria-hidden='true'>&times;</span>" +
+                            "<span class='sr-only'>"
+                            + "<spring:message code='action.close.label'/> "
+                            + "</span></button>"
+                            + data.message + "</div>";
+                    $('#notification').append(alert);
+                    table.ajax.reload();
+                }
+            });
         });
     });
 </script>
