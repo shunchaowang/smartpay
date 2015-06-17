@@ -265,7 +265,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         }
         Site site = siteDao.get(id);
         if (site == null) {
-            throw new NoSuchEntityException("Merchant with id " + id +
+            throw new NoSuchEntityException("Site with id " + id +
                     " does not exist.");
         }
         SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties
@@ -283,7 +283,7 @@ public class SiteServiceImpl extends GenericQueryServiceImpl<Site, Long> impleme
         }
         Site site = siteDao.get(id);
         if (site == null) {
-            throw new NoSuchEntityException("Merchant with id " + id +
+            throw new NoSuchEntityException("Site with id " + id +
                     " does not exist.");
         }
         SiteStatus siteStatus = siteStatusDao.findByCode(ResourceProperties

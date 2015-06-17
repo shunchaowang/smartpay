@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-
-<spring:message code="site.label" var="entity"/>
+<spring:message code="merchantOperator.label" var="entity"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -24,40 +23,52 @@
         <div class="row">
             <div class="col-sm-8">
                 <table class="table table-bordered">
-                    <c:if test="${not empty siteCommand.merchantName}">
+                    <c:if test="${not empty userCommand.username}">
                         <tr>
-                            <td><spring:message code="site.merchant.label"/></td>
-                            <td>${siteCommand.merchantName}</td>
+                            <td><spring:message code="username.label"/></td>
+                            <td>${userCommand.username}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty siteCommand.identity}">
+                    <c:if test="${not empty userCommand.firstName}">
                         <tr>
-                            <td><spring:message code="identity.label"/></td>
-                            <td>${siteCommand.identity}</td>
+                            <td><spring:message code="firstName.label"/></td>
+                            <td>${userCommand.firstName}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty siteCommand.name}">
+                    <c:if test="${not empty userCommand.lastName}">
                         <tr>
-                            <td><spring:message code="name.label"/></td>
-                            <td>${siteCommand.name}</td>
+                            <td><spring:message code="lastName.label"/></td>
+                            <td>${userCommand.lastName}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty siteCommand.url}">
+                    <c:if test="${not empty userCommand.email}">
                         <tr>
-                            <td><spring:message code="site.url.label"/></td>
-                            <td>${siteCommand.url}</td>
+                            <td><spring:message code="email.label"/></td>
+                            <td>${userCommand.email}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty siteCommand.siteStatusName}">
+                    <c:if test="${not empty userCommand.userStatusName}">
                         <tr>
                             <td><spring:message code="status.label"/></td>
-                            <td>${siteCommand.siteStatusName}</td>
+                            <td>${userCommand.userStatusName}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty siteCommand.remark}">
+                    <c:if test="${not empty userCommand.remark}">
                         <tr>
                             <td><spring:message code="remark.label"/></td>
-                            <td>${siteCommand.remark}</td>
+                            <td>${userCommand.remark}</td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${not empty userCommand.merchantName}">
+                        <tr>
+                            <td><spring:message code="merchant.label"/></td>
+                            <td>${userCommand.merchantName}</td>
+                        </tr>
+                    </c:if>
+                    <c:if test="${not empty userCommand.createdTime}">
+                        <tr>
+                            <td><spring:message code="createdTime.label"/></td>
+                            <td>${userCommand.createdTime}</td>
                         </tr>
                     </c:if>
                 </table>
@@ -66,7 +77,7 @@
     </div>
     <div class="row">
         <div class="col-sm-2 col-sm-offset-2">
-            <a href="${rootURL}site/index/all">
+            <a href="${rootURL}user/index/merchantOperator">
                 <button type="button" class="btn btn-default">
                     <spring:message code="action.return.label"/>
                 </button>

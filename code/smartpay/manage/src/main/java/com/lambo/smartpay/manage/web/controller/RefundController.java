@@ -55,6 +55,7 @@ public class RefundController {
     @Autowired
     private MessageSource messageSource;
 
+    /*
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
@@ -65,12 +66,21 @@ public class RefundController {
     public String domain() {
         return "Refund";
     }
+    */
 
     @ModelAttribute("paymentStatuses")
     public List<RefundStatus> refundStatuses() {
         return refundStatusService.getAll();
     }
 
+
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "refund/indexAll");
+        return "main";
+    }
+
+    /*
     @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
     public String index(@PathVariable("domain") String domain, Model model) {
         if (domain.equals("All")) {
@@ -86,11 +96,12 @@ public class RefundController {
         }
         return "main";
     }
+    */
 
-    @RequestMapping(value = {"/list{domain}"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/list/all"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(@PathVariable("domain") String domain, HttpServletRequest request) {
+    public String list(HttpServletRequest request) {
 
         DataTablesParams params = new DataTablesParams(request);
         Integer start = Integer.valueOf(params.getOffset());
@@ -107,6 +118,14 @@ public class RefundController {
         List<Refund> refunds = null;
         Long recordsTotal = null;
         Long recordsFiltered = null;
+
+        refunds = refundService.findByCriteria(params.getSearch(),
+                start, length, params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        recordsTotal = refundService.countAll();
+        recordsFiltered = refundService.countByCriteria(params.getSearch());
+
+        /*
         if (domain.equals("All")) {
             refunds = refundService.findByCriteria(params.getSearch(),
                     start, length, params.getOrder(),
@@ -148,6 +167,7 @@ public class RefundController {
         } else {
             throw new BadRequestException("400", "Domain does not exist.");
         }
+        */
 
         if (refunds == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");

@@ -455,7 +455,7 @@ public class MerchantController {
             merchant = merchantService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+            throw new BadRequestException("400", "Merchant " + id + " not found.");
         }
 
         MerchantCommand merchantCommand = new MerchantCommand(merchant);
@@ -489,15 +489,15 @@ public class MerchantController {
             merchant = merchantService.update(merchant);
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
                     new String[]{label, merchant.getIdentity()}, locale);
-            response.setMessage(notDeleteMessage);
+            response.setMessage(notSavedMessage);
             throw new BadRequestException("400", e.getMessage());
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
                     new String[]{label, merchant.getIdentity()}, locale);
-            response.setMessage(notDeleteMessage);
+            response.setMessage(notSavedMessage);
             throw new BadRequestException("400", e.getMessage());
         }
 
@@ -552,15 +552,15 @@ public class MerchantController {
             merchant = merchantService.update(merchant);
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
                     new String[]{label, merchant.getIdentity()}, locale);
-            response.setMessage(notDeleteMessage);
+            response.setMessage(notSavedMessage);
             throw new BadRequestException("400", e.getMessage());
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            String notDeleteMessage = messageSource.getMessage("not.saved.message",
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
                     new String[]{label, merchant.getIdentity()}, locale);
-            response.setMessage(notDeleteMessage);
+            response.setMessage(notSavedMessage);
             throw new BadRequestException("400", e.getMessage());
         }
 

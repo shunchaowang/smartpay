@@ -179,7 +179,7 @@
 
                         <div class="col-sm-5">
                             <textarea cols="100" rows="5" class="form-control"
-                                      name="remark" id="remark" value="">
+                                      name="remark" id="remark">
                                 ${merchantCommand.remark}
                             </textarea>
                         </div>

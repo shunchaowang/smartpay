@@ -64,86 +64,35 @@ public class ClaimController {
     @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "claim";
-    }
 
-    @ModelAttribute("domain")
-    public String domain() {
-        return "PaymentRefused";
-    }
-
-    /**
-     * Index page for claims.
-     *
-     * @param domain can be Approved, Process, Resolved
-     * @param model
-     * @return index page of the domain payment
-     */
-    @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
-    public String index(@PathVariable("domain") String domain, Model model) {
-
-        String action = "";
-        if (domain.equals("Approved")) {
-            action = "indexApproved";
-        } else if (domain.equals("Process")) {
-            action = "indexProcess";
-        } else if (domain.equals("Resolved")) {
-            action = "indexResolved";
-        } else {
-            throw new BadRequestException("400", "Bad request.");
-        }
-
-        model.addAttribute("action", action);
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "claim/indexAll");
         return "main";
     }
 
     /**
      * Query all json data.
      *
-     * @param domain  can be Approved, Process, Resolved
      * @param request
      * @return payment data of the domain
      */
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET)
-    public
+
+
+    @RequestMapping(value = {"/list/all"}, method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
     @ResponseBody
-    String list(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        String paymentStatusCode = "";
-        // only approved payment status can be initiated to be pending, this list
-        // will show all approved payment and user can mark any of them to be claim pending
-
-        if (domain.equals("Approved")) { // for indexApproved, only approved payment
-            paymentStatusCode = ResourceProperties.PAYMENT_STATUS_APPROVED_CODE;
-        } else if (domain.equals("Process")) { // for indexProcess, only payment status process
-            paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE;
-        } else if (domain.equals("Resolved")) { // for indexResolved, only payment status resolved
-            paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE;
-        } else {
-            throw new BadRequestException("400", "Bad request.");
-        }
-
-        PaymentStatus paymentStatus = null;
-        try {
-            paymentStatus = paymentStatusService.findByCode(paymentStatusCode);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
+    public String list(HttpServletRequest request) {
 
         DataTablesParams params = new DataTablesParams(request);
-        Payment paymentCriteria = new Payment();
-        paymentCriteria.setPaymentStatus(paymentStatus);
 
-        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, params.getSearch(),
+        List<Payment> payments = paymentService.findByCriteria(params.getSearch(),
                 Integer.valueOf(params.getOffset()), Integer.valueOf(params.getMax()),
                 params.getOrder(),
                 ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
 
-        Long recordsTotal = paymentService.countByCriteria(paymentCriteria);
-        Long recordsFiltered = paymentService.countByCriteria(paymentCriteria, params.getSearch());
+        Long recordsTotal = paymentService.countAll();
+        Long recordsFiltered = paymentService.countByCriteria(params.getSearch());
 
         if (payments == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
