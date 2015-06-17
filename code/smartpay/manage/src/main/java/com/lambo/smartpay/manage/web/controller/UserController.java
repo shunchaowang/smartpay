@@ -4,10 +4,12 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
+import com.lambo.smartpay.core.persistence.entity.Permission;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.persistence.entity.UserStatus;
 import com.lambo.smartpay.core.service.MerchantService;
+import com.lambo.smartpay.core.service.PermissionService;
 import com.lambo.smartpay.core.service.RoleService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
@@ -57,6 +59,8 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private PermissionService permissionService;
     @Autowired
     private UserStatusService userStatusService;
     @Autowired
@@ -79,6 +83,26 @@ public class UserController {
     public String managePermission(Model model) {
 
         model.addAttribute("_view", "user/managePermission");
+        List<Permission> permissions = permissionService.getAll();
+        model.addAttribute("permissions", permissions);
+        return "main";
+    }
+
+    @RequestMapping(value = {"/show/permission/{id}"}, method = RequestMethod.GET)
+    public String showPermission(Model model) {
+
+        model.addAttribute("_view", "user/showPermission");
+        List<Permission> permissions = permissionService.getAll();
+        model.addAttribute("permissions", permissions);
+        return "main";
+    }
+
+    @RequestMapping(value = {"/edit/permission/{id}"}, method = RequestMethod.GET)
+    public String editPermission(Model model) {
+
+        model.addAttribute("_view", "user/editPermission");
+        List<Permission> permissions = permissionService.getAll();
+        model.addAttribute("permissions", permissions);
         return "main";
     }
 
