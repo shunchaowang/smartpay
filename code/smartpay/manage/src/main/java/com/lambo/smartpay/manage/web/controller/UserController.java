@@ -21,6 +21,7 @@ import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.UserCommand;
+import com.lambo.smartpay.manage.web.vo.UserPermissionCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesUser;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -84,7 +86,6 @@ public class UserController {
 
         model.addAttribute("_view", "user/managePermission");
         List<Permission> permissions = permissionService.getAll();
-        model.addAttribute("permissions", permissions);
         return "main";
     }
 
@@ -98,12 +99,64 @@ public class UserController {
     }
 
     @RequestMapping(value = {"/edit/permission/{id}"}, method = RequestMethod.GET)
-    public String editPermission(Model model) {
+    public String editPermission(@PathVariable("id") Long id, Model model) {
 
-        model.addAttribute("_view", "user/editPermission");
+        User user = null;
+        try {
+            user = userService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        model.addAttribute("user", user);
         List<Permission> permissions = permissionService.getAll();
-        model.addAttribute("permissions", permissions);
+        List<String> permissionNames = new ArrayList<>();
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Permission permission : permissions) {
+                permissionNames.add(permission.getName());
+            }
+        }
+        model.addAttribute("permissions", permissionNames);
+        UserPermissionCommand command = new UserPermissionCommand(user);
+        model.addAttribute("userPermissionCommand", command);
+        model.addAttribute("_view", "user/editPermission");
         return "main";
+    }
+
+    @RequestMapping(value = {"/edit/permission"}, method = RequestMethod.POST)
+    public String updatePermission(@ModelAttribute("userPermissionCommand") UserPermissionCommand
+                                           command, RedirectAttributes attributes) {
+        User user = null;
+        try {
+            user = userService.get(command.getUserId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        if (user.getPermissions() == null) {
+            user.setPermissions(new HashSet<Permission>());
+        }
+        for (String p : command.getPermissions()) {
+            Permission permission = null;
+            try {
+                permission = permissionService.findByName(p);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", e.getMessage());
+            }
+            user.getPermissions().add(permission);
+        }
+        try {
+            userService.update(user);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+
+        return "redirect:/user/manage/permission";
     }
 
     @RequestMapping(value = {"/index/merchantAdmin"}, method = RequestMethod.GET)
