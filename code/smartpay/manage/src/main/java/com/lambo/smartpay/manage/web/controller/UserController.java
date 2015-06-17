@@ -744,8 +744,8 @@ public class UserController {
     /**
      * Save a user.
      *
-     * @param userCommand
-     * @return
+     * @param request request form client
+     * @return message
      */
     @RequestMapping(value = "/edit", method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
