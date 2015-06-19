@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="refund.label" var="entity"/>
+<spring:message code="details.label" arguments="{entity}"/>
+
 
 <div class="container-fluid">
     <div class="row">

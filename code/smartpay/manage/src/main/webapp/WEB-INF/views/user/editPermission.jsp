@@ -2,6 +2,16 @@
 <spring:message code="user.label" var="entity"/>
 <spring:message code="permission.label" var="permissionLabel"/>
 
+<style type="text/css">
+    #permission-list ul {
+        /*list-style: none;*/
+    }
+
+    #permission-list li {
+        /*display: inline;*/
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <ol class="breadcrumb">
@@ -29,6 +39,7 @@
         </div>
     </div>
     <br>
+
     <div class="row">
         <div class="col-sm-12">
             <form:form class="form-horizontal" id="edit-form" method="post"
@@ -38,11 +49,15 @@
                             value="${user.id}"/>
 
                 <div class="form-group">
-                    <div class="col-sm-4">
-                        <c:forEach items="${permissions}" var="permission">
-                            <form:checkbox path="permissions" value="${permission}"/>
-                            <spring:message code="${permission}.label"/>
-                        </c:forEach>
+                    <div class="col-sm-8" id="permission-list">
+                        <ul>
+                            <c:forEach items="${permissions}" var="permission">
+                                <li>
+                                    <form:checkbox path="permissions" value="${permission}"/>
+                                    <spring:message code="${permission}.label"/>
+                                </li>
+                            </c:forEach>
+                        </ul>
                     </div>
                 </div>
                 <div class='form-group'>
