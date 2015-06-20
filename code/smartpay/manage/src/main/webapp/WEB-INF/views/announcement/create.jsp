@@ -1,77 +1,75 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
+<spring:message code="announcement.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/index">
-                <spring:message code="manage.label" arguments="${entity}"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
+            </li>
+            <li>
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-wrench"></i>
                 <spring:message code="create.label" arguments="${entity}"/>
-            </a>
-        </div>
+            </li>
+        </ol>
     </div>
-    <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span12">
-                <div class="widget-box">
-                    <div class="widget-title">
-								<span class="icon">
-									<i class="icon icon-align-justify"></i>
-								</span>
-                        <h5><b><spring:message code='create.label' arguments="${entity}"/></b></h5>
-                    </div>
-                    <div class="widget-content nopadding">
-                        <form:form action="${rootURL}${controller}/create" method="POST"
-                                   commandName="announcementCommand" cssClass="form-horizontal"
-                                   id="new-announcement-form">
-                            <div class="control-group">
-                                <h5>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <spring:message code="basic.info.label"/>
-                                </h5>
-                            </div>
-                            <div class="control-group">
-                                <label class="col-sm-3 control-label" for="titleName">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="announcement.title.lable"/>
-                                </label>
+    <div class="row">
+        <div class="col-sm-12">
+            <form:form action="${rootURL}announcement/create" method="POST"
+                       commandName="announcementCommand" cssClass="form-horizontal"
+                       id="new-announcement-form">
 
-                                <div class="controls">
-                                    <form:input size="80" path="title" id="titleName" cssClass="text"
-                                                required=""
-                                                placeholder="TitleName"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="col-sm-3 control-label" for="announcementContent">
-                                    <span class="required-indicator">*</span>
-                                    <spring:message code="announcement.content.lable"/>
-                                </label>
-                                <div class="controls">
-                                    <form:textarea cols="120" rows="10" path="content" id="announcementContent"/>
-                                </div>
-                            </div>
-                            <div class='form-actions col-lg-offset-2'>
-                                <button class='btn btn-success' id='create-button' type="submit">
-                                    <spring:message code='action.save.label'/>
-                                </button>
-                                <button class='btn btn-success' id='reset-button' type="reset">
-                                    <spring:message code='action.reset.label'/>
-                                </button>
-                            </div>
-                        </form:form>
+
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="titleName">
+                        <span>*</span>
+                        <spring:message code="announcement.label"/>
+                    </label>
+
+
+                    <div class="col-sm-3">
+                        <form:input size="80" path="title" id="titleName" cssClass="text"
+                                    required=""
+                                    placeholder="TitleName"/>
                     </div>
                 </div>
-            </div>
+
+                <div class="row">
+
+                    <label class="col-sm-1 control-label" for="announcementContent">
+
+                        <span class="required-indicator">*</span>
+                        <spring:message code="content.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:textarea cols="120" rows="10" path="content" id="announcementContent"/>
+                    </div>
+                </div>
+
+                <div class='form-group'>
+                    <div class="col-sm-2 col-sm-offset-2">
+
+                        <button class='btn btn-success' id='create-button' type="submit">
+                            <spring:message code='action.save.label'/>
+                        </button>
+                        <button class='btn btn-success' id='reset-button' type="reset">
+                            <spring:message code='action.reset.label'/>
+                        </button>
+                    </div>
+                </div>
+            </form:form>
         </div>
     </div>
+</div>
+</div>
+</div>
 </div>
 
 <script type="text/javascript">
