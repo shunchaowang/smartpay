@@ -39,21 +39,15 @@ public class AnnouncementController {
     private AnnouncementService anouncementService;
     @Autowired
     private MessageSource messageSource;
+
     // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() { return "announcement"; }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Announcement";
-    }
-
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index( Model model) {
+        model.addAttribute("_view", "announcement/indexAll");
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {
@@ -146,7 +140,7 @@ public class AnnouncementController {
     public String create(Model model) {
         AnnouncementCommand announcementCommand = new AnnouncementCommand();
         model.addAttribute("announcementCommand", announcementCommand);
-        model.addAttribute("action", "create");
+        model.addAttribute("_view", "announcement/create");
         return "main";
     }
 

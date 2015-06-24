@@ -63,7 +63,7 @@
             "order": [[0, "desc"]],
             'dom': '<""if>rt<"F"lp>',
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}announcement/list/all",
                 'type': "GET",
                 'dataType': 'json'
             },

@@ -34,9 +34,9 @@ public class SecurityUser extends User implements UserDetails {
             this.setLastName(user.getLastName());
             this.setMerchant(user.getMerchant());
             this.setActive(user.getActive());
-            this.setRoles(user.getRoles());
             this.setCreatedTime(user.getCreatedTime());
             this.setRemark(user.getRemark());
+            this.setPermissions(new HashSet<Permission>());
 
             if (user.getMerchant() != null) {
                 this.setMerchant(user.getMerchant());
@@ -48,11 +48,15 @@ public class SecurityUser extends User implements UserDetails {
                 }
             }
 
-            permissions = new HashSet<>();
+            // set user's permissions
+            if (user.getPermissions() != null) {
+                this.getPermissions().addAll(user.getPermissions());
+            }
+            // add user's roles' permission to permissions
             if (user.getRoles() != null) {
                 this.setRoles(user.getRoles());
                 for (Role role : user.getRoles()) {
-                    permissions.addAll(role.getPermissions());
+                    this.getPermissions().addAll(role.getPermissions());
                 }
             }
         }
