@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="claim.label" var="entity"/>
+<spring:message code="details.label" arguments="{entity}"/>
+
 
 <div class="container-fluid">
     <div class="row">
@@ -18,18 +20,11 @@
     <br>
 
     <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="payment-table">
-                            <thead>
-                            <tr>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="payment-table">
+                <thead>
+                <tr>
                                 <th><spring:message code="id.label"/></th>
                                 <th><spring:message code="orderNumber.label"/></th>
                                 <th><spring:message code="bankTransactionNumber.label"/></th>

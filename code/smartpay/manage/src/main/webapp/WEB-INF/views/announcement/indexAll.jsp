@@ -1,37 +1,41 @@
+<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<spring:message code="announcement.label" var="entity"/>
+<spring:message code="details.label" arguments="{entity}"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="${action}.label" arguments="${entity}"/>
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </li>
+        </ol>
+    </div>
+    <div class="row">
+        <div class="col-sm-2 pull-left">
+            <a href="${rootURL}announcement/create">
+                <button class="btn btn-default">
+                    <i class="glyphicon glyphicon-wrench"></i>
+                    <spring:message code="create.label" arguments="${entity}"/>
+                </button>
             </a>
         </div>
     </div>
-    <!-- reserved for notification -->
+    <br>
+
     <!-- close of content-header -->
-    <div class="container-fluid">
-        <!— actual content —>
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="announcement-table">
-                            <thead>
-                            <tr>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="announcement-table">
+                <thead>
+                <tr>
                                 <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="announcement.title.lable"/></th>
+                                <th><spring:message code="announcement.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="action.operation.label"/></th>
                             </tr>
@@ -57,10 +61,9 @@
             "paginationType": "full_numbers",
             "bAutoWidth":true,
             "order": [[0, "desc"]],
-            "jQueryUI": true,
             'dom': '<""if>rt<"F"lp>',
             'ajax': {
-                'url': "${rootURL}${controller}/list",
+                'url': "${rootURL}announcement/list/all",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -77,15 +80,16 @@
                 {
                     'name': 'operation', 'targets': 3, 'searchable': false, 'orderable': false,"sWidth": "15%",
                     'render': function (data, type, row) {
-                        return '<a href="' + "${rootURL}${controller}" + '/edit/'
-                                + row['id'] + '">' +
-                                '<button type="button" name="edit-button" class="tableButton"'
-                                + '">' + '<spring:message code="action.edit.label"/>'
-                                + '</button></a>' + ' '
-                                + '<button type="button" name="delete-button"'
-                                + ' class="tableButton" value="' + row['id'] + '">' +
-                                '<spring:message code="action.delete.label"/>' +
-                                '</button>';
+                        var operations = '<button type="button" name="edit-button" '
+                                + 'class="btn btn-default" value="' + row['id'] + '">'
+                                + '<spring:message code="action.edit.label"/>'
+                                + '</button>';
+                        operations += '<button type="button" name="delete-button" '
+                        + 'class="btn btn-default" value="' + row['id'] + '">'
+                        + '<spring:message code="action.delete.label"/>'
+                        + '</button>';
+                        return operations;
+
                     }
                 }
             ]

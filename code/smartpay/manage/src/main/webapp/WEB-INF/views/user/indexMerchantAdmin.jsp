@@ -256,7 +256,7 @@
                 type: 'get',
                 url: "${rootURL}user/edit",
                 data: {
-                    merchantId: this.value
+                    userId: this.value
                 },
                 error: function () {
                     alert('There was an error.');
