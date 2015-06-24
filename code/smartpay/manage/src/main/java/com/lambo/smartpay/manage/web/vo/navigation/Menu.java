@@ -2,6 +2,7 @@ package com.lambo.smartpay.manage.web.vo.navigation;
 
 import com.lambo.smartpay.core.persistence.entity.MenuCategory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class Menu implements Comparable<Menu> {
     public Menu(MenuCategory menuCategory) {
         name = menuCategory.getName();
         index = menuCategory.getIndex().intValue();
+        subMenus = new ArrayList<>();
     }
 
     /**

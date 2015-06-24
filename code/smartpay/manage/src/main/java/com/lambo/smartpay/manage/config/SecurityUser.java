@@ -32,22 +32,19 @@ public class SecurityUser extends User implements UserDetails {
             this.setMerchant(user.getMerchant());
             this.setActive(user.getActive());
             this.setUserStatus(user.getUserStatus());
+            this.setPermissions(new HashSet<Permission>());
 
             // set user's permissions
-            this.setPermissions(new HashSet<Permission>());
             if (user.getPermissions() != null) {
                 this.getPermissions().addAll(user.getPermissions());
             }
-            // we don't need to add user's roles to the permission,
-            // we are going with user-permission based access control,
-            // role is used as a mark
             // add user's roles' permission to permissions
-//            if (user.getRoles() != null) {
-//                this.setRoles(user.getRoles());
-//                for (Role role : user.getRoles()) {
-//                    this.getPermissions().addAll(role.getPermissions());
-//                }
-//            }
+            if (user.getRoles() != null) {
+                this.setRoles(user.getRoles());
+                for (Role role : user.getRoles()) {
+                    this.getPermissions().addAll(role.getPermissions());
+                }
+            }
         }
     }
 

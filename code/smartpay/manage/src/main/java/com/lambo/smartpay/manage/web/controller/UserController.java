@@ -46,9 +46,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by swang on 3/18/2015.
@@ -85,7 +87,6 @@ public class UserController {
     public String managePermission(Model model) {
 
         model.addAttribute("_view", "user/managePermission");
-        List<Permission> permissions = permissionService.getAll();
         return "main";
     }
 
@@ -93,6 +94,7 @@ public class UserController {
     public String showPermission(Model model) {
 
         model.addAttribute("_view", "user/showPermission");
+        //TODO Update to be user's real permissions
         List<Permission> permissions = permissionService.getAll();
         model.addAttribute("permissions", permissions);
         return "main";
@@ -109,13 +111,22 @@ public class UserController {
             throw new BadRequestException("400", e.getMessage());
         }
         model.addAttribute("user", user);
-        List<Permission> permissions = permissionService.getAll();
+        // pull out all permissions belonging to role admin
+        Role admin = null;
+        try {
+            admin = roleService.findByCode(ResourceProperties.ROLE_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+        Set<Permission> permissions = admin.getPermissions();
         List<String> permissionNames = new ArrayList<>();
         if (permissions != null && !permissions.isEmpty()) {
             for (Permission permission : permissions) {
                 permissionNames.add(permission.getName());
             }
         }
+        Collections.sort(permissionNames);
         model.addAttribute("permissions", permissionNames);
         UserPermissionCommand command = new UserPermissionCommand(user);
         model.addAttribute("userPermissionCommand", command);
@@ -133,9 +144,8 @@ public class UserController {
             e.printStackTrace();
             throw new BadRequestException("400", e.getMessage());
         }
-        if (user.getPermissions() == null) {
-            user.setPermissions(new HashSet<Permission>());
-        }
+        // reset user's permission
+        user.setPermissions(new HashSet<Permission>());
         for (String p : command.getPermissions()) {
             Permission permission = null;
             try {
