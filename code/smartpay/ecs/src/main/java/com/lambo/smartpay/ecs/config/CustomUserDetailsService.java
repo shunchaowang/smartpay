@@ -2,6 +2,9 @@ package com.lambo.smartpay.ecs.config;
 
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.service.UserService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,12 +20,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
+
     @Autowired
     private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username);
+        logger.debug("Login username: " + username);
+        if (StringUtils.isBlank(username)) {
+            throw new UsernameNotFoundException("Username is blank.");
+        }
+        String[] merUserStr = StringUtils.split(username, "/");
+        if (merUserStr.length != 2) {
+            throw new UsernameNotFoundException("Username format is illegal.");
+        }
+
+        User user = userService.findUserWithMerchantByUsername(merUserStr[1], merUserStr[0]);
         if (user == null) {
             throw new UsernameNotFoundException("Username " + username + " not found.");
         }
