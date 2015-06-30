@@ -8,57 +8,64 @@
 </head>
 <body>
 
-
-<div id="logo">
-    <img src="${rootURL}assets/images/login-logo.png" alt=""/>
-</div>
-
-<div id="loginbox">
-    <form id="loginform" class="form-vertical" action="${rootURL}login" method="post">
-        <div class="form-group normal_text">
-            <h3>
-                <spring:message code="login.title"/>
-            </h3>
-        </div>
-        <div class="form-group">
-            <div class="controls">
-                <div class="main_input_box">
-                    <span class="add-on"><i class="glyphicon glyphicon-user"></i></span>
-                    <input type="text" name="username" placeholder="Username"/>
+<div class="container">
+    <div id="logo" class="row">
+        <img src=""/>
+    </div>
+    <div id="notification" class="row">
+        <div class="col-sm-12">
+            <c:if test="${param.error != null}">
+                <div class="alert alert-danger">
+                    Invalid UserName and Password.
                 </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="controls">
-                <div class="main_input_box">
-                    <span class="add-on"><i class="glyphicon glyphicon-lock"></i></span>
-                    <input type="password" name="password" placeholder="Password"/>
+            </c:if>
+            <c:if test="${param.logout != null}">
+                <div class="alert alert-success">
+                    You have been logged out.
                 </div>
-            </div>
+            </c:if>
         </div>
+    </div>
+    <!-- end of notification -->
+    <div class="row">
+        <div class="col-sm-6" id="form-section">
+            <form id="login" class="form-horizontal" action="${rootURL}login" method="post">
 
-        <div class="form-actions">
-            <span class="pull-right"><input type="submit" class="btn btn-success"
-                                            value="Login"/></span>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <spring:message code="login.username.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <input type="text" name="username" class="form-control"
+                               placeholder="Username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        <spring:message code="login.password.label"/>
+                    </label>
+
+                    <div class="col-sm-4">
+                        <input type="password" name="password" class="form-control"
+                               placeholder="Password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-4">
+                        <button type="submit" class="btn btn-default">
+                            <spring:message code="login.label"/>
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-    </form>
+    </div>
 </div>
 
-<div class="col-sm-12">
-    <c:if test="${param.error != null}">
-        <div class="alert alert-danger">
-            Invalid UserName and Password.
-        </div>
-    </c:if>
-    <c:if test="${param.logout != null}">
-        <div class="alert alert-success">
-            You have been logged out.
-        </div>
-    </c:if>
-</div>
 
-<script src="${rootURL}assets/js/login.js"></script>
+<script type="application/javascript"></script>
+
 
 </body>
 </html>
