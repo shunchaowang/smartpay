@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="site.label" var="entity"/>
-<spring:message code="details.label" arguments="{entity}"/>
 
 
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>

@@ -21,14 +21,3 @@ automatically.
        value="/assets/vendor/DataTables-1.10.4/localization/messages_${currentLocale}.json"/>
 <c:url var="tableTools"
        value="${rootURL}assets/vendor/TableTools-2.2.3/swf/copy_csv_xls_pdf.swf"/>
-
-
-<c:if test="${action == null}">
-    <c:set var="action" value="index"/>
-</c:if>
-
-<c:set var="_view" value="${action}"/>
-
-<c:if test="${controller != null}">
-    <c:set var="_view" value="${controller}/${_view}"/>
-</c:if>

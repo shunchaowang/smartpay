@@ -137,7 +137,7 @@ public class SiteController {
         SiteCommand command = new SiteCommand();
         command.setIdentity(identity);
 
-        model.addAttribute("action", "create");
+        model.addAttribute("_view", "site/create");
         model.addAttribute("siteCommand", command);
         return "main";
     }
