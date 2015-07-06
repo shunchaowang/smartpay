@@ -41,33 +41,6 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${merchant}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}merchant/index/all">
-                                    <spring:message code="manage.label" arguments="${merchant}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}merchant/index/setting">
-                                    <spring:message code="manage.label" arguments="${transaction}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}merchant/index/archive">
-                                    <spring:message code="archive.label" arguments="${merchant}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- end of merchant management -->
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -104,20 +77,6 @@
                                     <spring:message code="manage.label" arguments="${operator}"/>
                                 </a>
                             </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}user/index/merchantAdmin">
-                                    <spring:message code="manage.label"
-                                                    arguments="${merchantAdmin}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}user/index/merchantOperator">
-                                    <spring:message code="manage.label"
-                                                    arguments="${merchantOperator}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
                             <li>
                                 <a href="${rootURL}user/manage/permission">
                                     <spring:message code="manage.label" arguments="${permission}"/>
@@ -184,12 +143,6 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="${rootURL}refund/audit">
-                                    <spring:message code="audit.label" arguments="${refund}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
                                 <a href="${rootURL}payment/index/archive">
                                     <spring:message code="archive.label" arguments="${payment}"/>
                                 </a>
@@ -216,8 +169,8 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}claim/audit">
-                                    <spring:message code="audit.label" arguments="${refuse}"/>
+                                <a href="${rootURL}claim/refuse">
+                                    <spring:message code="claim.label" arguments="${refuse}"/>
                                 </a>
                             </li>
                             <li class="divider"></li>
@@ -228,36 +181,6 @@
                             </li>
                         </ul>
                     </li>
-                    <!-- system management -->
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${system}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}announcement/index/all">
-                                    <spring:message code="manage.label"
-                                                    arguments="${announcement}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}log/index">
-                                    <spring:message code="index.label" arguments="${log}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}announcement/index/archive">
-                                    <spring:message code="archive.label"
-                                                    arguments="${announcement}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- system management -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                            aria-expanded="false">
@@ -323,224 +246,6 @@
         </div>
         <!-- end of container-fluid -->
     </nav>
-
-
-    <ul>
-        <!--    HOME    -->
-        <li>
-            <a href="${rootURL}"><i class="icon icon-home"></i>
-                            <span>
-                    <spring:message code="home.label"/>
-                            </span>
-            </a>
-        </li>
-
-        <!-- merchant admin menu ends -->
-
-        <li class="dropdown">
-            <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-               href="#"><i class="icon icon-refresh"></i>
-                            <span>
-                    <spring:message code="transaction.label"/>
-                    <b class="caret"></b>
-                            </span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-                <li class="">
-                    <a href="${rootURL}payment/index">
-                            <span> >>
-                            <spring:message code="info.label" arguments="${payment}"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}shipment/index">
-                            <span> >>
-                            <spring:message code="info.label" arguments="${shipment}"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}shipment/shipping">
-                            <span> >>
-                            <spring:message code="manage.label" arguments="${shipment}"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}refund/index">
-                            <span> >>
-                            <spring:message code="info.label" arguments="${refund}"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}refund/refund">
-                            <span> >>
-                            <spring:message code="manage.label" arguments="${refund}"/>
-                            </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <li class="dropdown">
-            <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-               href="#"><i class="icon icon-pencil"></i>
-                            <span>
-                            <spring:message code="manage.label" arguments="${site}"/>
-                            <b class="caret"></b>
-                            </span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-                <li class="">
-                    <a href="${rootURL}site/create">
-                            <span> >>
-                            <spring:message code="create.label" arguments="${site}"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}site/index">
-                            <span> >>
-                            <spring:message code="manage.label" arguments="${site}"/>
-                            </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-
-        <!-- merchant admin menu ends -->
-
-        <li class="dropdown">
-            <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-               href="#"><i class="icon icon-search"></i>
-                            <span>
-                    <spring:message code="info.count.label"/>
-                    <b class="caret"></b>
-                            </span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-                <li class="">
-                    <a href="${rootURL}count/currency">
-                            <span> >>
-                            <spring:message code="countBy.label" arguments="${currency}"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}count/site">
-                            <span> >>
-                            <spring:message code="countBy.label" arguments="${site}"/>
-                            </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-
-        <!-- merchant management goes here -->
-        <!-- merchant admin can view merchant detail -->
-        <!-- merchant operator cannot see merchant nav -->
-        <!-- merchant admin menu starts -->
-        <li class="dropdown">
-            <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-               href="#"><i class="icon icon-pencil"></i>
-                            <span>
-                            <spring:message code="manage.label" arguments="${merchant}"/>
-                            <b class="caret"></b>
-                            </span>
-            </a>
-
-            <ul class="dropdown-menu" role="menu">
-                <sec:authorize access="hasRole('ROLE_MERCHANT_ADMIN')">
-
-                    <li class="">
-                        <a href="${rootURL}user/create">
-                            <span> >>
-                            <spring:message code="create.label" arguments="${operator}"/>
-                            </span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="${rootURL}user/index">
-                            <span> >>
-                            <spring:message code="manage.label" arguments="${operator}"/>
-                            </span>
-                        </a>
-                    </li>
-                </sec:authorize>
-
-                <li class="">
-                    <a href="${rootURL}merchant/edit">
-                            <span> >>
-                            <spring:message code="edit.label" arguments="${merchant}"/>
-                            </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" role="button" data-toggle="dropdown"
-               data-target="#" href="#"><i class="icon icon-th-list"></i>
-                        <span>
-                        <spring:message code="manage.label" arguments="${complain}"/>
-                        <b class="caret"></b>
-                            </span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-                <!-- query claim -->
-                <li class="">
-                    <a href="${rootURL}claim/indexResolved">
-                                <span> >>
-                                    <spring:message code="info.label"
-                                                    arguments="${paymentRefused}"/>
-                                </span>
-                    </a>
-                </li>
-                <!-- claim claim -->
-                <li class="">
-                    <a href="${rootURL}claim/indexProcess">
-                                <span> >>
-                                    <spring:message code="claim.label"
-                                                    arguments="${paymentRefused}"/>
-                                </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-
-        <!-- merchant admin menu ends -->
-
-        <li class="dropdown">
-            <a class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#"
-               href="#"><i class="icon icon-cog"></i>
-                            <span>
-                    <spring:message code="user.setting.label"/>
-                    <b class="caret"></b>
-                            </span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-                <li class="">
-                    <a href="${rootURL}changePassword">
-                            <span> >>
-                            <spring:message code="user.change.password.label"/>
-                            </span>
-                    </a>
-                </li>
-                <li class="">
-                    <a href="${rootURL}profile">
-                            <span> >>
-                            <spring:message code="user.profile.label"/>
-                            </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-    </ul>
-
-
 </sec:authorize>
 <!-- end navbar-collapse -->
 <!-- end container-fluid -->

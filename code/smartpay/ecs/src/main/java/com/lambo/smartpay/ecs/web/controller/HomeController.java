@@ -102,6 +102,7 @@ public class HomeController {
         decimalFormat.applyPattern("###.##");
         command.setOrderAmount(Double.valueOf(decimalFormat.format(amount)));
         model.addAttribute("merchantCommand", command);
+        model.addAttribute("_view", "index");
 
         return "main";
     }

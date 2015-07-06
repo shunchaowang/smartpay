@@ -12,6 +12,7 @@ import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
+import com.lambo.smartpay.ecs.util.DataTablesParams;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
@@ -56,55 +57,31 @@ public class SiteController {
     @Autowired
     private SiteStatusService siteStatusService;
     @Autowired
-    private MerchantService merchantService;
-    @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "site";
-    }
+//    @ModelAttribute("siteStatuses")
+//    public List<SiteStatus> siteStatuses() {
+//        return siteStatusService.getAll();
+//    }
 
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Site";
-    }
-
-    @ModelAttribute("siteStatuses")
-    public List<SiteStatus> siteStatuses() {
-        return siteStatusService.getAll();
-    }
-
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "site/indexAll");
         return "main";
     }
 
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET,
+    @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {
 
-        // parse sorting column
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
+        DataTablesParams params = new DataTablesParams(request);
 
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
-
         List<Site> sites = null;
         Long recordsTotal;
         Long recordsFiltered;
@@ -113,12 +90,14 @@ public class SiteController {
         User currentUser = UserResource.getCurrentUser();
         siteCriteria.setMerchant(currentUser.getMerchant());
 
-        sites = siteService.findByCriteria(siteCriteria, search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+        sites = siteService.findByCriteria(siteCriteria,params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
 
         // count total records and filtered records
         recordsTotal = siteService.countByCriteria(siteCriteria);
-        recordsFiltered = siteService.countByCriteria(siteCriteria, search);
+        recordsFiltered = siteService.countByCriteria(siteCriteria, params.getSearch());
 
         if (sites == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
