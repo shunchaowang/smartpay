@@ -7,7 +7,6 @@ import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.Site;
 import com.lambo.smartpay.core.persistence.entity.SiteStatus;
 import com.lambo.smartpay.core.persistence.entity.User;
-import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
@@ -21,7 +20,6 @@ import com.lambo.smartpay.ecs.web.vo.SiteCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesSite;
 import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +88,7 @@ public class SiteController {
         User currentUser = UserResource.getCurrentUser();
         siteCriteria.setMerchant(currentUser.getMerchant());
 
-        sites = siteService.findByCriteria(siteCriteria,params.getSearch(),
+        sites = siteService.findByCriteria(siteCriteria, params.getSearch(),
                 Integer.valueOf(params.getOffset()),
                 Integer.valueOf(params.getMax()), params.getOrder(),
                 ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
@@ -204,7 +202,7 @@ public class SiteController {
             throw new BadRequestException("400", "User " + id + " not found.");
         }
 
-        SiteCommand siteCommand = createSiteCommand(site);
+        SiteCommand siteCommand = new SiteCommand(site);
 
         model.addAttribute("siteCommand", siteCommand);
         model.addAttribute("action", "edit");
@@ -276,32 +274,11 @@ public class SiteController {
             e.printStackTrace();
             throw new BadRequestException("400", "Site  " + id + " not found.");
         }
-        SiteCommand siteCommand = createSiteCommand(site);
+        SiteCommand siteCommand = new SiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
 
         model.addAttribute("action", "show");
         return "main";
-    }
-
-    // create SiteCommand from User
-    private SiteCommand createSiteCommand(Site site) {
-        //
-        SiteCommand SiteCommand = new SiteCommand();
-        //
-        SiteCommand.setId(site.getId());
-        SiteCommand.setIdentity(site.getIdentity());
-        SiteCommand.setName(site.getName());
-        SiteCommand.setUrl(site.getUrl());
-        SiteCommand.setCreatedTime(site.getCreatedTime());
-        SiteCommand.setRemark(site.getRemark());
-        SiteCommand.setActive(site.getActive());
-
-
-        if (site.getSiteStatus() != null) {
-            SiteCommand.setSiteStatusId(site.getSiteStatus().getId());
-            SiteCommand.setSiteStatusName(site.getSiteStatus().getName());
-        }
-        return SiteCommand;
     }
 
     // create SiteCommand from User
