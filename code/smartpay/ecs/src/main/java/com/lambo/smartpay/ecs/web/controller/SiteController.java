@@ -149,48 +149,47 @@ public class SiteController {
         // message locale
         Locale locale = LocaleContextHolder.getLocale();
         //TODO verify required fields
-        // check uniqueness
-        if (siteService.findByIdentity(siteCommand.getIdentity()) != null) {
-            String fieldLabel = messageSource.getMessage("identity.label", null, locale);
-            model.addAttribute("message",
-                    messageSource.getMessage("not.unique.message",
-                            new String[]{fieldLabel, siteCommand.getName()}, locale));
-            model.addAttribute("siteCommand", siteCommand);
-            model.addAttribute("action", "create");
+        Long count = siteService.countAll();
+        String identity = "S" + String.format("%07d", count);
+        while (siteService.findByIdentity(identity) != null) {
+            count++;
+            identity = "S" + String.format("%07d", count);
         }
+        siteCommand.setIdentity(identity);
+        // check uniqueness
         if (siteService.findByUrl(siteCommand.getUrl()) != null) {
             String fieldLabel = messageSource.getMessage("site.url.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, siteCommand.getName()}, locale));
             model.addAttribute("siteCommand", siteCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("_view", "site/create");
         }
 
         Site site = createSite(siteCommand);
         try {
             siteService.create(site);
-            String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+            String fieldLabel = messageSource.getMessage("site.label", null, locale);
             attributes.addFlashAttribute("message",
                     messageSource.getMessage("created.message",
                             new String[]{fieldLabel, site.getName() + site.getUrl()}, locale));
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+            String fieldLabel = messageSource.getMessage("site.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("created.message",
                             new String[]{fieldLabel, site.getName() + site.getUrl()}, locale));
             throw new IntervalServerException("500", e.getMessage());
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            String fieldLabel = messageSource.getMessage("Site.label", null, locale);
+            String fieldLabel = messageSource.getMessage("site.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("created.message",
                             new String[]{fieldLabel, site.getName() + site.getUrl()}, locale));
             throw new IntervalServerException("500", e.getMessage());
         }
 
-        return "redirect:/site/index";
+        return "redirect:/site/index/all";
 
     }
 
@@ -332,6 +331,7 @@ public class SiteController {
         site.setIdentity(siteCommand.getIdentity());
         site.setName(siteCommand.getName());
         site.setUrl(siteCommand.getUrl());
+        site.setReturnUrl(siteCommand.getReturnUrl());
         site.setSiteStatus(siteStatus);
         site.setActive(true);
         site.setRemark(siteCommand.getRemark());
