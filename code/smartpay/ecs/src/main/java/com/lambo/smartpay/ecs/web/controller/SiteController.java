@@ -20,6 +20,7 @@ import com.lambo.smartpay.ecs.web.vo.SiteCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesSite;
 import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -188,48 +190,59 @@ public class SiteController {
         }
 
         return "redirect:/site/index/all";
-
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") Long id, Model model) {
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public ModelAndView edit(HttpServletRequest request) {
 
-        Site site;
+        String siteId = request.getParameter("siteId");
+        if (StringUtils.isBlank(siteId)) {
+            throw new BadRequestException("400", "Site id is blank.");
+        }
+        Long id = Long.valueOf(siteId);
+        Site site = null;
         try {
             site = siteService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "User " + id + " not found.");
+            throw new BadRequestException("400", "Site " + id + " not found.");
         }
 
         SiteCommand siteCommand = new SiteCommand(site);
-
-        model.addAttribute("siteCommand", siteCommand);
-        model.addAttribute("action", "edit");
-        return "main";
+        ModelAndView view = new ModelAndView("site/_editDialog");
+        view.addObject("siteCommand", siteCommand);
+        return view;
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String edit(Model model,
-                       @ModelAttribute("siteCommand") SiteCommand siteCommand) {
+    @RequestMapping(value = "/edit", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String update(HttpServletRequest request) {
 
-        model.addAttribute("siteCommand", siteCommand);
-
-        // message locale
+        JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        Site site = createSite(siteCommand);
-
+        String label = messageSource.getMessage("site.label", null, locale);
+        Site site = editSite(request);
         try {
-            siteService.update(site);
-        } catch (MissingRequiredFieldException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
+            site = siteService.update(site);
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            throw new IntervalServerException("500", e.getMessage());
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, site.getIdentity()}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label, site.getIdentity()}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
         }
 
-        return "redirect:/site/index";
+        String message = messageSource.getMessage("saved.message",
+                new String[]{label, site.getIdentity()}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST,
@@ -277,7 +290,7 @@ public class SiteController {
         SiteCommand siteCommand = new SiteCommand(site);
         model.addAttribute("siteCommand", siteCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "site/show");
         return "main";
     }
 
@@ -313,6 +326,22 @@ public class SiteController {
         site.setActive(true);
         site.setRemark(siteCommand.getRemark());
 
+        return site;
+    }
+
+    private Site editSite(HttpServletRequest request) {
+
+        Site site = null;
+        try {
+            site = siteService.get(Long.valueOf(request.getParameter("id")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        site.setName(request.getParameter("name"));
+        site.setReturnUrl(request.getParameter("returnUrl"));
+        site.setUrl(request.getParameter("url"));
+        site.setRemark(request.getParameter("remark"));
         return site;
     }
 }

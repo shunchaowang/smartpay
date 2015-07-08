@@ -47,33 +47,6 @@
                                    required="" value="${siteCommand.url}"/>
                         </div>
                     </div>
-                    <!-- site status -->
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label" for="siteStatusId">
-                            <span class="required-indicator">*</span>
-                            <spring:message code="status.label"/>
-                        </label>
-
-                        <div class="col-sm-4">
-                            <select id="siteStatusId" class="form-control" name="siteStatusId"
-                                    required="" value="${siteCommand.siteStatusId}">
-                                <c:forEach items="${siteStatuses}" var="status">
-                                    <c:choose>
-                                        <c:when test="${status.id == siteCommand.siteStatusId}">
-                                            <option value="${status.id}" selected>
-                                                    ${status.name}
-                                            </option>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <option value="${status.id}">
-                                                    ${status.name}
-                                            </option>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="remark">
                             <spring:message code="remark.label"/>
@@ -115,8 +88,7 @@
             rules: {
                 name: {required: true, minlength: 3, maxlength: 32},
                 returnUrl: {required: true, minlength: 3, maxlength: 32},
-                url: {required: true, minlength: 3, maxlength: 32},
-                siteStatusId: {required: true}
+                url: {required: true, minlength: 3, maxlength: 32}
             }
         });
     });

@@ -49,7 +49,9 @@ public class SiteCommand {
         name = site.getName();
         returnUrl = site.getReturnUrl();
         url = site.getUrl();
-        createdTime = dateFormat.format(site.getCreatedTime());
+        if (site.getCreatedTime() != null) {
+            createdTime = dateFormat.format(site.getCreatedTime());
+        }
         remark = site.getRemark();
         active = site.getActive();
 

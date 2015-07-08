@@ -46,14 +46,22 @@ public class SiteCommand {
         name = site.getName();
         url = site.getUrl();
         returnUrl = site.getReturnUrl();
-        createdTime = dateFormat.format(site.getCreatedTime());
-        updatedTime = dateFormat.format(site.getUpdatedTime());
+        if (site.getCreatedTime() != null) {
+            createdTime = dateFormat.format(site.getCreatedTime());
+        }
+        if (site.getUpdatedTime() != null) {
+            updatedTime = dateFormat.format(site.getUpdatedTime());
+        }
         remark = site.getRemark();
         active = site.getActive();
 
         if (site.getSiteStatus() != null) {
             siteStatusId = site.getSiteStatus().getId();
             siteStatusName = site.getSiteStatus().getName();
+        }
+        if (site.getMerchant() != null) {
+            merchant = site.getMerchant().getId();
+            merchantName = site.getMerchant().getName();
         }
     }
 

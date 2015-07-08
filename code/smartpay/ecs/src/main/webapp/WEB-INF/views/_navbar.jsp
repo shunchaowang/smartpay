@@ -17,7 +17,7 @@
     <spring:message code='currency.label' var="currency"/>
     <spring:message code='complain.label' var="complain"/>
     <spring:message code='refuse.label' var="refuse"/>
-
+    <spring:message code='permission.label' var="permission"/>
 
 
     <nav class="navbar navbar-default navbar-fixed-top">
