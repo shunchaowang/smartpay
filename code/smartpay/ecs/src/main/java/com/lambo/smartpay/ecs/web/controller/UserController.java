@@ -14,6 +14,7 @@ import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
+import com.lambo.smartpay.ecs.util.DataTablesParams;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
@@ -70,75 +71,61 @@ public class UserController {
     @Autowired
     private MessageSource messageSource;
 
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "user";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "User";
-    }
-
-    @ModelAttribute("userStatuses")
-    public List<UserStatus> userStatuses() {
-        return userStatusService.getAll();
-    }
-
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
-
+    @RequestMapping(value = {"/index/operator"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "user/indexOperator");
         return "main";
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/operator", method = RequestMethod.GET)
     public
     @ResponseBody
     String list(HttpServletRequest request) {
 
-        String orderIndex = request.getParameter("order[0][column]");
-        String order = request.getParameter("columns[" + orderIndex + "][name]");
-
-        // parse sorting direction
-        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
-
-        // parse search keyword
-        String search = request.getParameter("search[value]");
-
-        // parse pagination
-        Integer start = Integer.valueOf(request.getParameter("start"));
-        Integer length = Integer.valueOf(request.getParameter("length"));
-
-        if (start == null || length == null || order == null || orderDir == null) {
-            throw new BadRequestException("400", "Bad Request.");
+        // exclude current user
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            return "403";
+        }
+        if (securityUser.getMerchant() == null) {
+            return "403";
         }
 
-
-        //Merchant admin can only view the users belonged to this merchant
-        SecurityUser principal = UserResource.getCurrentUser();
-        if (principal.getMerchant() == null) {
-            throw new BadRequestException("400", "User doesn't have merchant.");
-        }
-        User userCriteria = new User();
-        userCriteria.setMerchant(principal.getMerchant());
-        // create Role object for query criteria
-        Role criteriaRole;
+        Role merchantOperatorRole = null;
         try {
-            criteriaRole = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
+            merchantOperatorRole = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_OPERATOR_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", "No role found.");
         }
+
+        // formulate criteria query
+        // if active == false means archive, no role
+        // support ad hoc search on username only
+        // support order on id and createdTime only
+        User userCriteria = new User();
+        userCriteria.setActive(true);
         userCriteria.setRoles(new HashSet<Role>());
-        userCriteria.getRoles().add(criteriaRole);
-        List<User> users = userService.findByCriteria(userCriteria, search, start, length, order,
-                ResourceProperties.JpaOrderDir.valueOf(orderDir));
+        userCriteria.getRoles().add(merchantOperatorRole);
+        userCriteria.setMerchant(securityUser.getMerchant());
+
+        DataTablesParams params = new DataTablesParams(request);
+        if (params.getOffset() == null || params.getMax() == null
+                || params.getOrder() == null || params.getOrderDir() == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        List<User> users = userService.findByCriteria(
+                userCriteria,
+                params.getSearch(),
+                Integer.valueOf(params.getOffset()),
+                Integer.valueOf(params.getMax()), params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
 
         // count total records
         Long recordsTotal = userService.countByCriteria(userCriteria);
         // count records filtered
-        Long recordsFiltered = userService.countByCriteria(userCriteria, search);
+        Long recordsFiltered = userService.countByCriteria(userCriteria, params.getSearch());
 
         if (users == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
@@ -166,9 +153,10 @@ public class UserController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
+    @RequestMapping(value = "/create/operator", method = RequestMethod.GET)
     public String create(Model model) {
-        model.addAttribute("action", "create");
+        model.addAttribute("_view", "user/createOperator");
+        model.addAttribute("userStatuses", userStatusService.getAll());
         model.addAttribute("userCommand", new UserCommand());
         return "main";
     }
