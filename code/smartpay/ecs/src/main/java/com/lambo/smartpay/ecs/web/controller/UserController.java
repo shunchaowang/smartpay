@@ -161,7 +161,7 @@ public class UserController {
         return "main";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/create/operator", method = RequestMethod.POST)
     public String save(Model model, RedirectAttributes attributes,
                        @ModelAttribute("userCommand") UserCommand userCommand) {
         // get merchant operator role
@@ -182,7 +182,8 @@ public class UserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("userStatuses", userStatusService.getAll());
+            model.addAttribute("_view", "user/create/operator");
             return "main";
         }
         // check if email already taken
@@ -193,7 +194,8 @@ public class UserController {
                     messageSource.getMessage("not.unique.message",
                             new String[]{fieldLabel, userCommand.getEmail()}, locale));
             model.addAttribute("userCommand", userCommand);
-            model.addAttribute("action", "create");
+            model.addAttribute("userStatuses", userStatusService.getAll());
+            model.addAttribute("_view", "user/create/operator");
             return "main";
         }
         //TODO check if all required fields filled
@@ -227,7 +229,7 @@ public class UserController {
                 messageSource.getMessage("created.message",
                         new String[]{fieldLabel, user.getUsername()}, locale));
 
-        return "redirect:/user/index";
+        return "redirect:/user/index/operator";
     }
 
     /**
