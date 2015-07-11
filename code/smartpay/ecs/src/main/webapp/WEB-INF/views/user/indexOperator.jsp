@@ -100,7 +100,7 @@
                     'name': 'username', 'targets': 1, 'data': 'username',
                     'orderable': false,
                     'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}user" + '/show/operator/'
+                        return '<a href=' + "${rootURL}user" + '/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }
                 },
