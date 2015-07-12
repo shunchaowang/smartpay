@@ -660,6 +660,7 @@ public class HomeController {
         // create payment object
         PaymentCommand paymentCommand = createPaymentCommand(request, order);
         Payment payment = createPayment(paymentCommand);
+        ;
 
         // create ITFPay params and make the pay request
         List<BasicNameValuePair> params = formulateITFpayParams(paymentCommand, orderCommand, request);
@@ -692,6 +693,9 @@ public class HomeController {
         payment.setBankReturnCode(bankCode);
 //        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
 
+        if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
+            payment.setFee(merchant.getCommissionFee().getValue());
+        else payment.setFee(payment.getAmount() * merchant.getCommissionFee().getValue() /10*10);
         String succeed = "0";
         String paymentStatusCode = "501";
         if (returnCode[1].equals("00")) {
@@ -708,6 +712,7 @@ public class HomeController {
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
         }
+        payment.setUpdatedTime(Calendar.getInstance().getTime());
 
         PaymentStatus paymentStatus = null;
         try {
@@ -992,6 +997,12 @@ public class HomeController {
         paymentCommand.setBillState(formatString(request.getParameter("billState")));
         paymentCommand.setBillZipCode(formatString(request.getParameter("billZipCode")));
         paymentCommand.setBillCountry(formatString(request.getParameter("billCountry")));
+        String clientIp = request.getHeader("X-FORWARDED-FOR");
+        if (clientIp == null) {
+            clientIp = request.getRemoteAddr();
+        }
+        paymentCommand.setPaymentClientIp(clientIp);
+
 
         return paymentCommand;
     }
@@ -1036,6 +1047,7 @@ public class HomeController {
         payment.setBillState(paymentCommand.getBillState());
         payment.setBillCountry(paymentCommand.getBillCountry());
         payment.setBillZipCode(paymentCommand.getBillZipCode());
+        payment.setClientIp(paymentCommand.getPaymentClientIp());
 
         PaymentType paymentType;
         String paymentTypeCode = "100";

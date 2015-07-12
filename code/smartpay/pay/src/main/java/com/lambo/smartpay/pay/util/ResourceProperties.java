@@ -29,4 +29,6 @@ public abstract class ResourceProperties {
     public static final String CURRENCY_USD_NAME ="USD";
     public static final String CURRENCY_RMB_NAME ="RMB";
 
+    public static final String FEE_TYPE_STATIC_CODE ="100";
+
 }
