@@ -54,13 +54,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by swang on 3/11/2015.
@@ -625,6 +623,284 @@ public class HomeController {
         return "pay";
     }
 
+    /**
+     * ITF payment action.
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/ITFPay", method = RequestMethod.POST,
+            produces = "text/plain;charset=UTF-8")
+    public
+    @ResponseBody
+    String ITFPay(HttpServletRequest request){
+        PayUtil payUtil = new PayUtil();
+
+        if (!payUtil.validateRequestParams(request)) {
+            return "404. Missing Required Params.";
+        }
+
+        if (!payUtil.ifAllow(request)) {
+            return "403. Operation Not Allowed.";
+        }
+
+        if (!payUtil.validateMd5(request)) {
+            return "403. MD5 Checking Error.";
+        }
+
+        // if order status is already paid, don't allow duplicated submission
+        if (payUtil.isPaid(request)) {
+            return "403. Do Not Allow Duplicated Submission.";
+        }
+        OrderCommand orderCommand = createOrderCommand(request);
+        // create order
+        Order order = payUtil.initiateOrder(request);
+        Merchant merchant = merchantService.findByIdentity(orderCommand.getMerNo());
+        String merchantKey = merchant.getEncryption().getKey();
+        // create payment object
+        PaymentCommand paymentCommand = createPaymentCommand(request, order);
+        Payment payment = createPayment(paymentCommand);
+
+        // create ITFPay params and make the pay request
+        List<BasicNameValuePair> params = formulateITFpayParams(paymentCommand, orderCommand, request);
+
+        String stringFromBase = ITFpay(params);
+        logger.debug("Decoded Base64 String: " + stringFromBase);
+        //Parameter1  交易号  CHAR(50)
+        //Parameter2  订单号  CHAR(50)
+        //Parameter3  查询交易号    CHAR(50)
+        //Parameter4  返回的 code  CHAR(32)
+        //Parameter5  返回的信息  CHAR(500)
+        //Parameter6  返回货币代码  CHAR(4)
+        //Parameter7  订单金额  Decimal(18,2)
+        //Parameter8  加密数据  CHAR(500)
+        //Parameter9  返回金额  Decimal(18,2)  人民币
+        //Parameter10  返回交易时间  CHAR(20)  YYYYMMDDHHMMSS
+        // initial return parameter
+        String[] strReturn = stringFromBase.split("&");
+        String[] returnTradeNo = strReturn[1].split("=");
+        String[] returnPayNo = strReturn[2].split("=");
+        String[] returnCode = strReturn[3].split("=");
+        String[] returnBankInfo = strReturn[4].split("=");
+        String[] returnAmount = strReturn[8].split("=");
+
+        // SUCCEED CHECK
+        String payTranNo = returnPayNo[1]; // this will be bank transaction number
+        logger.info("Pay gateway transaction number " + payTranNo);
+        payment.setBankTransactionNumber(payTranNo);
+        String bankCode = returnBankInfo[1];
+        payment.setBankReturnCode(bankCode);
+//        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
+
+        String succeed = "0";
+        String paymentStatusCode = "501";
+        if (returnCode[1].equals("00")) {
+            succeed = "1"; // 交易成功
+            paymentStatusCode = "500";
+            payment.setSuccessTime(Calendar.getInstance().getTime());
+            OrderStatus paidOrderStatus = null;
+            try {
+                paidOrderStatus = orderStatusService
+                        .findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot find paid order status.");
+            }
+            payment.getOrder().setOrderStatus(paidOrderStatus);
+        }
+
+        PaymentStatus paymentStatus = null;
+        try {
+            paymentStatus = paymentStatusService.findByCode(paymentStatusCode);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        payment.setPaymentStatus(paymentStatus);
+
+        // save payment object
+        try {
+            payment = paymentService.create(payment);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
+                + orderCommand.getOrderNo().substring(8) + orderCommand.getAmount()
+                + orderCommand.getCurrency() + succeed);
+
+        String result = "succeed=" + succeed + "&amount=" + orderCommand.getAmount()
+                + "&orderNo=" + orderCommand.getOrderNo().substring(8)
+                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
+                + "&md5info=" + calculatedMd5Info;
+        logger.debug("ITFPay result:"+result);
+        return result;
+    }
+
+
+    private String ITFpay(List<BasicNameValuePair> params) {
+        String result = "";
+        // properties params
+        // params obtained from properties
+        String payUrl = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_URL_KEY);
+
+        HttpPost httpPost = new HttpPost(payUrl);
+        try {
+            httpPost.setEntity(new UrlEncodedFormEntity(params));
+            logger.debug("request string:"+httpPost.getEntity().toString());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpResponse httpResponse = null;
+        try {
+            httpResponse = httpClient.execute(httpPost);
+            logger.info("ITFPay return " + httpResponse.getStatusLine());
+            result = EntityUtils.toString(httpResponse.getEntity());
+            EntityUtils.consume(httpResponse.getEntity());
+            httpResponse.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        try {
+            httpResponse.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        return result;
+    }
+
+    private List<BasicNameValuePair> formulateITFpayParams(PaymentCommand paymentCommand,
+                                                           OrderCommand orderCommand,
+                                                           HttpServletRequest request) {
+        List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
+
+        //AcctNo 交易号 必填
+        String AcctNo = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_ACCTNO_KEY);
+        pairs.add(new BasicNameValuePair("AcctNo", AcctNo));
+        //Agent_AcctNo 商户交易号 必填
+        String Agent_AcctNo = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_AGENT_ACCTNO_KEY);
+        pairs.add(new BasicNameValuePair("Agent_AcctNo", Agent_AcctNo));
+        //OrderID 订单号 （不允许重复大于 10 位）商户的订单号，必填项目
+        String OrderID = orderCommand.getOrderNo();
+        pairs.add(new BasicNameValuePair("OrderID", OrderID));
+        //CurrCode 货币代码 必填项目 CurrCode  =840  代表美元
+        String CurrCode = getCurrCode(orderCommand.getCurrency());
+        pairs.add(new BasicNameValuePair("CurrCode", CurrCode));
+        //Amount 商家交易的金额（以分为单位上传，不保留小数点）,必填项目
+        String Amount = BigDecimal.valueOf(Double.parseDouble(orderCommand.getAmount())).multiply(new BigDecimal(100)).toString();
+        if(Amount.indexOf(".")>0) Amount = Amount.substring(0,Amount.indexOf("."));
+        pairs.add(new BasicNameValuePair("Amount", Amount));
+        //IPAddress 持卡人的 IP 地址  必填
+        String clientIp = request.getHeader("X-FORWARDED-FOR");
+        if (clientIp == null) {
+            clientIp = request.getRemoteAddr();
+        }
+        logger.debug("Client ip is " + clientIp);
+        pairs.add(new BasicNameValuePair("IPAddress", clientIp));
+        //CardType 卡种 必填
+        pairs.add(new BasicNameValuePair("CardType", paymentCommand.getBankName()));
+        //CardPAN 卡号 必填
+        pairs.add(new BasicNameValuePair("CardPAN", paymentCommand.getBankAccountNumber()));
+        //CName 持卡人姓名 必填
+        String CNname = paymentCommand.getBillFirstName()+" "+ paymentCommand.getBillLastName();
+        pairs.add(new BasicNameValuePair("CName", CNname.getBytes().length <= 16 ? CNname:CNname.substring(0, 16)));
+        //ExpDate 有效期 必填
+        pairs.add(new BasicNameValuePair("ExpDate", paymentCommand.getExpireYear().substring(2)+paymentCommand.getExpireMonth()));
+        //CVV2 卡背面的三位 必填
+        pairs.add(new BasicNameValuePair("CVV2", paymentCommand.getCvv()));
+        //Issuer 发卡行
+        pairs.add(new BasicNameValuePair("Issuer", paymentCommand.getBankName()));
+        //IssCountry 账单国家 必填
+        pairs.add(new BasicNameValuePair("IssCountry", paymentCommand.getBillCountry()));
+        //BAddress 账单地址 必填
+        pairs.add(new BasicNameValuePair("BAddress", paymentCommand.getBillAddress1()));
+        //BCity 账单城市 必填
+        pairs.add(new BasicNameValuePair("BCity", paymentCommand.getBillCity()));
+        //PostCode 账单邮编必填
+        pairs.add(new BasicNameValuePair("PostCode", paymentCommand.getBillZipCode()));
+        //IVersion 版本号 必填项目（默认 V5.0）
+        String ver = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_VER_KEY);
+        pairs.add(new BasicNameValuePair("IVersion", ver));
+        //Telephone 持卡人电话 必填
+        pairs.add(new BasicNameValuePair("Telephone", orderCommand.getPhone()));
+        //RetURL 持卡人购物的网站 必填项目（不带 http 和后缀）
+        pairs.add(new BasicNameValuePair("RetURL", orderCommand.getReferer()));
+        //Email 邮箱地址 必填
+        pairs.add(new BasicNameValuePair("Email", orderCommand.getEmail()));
+
+        //HashValue 代理商加密数据 必填项目  HashValue    = MD5(Md5Key + AcctNo + OrderID + Amount +  CurrCode)
+        String szHashValue = "";
+        String Md5Key = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_MD5_KEY);
+        String sz_Key = Md5Key + AcctNo + OrderID + Amount + CurrCode;
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            sun.misc.BASE64Encoder baseEncoder = new sun.misc.BASE64Encoder();
+            szHashValue = baseEncoder.encode(md5.digest(sz_Key.getBytes("utf-8")));
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("数据签名失败----", e);
+        } catch (UnsupportedEncodingException e) {
+            logger.error("数据签名失败----", e);
+        }
+        pairs.add(new BasicNameValuePair("HashValue",szHashValue));
+        //BrowserDate浏览器时间
+        pairs.add(new BasicNameValuePair("BrowserDate", ""));
+        //BrowserDateTimezone 时区
+        pairs.add(new BasicNameValuePair("BrowserDateTimezone", ""));
+        //BrowserUserAgent BrowserUserAgent 必填
+        String BrowserUserAgent = request.getHeader("User-Agent");
+        logger.debug("User agent is " + BrowserUserAgent);
+        if (BrowserUserAgent == null) {
+            BrowserUserAgent = "Mozilla/5.0";
+        }
+        pairs.add(new BasicNameValuePair("BrowserUserAgent", BrowserUserAgent));
+        //BrowserName  浏览器名称  CHAR(32)
+        pairs.add(new BasicNameValuePair("BrowserName", BrowserUserAgent.getBytes().length <=32 ? BrowserUserAgent:BrowserUserAgent.substring(0, 32)));
+        //BrowserLanguage  浏览器语言  CHAR(50)
+        String BrowserLanguage = request.getHeader("Accept-Language");
+        if (BrowserLanguage == null) {
+            BrowserLanguage = "en_US";
+        }
+        pairs.add(new BasicNameValuePair("BrowserLanguage", BrowserLanguage));
+        //BrowserSystemLanguage 浏览器系统语言  CHAR(50)
+        Locale locale = request.getLocale();
+        String BrowserSystemLanguage = locale.getLanguage();
+        pairs.add(new BasicNameValuePair("BrowserSystemLanguage", BrowserSystemLanguage));
+        //Resolution  分辨率  CHAR(20)
+        pairs.add(new BasicNameValuePair("Resolution", ""));
+        //CommodityBrand  品牌  CHAR(100)  必填项目
+        pairs.add(new BasicNameValuePair("CommodityBrand", orderCommand.getProductType()));
+        //ShipName  收货名称  CHAR(50)  必填项目
+        pairs.add(new BasicNameValuePair("ShipName", orderCommand.getGoodsName()));
+        //ShipAddress  地址  CHAR(200)  必填项目
+        pairs.add(new BasicNameValuePair("ShipAddress", orderCommand.getShipAddress()));
+        //ShipCity  城市  CHAR(30)  必填项目
+        pairs.add(new BasicNameValuePair("ShipCity", orderCommand.getShipCity()));
+        //Shipstate  州  CHAR(30)  必填项目
+        pairs.add(new BasicNameValuePair("Shipstate", orderCommand.getShipState()));
+        //ShipCountry  国家  CHAR(30)  必填项目
+        pairs.add(new BasicNameValuePair("ShipCountry", orderCommand.getShipCountry()));
+        //ShipPostCode  邮编  CHAR(20)  必填项目
+        pairs.add(new BasicNameValuePair("ShipPostCode", orderCommand.getShipZipCode()));
+        //Shipphone  电话  CHAR(20)  必填项目
+        pairs.add(new BasicNameValuePair("Shipphone", orderCommand.getPhone()));
+        //CMSName  框架名称  CHAR(20)
+        pairs.add(new BasicNameValuePair("CMSName", ""));
+        //TxnType  01 代表消费 CHAR（20）  必填
+        pairs.add(new BasicNameValuePair("TxnType", "01"));
+
+        return pairs;
+    }
+
+
     // for 403 access denied page
     @RequestMapping(value = "403", method = RequestMethod.GET)
     public ModelAndView accessDenied() {
@@ -642,9 +918,11 @@ public class HomeController {
 
     private OrderCommand createOrderCommand(HttpServletRequest request) {
         OrderCommand orderCommand = new OrderCommand();
-        orderCommand.setOrderNo(request.getParameter("orderNo"));
+        orderCommand.setSiteNo(formatString((String) request.getAttribute("siteNo")));
+        String referer = formatString(request.getParameter("referer"));
+        Site site = siteService.findByUrl(referer);
+        orderCommand.setOrderNo(formatString(site.getIdentity() + request.getParameter("orderNo")));
         orderCommand.setMerNo(request.getParameter("merNo"));
-        orderCommand.setSiteNo(request.getParameter("siteNo"));
         orderCommand.setReturnUrl(request.getParameter("returnURL"));
         DecimalFormat decimalFormat = new DecimalFormat("###.00");
         String amount = request.getParameter("amount");
@@ -689,6 +967,35 @@ public class HomeController {
         orderCommand.setRemark(request.getParameter("remark"));
         return orderCommand;
     }
+
+    PaymentCommand createPaymentCommand(HttpServletRequest request, Order order) {
+
+        // bank return code, success time and payment status need to be set after payment
+        Date date = Calendar.getInstance().getTime();
+        PaymentCommand paymentCommand = new PaymentCommand();
+        paymentCommand.setBankName(formatString(request.getParameter("bankName")));
+        paymentCommand
+                .setBankAccountNumber(formatString(request.getParameter("bankAccountNumber")));
+        paymentCommand.setExpireMonth(formatString(request.getParameter("expireMonth")));
+        paymentCommand.setExpireYear(formatString(request.getParameter("expireYear")));
+        paymentCommand.setCvv(formatString(request.getParameter("cvv")));
+
+        paymentCommand.setOrderId(order.getId()); // set payment command order id
+        paymentCommand.setAmount(order.getAmount()); // set payment command order amount
+        paymentCommand.setCurrencyName(order.getCurrency().getName()); // set currency name
+
+        paymentCommand.setPayMethod(formatString(request.getParameter("payMethod")));
+        paymentCommand.setBillFirstName(formatString(request.getParameter("billFirstName")));
+        paymentCommand.setBillLastName(formatString(request.getParameter("billLastName")));
+        paymentCommand.setBillAddress1(formatString(request.getParameter("billAddress1")));
+        paymentCommand.setBillCity(formatString(request.getParameter("billCity")));
+        paymentCommand.setBillState(formatString(request.getParameter("billState")));
+        paymentCommand.setBillZipCode(formatString(request.getParameter("billZipCode")));
+        paymentCommand.setBillCountry(formatString(request.getParameter("billCountry")));
+
+        return paymentCommand;
+    }
+
 
     Payment createPayment(PaymentCommand paymentCommand) {
 
@@ -888,26 +1195,6 @@ public class HomeController {
     private class PayUtil {
 
         private Logger logger = LoggerFactory.getLogger(PayUtil.class);
-//
-//    @Autowired
-//    private MerchantService merchantService;
-//    private SiteService siteService;
-//    private OrderService orderService;
-//    private OrderStatusService orderStatusService;
-//    private CustomerService customerService;
-//    private CurrencyService currencyService;
-//    private CustomerStatusService customerStatusService;
-
-//        private static PayUtil instance = null;
-//
-//        public static PayUtil getInstance() {
-//            synchronized (PayUtil.class) {
-//                if (instance == null) {
-//                    instance = new PayUtil();
-//                }
-//            }
-//            return instance;
-//        }
 
         public Boolean validateRequestParams(HttpServletRequest request) {
 
@@ -1115,7 +1402,9 @@ public class HomeController {
 
         public Boolean isPaid(HttpServletRequest request) {
 
-            String orderNo = formatString(request.getParameter("orderNo"));
+            String referer = formatString(request.getParameter("referer"));
+            Site site = siteService.findByUrl(referer);
+            String orderNo = formatString(site.getIdentity() + request.getParameter("orderNo"));
             // if order status is already paid, don't allow duplicated submission
             Order order = orderService.findByMerchantNumber(orderNo);
             OrderStatus paidOrderStatus = null;
@@ -1218,6 +1507,7 @@ public class HomeController {
 
             // if order does not exist create new
             Site site = siteService.findByUrl(referer);
+            orderNo = site.getIdentity()+orderNo;
             Order order = orderService.findByMerchantNumber(orderNo);
 
             if (order == null) {
@@ -1260,5 +1550,40 @@ public class HomeController {
             return order;
         }
     }
+    private Map<String, String> hashMap = new HashMap<String, String>() {
+        {
+            put("AUD", "36");
+            put("CAD", "124");
+            put("CNY", "156");
+            put("DKK", "208");
+            put("HKD", "344");
+            put("INR", "356");
+            put("IDR", "360");
+            put("ILS", "376");
+            put("JPY", "392");
+            put("KRW", "410");
+            put("MOP", "446");
+            put("MYR", "458");
+            put("NOK", "578");
+            put("PHP", "608");
+            put("RUB", "643");
+            put("SGD", "702");
+            put("ZAR", "710");
+            put("SEK", "752");
+            put("CHF", "756");
+            put("GBP", "826");
+            put("USD", "840");
+            put("TWD", "901");
+            put("TRY", "949");
+            put("EUR", "978");
+            put("NZD", "554");
+        }
+    };
+
+
+    private String getCurrCode(String currency){
+        return hashMap.get(currency);
+    }
+
 
 }
