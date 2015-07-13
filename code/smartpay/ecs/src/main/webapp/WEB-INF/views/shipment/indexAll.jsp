@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<spring:message code="refund.label" var="entity"/>
+<spring:message code="shipment.label" var="entity"/>
 
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
 <spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
@@ -34,7 +34,7 @@
     </div>
     <div class="row">
         <div class="col-sm-2 pull-left">
-            <a href="${rootURL}refund/refund">
+            <a href="${rootURL}shipment/shipping">
                 <button class="btn btn-default">
                     <i class="glyphicon glyphicon-wrench"></i>
                     <spring:message code="create.label" arguments="${entity}"/>
@@ -46,24 +46,19 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <table class="table table-bordered" id="payment-table">
+            <table class="table table-bordered" id="shipment-table">
                 <thead>
                 <tr>
-                    <th>
-                        <spring:message code="refund.label"/><spring:message code="id.label"/>
-                    </th>
-                    <th>
-                        <spring:message code="refund.label"/><spring:message code="amount.label"/>
-                    </th>
-                    <th><spring:message code="createdTime.label"/></th>
-                    <th>
-                        <spring:message code="order.label"/><spring:message code="merchantNumber.label"/>
-                    </th>
-                    <th>
-                        <spring:message code="order.label"/><spring:message code="amount.label"/>
-                    </th>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="orderNumber.label"/></th>
+                    <th><spring:message code="amount.label"/></th>
                     <th><spring:message code="currency.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="site.url.label"/></th>
+                    <th><spring:message code="carrier.label"/></th>
+                    <th><spring:message code="trackingNumber.label"/></th>
                     <th><spring:message code="custom.label"/></th>
+                    <th><spring:message code="address.label"/></th>
                     <th><spring:message code="status.label"/></th>
                 </tr>
                 </thead>
@@ -75,10 +70,9 @@
 <div class="confirmDialog" id="confirm-dialog"></div>
 <div id="dialog-area"></div>
 
-
 <script type="text/javascript">
     $(document).ready(function () {
-        var paymentTable = $('#payment-table').DataTable({
+        var shipmentTable = $('#shipment-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -92,11 +86,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                     }
                 ]
             },
@@ -108,49 +102,45 @@
             },
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': true, 'data': 'id'},
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'orderId'},
                 {
-                    'name': 'amount', 'targets': 1, 'data': 'amount',
-                    'searchable': false, 'orderable': false
+                    'name': 'merchantNumber', 'targets': 1, 'data': 'orderNumber'
                 },
                 {
-                    'name': 'createdTime', 'targets': 2, 'searchable': false,
+                    'name': 'orderAmount', 'targets': 2, 'searchable': true,
+                    'orderable': false, 'data': 'orderAmount'
+                },
+                {
+                    'name': 'orderCurrency', 'targets': 3, 'searchable': true,
+                    'orderable': false, 'data': 'orderCurrency'
+                },
+                {
+                    'name': 'createdTime', 'targets': 4, 'searchable': false,
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'merchantNumber',
-                    'targets': 3,
-                    'searchable': false,
-                    'orderable': false,
-                    'data': 'orderNumber'
+                    'name': 'siteUrl', 'targets': 5, 'searchable': true,
+                    'orderable': false, 'data': 'siteUrl'
                 },
                 {
-                    'name': 'orderAmount',
-                    'targets': 4,
-                    'searchable': false,
-                    'orderable': false,
-                    'data': 'orderAmount'
+                    'name': 'carrier', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'carrier'
                 },
                 {
-                    'name': 'orderCurrency',
-                    'targets': 5,
-                    'searchable': false,
-                    'orderable': false,
-                    'data': 'orderCurrency'
+                    'name': 'trackingNumber', 'targets': 7, 'searchable': false,
+                    'orderable': false, 'data': 'trackingNumber'
                 },
                 {
-                    'name': 'customer',
-                    'targets': 6,
-                    'searchable': false,
-                    'orderable': false,
-                    'data': 'customerName'
+                    'name': 'customerName', 'targets': 8, 'searchable': false,
+                    'orderable': false, 'data': 'customerName'
                 },
                 {
-                    'name': 'refundStatus',
-                    'targets': 7,
-                    'searchable': false,
-                    'orderable': false,
-                    'data': 'refundStatusName'
+                    'name': 'customerAddress', 'targets': 9, 'searchable': false,
+                    'orderable': false, 'data': 'customerAddress'
+                },
+                {
+                    'name': 'orderStatus', 'targets': 10, 'searchable': false,
+                    'orderable': false, 'data': 'orderStatusName'
                 }
             ]
         });

@@ -253,7 +253,7 @@ public class RefundController {
         // to paid or sth else when manage denies the refund
         //order.setOrderStatus(refundedOrderStatus);
         // when persisting refund, order should be cascaded merged
-        String domain = messageSource.getMessage("Refund.label", null, locale);
+        String domain = messageSource.getMessage("refund.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, amount + " " + remark}, locale);
         try {
