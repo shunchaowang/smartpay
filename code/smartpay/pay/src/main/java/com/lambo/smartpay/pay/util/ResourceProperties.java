@@ -21,6 +21,7 @@ public abstract class ResourceProperties {
     public  static final String ITFPAY_VER_KEY = "ITFPayVer";
     public  static final String ITFPAY_ACCTNO_KEY = "ITFAcctNo";
     public  static final String ITFPAY_AGENT_ACCTNO_KEY = "ITFAgent_AcctNo";
+    public  static final String ITFPAY_REFERER_KEY = "ITFReferer";
 
     public static final String ORDER_STATUS_INITIATED_CODE = "400";
     public static final String ORDER_STATUS_SHIPPED_CODE = "502";

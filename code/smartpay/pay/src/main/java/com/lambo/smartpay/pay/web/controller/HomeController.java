@@ -660,13 +660,10 @@ public class HomeController {
         // create payment object
         PaymentCommand paymentCommand = createPaymentCommand(request, order);
         Payment payment = createPayment(paymentCommand);
-        ;
-
         // create ITFPay params and make the pay request
         List<BasicNameValuePair> params = formulateITFpayParams(paymentCommand, orderCommand, request);
 
         String stringFromBase = ITFpay(params);
-        logger.debug("Decoded Base64 String: " + stringFromBase);
         //Parameter1  交易号  CHAR(50)
         //Parameter2  订单号  CHAR(50)
         //Parameter3  查询交易号    CHAR(50)
@@ -838,7 +835,8 @@ public class HomeController {
         //Telephone 持卡人电话 必填
         pairs.add(new BasicNameValuePair("Telephone", orderCommand.getPhone()));
         //RetURL 持卡人购物的网站 必填项目（不带 http 和后缀）
-        pairs.add(new BasicNameValuePair("RetURL", orderCommand.getReferer()));
+        String referer = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_REFERER_KEY);
+        pairs.add(new BasicNameValuePair("RetURL", referer));
         //Email 邮箱地址 必填
         pairs.add(new BasicNameValuePair("Email", orderCommand.getEmail()));
 
