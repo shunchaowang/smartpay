@@ -70,6 +70,12 @@ public class SiteController {
         return "main";
     }
 
+    @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
+    public String indexArchive(Model model) {
+
+        model.addAttribute("_view", "site/indexArchive");
+        return "main";
+    }
 
     @RequestMapping(value = "/list/all", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")

@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
-<spring:message code="Refund.label" var="refund"/>
+<spring:message code="refund.label" var="refund"/>
 <div id="content">
     <div id="content-header">
         <div id="breadcrumb">
@@ -40,7 +37,7 @@
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="status.label"/></th>
-                                <th><spring:message code="Customer.label"/></th>
+                                <th><spring:message code="customer.label"/></th>
                                 <th><spring:message code="action.operation.label"/></th>
                             </tr>
                             </thead>
@@ -65,8 +62,6 @@
             'serverSide': true,
             'paging': true,
             "paginationType": "full_numbers",
-            "jQueryUI": true,
-            'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [

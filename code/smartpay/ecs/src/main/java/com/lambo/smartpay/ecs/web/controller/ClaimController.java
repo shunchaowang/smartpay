@@ -89,16 +89,16 @@ public class ClaimController {
     @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
     public String index(@PathVariable("domain") String domain, Model model) {
 
-        String action = "";
+        String view = "";
         if (domain.equals("Process")) {
-            action = "indexProcess";
+            view = "indexProcess";
         } else if (domain.equals("Resolved")) {
-            action = "indexResolved";
+            view = "indexResolved";
         } else {
             throw new BadRequestException("400", "Bad request.");
         }
 
-        model.addAttribute("action", action);
+        model.addAttribute("_view", view);
         return "main";
     }
 
@@ -260,7 +260,6 @@ public class ClaimController {
     /**
      * Query all json data.
      *
-     * @param domain  can be Approved, Process, Resolved
      * @param request
      * @return payment data of the domain
      */

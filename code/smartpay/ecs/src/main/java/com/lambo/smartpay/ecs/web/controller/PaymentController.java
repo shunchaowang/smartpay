@@ -53,11 +53,11 @@ public class PaymentController {
         return "Payment";
     }
 
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "payment/index");
         return "main";
     }
-
     @RequestMapping(value = "/list", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -132,7 +132,7 @@ public class PaymentController {
         PaymentCommand paymentCommand = createPaymentCommand(payment);
         model.addAttribute("paymentCommand", paymentCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "payment/show");
         return "main";
     }
 

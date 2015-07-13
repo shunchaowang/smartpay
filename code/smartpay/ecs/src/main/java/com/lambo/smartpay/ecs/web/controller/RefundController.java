@@ -74,11 +74,11 @@ public class RefundController {
         return "Refund";
     }
 
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "refund/index");
         return "main";
     }
-
     @RequestMapping(value = {"/list"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -131,7 +131,7 @@ public class RefundController {
     public String indexPaidOrder(Model model) {
 
         model.addAttribute("domain", "PaidOrder");
-        model.addAttribute("action", "refund");
+        model.addAttribute("_view", "refund/refund");
         return "main";
     }
 

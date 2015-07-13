@@ -74,8 +74,9 @@ public class ShipmentController {
         return "Shipment";
     }
 
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "shipment/index");
         return "main";
     }
 
