@@ -169,7 +169,7 @@
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="${rootURL}claim/refuse">
+                                <a href="${rootURL}claim/index/refuse">
                                     <spring:message code="claim.label" arguments="${refuse}"/>
                                 </a>
                             </li>
