@@ -842,7 +842,7 @@ public class HomeController {
 
         //HashValue 代理商加密数据 必填项目  HashValue    = MD5(Md5Key + AcctNo + OrderID + Amount +  CurrCode)
         String szHashValue = "";
-        String Md5Key = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_MD5_KEY);
+        String Md5Key = new String(Base64.decodeBase64(PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_MD5_KEY)));
         String sz_Key = Md5Key + AcctNo + OrderID + Amount + CurrCode;
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
