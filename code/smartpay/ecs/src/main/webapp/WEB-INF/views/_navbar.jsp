@@ -1,3 +1,4 @@
+<%@ page import="com.lambo.smartpay.ecs.web.controller.UserResource" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@include file="taglib.jsp" %>
 
@@ -38,177 +39,28 @@
             </div>
             <!-- end of navbar header -->
 
+            <c:set var="menus" value="<%=UserResource.getMenu()%>" scope="session"/>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav">
-
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${site}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}site/index/all">
-                                    <spring:message code="manage.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}site/index/archive">
-                                    <spring:message code="archive.label" arguments="${site}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- end of site management -->
-
-                    <!-- user management -->
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${user}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}user/index/operator">
-                                    <spring:message code="manage.label" arguments="${operator}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}user/manage/permission">
-                                    <spring:message code="manage.label" arguments="${permission}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}user/index/archive">
-                                    <spring:message code="archive.label" arguments="${user}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <!-- order management -->
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${order}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}order/index/all">
-                                    <spring:message code="manage.label" arguments="${order}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}shipment/index/all">
-                                    <spring:message code="manage.label" arguments="${shipment}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}order/index/archive">
-                                    <spring:message code="archive.label" arguments="${order}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}shipment/index/archive">
-                                    <spring:message code="archive.label" arguments="${shipment}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- payment management -->
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${payment}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}payment/index/all">
-                                    <spring:message code="manage.label" arguments="${payment}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}refund/index/all">
-                                    <spring:message code="manage.label" arguments="${refund}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}payment/index/archive">
-                                    <spring:message code="archive.label" arguments="${payment}"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="${rootURL}refund/index/archive">
-                                    <spring:message code="archive.label" arguments="${refund}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <!-- claim management -->
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="manage.label" arguments="${complain}"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}claim/index/all">
-                                    <spring:message code="manage.label" arguments="${refuse}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}claim/index/refuse">
-                                    <spring:message code="claim.label" arguments="${refuse}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}claim/index/archive">
-                                    <spring:message code="archive.label" arguments="${refuse}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-expanded="false">
-                            <spring:message code="statistics.label"/>
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="${rootURL}search/index/all">
-                                    <spring:message code="manage.label"
-                                                    arguments="${announcement}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}search/index">
-                                    <spring:message code="index.label" arguments="${log}"/>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="${rootURL}search/index/archive">
-                                    <spring:message code="archive.label"
-                                                    arguments="${announcement}"/>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    <c:forEach items="${menus}" var="menu">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-expanded="false">
+                                <spring:message code="menu.${menu.name}.label"/>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <c:forEach items="${menu.subMenus}" var="subMenu">
+                                    <li>
+                                        <a href="${rootURL}${subMenu.target}">
+                                            <spring:message code="subMenu.${subMenu.name}.label"/>
+                                        </a>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </li>
+                    </c:forEach>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

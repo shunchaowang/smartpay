@@ -5,10 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.Permission;
 import com.lambo.smartpay.core.persistence.entity.Role;
 import com.lambo.smartpay.core.persistence.entity.User;
 import com.lambo.smartpay.core.persistence.entity.UserStatus;
-import com.lambo.smartpay.core.service.MerchantService;
+import com.lambo.smartpay.core.service.PermissionService;
 import com.lambo.smartpay.core.service.RoleService;
 import com.lambo.smartpay.core.service.UserService;
 import com.lambo.smartpay.core.service.UserStatusService;
@@ -20,6 +21,7 @@ import com.lambo.smartpay.ecs.web.exception.BadRequestException;
 import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.ecs.web.vo.UserCommand;
+import com.lambo.smartpay.ecs.web.vo.UserPermissionCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesUser;
 import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
@@ -45,9 +47,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by swang on 3/15/2015.
@@ -66,13 +70,13 @@ public class UserController {
     @Autowired
     private RoleService roleService;
     @Autowired
-    private MerchantService merchantService;
+    private PermissionService permissionService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping(value = {"/index/operator"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index/merchantOperator"}, method = RequestMethod.GET)
     public String index(Model model) {
         model.addAttribute("_view", "user/indexOperator");
         return "main";
@@ -434,6 +438,94 @@ public class UserController {
                 new String[]{label, user.getUsername()}, locale);
         response.setMessage(deletedMessage);
         return JsonUtil.toJson(response);
+    }
+
+    @RequestMapping(value = {"/manage/operatorPermission"}, method = RequestMethod.GET)
+    public String managePermission(Model model) {
+
+        model.addAttribute("_view", "user/managePermission");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/show/permission/{id}"}, method = RequestMethod.GET)
+    public String showPermission(Model model) {
+
+        model.addAttribute("_view", "user/showPermission");
+        //TODO Update to be user's real permissions
+        List<Permission> permissions = permissionService.getAll();
+        model.addAttribute("permissions", permissions);
+        return "main";
+    }
+
+    @RequestMapping(value = {"/edit/permission/{id}"}, method = RequestMethod.GET)
+    public String editPermission(@PathVariable("id") Long id, Model model) {
+
+        User user = null;
+        try {
+            user = userService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        model.addAttribute("user", user);
+        // pull out all permissions belonging to role admin
+        Role merchantAdmin = null;
+        try {
+            merchantAdmin = roleService.findByCode(ResourceProperties.ROLE_MERCHANT_ADMIN_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+        Set<Permission> permissions = merchantAdmin.getPermissions();
+        logger.debug("...ps size: " + permissions.size());
+        List<String> permissionNames = new ArrayList<>();
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Permission permission : permissions) {
+                logger.debug("permission of ma: " + permission.getName());
+                permissionNames.add(permission.getName());
+            }
+        }
+        Collections.sort(permissionNames);
+        model.addAttribute("permissions", permissionNames);
+        UserPermissionCommand command = new UserPermissionCommand(user);
+        model.addAttribute("userPermissionCommand", command);
+        model.addAttribute("_view", "user/editPermission");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/edit/permission"}, method = RequestMethod.POST)
+    public String updatePermission(@ModelAttribute("userPermissionCommand") UserPermissionCommand
+                                           command, RedirectAttributes attributes) {
+        User user = null;
+        try {
+            user = userService.get(command.getUserId());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        // reset user's permission
+        user.setPermissions(new HashSet<Permission>());
+        for (String p : command.getPermissions()) {
+            Permission permission = null;
+            try {
+                permission = permissionService.findByName(p);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", e.getMessage());
+            }
+            user.getPermissions().add(permission);
+        }
+        try {
+            userService.update(user);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", e.getMessage());
+        }
+
+        return "redirect:/user/manage/permission";
     }
 
     // create a new User from a UserCommand
