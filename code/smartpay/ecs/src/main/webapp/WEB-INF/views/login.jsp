@@ -28,31 +28,31 @@
     </div>
     <!-- end of notification -->
     <div class="row">
-        <div class="col-sm-6" id="form-section">
+        <div class="col-sm-4 pull-right" id="form-section">
             <form id="login" class="form-horizontal" action="${rootURL}login" method="post">
 
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">
+                    <label class="col-sm-4 control-label">
                         <spring:message code="login.username.label"/>
                     </label>
 
-                    <div class="col-sm-4">
+                    <div class="col-sm-8">
                         <input type="text" name="username" class="form-control"
                                placeholder="Username">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">
+                    <label class="col-sm-4 control-label">
                         <spring:message code="login.password.label"/>
                     </label>
 
-                    <div class="col-sm-4">
+                    <div class="col-sm-8">
                         <input type="password" name="password" class="form-control"
                                placeholder="Password">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-4">
+                    <div class="col-sm-offset-4 col-sm-4">
                         <button type="submit" class="btn btn-default">
                             <spring:message code="login.label"/>
                         </button>
@@ -64,7 +64,42 @@
 </div>
 
 
-<script type="application/javascript"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        /*
+         $('#form-section').on('submit', function (e) {
+         e.preventDefault();
+         var merchant = $('input[name="merchant"]');
+         var username = $('input[name="username"]');
+         var password = $('input[name="password"]');
+         if(merchant.val().length == 0 || username.val().length == 0 ||
+         password.val().length == 0) {
+         return;
+         }
+         var name = username.val();
+         username.val(merchant.val() + "/" + name);
+         $("#form-section").submit();
+
+         var formData = {
+         'username' : merchant.val() + '/' + username.val(),
+         'password' : password.val()
+         };
+         $.ajax({
+         type: "POST",
+         url: $('#form-section').action,
+         data: formData,
+         error: function (data) {
+         alert("There was an error");
+         },
+         success: function (data) {
+
+         }
+         });
+
+         });
+         */
+    });
+</script>
 
 
 </body>
