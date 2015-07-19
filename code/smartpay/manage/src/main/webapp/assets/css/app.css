@@ -6,10 +6,10 @@ body {
     padding-bottom: 55px;
 }
 
-footer {
+#footer {
     height: 33px;
     /* color: #eee; */
-    font-size: 11px;
+    font-size: 16px;
     text-align: center;
     padding-top: 8px;
 }
