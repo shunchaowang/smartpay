@@ -32,7 +32,6 @@
                 <div class="form-group">
 
 
-
                     <label class="col-sm-3 control-label">
                         <spring:message
                                 code="login.username.label"/>
@@ -84,7 +83,7 @@
             </form>
             <br>
             <br>
-            <br>            <br>
+            <br> <br>
             <br>
             <br>
 
