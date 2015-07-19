@@ -1,6 +1,6 @@
 <%@include file="../taglib.jsp" %>
 <spring:message var="cancelAction" code="action.cancel.label"/>
-<spring:message var="entity" code="claim.label"/>
+<spring:message var="entity" code="refuse.label"/>
 <spring:message code="claim.label" var="claimLabel" arguments="${entity}"/>
 
 <div id="claim-dialog" title="${claimLabel}">
@@ -9,14 +9,15 @@
             <div class="col-sm-12">
                 <table class="table table-bordered" id="claim-table">
                     <thead>
+                    </thead>
+                    <tbody>
                     <tr>
                         <th><spring:message code="id.label"/></th>
                         <th><spring:message code="createdTime.label"/></th>
                         <th><spring:message code="remark.label"/></th>
                         <th><spring:message code="action.operation.label"/></th>
                     </tr>
-                    </thead>
-                    <tbody></tbody>
+                    </tbody>
                 </table>
             </div>
             <div class='form-group'>

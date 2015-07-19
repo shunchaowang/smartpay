@@ -238,7 +238,7 @@ public class HomeController {
 
         PasswordCommand passwordCommand = new PasswordCommand();
         model.addAttribute("passwordCommand", passwordCommand);
-        model.addAttribute("action", "changePassword");
+        model.addAttribute("_view", "changePassword");
         return "main";
     }
 
@@ -255,7 +255,7 @@ public class HomeController {
         if (!passwordCommand.getPassword().equals(passwordCommand.getConfirmPassword())) {
             model.addAttribute("message",
                     messageSource.getMessage("password.not.match.message", null, locale));
-            model.addAttribute("action", "changePassword");
+            model.addAttribute("_view", "changePassword");
             return "main";
         }
 
@@ -263,7 +263,7 @@ public class HomeController {
                 .getPassword())) {
             model.addAttribute("message",
                     messageSource.getMessage("password.not.correct.message", null, locale));
-            model.addAttribute("action", "changePassword");
+            model.addAttribute("_view", "changePassword");
             return "main";
         }
         User user = null;
@@ -284,7 +284,7 @@ public class HomeController {
             throw new BadRequestException("400", "Not unique.");
         }
         securityUser.setPassword(user.getPassword());
-        model.addAttribute("action", "index");
+        model.addAttribute("_view", "index");
         return "main";
     }
 
@@ -302,7 +302,7 @@ public class HomeController {
         // create command user and add to model and view
         UserCommand userCommand = createUserCommand(user);
         model.addAttribute("userCommand", userCommand);
-        model.addAttribute("action", "profile");
+        model.addAttribute("_view", "profile");
         return "main";
     }
 
@@ -338,7 +338,7 @@ public class HomeController {
                         messageSource.getMessage("not.unique.message",
                                 new String[]{fieldLabel, userCommand.getEmail()}, locale));
                 model.addAttribute("userCommand", userCommand);
-                model.addAttribute("action", "profile");
+                model.addAttribute("_view", "profile");
                 return "main";
             }
         }
@@ -349,19 +349,19 @@ public class HomeController {
         // user is a user edited by merchant admin
         try {
             userService.update(user);
-            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            String fieldLabel = messageSource.getMessage("user.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            String fieldLabel = messageSource.getMessage("user.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            String fieldLabel = messageSource.getMessage("user.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
