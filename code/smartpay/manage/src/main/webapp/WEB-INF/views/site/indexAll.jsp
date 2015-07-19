@@ -229,7 +229,7 @@
                                 siteStatus: $("#siteStatusId").val(),
                                 returnUrl: $("#returnUrl").val(),
                                 url: $("#url").val(),
-                                remark: $("#remark").val(),
+                                remark: $("#remark").val()
                             },
                             dataType: "json",
                             error: function (data) {

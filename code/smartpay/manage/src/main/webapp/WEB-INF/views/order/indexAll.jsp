@@ -1,7 +1,23 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
     <spring:message code="order.label" var="entity"/>
-    <spring:message code="details.label" arguments="{entity}"/>
+
+<spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
+<spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
+<spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
+<spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
+<spring:message code="action.delete.label" var="deleteLabel"/>
+<spring:message code="action.cancel.label" var="cancelLabel"/>
+<spring:message code="action.freeze.label" var="freezeLabel"/>
+<spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
+<spring:message code="action.approve.label" var="approveLabel"/>
+<spring:message code="action.decline.label" var="declineLabel"/>
+<spring:message code="action.archive.label" var="archiveLabel"/>
+<spring:message code="status.created.label" var="createdStatus"/>
+<spring:message code="status.frozen.label" var="frozenStatus"/>
+<spring:message code="status.approved.label" var="approvedStatus"/>
+<spring:message code="status.declined.label" var="declinedStatus"/>
 
 <div class="container-fluid">
     <div class="row">

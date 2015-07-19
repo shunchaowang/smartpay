@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="claim.label" var="entity"/>
-<spring:message code="details.label" arguments="{entity}"/>
+<spring:message code="details.label" arguments="${entity}"/>
 
 
 <div class="container-fluid">
@@ -119,7 +119,7 @@
                     'name': 'paymentStatusName',
                     'targets': 9,
                     'visible': false,
-                    'data': 'paymentStatus'
+                    'data': 'paymentStatusName'
                 },
                 {
                     'name': 'paymentTypeName',

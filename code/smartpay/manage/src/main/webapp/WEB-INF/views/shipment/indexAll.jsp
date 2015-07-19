@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="shipment.label" var="entity"/>
-<spring:message code="details.label" arguments="{entity}"/>
-
 
 <div class="container-fluid">
     <div class="row">
@@ -17,40 +15,27 @@
             </li>
         </ol>
     </div>
-    <br>
-
-    <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="shipment-table">
-                            <thead>
-                            <tr>
-                                <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="orderNumber.label"/></th>
-                                <th><spring:message code="amount.label"/></th>
-                                <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="site.url.label"/></th>
-                                <th><spring:message code="site.merchant.label"/></th>
-                                <th><spring:message code="carrier.label"/></th>
-                                <th><spring:message code="trackingNumber.label"/></th>
-                                <th><spring:message code="custom.label"/></th>
-                                <th><spring:message code="address.label"/></th>
-                                <th><spring:message code="status.label"/></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="shipment-table">
+                <thead>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="orderNumber.label"/></th>
+                    <th><spring:message code="amount.label"/></th>
+                    <th><spring:message code="currency.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="site.url.label"/></th>
+                    <th><spring:message code="site.merchant.label"/></th>
+                    <th><spring:message code="carrier.label"/></th>
+                    <th><spring:message code="trackingNumber.label"/></th>
+                    <th><spring:message code="custom.label"/></th>
+                    <th><spring:message code="address.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
