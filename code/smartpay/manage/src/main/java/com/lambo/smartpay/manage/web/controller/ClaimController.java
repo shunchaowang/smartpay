@@ -70,6 +70,56 @@ public class ClaimController {
         model.addAttribute("_view", "claim/indexAll");
         return "main";
     }
+    @RequestMapping(value = {"/audit"}, method = RequestMethod.GET)
+    public String claimAudit( Model model) {
+        model.addAttribute("_view", "claim/indexResolved");
+        return "main";
+    }
+
+    /**
+     * Query all json data.
+     * @param request
+     * @return payment data of the domain
+     */
+    @RequestMapping(value = {"/list/Resolved"}, method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listResolved(HttpServletRequest request) {
+        PaymentStatus paymentStatus = null;
+        try {
+            paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        DataTablesParams params = new DataTablesParams(request);
+        Payment paymentCriteria = new Payment();
+        paymentCriteria.setPaymentStatus(paymentStatus);
+
+        List<Payment> payments = paymentService.findByCriteria(params.getSearch(),
+                Integer.valueOf(params.getOffset()), Integer.valueOf(params.getMax()),
+                params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+
+        Long recordsTotal = paymentService.countAll();
+        Long recordsFiltered = paymentService.countByCriteria(params.getSearch());
+
+        if (payments == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
+        for (Payment payment : payments) {
+            DataTablesPayment tablesPayment = new DataTablesPayment(payment);
+            dataTablesPayments.add(tablesPayment);
+        }
+
+        DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesPayments);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
 
     /**
      * Query all json data.
@@ -77,14 +127,65 @@ public class ClaimController {
      * @param request
      * @return payment data of the domain
      */
-
-
-    @RequestMapping(value = {"/list/all"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/list/Approved"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String list(HttpServletRequest request) {
-
+    public String listApproved(HttpServletRequest request) {
+        PaymentStatus paymentStatus = null;
+        try {
+            paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
         DataTablesParams params = new DataTablesParams(request);
+        Payment paymentCriteria = new Payment();
+        paymentCriteria.setPaymentStatus(paymentStatus);
+
+        List<Payment> payments = paymentService.findByCriteria(params.getSearch(),
+                Integer.valueOf(params.getOffset()), Integer.valueOf(params.getMax()),
+                params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+
+        Long recordsTotal = paymentService.countAll();
+        Long recordsFiltered = paymentService.countByCriteria(params.getSearch());
+
+        if (payments == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
+        for (Payment payment : payments) {
+            DataTablesPayment tablesPayment = new DataTablesPayment(payment);
+            dataTablesPayments.add(tablesPayment);
+        }
+
+        DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesPayments);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
+    /**
+     * Query all json data.
+     *
+     * @param request
+     * @return payment data of the domain
+     */
+    @RequestMapping(value = {"/list/Process"}, method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listProcess(HttpServletRequest request) {
+        PaymentStatus paymentStatus = null;
+        try {
+            paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        DataTablesParams params = new DataTablesParams(request);
+        Payment paymentCriteria = new Payment();
+        paymentCriteria.setPaymentStatus(paymentStatus);
 
         List<Payment> payments = paymentService.findByCriteria(params.getSearch(),
                 Integer.valueOf(params.getOffset()), Integer.valueOf(params.getMax()),
@@ -199,7 +300,6 @@ public class ClaimController {
     /**
      * Query all json data.
      *
-     * @param domain  can be Approved, Process, Resolved
      * @param request
      * @return payment data of the domain
      */

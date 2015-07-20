@@ -111,7 +111,7 @@ public class AnnouncementController {
         AnnouncementCommand announcementCommand = createAnnouncementCommand(announcement);
         model.addAttribute("announcementCommand", announcementCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "announcement/show");
         return "main";
     }
 
@@ -164,7 +164,7 @@ public class AnnouncementController {
             e.printStackTrace();
             throw new IntervalServerException("500", e.getMessage());
         }
-        model.addAttribute("action", "index");
+        model.addAttribute("_view", "announcement/indexAll");
         return "main";
     }
 
@@ -182,7 +182,7 @@ public class AnnouncementController {
         AnnouncementCommand announcementCommand = createAnnouncementCommand(announcement);
 
         model.addAttribute("announcementCommand", announcementCommand);
-        model.addAttribute("action", "edit");
+        model.addAttribute("_view", "announcement/edit");
         return "main";
     }
 
@@ -207,7 +207,7 @@ public class AnnouncementController {
             throw new IntervalServerException("500", e.getMessage());
         }
 
-        model.addAttribute("action", "index");
+        model.addAttribute("_view", "announcement/indexAll");
         return "main";
     }
 
@@ -231,7 +231,7 @@ public class AnnouncementController {
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Announcement.label", null, locale);
+        String label = messageSource.getMessage("announcement.label", null, locale);
         try {
             announcement = anouncementService.delete(id);
 

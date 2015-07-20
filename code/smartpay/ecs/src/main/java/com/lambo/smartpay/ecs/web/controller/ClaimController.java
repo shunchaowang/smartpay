@@ -76,7 +76,7 @@ public class ClaimController {
 
     @ModelAttribute("domain")
     public String domain() {
-        return "PaymentRefused";
+        return "refuse";
     }
 
     /**
@@ -86,19 +86,19 @@ public class ClaimController {
      * @param model
      * @return index page of the domain payment
      */
-    @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/index/{domain}"}, method = RequestMethod.GET)
     public String index(@PathVariable("domain") String domain, Model model) {
 
         String action = "";
-        if (domain.equals("Process")) {
-            action = "indexProcess";
-        } else if (domain.equals("Resolved")) {
-            action = "indexResolved";
+        if (domain.equals("refuse")) {
+            action = "claim/indexProcess";
+        } else if (domain.equals("all")) {
+            action = "claim/indexResolved";
         } else {
             throw new BadRequestException("400", "Bad request.");
         }
 
-        model.addAttribute("action", action);
+        model.addAttribute("_view", action);
         return "main";
     }
 
@@ -109,7 +109,7 @@ public class ClaimController {
      * @param request
      * @return payment data of the domain
      */
-    @RequestMapping(value = "/list{domain}", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{domain}", method = RequestMethod.GET)
     public
     @ResponseBody
     String list(@PathVariable("domain") String domain, HttpServletRequest request) {
@@ -118,9 +118,9 @@ public class ClaimController {
         // only approved payment status can be initiated to be pending, this list
         // will show all approved payment and user can mark any of them to be claim pending
 
-        if (domain.equals("Process")) { // for indexProcess, only payment status process
+        if (domain.equals("refuse")) { // for indexProcess, only payment status process
             paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE;
-        } else if (domain.equals("Resolved")) { // for indexResolved, only payment status resolved
+        } else if (domain.equals("all")) { // for indexResolved, only payment status resolved
             paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE;
         } else {
             throw new BadRequestException("400", "Bad request.");
@@ -234,7 +234,7 @@ public class ClaimController {
 
         // set payment status to be claim in pending
         payment = paymentService.processPaymentClaim(payment);
-        String domain = messageSource.getMessage("PaymentRefused.label", null, locale);
+        String domain = messageSource.getMessage("refuse.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, payment.getBankTransactionNumber()}, locale);
         response.setStatus("successful");
@@ -260,7 +260,6 @@ public class ClaimController {
     /**
      * Query all json data.
      *
-     * @param domain  can be Approved, Process, Resolved
      * @param request
      * @return payment data of the domain
      */

@@ -1,33 +1,30 @@
 <%@include file="../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
-<div id="claim-dialog">
+<spring:message var="cancelAction" code="action.cancel.label"/>
+<spring:message var="entity" code="refuse.label"/>
+<spring:message code="claim.label" var="claimLabel" arguments="${entity}"/>
+
+<div id="claim-dialog" title="${claimLabel}">
     <div class="container-fluid">
-        <div class="row-fluid">
+        <div class="row">
             <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="claim-table">
-                            <thead>
-                            <tr>
-                                <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="remark.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <!-- buttons -->
-                        <div class='form-actions col-sm-offset-4'>
-                            <button class='tableButton col-sm-offset-2' id='close-button'>
-                                <spring:message code='action.close.label'/>
-                            </button>
-                        </div>
-                    </div>
+                <table class="table table-bordered" id="claim-table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th><spring:message code="id.label"/></th>
+                        <th><spring:message code="createdTime.label"/></th>
+                        <th><spring:message code="remark.label"/></th>
+                        <th><spring:message code="action.operation.label"/></th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class='form-group'>
+                <div class="col-sm-2">
+                    <button class='btn btn-default' id='close-button'>
+                        <spring:message code='action.close.label'/>
+                    </button>
                 </div>
             </div>
         </div>

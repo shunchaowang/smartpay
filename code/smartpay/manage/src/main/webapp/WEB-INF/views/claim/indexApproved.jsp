@@ -1,58 +1,51 @@
+<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<spring:message code="refuse.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/indexResolved">
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-list"></i>
                 <spring:message code="index.label" arguments="${entity}"/>
-            </a>
-            <a href="${rootURL}${controller}/indexApproved" class="current">
-                <spring:message code="manage.label" arguments="${entity}"/>
-            </a>
-        </div>
+            </li>
+        </ol>
     </div>
+    <br>
 
     <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="payment-table">
-                            <thead>
-                            <tr>
-                                <th><spring:message code="id.label"/></th>
-                                <th><spring:message code="orderNumber.label"/></th>
-                                <th><spring:message code="bankTransactionNumber.label"/></th>
-                                <th><spring:message code="bankName.label"/></th>
-                                <th><spring:message code="amount.label"/></th>
-                                <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="createdTime.label"/></th>
-                                <th><spring:message code="returnCode.label"/></th>
-                                <th><spring:message code="paymentStatusName.label"/></th>
-                                <th><spring:message code="paymentTypeName.label"/></th>
-                                <th><spring:message code="action.operation.label"/></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="payment-table">
+                <thead>
+                <tr>
+                    <th><spring:message code="id.label"/></th>
+                    <th><spring:message code="orderNumber.label"/></th>
+                    <th><spring:message code="bankTransactionNumber.label"/></th>
+                    <th><spring:message code="bankName.label"/></th>
+                    <th><spring:message code="amount.label"/></th>
+                    <th><spring:message code="currency.label"/></th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th><spring:message code="returnCode.label"/></th>
+                    <th><spring:message code="paymentStatusName.label"/></th>
+                    <th><spring:message code="paymentStatusName.label"/></th>
+                    <th><spring:message code="paymentTypeName.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
-    <div id="dialog-area"></div>
+</div>
+</div>
+</div>
+<div id="dialog-area"></div>
 </div>
 
 <script type="text/javascript">
@@ -66,24 +59,23 @@
             'paging': true,
             "paginationType": "full_numbers",
             "order": [[0, "desc"]],
-            "jQueryUI": true,
             'dom': 'T<""if>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 10]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 10]
                     }
                 ]
             },
 
             'ajax': {
-                'url': "${rootURL}${controller}/listApproved",
+                'url': "${rootURL}claim/list/Process",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -123,19 +115,58 @@
                     'data': 'paymentStatusName'
                 },
                 {
-                    'name': 'paymentTypeName',
+                    'name': 'paymentStatusName',
                     'targets': 9,
+                    'visible': false,
+                    'data': 'paymentStatusName'
+                },
+                {
+                    'name': 'paymentTypeName',
+                    'targets': 10,
                     'searchable': false,
                     'orderable': false,
                     'data': 'paymentTypeName'
                 },
                 {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 11, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<button type="button" name="new-claim-button"'
-                                + ' class="tableButton" value="' + row['id'] + '">'
-                                + '<spring:message code="action.refusePayment.label"/>'
-                                + '</button>';
+                        var operations = '';
+                        if (row['paymentStatusName'] == 'Approved') { // if the merchant is Initiated
+                            operations += '<button type="button" name="new-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${newClaimLabel}"
+                            + '</button>';
+                        } else if(row['paymentStatusName'] == 'Process') {
+                            // if the merchant is Initiated{
+                            operations += '<button type="button" name="show-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${showClaimLabel}"
+                            + '</button>';
+                        } else if(row['paymentStatusName'] == 'Resolved') {
+                            // if the merchant is Initiated{
+                            operations += '<button type="button" name="show-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${showClaimLabel}"
+                            + '</button>';
+                            operations +=' ';
+
+                            operations += '<button type="button" name="add-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${addClaimLabel}"
+                            + '</button>';
+                            operations +=' ';
+
+                            operations += '<button type="button" name="audit-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${auditClaimLabel}"
+                            + '</button>';
+                        }
+                        return operations;
                     }
                 }
             ]

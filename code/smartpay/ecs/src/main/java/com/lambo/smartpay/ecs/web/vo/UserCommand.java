@@ -1,5 +1,11 @@
 package com.lambo.smartpay.ecs.web.vo;
 
+import com.lambo.smartpay.core.persistence.entity.User;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.text.DateFormat;
+import java.util.Locale;
+
 /**
  * Created by swang on 3/16/2015.
  */
@@ -19,6 +25,34 @@ public class UserCommand {
     private String merchantName;
     private Long userStatus;
     private String userStatusName;
+
+    public UserCommand() {
+    }
+
+    public UserCommand(User user) {
+        id = user.getId();
+        username = user.getUsername();
+        firstName = user.getFirstName();
+        lastName = user.getLastName();
+        email = user.getEmail();
+        active = user.getActive();
+        remark = user.getRemark();
+        if (user.getMerchant() != null) {
+            merchant = user.getMerchant().getId();
+            merchantName = user.getMerchant().getName();
+        }
+
+        if (user.getUserStatus() != null) {
+            userStatus = user.getUserStatus().getId();
+            userStatusName = user.getUserStatus().getName();
+        }
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        createdTime = dateFormat.format(user.getCreatedTime());
+        if (user.getUpdatedTime() != null) {
+            updatedTime = dateFormat.format(user.getUpdatedTime());
+        }
+    }
 
     public Long getId() {
         return id;

@@ -1,6 +1,10 @@
 package com.lambo.smartpay.ecs.web.vo;
 
-import java.util.Date;
+import com.lambo.smartpay.core.persistence.entity.Site;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.text.DateFormat;
+import java.util.Locale;
 
 /**
  * Created by linly on 3/17/2015.
@@ -16,9 +20,9 @@ public class SiteCommand {
     private String url;
     private String returnUrl;
 
-    private Date createdTime;
+    private String createdTime;
 
-    private Date updatedTime;
+    private String updatedTime;
 
     private String remark;
 
@@ -31,6 +35,36 @@ public class SiteCommand {
     private Long merchant;
     private String merchantName;
 
+    public SiteCommand() {
+    }
+
+    public SiteCommand(Site site) {
+        Locale locale = LocaleContextHolder.getLocale();
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        id = site.getId();
+        identity = site.getIdentity();
+        name = site.getName();
+        url = site.getUrl();
+        returnUrl = site.getReturnUrl();
+        if (site.getCreatedTime() != null) {
+            createdTime = dateFormat.format(site.getCreatedTime());
+        }
+        if (site.getUpdatedTime() != null) {
+            updatedTime = dateFormat.format(site.getUpdatedTime());
+        }
+        remark = site.getRemark();
+        active = site.getActive();
+
+        if (site.getSiteStatus() != null) {
+            siteStatusId = site.getSiteStatus().getId();
+            siteStatusName = site.getSiteStatus().getName();
+        }
+        if (site.getMerchant() != null) {
+            merchant = site.getMerchant().getId();
+            merchantName = site.getMerchant().getName();
+        }
+    }
+
     // set & get
     public Long getId() {
         return id;
@@ -40,7 +74,9 @@ public class SiteCommand {
         this.id = id;
     }
 
-    public String getIdentity() { return identity; }
+    public String getIdentity() {
+        return identity;
+    }
 
     public void setIdentity(String identity) {
         this.identity = identity;
@@ -62,19 +98,19 @@ public class SiteCommand {
         this.url = url;
     }
 
-    public Date getCreatedTime() {
+    public String getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(String createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Date getUpdatedTime() {
+    public String getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
+    public void setUpdatedTime(String updatedTime) {
         this.updatedTime = updatedTime;
     }
 
@@ -90,7 +126,9 @@ public class SiteCommand {
         return siteStatusId;
     }
 
-    public void setSiteStatusId(long siteStatusId) {this.siteStatusId = siteStatusId;}
+    public void setSiteStatusId(long siteStatusId) {
+        this.siteStatusId = siteStatusId;
+    }
 
     public Long getMerchant() {
         return merchant;

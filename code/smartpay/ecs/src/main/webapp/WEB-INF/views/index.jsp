@@ -3,155 +3,129 @@
 <%@include file="taglib.jsp" %>
 <!-- stats icons -->
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <c:if test="${domain != null}">
-                <spring:message code="${domain}.label" var="entity"/>
-                <a href="${rootURL}${controller}">
-                    <spring:message code="manage.label" arguments="${entity}"/>
-                </a>
-                <a href="${rootURL}${controller}/${action}" class="current">
-                    <spring:message code="${action}.label" arguments="${entity}"/>
-                </a>
-            </c:if>
-        </div>
+            </li>
+        </ol>
     </div>
-    <!-- reserved for notification -->
-    <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box widget-plain">
-                    <div class="center">
-                        <ul class="stat-boxes stat-boxes2">
-                            <li>
-                                <div class="right">
-                                    <strong>${merchantCommand.siteCount}</strong>
-                                    <spring:message code="Site.label"/>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="right">
-                                    <strong>${merchantCommand.orderCount}</strong>
-                                    <spring:message code="Transaction.label"/>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="right">
-                                    <strong>${merchantCommand.orderAmount}</strong>
-                                    <spring:message code="amount.label"/>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="row-fluid">
-            <!-- order count by site -->
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="orderCountSummary.label"/></h5>
-                        ${merchantCommand.orderCount}
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="count-table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="id.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="identity.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="name.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="count.label"/>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+    <!-- summary -->
+    <div class="row">
+                <div class="col-sm-4">
+                    <strong>${merchantCommand.siteCount}</strong>
+                    <spring:message code="site.label"/>
                 </div>
+                <div class="col-sm-4">
+                    <strong>${merchantCommand.orderCount}</strong>
+                    <spring:message code="transaction.label"/>
+                </div>
+                <div class="col-sm-4">
+                    <strong>${merchantCommand.orderAmount}</strong>
+                    <spring:message code="amount.label"/>
+                </div>
+    </div>
+    <!-- count by site -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div>
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="orderCountSummary.label"/>
+                ${merchantCommand.orderCount}
+                </h5>
             </div>
-        </div>
-        <div class="row-fluid">
-            <!-- order amount by site -->
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="orderAmountSummary.label"/></h5>
-                        ${merchantCommand.orderAmount}
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="amount-table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="id.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="identity.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Site.label"/>
-                                    <spring:message code="name.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="amount.label"/>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row-fluid">
-            <!-- order amount by currency -->
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="orderAmountSummary.label"/></h5>
-                        ${merchantCommand.orderAmount}
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="currency-table">
-                            <thead>
-                            <tr>
-                                <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="count.label"/></th>
-                                <th><spring:message code="amount.label"/></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+            <div>
+                <table class="table table-bordered" id="count-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <spring:message code="site.label"/>
+                            <spring:message code="id.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/>
+                            <spring:message code="identity.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/>
+                            <spring:message code="name.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="count.label"/>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </div>
     </div>
+    <!-- amount by site -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div>
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="orderCountSummary.label"/>
+                ${merchantCommand.orderAmount}
+                </h5>
+            </div>
+            <div>
+                <table class="table table-bordered" id="amount-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <spring:message code="site.label"/>
+                            <spring:message code="id.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/>
+                            <spring:message code="identity.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/>
+                            <spring:message code="name.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="amount.label"/>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- amount by currency -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div>
+                <span class="icon"><i class="icon icon-th"></i> </span>
+                <h5><spring:message code="orderAmountSummary.label"/>
+                ${merchantCommand.orderAmount}
+                </h5>
+            </div>
+            <div>
+                <table class="table table-bordered" id="currency-table">
+                    <thead>
+                    <tr>
+                        <th><spring:message code="currency.label"/></th>
+                        <th><spring:message code="count.label"/></th>
+                        <th><spring:message code="amount.label"/></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
+<div class="confirmDialog" id="confirm-dialog">
+</div>
+<div id="dialog-area"></div>
 
 <script type="text/javascript">
     $(document).ready(function () {

@@ -1,65 +1,80 @@
+<!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<c:if test="${domain != null}">
-    <spring:message code="${domain}.label" var="entity"/>
-</c:if>
+<spring:message code="refund.label" var="entity"/>
 
-<div id="content">
-    <div id="content-header">
-        <div id="breadcrumb">
-            <a href="${rootURL}">
-                <i class="icon icon-home"></i>
+<spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
+<spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
+<spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
+<spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
+<spring:message code="action.delete.label" var="deleteLabel"/>
+<spring:message code="action.cancel.label" var="cancelLabel"/>
+<spring:message code="action.freeze.label" var="freezeLabel"/>
+<spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
+<spring:message code="action.approve.label" var="approveLabel"/>
+<spring:message code="action.decline.label" var="declineLabel"/>
+<spring:message code="action.archive.label" var="archiveLabel"/>
+<spring:message code="status.created.label" var="createdStatus"/>
+<spring:message code="status.frozen.label" var="frozenStatus"/>
+<spring:message code="status.approved.label" var="approvedStatus"/>
+<spring:message code="status.declined.label" var="declinedStatus"/>
+
+<div class="container-fluid">
+    <div class="row">
+        <ol class="breadcrumb">
+            <li>
+                <i class="glyphicon glyphicon-home"></i>
                 <spring:message code="home.label"/>
-            </a>
-            <a href="${rootURL}${controller}/${action}" class="current">
-                <spring:message code="${action}.label" arguments="${entity}"/>
+            </li>
+            <li class="active">
+                <i class="glyphicon glyphicon-list"></i>
+                <spring:message code="index.label" arguments="${entity}"/>
+            </li>
+        </ol>
+    </div>
+    <div class="row">
+        <div class="col-sm-2 pull-left">
+            <a href="${rootURL}refund/refund">
+                <button class="btn btn-default">
+                    <i class="glyphicon glyphicon-wrench"></i>
+                    <spring:message code="create.label" arguments="${entity}"/>
+                </button>
             </a>
         </div>
     </div>
-    <!-- reserved for notification -->
-    <!-- close of content-header -->
-    <div class="container-fluid">
-        <!— actual content —>
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="payment-table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    <spring:message code="Refund.label"/><spring:message
-                                        code="id.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Refund.label"/><spring:message
-                                        code="amount.label"/>
-                                </th>
-                                <th><spring:message code="createdTime.label"/></th>
-                                <th>
-                                    <spring:message code="Order.label"/><spring:message
-                                        code="merchantNumber.label"/>
-                                </th>
-                                <th>
-                                    <spring:message code="Order.label"/><spring:message
-                                        code="amount.label"/>
-                                </th>
-                                <th><spring:message code="currency.label"/></th>
-                                <th><spring:message code="custom.label"/></th>
-                                <th><spring:message code="status.label"/></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <br>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="payment-table">
+                <thead>
+                <tr>
+                    <th>
+                        <spring:message code="refund.label"/><spring:message code="id.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="refund.label"/><spring:message code="amount.label"/>
+                    </th>
+                    <th><spring:message code="createdTime.label"/></th>
+                    <th>
+                        <spring:message code="order.label"/><spring:message code="merchantNumber.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="order.label"/><spring:message code="amount.label"/>
+                    </th>
+                    <th><spring:message code="currency.label"/></th>
+                    <th><spring:message code="custom.label"/></th>
+                    <th><spring:message code="status.label"/></th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
+<div class="confirmDialog" id="confirm-dialog"></div>
+<div id="dialog-area"></div>
+
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -72,8 +87,6 @@
             'paging': true,
             "paginationType": "full_numbers",
             "order": [[0, "desc"]],
-            "jQueryUI": true,
-            'dom': 'T<""i>rt<"F"lp>',
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [

@@ -62,7 +62,7 @@ public class OrderController {
 
     @ModelAttribute("domain")
     public String domain() {
-        return "Order";
+        return "order";
     }
 
     @ModelAttribute("orderStatuses")
@@ -71,8 +71,15 @@ public class OrderController {
         return orderStatusService.getAll();
     }
 
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "order/indexAll");
+        return "main";
+    }
+    @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
+    public String indexArchive(Model model) {
+
+        model.addAttribute("_view", "site/indexArchive");
         return "main";
     }
 
@@ -151,10 +158,9 @@ public class OrderController {
         OrderCommand orderCommand = createOrderCommand(order);
         model.addAttribute("orderCommand", orderCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "order/show");
         return "main";
     }
-
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(Model model) {
@@ -201,7 +207,7 @@ public class OrderController {
 
         // parse my own query params
         String id = request.getParameter("id");
-        String merchantNumber = request.getParameter("merchantNUmber");
+        String merchantNumber = request.getParameter("merchantNumber");
         String orderStatus = request.getParameter("orderStatus");
         String site = request.getParameter("site");
         String timeBeginning = request.getParameter("timeBeginning");

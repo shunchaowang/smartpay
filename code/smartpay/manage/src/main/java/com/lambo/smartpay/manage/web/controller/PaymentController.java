@@ -156,13 +156,13 @@ public class PaymentController {
         model.addAttribute("shipmentCommand", shipmentCommand);
         model.addAttribute("orderCommand", orderCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "payment/show");
         return "main";
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(Model model) {
-        model.addAttribute("action", "search");
+        model.addAttribute("_view", "payment/search");
         model.addAttribute("sites", siteService.getAll());
         return "main";
     }

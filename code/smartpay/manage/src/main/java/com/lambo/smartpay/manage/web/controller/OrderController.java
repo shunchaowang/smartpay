@@ -137,14 +137,14 @@ public class OrderController {
         OrderCommand orderCommand = createOrderCommand(order);
         model.addAttribute("orderCommand", orderCommand);
 
-        model.addAttribute("action", "show");
+        model.addAttribute("_view", "order/show");
         return "main";
     }
 
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String search(Model model) {
-        model.addAttribute("action", "search");
+        model.addAttribute("_view", "order/search");
         model.addAttribute("sites", siteService.getAll());
         return "main";
     }

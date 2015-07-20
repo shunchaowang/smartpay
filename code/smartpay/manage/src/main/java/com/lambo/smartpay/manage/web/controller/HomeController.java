@@ -172,19 +172,19 @@ public class HomeController {
         // user is a user edited by merchant admin
         try {
             userService.update(user);
-            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            String fieldLabel = messageSource.getMessage("user.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            String fieldLabel = messageSource.getMessage("user.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            String fieldLabel = messageSource.getMessage("User.label", null, locale);
+            String fieldLabel = messageSource.getMessage("user.label", null, locale);
             model.addAttribute("message",
                     messageSource.getMessage("not.updated.message",
                             new String[]{fieldLabel, userCommand.getUsername()}, locale));

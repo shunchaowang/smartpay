@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="announcement.label" var="entity"/>
-<spring:message code="details.label" arguments="{entity}"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -94,6 +93,71 @@
                 }
             ]
         });
+
+
+        // add live handler for edit button
+        announcementTable.on('click', 'button[type=button][name=edit-button]', function
+                (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}announcement/edit",
+                data: {
+                    siteId: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var editDialog = $("#edit-dialog").dialog({
+                        autoOpen: false,
+                        height: 'auto',
+                        width: 'auto',
+                        modal: true,
+                        close: function () {
+                            editDialog.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#cancel-button").click(function (event) {
+                        event.preventDefault();
+                        editDialog.dialog("close");
+                    });
+
+                    $("#save-button").click(function (event) {
+                        event.preventDefault();
+                        if (!$("#edit-form").valid()) {
+                            return;
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "${rootURL}announcementTable/edit",
+                            data: {id: id},
+                            dataType: "json",
+                            error: function (data) {
+                                alert("There was an error");
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                editDialog.dialog("close");
+                                announcementTableTable.ajax.reload();
+                            }
+                        });
+                    });
+                }
+            });
+        });
+
         // add live handler for remove button
         announcementTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
