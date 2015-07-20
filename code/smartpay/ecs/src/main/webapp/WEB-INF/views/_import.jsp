@@ -9,19 +9,17 @@
 
 <!-- bootstrap depending on jquery -->
 <link type="text/css" rel="stylesheet"
-      href="${rootURL}assets/vendor/bootstrap-3.3.2/css/bootstrap.min.css"/>
+      href="${rootURL}assets/vendor/bootstrap-3.3.2/css/cerulean.min.css"/>
 <script type="text/javascript"
         src="${rootURL}assets/vendor/bootstrap-3.3.2/js/bootstrap.min.js"></script>
 
 <!-- jquery-ui depending on jquery -->
-<!-- commented this out right for we don't want ui-widget-header color
 <link type="text/css" rel="stylesheet"
-href="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.min.css"/>
+      href="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.min.css"/>
 <link type="text/css" rel="stylesheet"
-href="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
+      href="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
 <link type="text/css" rel="stylesheet"
-href="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
--->
+      href="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
 <script type="text/javascript"
         src="${rootURL}assets/vendor/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 
@@ -53,6 +51,5 @@ src="${rootURL}assets/vendor/select2/js/select2.min.js"></script>
 -->
 
 <!-- customized css and js -->
-<link type="text/css" rel="stylesheet" href="${rootURL}assets/css/style.css"/>
-<link type="text/css" rel="stylesheet" href="${rootURL}assets/css/media.css"/>
+<link type="text/css" rel="stylesheet" href="${rootURL}assets/css/app.css"/>
 <script type="text/javascript" src="${rootURL}assets/js/app.js"></script>

@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="payment.label" var="entity"/>
-<spring:message code="details.label" arguments="{entity}"/>
+
+
+<spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
+<spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
+<spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
+<spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
+<spring:message code="action.delete.label" var="deleteLabel"/>
+<spring:message code="action.cancel.label" var="cancelLabel"/>
+<spring:message code="action.freeze.label" var="freezeLabel"/>
+<spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
+<spring:message code="action.approve.label" var="approveLabel"/>
+<spring:message code="action.decline.label" var="declineLabel"/>
+<spring:message code="action.archive.label" var="archiveLabel"/>
+<spring:message code="status.created.label" var="createdStatus"/>
+<spring:message code="status.frozen.label" var="frozenStatus"/>
+<spring:message code="status.approved.label" var="approvedStatus"/>
+<spring:message code="status.declined.label" var="declinedStatus"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -16,19 +33,10 @@
             </li>
         </ol>
     </div>
-    <br>
-
     <!-- close of content-header -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-sm-12">
-                <div class="widget-box">
-                    <div class="widget-title">
-                        <span class="icon"><i class="icon icon-th"></i> </span>
-                        <h5><spring:message code="index.label" arguments="${entity}"/></h5>
-                    </div>
-                    <div class="widget-content">
-                        <table class="table display table-bordered data-table" id="payment-table">
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-bordered" id="payment-table">
                             <thead>
                             <tr>
                                 <th><spring:message code="id.label"/></th>
@@ -47,9 +55,6 @@
                             </thead>
                             <tbody></tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -89,11 +94,7 @@
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
                 {
-                    'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
+                    'name': 'orderNumber', 'targets': 1, 'data': 'orderNumber'
                 },
                 {
                     'name': 'bankTransactionNumber', 'targets': 2, 'data': 'bankTransactionNumber',
@@ -107,11 +108,7 @@
                     'data': 'bankName'
                 },
                 {
-                    'name': 'amount', 'targets': 4, 'data': 'amount',
-                    'render': function (data, type, row) {
-                        return '<a href=' + "${rootURL}" + 'payment/show/'
-                                + row['id'] + '>' + data + '</a>';
-                    }
+                    'name': 'amount', 'targets': 4, 'data': 'amount'
                 },
                 {
                     'name': 'currencyName', 'targets': 5, 'searchable': false, 'orderable': false,

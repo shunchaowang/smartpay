@@ -16,11 +16,20 @@ public abstract class ResourceProperties {
     public static final String REFERER_KEY = "referer";
     public static final String SHOP_NAME_KEY = "shopName";
 
+    public  static final String ITFPAY_URL_KEY = "ITFPayUrl";
+    public  static final String ITFPAY_MD5_KEY = "ITFPayMd5Key";
+    public  static final String ITFPAY_VER_KEY = "ITFPayVer";
+    public  static final String ITFPAY_ACCTNO_KEY = "ITFAcctNo";
+    public  static final String ITFPAY_AGENT_ACCTNO_KEY = "ITFAgent_AcctNo";
+    public  static final String ITFPAY_REFERER_KEY = "ITFReferer";
+
     public static final String ORDER_STATUS_INITIATED_CODE = "400";
     public static final String ORDER_STATUS_SHIPPED_CODE = "502";
     public static final String ORDER_STATUS_PAID_CODE = "401";
     public static final String CUSTOMER_STATUS_NORMAL_CODE = "200";
     public static final String CURRENCY_USD_NAME ="USD";
     public static final String CURRENCY_RMB_NAME ="RMB";
+
+    public static final String FEE_TYPE_STATIC_CODE ="100";
 
 }

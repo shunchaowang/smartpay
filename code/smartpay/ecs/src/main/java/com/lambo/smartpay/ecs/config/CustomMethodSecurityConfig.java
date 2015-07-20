@@ -16,17 +16,17 @@ import javax.annotation.Resource;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class CustomMethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
     @Resource
-    CustomPermissionEvaluator permissionEvaluator;
+    CustomPermissionEvaluator customPermissionEvaluator;
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler handler = new
                 DefaultMethodSecurityExpressionHandler();
-        handler.setPermissionEvaluator(permissionEvaluator);
+        handler.setPermissionEvaluator(customPermissionEvaluator);
         return handler;
     }
 }

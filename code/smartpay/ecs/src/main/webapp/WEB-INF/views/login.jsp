@@ -8,57 +8,129 @@
 </head>
 <body>
 
-
-<div id="logo">
-    <img src="${rootURL}assets/images/login-logo.png" alt=""/>
-</div>
-
-<div id="loginbox">
-    <form id="loginform" class="form-vertical" action="${rootURL}login" method="post">
-        <div class="form-group normal_text">
-            <h3>
-                <spring:message code="login.title"/>
-            </h3>
+<div class="container-fluid" id="content">
+    <div class="col-sm-12">
+        <div id="logo" class="row text-center">
+            <img src="${rootURL}assets/images/logo-GP.png"/>
         </div>
-        <div class="form-group">
-            <div class="controls">
-                <div class="main_input_box">
-                    <span class="add-on"><i class="glyphicon glyphicon-user"></i></span>
-                    <input type="text" name="username" placeholder="Username"/>
+        <div class="row text-center">
+            <img src="${rootURL}assets/images/login-company-name.png"/>
+        </div>
+    </div>
+
+
+    <!-- end of notification -->
+    <div class="row">
+
+        <div class="col-sm-6 col-sm-offset-3" id="form-section">
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <form id="login" class="form-horizontal" action="${rootURL}login" method="post">
+                <div class="form-group">
+
+
+                    <label class="col-sm-3 control-label">
+                        <spring:message
+                                code="login.username.label"/>
+                    </label>
+
+                    <div class="col-sm-6">
+                        <input type="text" name="username" class="form-control"
+                               placeholder="Merchant Number/Username">
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="controls">
-                <div class="main_input_box">
-                    <span class="add-on"><i class="glyphicon glyphicon-lock"></i></span>
-                    <input type="password" name="password" placeholder="Password"/>
+                <br>
+
+                <div class="form-group">
+
+                    <label class="col-sm-3 control-label">
+                        <spring:message code="login.password.label"/>
+                    </label>
+
+                    <div class="col-sm-6">
+                        <input type="password" name="password" class="form-control"
+                               placeholder="Password">
+                    </div>
                 </div>
-            </div>
+                <br>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-4">
+                        <button type="submit" class="btn btn-default">
+                            <spring:message code="login.label"/>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="notification" class="row">
+                    <div class="col-sm-12 text-center">
+                        <c:if test="${param.error != null}">
+                            <div class="alert alert-danger">
+                                Invalid UserName and Password.
+                            </div>
+                        </c:if>
+                        <c:if test="${param.logout != null}">
+                            <div class="alert alert-success">
+                                You have been logged out.
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
+            </form>
+            <br>
+            <br>
+            <br> <br>
+            <br>
+            <br>
+
+            <br>
         </div>
 
-        <div class="form-actions">
-            <span class="pull-right"><input type="submit" class="btn btn-success"
-                                            value="Login"/></span>
-        </div>
-
-    </form>
+    </div>
 </div>
 
-<div class="col-sm-12">
-    <c:if test="${param.error != null}">
-        <div class="alert alert-danger">
-            Invalid UserName and Password.
-        </div>
-    </c:if>
-    <c:if test="${param.logout != null}">
-        <div class="alert alert-success">
-            You have been logged out.
-        </div>
-    </c:if>
-</div>
 
-<script src="${rootURL}assets/js/login.js"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        /*
+         $('#form-section').on('submit', function (e) {
+         e.preventDefault();
+         var merchant = $('input[name="merchant"]');
+         var username = $('input[name="username"]');
+         var password = $('input[name="password"]');
+         if(merchant.val().length == 0 || username.val().length == 0 ||
+         password.val().length == 0) {
+         return;
+         }
+         var name = username.val();
+         username.val(merchant.val() + "/" + name);
+         $("#form-section").submit();
+
+         var formData = {
+         'username' : merchant.val() + '/' + username.val(),
+         'password' : password.val()
+         };
+         $.ajax({
+         type: "POST",
+         url: $('#form-section').action,
+         data: formData,
+         error: function (data) {
+         alert("There was an error");
+         },
+         success: function (data) {
+
+         }
+         });
+
+         });
+         */
+    });
+</script>
+
 
 </body>
 </html>

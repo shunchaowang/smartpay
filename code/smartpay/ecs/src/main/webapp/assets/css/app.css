@@ -1,18 +1,42 @@
 /*  ---------------------------------
     Layout
     --------------------------------- */
-
 body {
-    /*padding-top: 70px;*/
-    padding-bottom: 70px;
+    padding-top: 55px;
+    padding-bottom: 55px;
 }
 
-footer {
+body {
+    background-image: url("../images/login-bg-bgline.png");
+    padding-top: 55px;
+    padding-bottom: 55px;
+}
+
+.navbar {
+    /*background-image: url("../images/navbar-bg.png");*/
+    /*height: 60px;*/
+}
+
+.footer {
+    height: 30px;
+
+}
+
+#form-section {
+    background-image: url("../images/login-input-bg.png");
+    background-repeat: no-repeat;
+}
+
+#footer {
     height: 33px;
     /* color: #eee; */
-    font-size: 11px;
+    font-size: 16px;
     text-align: center;
     padding-top: 8px;
+}
+
+.confirmDialog {
+    display: none;
 }
 
 /*  ---------------------------------------

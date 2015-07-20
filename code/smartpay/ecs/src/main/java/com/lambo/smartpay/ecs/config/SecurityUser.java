@@ -84,7 +84,7 @@ public class SecurityUser extends User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return super.getUsername();
+        return super.getMerchant().getIdentity() + "/" + super.getUsername();
     }
 
     @Override

@@ -35,6 +35,7 @@ public class PaymentCommand {
     private Long currencyId;
     private String currencyName;
     private String repayment;
+    private String paymentClientIp;
 
     public Long getId() {
         return id;
@@ -274,5 +275,13 @@ public class PaymentCommand {
 
     public void setPayMethod(String payMethod) {
         this.payMethod = payMethod;
+    }
+
+    public String getPaymentClientIp() {
+        return paymentClientIp;
+    }
+
+    public void setPaymentClientIp(String paymentClientIp) {
+        this.paymentClientIp = paymentClientIp;
     }
 }

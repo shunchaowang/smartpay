@@ -36,7 +36,7 @@
                                 <th><spring:message code="amount.label"/></th>
                                 <th><spring:message code="currency.label"/></th>
                                 <th><spring:message code="Site.label"/></th>
-                                <th><spring:message code="Customer.label"/></th>
+                                <th><spring:message code="customer.label"/></th>
                                 <th><spring:message code="createdTime.label"/></th>
                                 <th><spring:message code="status.label"/></th>
                             </tr>

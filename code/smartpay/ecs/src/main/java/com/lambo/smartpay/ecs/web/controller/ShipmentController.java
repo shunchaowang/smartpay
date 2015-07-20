@@ -74,8 +74,15 @@ public class ShipmentController {
         return "Shipment";
     }
 
-    @RequestMapping(value = {"/index"}, method = RequestMethod.GET)
-    public String index() {
+    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
+    public String index(Model model) {
+        model.addAttribute("_view", "shipment/indexAll");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/create"}, method = RequestMethod.GET)
+    public String create(Model model) {
+        model.addAttribute("_view", "shipment/shipping");
         return "main";
     }
 
@@ -131,7 +138,7 @@ public class ShipmentController {
     public String indexWaitForShipping(Model model) {
 
         model.addAttribute("domain", "WaitForShipping");
-        model.addAttribute("action", "shipping");
+        model.addAttribute("_view", "shipment/shipping");
         //model.addAttribute("command", new ShipmentCommand());
         return "main";
     }
@@ -251,7 +258,7 @@ public class ShipmentController {
         shipment.setShipmentStatus(shippedShipmentStatus);
         order.setOrderStatus(shippedOrderStatus);
         // when persisting shipment, order should be cascaded merged
-        String domain = messageSource.getMessage("Shipment.label", null, locale);
+        String domain = messageSource.getMessage("shipment.label", null, locale);
         String failedMessage = messageSource.getMessage("not.saved.message",
                 new String[]{domain, carrier + " " + trackingNumber}, locale);
         String successfulMessage = messageSource.getMessage("saved.message",

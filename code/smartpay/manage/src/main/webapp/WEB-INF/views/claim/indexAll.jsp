@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<spring:message code="claim.label" var="entity"/>
-<spring:message code="details.label" arguments="{entity}"/>
+<spring:message code="refuse.label" var="entity"/>
 
+<spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
+<spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
+<spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
+<spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
+<spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
+<spring:message code="action.delete.label" var="deleteLabel"/>
+<spring:message code="action.cancel.label" var="cancelLabel"/>
+<spring:message code="action.freeze.label" var="freezeLabel"/>
+<spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
+<spring:message code="action.approve.label" var="approveLabel"/>
+<spring:message code="action.decline.label" var="declineLabel"/>
+<spring:message code="action.archive.label" var="archiveLabel"/>
+<spring:message code="status.created.label" var="createdStatus"/>
+<spring:message code="status.frozen.label" var="frozenStatus"/>
+<spring:message code="status.approved.label" var="approvedStatus"/>
+<spring:message code="status.declined.label" var="declinedStatus"/>
 
 <div class="container-fluid">
     <div class="row">
@@ -76,7 +91,7 @@
             },
 
             'ajax': {
-                'url': "${rootURL}claim/list/all",
+                'url': "${rootURL}claim/list/Process",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -119,7 +134,7 @@
                     'name': 'paymentStatusName',
                     'targets': 9,
                     'visible': false,
-                    'data': 'paymentStatus'
+                    'data': 'paymentStatusName'
                 },
                 {
                     'name': 'paymentTypeName',
@@ -131,22 +146,21 @@
                 {
                     'name': 'operation', 'targets': 11, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-
                         var operations = '';
-                        if (row['paymentStatus'] == 'Approved') { // if the merchant is Initiated
+                        if (row['paymentStatusName'] == 'Approved') { // if the merchant is Initiated
                             operations += '<button type="button" name="new-claim-button"'
                             + ' data-identity="' + row['id'] + '"'
                             + ' class="btn btn-default" value="' + row['id'] + '">' +
                             "${newClaimLabel}"
                             + '</button>';
-                        } else if(row['paymentStatus'] == 'Process') {
+                        } else if(row['paymentStatusName'] == 'Process') {
                         // if the merchant is Initiated{
                             operations += '<button type="button" name="show-claim-button"'
                             + ' data-identity="' + row['id'] + '"'
                             + ' class="btn btn-default" value="' + row['id'] + '">' +
                             "${showClaimLabel}"
                             + '</button>';
-                        } else if(row['paymentStatus'] == 'Resolved') {
+                        } else if(row['paymentStatusName'] == 'Resolved') {
                         // if the merchant is Initiated{
                             operations += '<button type="button" name="show-claim-button"'
                             + ' data-identity="' + row['id'] + '"'

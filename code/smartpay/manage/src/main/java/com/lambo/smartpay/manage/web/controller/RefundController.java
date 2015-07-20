@@ -1,8 +1,7 @@
 package com.lambo.smartpay.manage.web.controller;
 
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
-import com.lambo.smartpay.core.persistence.entity.Refund;
-import com.lambo.smartpay.core.persistence.entity.RefundStatus;
+import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.service.OrderService;
 import com.lambo.smartpay.core.service.OrderStatusService;
 import com.lambo.smartpay.core.service.RefundService;
@@ -55,19 +54,6 @@ public class RefundController {
     @Autowired
     private MessageSource messageSource;
 
-    /*
-    // here goes all model across the whole controller
-    @ModelAttribute("controller")
-    public String controller() {
-        return "refund";
-    }
-
-    @ModelAttribute("domain")
-    public String domain() {
-        return "Refund";
-    }
-    */
-
     @ModelAttribute("paymentStatuses")
     public List<RefundStatus> refundStatuses() {
         return refundStatusService.getAll();
@@ -79,24 +65,6 @@ public class RefundController {
         model.addAttribute("_view", "refund/indexAll");
         return "main";
     }
-
-    /*
-    @RequestMapping(value = {"/index{domain}"}, method = RequestMethod.GET)
-    public String index(@PathVariable("domain") String domain, Model model) {
-        if (domain.equals("All")) {
-            model.addAttribute("action", "indexAll");
-        } else if (domain.equals("Initiated")) {
-            model.addAttribute("domain", "InitiatedRefund");
-            model.addAttribute("action", "indexInitiated");
-        } else if (domain.equals("Approved")) {
-            model.addAttribute("domain", "ApprovedRefund");
-            model.addAttribute("action", "indexApproved");
-        } else {
-            throw new BadRequestException("400", "Domain does not exist.");
-        }
-        return "main";
-    }
-    */
 
     @RequestMapping(value = {"/list/all"}, method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
@@ -187,6 +155,68 @@ public class RefundController {
         return JsonUtil.toJson(resultSet);
     }
 
+    @RequestMapping(value = {"/audit"}, method = RequestMethod.GET)
+    public String indexInitiated(Model model) {
+        model.addAttribute("_view", "refund/indexInitiated");
+        return "main";
+    }
+
+    @RequestMapping(value = {"/listInitiated"}, method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String listInitiated(HttpServletRequest request) {
+
+        DataTablesParams params = new DataTablesParams(request);
+        Integer start = Integer.valueOf(params.getOffset());
+        Integer length = Integer.valueOf(params.getMax());
+        if (start == null || length == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+
+        List<Refund> refunds = null;
+        Long recordsTotal = null;
+        Long recordsFiltered = null;
+
+        RefundStatus status = null;
+        try {
+            status = refundStatusService.findByCode(ResourceProperties
+                    .REFUND_STATUS_INITIATED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Refund status doesn't exist.");
+        }
+        Refund refundCriteria = new Refund();
+        refundCriteria.setRefundStatus(status);
+        refunds = refundService.findByCriteria(refundCriteria, params.getSearch(),
+                start, length, params.getOrder(),
+                ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
+        recordsTotal = refundService.countByCriteria(refundCriteria);
+        recordsFiltered = refundService.countByCriteria(refundCriteria, params.getSearch());
+
+        if (refunds == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        List<DataTablesRefund> dataTablesRefunds = new ArrayList<>();
+        for (Refund r : refunds) {
+            DataTablesRefund refund = new DataTablesRefund(r);
+            dataTablesRefunds.add(refund);
+        }
+
+        DataTablesResultSet<DataTablesRefund> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesRefunds);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
+
     /**
      * ajax calls to audit a refund by id.
      *
@@ -207,7 +237,7 @@ public class RefundController {
 
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String label = messageSource.getMessage("Refund.label", null, locale);
+        String label = messageSource.getMessage("refund.label", null, locale);
         try {
             refund = refundService.approveRefund(id);
         } catch (NoSuchEntityException e) {

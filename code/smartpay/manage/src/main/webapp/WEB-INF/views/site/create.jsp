@@ -24,7 +24,7 @@
         <div class="col-sm-8">
             <form:form action="${rootURL}site/create" method="POST"
                        commandName="siteCommand" cssClass="form-horizontal"
-                       id="new-user-form">
+                       id="new-site-form">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="merchant">

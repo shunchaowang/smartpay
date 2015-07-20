@@ -132,14 +132,6 @@ public class SiteController {
         }
         siteCommand.setIdentity(identity);
         // check uniqueness
-        if (siteService.findByIdentity(siteCommand.getIdentity()) != null) {
-            String fieldLabel = messageSource.getMessage("identity.label", null, locale);
-            model.addAttribute("message",
-                    messageSource.getMessage("not.unique.message",
-                            new String[]{fieldLabel, siteCommand.getName()}, locale));
-            model.addAttribute("siteCommand", siteCommand);
-            model.addAttribute("_view", "site/create");
-        }
         if (siteService.findByUrl(siteCommand.getUrl()) != null) {
             String fieldLabel = messageSource.getMessage("site.url.label", null, locale);
             model.addAttribute("message",
