@@ -167,7 +167,7 @@ public class HomeController {
 
         // Order and Customer should be created here
         // if customer exists using current one
-        Order order = payUtil.initiateOrder(request);
+        Order order = payUtil.initiateOrder(orderCommand);
 
 
         // create order command object and add to model
@@ -654,7 +654,7 @@ public class HomeController {
         }
         OrderCommand orderCommand = createOrderCommand(request);
         // create order
-        Order order = payUtil.initiateOrder(request);
+        Order order = payUtil.initiateOrder(orderCommand);
         Merchant merchant = merchantService.findByIdentity(orderCommand.getMerNo());
         String merchantKey = merchant.getEncryption().getKey();
         // create payment object
@@ -676,17 +676,17 @@ public class HomeController {
         //Parameter10  返回交易时间  CHAR(20)  YYYYMMDDHHMMSS
         // initial return parameter
         String[] strReturn = stringFromBase.split("&");
-        String[] returnTradeNo = strReturn[1].split("=");
+//        String[] returnTradeNo = strReturn[1].split("=");
         String[] returnPayNo = strReturn[2].split("=");
         String[] returnCode = strReturn[3].split("=");
-        String[] returnBankInfo = strReturn[4].split("=");
-        String[] returnAmount = strReturn[8].split("=");
+//        String[] returnBankInfo = strReturn[4].split("=");
+//        String[] returnAmount = strReturn[8].split("=");
 
         // SUCCEED CHECK
         String payTranNo = returnPayNo[1]; // this will be bank transaction number
         logger.info("Pay gateway transaction number " + payTranNo);
         payment.setBankTransactionNumber(payTranNo);
-        String bankCode = returnBankInfo[1];
+        String bankCode = returnCode[1];
         payment.setBankReturnCode(bankCode);
 //        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
 
@@ -730,7 +730,7 @@ public class HomeController {
             throw new BadRequestException("400", e.getMessage());
         }
 
-        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
+        String calculatedMd5Info = MDUtil.getMD5Str(merchantKey+orderCommand.getMerNo()
                 + orderCommand.getOrderNo().substring(8) + orderCommand.getAmount()
                 + orderCommand.getCurrency() + succeed);
 
@@ -1432,26 +1432,26 @@ public class HomeController {
             return false;
         }
 
-        public Order initiateOrder(HttpServletRequest request) {
+        public Order initiateOrder(OrderCommand orderCommand) {
 
-            String email = formatString(request.getParameter("email"));
-            String referer = formatString(request.getParameter("referer"));
-            String shipFirstName = formatString(request.getParameter("shipFirstName"));
-            String shipLastName = formatString(request.getParameter("shipLastName"));
-            String shipAddress = formatString(request.getParameter("shipAddress"));
-            String shipCity = formatString(request.getParameter("shipCity"));
-            String shipState = formatString(request.getParameter("shipState"));
-            String shipZipCode = formatString(request.getParameter("shipZipCode"));
-            String shipCountry = formatString(request.getParameter("shipCountry"));
-            String currency = formatString(request.getParameter("currency"));
-            String orderNo = formatString(request.getParameter("orderNo"));
-            String amount = formatString(request.getParameter("amount"));
+            String email = formatString(orderCommand.getEmail());
+            String referer = formatString(orderCommand.getReferer());
+            String shipFirstName = formatString(orderCommand.getShipFirstName());
+            String shipLastName = formatString(orderCommand.getShipLastName());
+            String shipAddress = formatString(orderCommand.getShipAddress());
+            String shipCity = formatString(orderCommand.getShipCity());
+            String shipState = formatString(orderCommand.getShipState());
+            String shipZipCode = formatString(orderCommand.getShipZipCode());
+            String shipCountry = formatString(orderCommand.getShipCountry());
+            String currency = formatString(orderCommand.getCurrency());
+            String orderNo = formatString(orderCommand.getOrderNo());
+            String amount = formatString(orderCommand.getAmount());
             DecimalFormat decimalFormat = new DecimalFormat("###.00");
             amount = decimalFormat.format(Float.parseFloat(amount));
-            String productType = formatString(request.getParameter("productType"));
-            String goodsName = formatString(request.getParameter("goodsName"));
-            String goodsNumber = formatString(request.getParameter("goodsNumber"));
-            String goodsPrice = formatString(request.getParameter("goodsPrice"));
+            String productType = formatString(orderCommand.getProductType());
+            String goodsName = formatString(orderCommand.getGoodsName());
+            String goodsNumber = formatString(orderCommand.getGoodsNumber());
+            String goodsPrice = formatString(orderCommand.getGoodsPrice());
 
             // Order and Customer should be created here
             // if customer exists using current one
