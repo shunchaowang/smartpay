@@ -4,7 +4,16 @@
 <html>
 <head>
     <jsp:include page="_import.jsp"/>
-    <link rel="stylesheet" href="${rootURL}assets/css/login.css"/>
+    <style>
+        body {
+            background-image: url("${rootURL}assets/images/login-bg-bgline.png");
+        }
+
+        #form-section {
+            background-image: url("${rootURL}assets/images/login-input-bg.png");
+            background-repeat: no-repeat;
+        }
+    </style>
 </head>
 <body>
 <div class="container-fluid" id="content">

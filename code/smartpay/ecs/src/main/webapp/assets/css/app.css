@@ -6,25 +6,9 @@ body {
     padding-bottom: 55px;
 }
 
-body {
-    background-image: url("../images/login-bg-bgline.png");
-    padding-top: 55px;
-    padding-bottom: 55px;
-}
-
 .navbar {
     /*background-image: url("../images/navbar-bg.png");*/
     /*height: 60px;*/
-}
-
-.footer {
-    height: 30px;
-
-}
-
-#form-section {
-    background-image: url("../images/login-input-bg.png");
-    background-repeat: no-repeat;
 }
 
 #footer {
