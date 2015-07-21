@@ -1,9 +1,5 @@
 ################### DataSource Configuration ##########################
 
-jdbc.driverClassName=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://localhost:3306/smartpay
-jdbc.username=
-jdbc.password=
 jndi.name=smartpay/<name>
 init-db=false
 
