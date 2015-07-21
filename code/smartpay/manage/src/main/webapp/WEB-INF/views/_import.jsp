@@ -9,7 +9,7 @@
 
 <!-- bootstrap depending on jquery -->
 <link type="text/css" rel="stylesheet"
-      href="${rootURL}assets/vendor/bootstrap-3.3.2/css/cerulean.min.css"/>
+      href="${rootURL}assets/vendor/bootstrap-3.3.2/css/bootstrap.min.css"/>
 <script type="text/javascript"
         src="${rootURL}assets/vendor/bootstrap-3.3.2/js/bootstrap.min.js"></script>
 
