@@ -679,7 +679,7 @@ public class HomeController {
 //        String[] returnTradeNo = strReturn[1].split("=");
         String[] returnPayNo = strReturn[2].split("=");
         String[] returnCode = strReturn[3].split("=");
-//        String[] returnBankInfo = strReturn[4].split("=");
+        String[] returnBankInfo = strReturn[4].split("=");
 //        String[] returnAmount = strReturn[8].split("=");
 
         // SUCCEED CHECK

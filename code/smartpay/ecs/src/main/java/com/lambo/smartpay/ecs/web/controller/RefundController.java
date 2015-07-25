@@ -206,7 +206,7 @@ public class RefundController {
         return view;
     }
 
-    @RequestMapping(value = {"/addRefund"}, method = RequestMethod.POST,
+    @RequestMapping(value = {"/saveRefund"}, method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String saveRefund(HttpServletRequest request) {

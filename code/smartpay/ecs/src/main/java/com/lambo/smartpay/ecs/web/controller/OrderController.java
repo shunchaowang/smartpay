@@ -2,26 +2,27 @@ package com.lambo.smartpay.ecs.web.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.OrderStatus;
-import com.lambo.smartpay.core.persistence.entity.Site;
-import com.lambo.smartpay.core.service.OrderService;
-import com.lambo.smartpay.core.service.OrderStatusService;
-import com.lambo.smartpay.core.service.SiteService;
+import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.*;
+import com.lambo.smartpay.core.service.*;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
+import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.ecs.web.vo.OrderCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrder;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
@@ -37,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by swang on 3/27/2015.
@@ -53,6 +56,12 @@ public class OrderController {
     private SiteService siteService;
     @Autowired
     private OrderStatusService orderStatusService;
+    @Autowired
+    private ShipmentService shipmentService;
+    @Autowired
+    private ShipmentStatusService shipmentStatusService;
+    @Autowired
+    private MessageSource messageSource;
 
     // here goes all model across the whole controller
     @ModelAttribute("controller")
@@ -276,6 +285,98 @@ public class OrderController {
         result.setRecordsTotal(recordsTotal.intValue());
 
         return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = {"/addShipment"}, method = RequestMethod.GET)
+    public ModelAndView addShipment(HttpServletRequest request) {
+
+        String orderId = request.getParameter("orderId");
+        if (StringUtils.isBlank(orderId)) {
+            throw new BadRequestException("400", "Order id is blank.");
+        }
+
+        ModelAndView view = new ModelAndView("order/_shipmentDialog");
+        view.addObject("orderId", orderId);
+        return view;
+    }
+
+    @RequestMapping(value = {"/saveShipment"}, method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String saveShipment(HttpServletRequest request) {
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+
+        String orderId = request.getParameter("orderId");
+        String carrier = request.getParameter("carrier");
+        String trackingNumber = request.getParameter("trackingNumber");
+
+        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(carrier)
+                || StringUtils.isBlank(trackingNumber)) {
+            throw new BadRequestException("400", "Bad request.");
+        }
+
+        Order order = null;
+        try {
+            order = orderService.get(Long.valueOf(orderId));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Order cannot be found.");
+        }
+
+        // retrieve order and associated customer, set shipment recipient to be
+        // the same with customer for now
+        Shipment shipment = createShipment(order);
+        shipment.setCarrier(carrier);
+        shipment.setTrackingNumber(trackingNumber);
+        ShipmentStatus shippedShipmentStatus = null;
+        OrderStatus shippedOrderStatus = null;
+        try {
+            shippedShipmentStatus = shipmentStatusService.findByCode(ResourceProperties
+                    .SHIPMENT_STATUS_SHIPPED_CODE);
+            shippedOrderStatus = orderStatusService.findByCode(ResourceProperties
+                    .ORDER_STATUS_SHIPPED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", "Cannot find shipment or order status.");
+        }
+        shipment.setShipmentStatus(shippedShipmentStatus);
+        order.setOrderStatus(shippedOrderStatus);
+        // when persisting shipment, order should be cascaded merged
+        String domain = messageSource.getMessage("shipment.label", null, locale);
+        String failedMessage = messageSource.getMessage("not.saved.message",
+                new String[]{domain, carrier + " " + trackingNumber}, locale);
+        String successfulMessage = messageSource.getMessage("saved.message",
+                new String[]{domain, carrier + " " + trackingNumber}, locale);
+        try {
+            shipment = shipmentService.create(shipment);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            response.setStatus("failed");
+            response.setMessage(failedMessage);
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            response.setStatus("failed");
+            response.setMessage(failedMessage);
+        }
+        response.setStatus("successful");
+        response.setMessage(successfulMessage);
+
+        return JsonUtil.toJson(response);
+    }
+
+    private Shipment createShipment(Order order) {
+        Shipment shipment = new Shipment();
+        shipment.setOrder(order);
+        shipment.setFirstName(order.getCustomer().getFirstName());
+        shipment.setLastName(order.getCustomer().getLastName());
+        shipment.setAddress1(order.getCustomer().getAddress1());
+        shipment.setCity(order.getCustomer().getCity());
+        shipment.setState(order.getCustomer().getState());
+        shipment.setZipCode(order.getCustomer().getZipCode());
+        shipment.setCountry(order.getCustomer().getCountry());
+        return shipment;
     }
 
 

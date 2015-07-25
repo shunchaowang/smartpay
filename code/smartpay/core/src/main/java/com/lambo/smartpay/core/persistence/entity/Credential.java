@@ -39,7 +39,7 @@ public class Credential implements Serializable {
     @Column(name = "CRDT_REMARK", length = 255)
     private String remark;
 
-    @Column(name = "CRDT_CRETED_TIME", nullable = false)
+    @Column(name = "CRDT_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 

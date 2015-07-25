@@ -11,7 +11,7 @@
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.freeze.label" var="freezeLabel"/>
 <spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
-<spring:message code="action.approve.label" var="approveLabel"/>
+<spring:message code="action.ship.label" var="shipLabel"/>
 <spring:message code="action.decline.label" var="declineLabel"/>
 <spring:message code="action.archive.label" var="archiveLabel"/>
 <spring:message code="status.created.label" var="createdStatus"/>
@@ -45,6 +45,7 @@
                     <th><spring:message code="customer.label"/><spring:message code="name.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="order.label"/><spring:message code="status.label"/></th>
+                    <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -117,8 +118,87 @@
                 {
                     'name': 'orderStatusName', 'targets': 7, 'searchable': false,
                     'orderable': false, 'data': 'orderStatusName'
+                },
+                {
+                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'render': function (data, type, row) {
+                        var operations = '';
+                        if (row['orderStatusName'] == 'Paid') {
+                            operations += '<button type="button" name="addShipment-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${shipLabel}"
+                            + '</button>';
+                        }
+                        return operations;
+                    }
                 }
             ]
+        });
+        orderTable.on('click', 'button[type=button][name=addShipment-button]', function
+                (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}order/addShipment",
+                data: {
+                    orderId: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var shipmentDialog = $("#shipment-dialog").dialog({
+                        autoOpen: false,
+                        height: 'auto',
+                        width: 'auto',
+                        modal: true,
+                        close: function () {
+                            shipmentDialog.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#cancel-button").click(function (event) {
+                        event.preventDefault();
+                        shipmentDialog.dialog("close");
+                    });
+
+                    $("#save-button").click(function (event) {
+                        event.preventDefault();
+                        if (!$("#new-shipment-form").valid()) {
+                            return;
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "${rootURL}order/saveShipment",
+                            data: {
+                                orderId: $("#orderId").val(),
+                                carrier: $("#carrier").val(),
+                                trackingNumber: $("#trackingNumber").val()
+                            },
+                            dataType: "json",
+                            error: function (data) {
+                                alert("There was an error");
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                shipmentDialog.dialog("close");
+                                orderTable.ajax.reload();
+                            }
+                        });
+                    });
+                }
+            });
         });
 
     });
