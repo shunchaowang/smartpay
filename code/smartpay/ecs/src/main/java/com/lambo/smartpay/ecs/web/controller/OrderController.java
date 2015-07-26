@@ -36,10 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by swang on 3/27/2015.
@@ -60,6 +57,12 @@ public class OrderController {
     private ShipmentService shipmentService;
     @Autowired
     private ShipmentStatusService shipmentStatusService;
+    @Autowired
+    private PaymentService paymentService;
+    @Autowired
+    private PaymentStatusService paymentStatusService;
+    @Autowired
+    private CustomerService customerService;
     @Autowired
     private MessageSource messageSource;
 
@@ -82,12 +85,21 @@ public class OrderController {
 
     @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
     public String index(Model model) {
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+        Merchant merchant = securityUser.getMerchant();
+        Site siteCriteria = new Site();
+        siteCriteria.setMerchant(merchant);
+        List<Site> sites = siteService.findByCriteria(siteCriteria);
+        model.addAttribute("sites", sites);
         model.addAttribute("_view", "order/indexAll");
         return "main";
     }
+
     @RequestMapping(value = {"/index/archive"}, method = RequestMethod.GET)
     public String indexArchive(Model model) {
-
         model.addAttribute("_view", "site/indexArchive");
         return "main";
     }
@@ -123,35 +135,100 @@ public class OrderController {
         Merchant merchant = securityUser.getMerchant();
         Order orderCriteria = new Order();
         Site siteCriteria = new Site();
-        siteCriteria.setMerchant(merchant);
-        orderCriteria.setSite(siteCriteria);
 
+        // parse my own query params
+        String merchantNumber = request.getParameter("merchantNumber");
+        String orderStatus = request.getParameter("orderStatus");
+        String site = request.getParameter("site");
+        String timeBeginning = request.getParameter("timeBeginning");
+        String timeEnding = request.getParameter("timeEnding");
+
+        Date beginning = null;
+        Date ending = null;
+        if ((!StringUtils.isBlank(timeBeginning)) && (!StringUtils.isBlank(timeEnding))) {
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            try {
+                beginning = dateFormat.parse(timeBeginning);
+                ending = dateFormat.parse(timeEnding);
+                Calendar calendar   =   new GregorianCalendar();
+                calendar.setTime(ending);
+                calendar.add(calendar.DATE,1);
+                ending = calendar.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Bad Request.");
+            }
+        }
+        List<DataTablesOrder> dataTablesOrders = new ArrayList<>();
+        DataTablesResultSet<DataTablesOrder> result = new DataTablesResultSet<>();
+        if (!StringUtils.isBlank(merchantNumber)) {
+            orderCriteria.setMerchantNumber(merchantNumber);
+        }
+        if (!StringUtils.isBlank(orderStatus)) {
+            OrderStatus status = null;
+            try {
+                status = orderStatusService.get(Long.valueOf(orderStatus));
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+            orderCriteria.setOrderStatus(status);
+        }
+        if (!StringUtils.isBlank(site)) {
+            try {
+                siteCriteria = siteService.get(Long.valueOf(site));
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+            orderCriteria.setSite(siteCriteria);
+        }else{
+            siteCriteria.setMerchant(merchant);
+            orderCriteria.setSite(siteCriteria);
+        }
         List<Order> orders = orderService.findByCriteria(orderCriteria, search, start, length,
-                order, ResourceProperties.JpaOrderDir.valueOf(orderDir));
-
+                order, ResourceProperties.JpaOrderDir.valueOf(orderDir), beginning, ending);
         // count total records
         Long recordsTotal = orderService.countByCriteria(orderCriteria);
         // count records filtered
         Long recordsFiltered = orderService.countByCriteria(orderCriteria, search);
-
         if (orders == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
 
-        List<DataTablesOrder> dataTablesOrders = new ArrayList<>();
-
         for (Order o : orders) {
-            DataTablesOrder tablesOrder = new DataTablesOrder(o);
-            dataTablesOrders.add(tablesOrder);
+            Payment paymentCriteria = new Payment();
+            paymentCriteria.setOrder(o);
+            List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search,
+                    null, null, "", ResourceProperties.JpaOrderDir.valueOf(orderDir), null, null);
+            if((payments!= null&&payments.size() >0)) {
+                for (Payment p : payments) {
+                    DataTablesOrder tablesOrder = new DataTablesOrder(o);
+                    tablesOrder.setBankName(p.getBankName());
+                    tablesOrder.setBankTransactionNumber(p.getBankTransactionNumber());
+                    tablesOrder.setBankReturnCode(p.getBankReturnCode());
+                    tablesOrder.setPaymentStatusId(p.getPaymentStatus().getId());
+                    tablesOrder.setPaymentStatusName(p.getPaymentStatus().getName());
+                    tablesOrder.setPaymentTypeId(p.getPaymentType().getId());
+                    tablesOrder.setPaymentTypeName(p.getPaymentType().getName());
+                    tablesOrder.setBillFirstName(p.getBillFirstName());
+                    tablesOrder.setBillLastName(p.getBillLastName());
+                    tablesOrder.setBillAddress1(p.getBillAddress1());
+                    tablesOrder.setBillAddress2(p.getBillAddress2());
+                    tablesOrder.setBillCity(p.getBillCity());
+                    tablesOrder.setBillState(p.getBillState());
+                    tablesOrder.setBillZipCode(p.getBillZipCode());
+                    tablesOrder.setBillCountry(p.getBillCountry());
+                    dataTablesOrders.add(tablesOrder);
+                }
+            }else {
+                DataTablesOrder tablesOrder = new DataTablesOrder(o);
+                dataTablesOrders.add(tablesOrder);
+            }
         }
-
-        DataTablesResultSet<DataTablesOrder> result = new DataTablesResultSet<>();
         result.setData(dataTablesOrders);
         result.setRecordsFiltered(recordsFiltered.intValue());
         result.setRecordsTotal(recordsTotal.intValue());
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(result);
+        return JsonUtil.toJson(result);
     }
 
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
