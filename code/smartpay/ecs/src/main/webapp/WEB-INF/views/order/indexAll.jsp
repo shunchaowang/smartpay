@@ -34,98 +34,93 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <div class="widget-box">
-                <div class="widget-title">
-								<span class="icon">
-									<i class="icon icon-align-justify"></i>
-								</span>
-                    <h5><b><spring:message code='search.label' arguments="${entity}"/></b></h5>
+            <span class="icon">
+                <i class="icon icon-align-justify"></i>
+            </span>
+            <h5><b><spring:message code='search.label' arguments="${entity}"/></b></h5>
+
+            <form class="form-horizontal">
+                <div class="row">
+                    <div class="control-group">
+                        <label class="col-sm-1" for="merchantNumber">
+                            <spring:message code="orderNumber.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <input type="text" class="text" name="merchantNumber"
+                                   id="merchantNumber"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="col-sm-1" for="orderStatus">
+                            <spring:message code="order.label"/><spring:message
+                                code="status.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <select id="orderStatus" class="text">
+                                <option value=""></option>
+                                <c:forEach items="${orderStatuses}" var="status">
+                                    <option value="${status.id}">${status.name}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="col-sm-1" for="site">
+                            <spring:message code="site.url.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <select id="site">
+                                <option value=""></option>
+                                <c:forEach items="${sites}" var="site">
+                                    <option value="${site.id}">${site.url}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="widget-content nopadding">
-                    <form class="form-horizontal">
-                        <div class="row">
-                            <div class="control-group">
-                                <label class="col-sm-1" for="merchantNumber">
-                                    <spring:message code="orderNumber.label"/>
-                                </label>
+                <div class="row">
+                    <div class="control-group">
+                        <label class="col-sm-1" for="begin-date">
+                            <spring:message code="date.begin.label"/>
+                        </label>
 
-                                <div class="col-sm-3">
-                                    <input type="text" class="text" name="merchantNumber"
-                                           id="merchantNumber"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="col-sm-1" for="orderStatus">
-                                    <spring:message code="order.label"/><spring:message code="status.label"/>
-                                </label>
-
-                                <div class="col-sm-3">
-                                    <select id="orderStatus" class="text">
-                                        <option value=""></option>
-                                        <c:forEach items="${orderStatuses}" var="status">
-                                            <option value="${status.id}">${status.name}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="col-sm-1" for="site">
-                                    <spring:message code="site.url.label"/>
-                                </label>
-                                <div class="col-sm-3">
-                                    <select id="site">
-                                        <option value=""></option>
-                                        <c:forEach items="${sites}" var="site">
-                                            <option value="${site.id}">${site.url}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="col-sm-3">
+                            <input id="begin-date" name="begin-date"
+                                   class="text datepicker" readonly="true"
+                                   style="background:white;"/>
                         </div>
-                        <div class="row">
-                            <div class="control-group">
-                                <label class="col-sm-1" for="begin-date">
-                                    <spring:message code="date.begin.label"/>
-                                </label>
+                    </div>
+                    <div class="control-group">
+                        <label class="col-sm-1" for="end-date">
+                            <spring:message code="date.end.label"/>
+                        </label>
 
-                                <div class="col-sm-3">
-                                    <input id="begin-date" name="begin-date"
-                                           class="text datepicker" readonly="true"
-                                           style="background:white;"/>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="col-sm-1" for="end-date">
-                                    <spring:message code="date.end.label"/>
-                                </label>
-
-                                <div class="col-sm-3">
-                                    <input id="end-date" name="end-date"
-                                           class="text datepicker" readonly="true"
-                                           style="background:white;"/>
-                                </div>
-                            </div>
+                        <div class="col-sm-3">
+                            <input id="end-date" name="end-date"
+                                   class="text datepicker" readonly="true"
+                                   style="background:white;"/>
                         </div>
-                        <div class='row'>
-                            <div class='form-group'>
-                                <div class="col-sm-2 col-sm-offset-2">
-                                    <button class='btn btn-default' id='search-button' type="submit">
-                                        <spring:message code='action.search.label'/>
-                                    </button>
-                                </div>
-                                <div class="col-sm-2">
-                                    <button class='btn btn-default' id='reset-button' type="reset">
-                                        <spring:message code='action.reset.label'/>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- line of submit and reset buttons -->
-                    </form>
+                    </div>
                 </div>
-                <!-- end of widget content -->
-            </div>
-            <!-- end of widget box -->
+                <div class='row'>
+                    <div class='form-group'>
+                        <div class="col-sm-2 col-sm-offset-2">
+                            <button class='btn btn-default' id='search-button' type="submit">
+                                <spring:message code='action.search.label'/>
+                            </button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class='btn btn-default' id='reset-button' type="reset">
+                                <spring:message code='action.reset.label'/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- line of submit and reset buttons -->
+            </form>
         </div>
         <!-- end of col-sm-12 -->
     </div>
@@ -139,9 +134,11 @@
                     <th><spring:message code="amount.label"/></th>
                     <th><spring:message code="currency.label"/></th>
                     <th><spring:message code="site.label"/><spring:message code="name.label"/></th>
-                    <th><spring:message code="customer.label"/><spring:message code="name.label"/></th>
+                    <th><spring:message code="customer.label"/><spring:message
+                            code="name.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
-                    <th><spring:message code="order.label"/><spring:message code="status.label"/></th>
+                    <th><spring:message code="order.label"/><spring:message
+                            code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -163,7 +160,7 @@
             "paginationType": "full_numbers",
             "order": [[0, "desc"]],
             'dom': 'T<""if>rt<"F"lp>',
-            "lengthMenu": [10, 100, 300, 600,  1000],
+            "lengthMenu": [10, 100, 300, 600, 1000],
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
@@ -227,10 +224,10 @@
                         var operations = '';
                         if (row['orderStatusName'] == 'Paid') {
                             operations += '<button type="button" name="addShipment-button"'
-                            + ' data-identity="' + row['id'] + '"'
-                            + ' class="btn btn-default" value="' + row['id'] + '">' +
-                            "${shipLabel}"
-                            + '</button>';
+                                    + ' data-identity="' + row['id'] + '"'
+                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                    "${shipLabel}"
+                                    + '</button>';
                         }
                         return operations;
                     }
@@ -238,7 +235,7 @@
             ]
         });
 
-        $('#search-button').click(function (e){
+        $('#search-button').click(function (e) {
             e.preventDefault();
             orderTable.destroy();
             orderTable = $('#order-table').DataTable({
@@ -250,7 +247,7 @@
                 'paging': true,
                 "order": [[0, "desc"]],
                 'dom': 'T<""if>rt<"F"lp>',
-                "lengthMenu": [10, 100, 300, 600,  1000],
+                "lengthMenu": [10, 100, 300, 600, 1000],
                 "tableTools": {
                     "sSwfPath": "${tableTools}",
                     "aButtons": [
@@ -263,7 +260,7 @@
                             "fnCellRender": function (sValue, iColumn, nTr, iDataIndex) {
                                 if (iColumn == 1) {
                                     if (sValue != "") {
-                                        return "=" + sValue.replace(/<[^>]*>/g,"\"");
+                                        return "=" + sValue.replace(/<[^>]*>/g, "\"");
                                     }
                                 }
                                 return sValue;
@@ -287,7 +284,13 @@
                 },
                 // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
                 'columnDefs': [
-                    {'name': 'id', 'targets': 0, 'data': 'id', 'visible': false, 'searchable': false},
+                    {
+                        'name': 'id',
+                        'targets': 0,
+                        'data': 'id',
+                        'visible': false,
+                        'searchable': false
+                    },
                     {
                         'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                         'render': function (data, type, row) {
@@ -311,7 +314,12 @@
                         'name': 'customerName', 'targets': 5, 'data': 'customerName',
                         'searchable': false, 'orderable': false
                     },
-                    {'name': 'createdTime', 'targets': 6, 'searchable': false, 'data': 'createdTime'},
+                    {
+                        'name': 'createdTime',
+                        'targets': 6,
+                        'searchable': false,
+                        'data': 'createdTime'
+                    },
                     {
                         'name': 'orderStatusName', 'targets': 7, 'searchable': false,
                         'orderable': false, 'data': 'orderStatusName'
@@ -322,10 +330,10 @@
                             var operations = '';
                             if (row['orderStatusName'] == 'Paid') {
                                 operations += '<button type="button" name="addShipment-button"'
-                                + ' data-identity="' + row['id'] + '"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                "${shipLabel}"
-                                + '</button>';
+                                        + ' data-identity="' + row['id'] + '"'
+                                        + ' class="btn btn-default" value="' + row['id'] + '">' +
+                                        "${shipLabel}"
+                                        + '</button>';
                             }
                             return operations;
                         }
@@ -400,5 +408,6 @@
             });
         });
 
+        $('.datepicker').datepicker();
     });
 </script>
