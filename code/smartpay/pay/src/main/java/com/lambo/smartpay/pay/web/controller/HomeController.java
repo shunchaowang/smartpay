@@ -127,6 +127,124 @@ public class HomeController {
         return new ModelAndView("index");
     }
 
+    /**
+     * ITFPay test payment action.
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = {"paytest"}, method = RequestMethod.POST)
+    public String paytest(HttpServletRequest request, HttpServletResponse response, Model model){
+        PayUtil payUtil = new PayUtil();
+
+        OrderCommand orderCommand = createOrderCommand(request);
+        // create order
+        Order order = payUtil.initiateOrder(orderCommand);
+        PaymentCommand paymentCommand = createPaymentCommand(request, order);
+        paymentCommand.setBankName("V");
+        paymentCommand.setBankAccountNumber("1111111111111111");
+        paymentCommand.setBillLastName("dfdfdf");
+        paymentCommand.setBillFirstName("kkckkjk");
+        paymentCommand.setExpireMonth("07");
+        paymentCommand.setExpireYear("2019");
+        paymentCommand.setBillCountry("US");
+        paymentCommand.setBillAddress1("dfkdjfjdlkfjldjflksd");
+        paymentCommand.setBillZipCode("33342");
+        paymentCommand.setBillCity("fgfgfdfsdf");
+        paymentCommand.setBillState("dfdfd");
+        paymentCommand.setCvv("456");
+        orderCommand.setProductType("dffdf");
+        orderCommand.setShipFirstName("kjkjkkjk");
+        orderCommand.setShipLastName("df9dkfjkdjf");
+        orderCommand.setShipAddress("kdfkdjfkdjkfjd");
+        orderCommand.setShipCity("dfvbfgfgdfgdfgfdg");
+        orderCommand.setShipState("kkkjkljkjljkl");
+        orderCommand.setShipCountry("US");
+        orderCommand.setShipZipCode("3985495");
+        Payment payment = createPayment(paymentCommand);
+        List<BasicNameValuePair> params = formulateITFpayParams(paymentCommand, orderCommand, request);
+        String stringFromBase = ITFpay(params);
+        //Parameter1  交易号  CHAR(50)
+        //Parameter2  订单号  CHAR(50)
+        //Parameter3  查询交易号    CHAR(50)
+        //Parameter4  返回的 code  CHAR(32)
+        //Parameter5  返回的信息  CHAR(500)
+        //Parameter6  返回货币代码  CHAR(4)
+        //Parameter7  订单金额  Decimal(18,2)
+        //Parameter8  加密数据  CHAR(500)
+        //Parameter9  返回金额  Decimal(18,2)  人民币
+        //Parameter10  返回交易时间  CHAR(20)  YYYYMMDDHHMMSS
+        // initial return parameter
+        String[] strReturn = stringFromBase.split("&");
+//        String[] returnTradeNo = strReturn[1].split("=");
+        String[] returnPayNo = strReturn[2].split("=");
+        String[] returnCode = strReturn[3].split("=");
+        String[] returnBankInfo = strReturn[4].split("=");
+//        String[] returnAmount = strReturn[8].split("=");
+
+        // SUCCEED CHECK
+        String payTranNo = returnPayNo[1]; // this will be bank transaction number
+        logger.info("Pay gateway transaction number " + payTranNo);
+        payment.setBankTransactionNumber(payTranNo);
+        String bankCode = returnCode[1];
+        payment.setBankReturnCode(bankCode);
+//        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
+        payment.setFee(Float.parseFloat("0.00"));
+        String succeed = "0";
+        String paymentStatusCode = "501";
+        if (returnCode[1].equals("00")) {
+            succeed = "1"; // 交易成功
+            paymentStatusCode = "500";
+            payment.setSuccessTime(Calendar.getInstance().getTime());
+            OrderStatus paidOrderStatus = null;
+            try {
+                paidOrderStatus = orderStatusService
+                        .findByCode(ResourceProperties.ORDER_STATUS_PAID_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot find paid order status.");
+            }
+            payment.getOrder().setOrderStatus(paidOrderStatus);
+            Merchant merchant = merchantService.findByIdentity(orderCommand.getMerNo());
+            if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
+                payment.setFee(merchant.getCommissionFee().getValue());
+            else payment.setFee(payment.getAmount() * merchant.getCommissionFee().getValue() /10*10);
+        }
+        payment.setUpdatedTime(Calendar.getInstance().getTime());
+
+        PaymentStatus paymentStatus = null;
+        try {
+            paymentStatus = paymentStatusService.findByCode(paymentStatusCode);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        payment.setPaymentStatus(paymentStatus);
+
+        // save payment object
+        try {
+            payment = paymentService.create(payment);
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        // return string md5 encoded return string OrderID + Amount +  CurrCode
+        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
+                + orderCommand.getOrderNo().substring(8) + orderCommand.getAmount()
+                + orderCommand.getCurrency() + succeed);
+
+        String result = "succeed=" + succeed + "&amount=" + orderCommand.getAmount()
+                + "&orderNo=" + orderCommand.getOrderNo().substring(8)
+                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
+                + "&md5info=" + calculatedMd5Info;
+        logger.debug("ITFPay result:"+result);
+        return result;
+    }
+
+
     @RequestMapping(value = {"pay"}, method = RequestMethod.POST)
     public String pay(HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -689,10 +807,7 @@ public class HomeController {
         String bankCode = returnCode[1];
         payment.setBankReturnCode(bankCode);
 //        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
-
-        if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
-            payment.setFee(merchant.getCommissionFee().getValue());
-        else payment.setFee(payment.getAmount() * merchant.getCommissionFee().getValue() /10*10);
+        payment.setFee(Float.parseFloat("0.00"));
         String succeed = "0";
         String paymentStatusCode = "501";
         if (returnCode[1].equals("00")) {
@@ -708,6 +823,9 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
+            if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
+                payment.setFee(merchant.getCommissionFee().getValue());
+            else payment.setFee(payment.getAmount() * merchant.getCommissionFee().getValue() /10*10);
         }
         payment.setUpdatedTime(Calendar.getInstance().getTime());
 
@@ -835,8 +953,7 @@ public class HomeController {
         //Telephone 持卡人电话 必填
         pairs.add(new BasicNameValuePair("Telephone", orderCommand.getPhone()));
         //RetURL 持卡人购物的网站 必填项目（不带 http 和后缀）
-        String referer = PayConfiguration.getInstance().getValue(ResourceProperties.ITFPAY_REFERER_KEY);
-        pairs.add(new BasicNameValuePair("RetURL", referer));
+        pairs.add(new BasicNameValuePair("RetURL", orderCommand.getReferer()));
         //Email 邮箱地址 必填
         pairs.add(new BasicNameValuePair("Email", orderCommand.getEmail()));
 
@@ -921,9 +1038,10 @@ public class HomeController {
 
     private OrderCommand createOrderCommand(HttpServletRequest request) {
         OrderCommand orderCommand = new OrderCommand();
-        orderCommand.setSiteNo(formatString((String) request.getAttribute("siteNo")));
         String referer = formatString(request.getParameter("referer"));
+        orderCommand.setReferer(referer);
         Site site = siteService.findByUrl(referer);
+        orderCommand.setSiteNo(site.getIdentity());
         orderCommand.setOrderNo(formatString(site.getIdentity() + request.getParameter("orderNo")));
         orderCommand.setMerNo(request.getParameter("merNo"));
         orderCommand.setReturnUrl(request.getParameter("returnURL"));
