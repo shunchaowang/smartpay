@@ -113,29 +113,8 @@ public class ClaimController {
     public
     @ResponseBody
     String list(@PathVariable("domain") String domain, HttpServletRequest request) {
-
-        String paymentStatusCode = "";
-        // only approved payment status can be initiated to be pending, this list
-        // will show all approved payment and user can mark any of them to be claim pending
-
-        if (domain.equals("refuse")) { // for indexProcess, only payment status process
-            paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE;
-        } else if (domain.equals("all")) { // for indexResolved, only payment status resolved
-            paymentStatusCode = ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE;
-        } else {
-            throw new BadRequestException("400", "Bad request.");
-        }
-
-        PaymentStatus paymentStatus = null;
-        try {
-            paymentStatus = paymentStatusService.findByCode(paymentStatusCode);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-
         DataTablesParams params = new DataTablesParams(request);
         Payment paymentCriteria = new Payment();
-        paymentCriteria.setPaymentStatus(paymentStatus);
         SecurityUser securityUser = UserResource.getCurrentUser();
         if (securityUser == null) {
             throw new BadRequestException("400", "User is null.");
@@ -187,7 +166,7 @@ public class ClaimController {
         return view;
     }
 
-    @RequestMapping(value = {"/addClaim"}, method = RequestMethod.POST,
+    @RequestMapping(value = {"/saveClaim"}, method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String saveClaim(MultipartHttpServletRequest request) {
@@ -251,8 +230,14 @@ public class ClaimController {
         if (StringUtils.isBlank(paymentId)) {
             throw new BadRequestException("400", "Payment id is blank.");
         }
-
         ModelAndView view = new ModelAndView("claim/_showClaimDialog");
+        try {
+            Payment payment = paymentService.get( Long.valueOf(paymentId));
+            view.addObject("paymentStatusCode", payment.getPaymentStatus().getCode());
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Cannot find payment " + paymentId);
+        }
         view.addObject("paymentId", paymentId);
         return view;
     }
@@ -337,4 +322,29 @@ public class ClaimController {
 
         return null;
     }
+
+    @RequestMapping(value = {"/agreeClaim"}, method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String agreeClaim(HttpServletRequest request) {
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        Long paymentId = Long.valueOf(request.getParameter("paymentId"));
+        Payment payment = null;
+        try {
+            payment = paymentService.get(paymentId);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Cannot find payment " + paymentId);
+        }
+
+        payment = paymentService.resolvePaymentClaim(payment);
+        String domain = messageSource.getMessage("refuse.label", null, locale);
+        String successfulMessage = messageSource.getMessage("saved.message",
+                new String[]{domain, payment.getBankTransactionNumber()}, locale);
+        response.setStatus("successful");
+        response.setMessage(successfulMessage);
+        return JsonUtil.toJson(response);
+    }
+
 }

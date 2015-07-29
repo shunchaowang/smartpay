@@ -1,19 +1,14 @@
 <%@include file="../taglib.jsp" %>
-<spring:message code="${domain}.label" var="entity"/>
-<spring:message var="formTitle" code="create.label" arguments="${entity}"/>
-
-<%@include file="../taglib.jsp" %>
 <spring:message var="cancelAction" code="action.cancel.label"/>
-<spring:message var="entity" code="claim.label"/>
+<spring:message var="entity" code="refuse.label"/>
 <spring:message code="claim.label" var="claimLabel" arguments="${entity}"/>
 
 <div id="claim-dialog" title="${claimLabel}">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <form class="form-horizontal" id="new-refund-form">
+                <form class="form-horizontal" id="new-claim-form">
                     <input id="paymentId" name="paymentId" value="${paymentId}" type="hidden"/>
-                    <!-- amount -->
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="file">
                             <spring:message code="file.label"/>

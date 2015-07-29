@@ -18,7 +18,8 @@
 
                         <div class="col-sm-4">
                             <input size="40" name="amount" id="amount"
-                                   class="text" required=""  placeholder="amount"/>
+                                   class="text" required=""  placeholder="amount" value="${orderAmount}"
+                                   max="${orderAmount}"/>
                         </div>
                     </div>
                     <!-- tracking number -->
@@ -55,13 +56,12 @@
         </div>
     </div>
 </div>
-
 <script type="text/javascript">
     $(document).ready(function () {
         $("#new-refund-form").validate({
             rules: {
-                carrier: {required: true, minlength: 3, maxlength: 32},
-                trackingNumber: {required: true, minlength: 3, maxlength: 40}
+                amount: {required: true, minlength: 1, maxlength: 12},
+                remark: {required: true, minlength: 3, maxlength: 40}
             }
         });
     });

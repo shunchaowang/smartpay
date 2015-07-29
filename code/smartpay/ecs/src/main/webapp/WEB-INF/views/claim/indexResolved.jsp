@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
-<spring:message code="refund.label" var="entity"/>
+<spring:message code="refuse.label" var="entity"/>
 
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
 <spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
@@ -9,8 +9,8 @@
 <spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
 <spring:message code="action.cancel.label" var="cancelLabel"/>
-<spring:message code="action.freeze.label" var="freezeLabel"/>
-<spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
+<spring:message code="action.show.label" var="showLabel"/>
+<spring:message code="action.claim.label" var="claimLabel"/>
 <spring:message code="action.approve.label" var="approveLabel"/>
 <spring:message code="action.decline.label" var="declineLabel"/>
 <spring:message code="action.archive.label" var="archiveLabel"/>
@@ -44,7 +44,6 @@
                     <th><spring:message code="amount.label"/></th>
                     <th><spring:message code="currency.label"/></th>
                     <th><spring:message code="createdTime.label"/></th>
-                    <th><spring:message code="returnCode.label"/></th>
                     <th><spring:message code="paymentStatusName.label"/></th>
                     <th><spring:message code="paymentTypeName.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
@@ -76,11 +75,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                     }
                 ]
             },
@@ -115,30 +114,30 @@
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'bankReturnCode', 'targets': 7, 'searchable': false, 'orderable': false,
-                    'data': 'bankReturnCode'
-                },
-                {
-                    'name': 'paymentStatusName',
-                    'targets': 8,
-                    'searchable': false,
-                    'orderable': false,
+                    'name': 'paymentStatusName', 'targets': 7, 'searchable': false, 'orderable': false,
                     'data': 'paymentStatusName'
                 },
                 {
-                    'name': 'paymentTypeName',
-                    'targets': 9,
-                    'searchable': false,
-                    'orderable': false,
+                    'name': 'paymentTypeName', 'targets': 8,'searchable': false, 'orderable': false,
                     'data': 'paymentTypeName'
                 },
                 {
-                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets':9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
-                        return '<button type="button" name="show-claim-button"'
-                                + ' class="tableButton" value="' + row['id'] + '">'
-                                + '<spring:message code="action.show.label"/>'
-                                + '</button>';
+                        var operations = '';
+                        operations += '<button type="button" name="show-claim-button"'
+                        + ' data-identity="' + row['id'] + '"'
+                        + ' class="btn btn-default" value="' + row['id'] + '">' +
+                        "${showLabel}"
+                        + '</button>';
+                        if (row['paymentStatusName'] == 'Claim In Process') {
+                            operations += '<button type="button" name="add-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${claimLabel}"
+                            + '</button>';
+                        }
+                        return operations;
                     }
                 }
             ]
@@ -179,8 +178,153 @@
                         event.preventDefault();
                         claimDialog.dialog("close");
                     });
+                    $("#audit-button").click(function (event) {
+                        event.preventDefault();
+                        $("#confirm-dialog").dialog({
+                            resizable: true,
+                            height: 'auto',
+                            width: 'auto',
+                            modal: true,
+                            open: function () {
+                                var content = "${approveMsg}" + ' ' ;
+                                $(this).html(content);
+                            },
+                            buttons: {
+                                "${approvedStatus}": function () {
+                                    $(this).dialog("close");
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: "${rootURL}claim" + '/agreeClaim',
+                                        data: {paymentId: $("#paymentId").val()},
+                                        dataType: 'JSON',
+                                        error: function (error) {
+                                            alert('There was an error');
+                                        },
+                                        success: function (data) {
+                                            var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                                    "<button type='button' class='close' data-dismiss='alert'>" +
+                                                    "<span aria-hidden='true'>&times;</span>" +
+                                                    "<span class='sr-only'>"
+                                                    + "<spring:message code='action.close.label'/> "
+                                                    + "</span></button>"
+                                                    + data.message + "</div>";
+                                            $('#notification').append(alert);
+                                            claimDialog.dialog("close");
+                                            paymentTable.ajax.reload();
+                                        }
+                                    });
+                                },
+                                "${cancelLabel}": function () {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    });
                 }
             });
         });
+        paymentTable.on('click', 'button[type=button][name=add-claim-button]', function
+                (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}${controller}/addClaim",
+                data: {
+                    paymentId: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var claimDialog = $("#claim-dialog").dialog({
+                        autoOpen: false,
+                        height: 'auto',
+                        width: 600,
+                        modal: true,
+                        dialogClass: "dialogClass",
+                        open: function (event, ui) {
+                            $(".ui-dialog-titlebar-close", ui.dialog || ui).hide();
+                        },
+                        close: function () {
+                            claimDialog.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#cancel-button").click(function (event) {
+                        event.preventDefault();
+                        claimDialog.dialog("close");
+                    });
+
+                    $("#save-button").click(function (event) {
+                        event.preventDefault();
+
+                        // update submit button to indicate busy
+                        //$(this).find("#save-button").attr("disabled","disabled").addClass("busy");
+                        // get the data of the file
+                        var formData = new FormData();
+
+                        var file = $("#file")[0].files[0];
+                        var fileSize = (file.size / 1024 / 1024).toFixed(2);
+                        if (fileSize > 20) {
+                            alert('The size of file ' + file.name + ' is ' +
+                            fileSize + 'M exceeding 20M limit ' +
+                            'file size.');
+                            return;
+                        }
+
+                        formData.append("paymentId", $("#paymentId").val());
+                        formData.append("remark", $("#remark").val());
+                        formData.append("file", file);
+                        $.ajax({
+                            type: "POST",
+                            url: "${rootURL}${controller}/saveClaim",
+                            // set mimeType to be multipart form to
+                            // upload file
+                            mimeType: "multipart/form-data",
+                            // set content type to false or jQuery will tell
+                            // the server its a query string request
+                            contentType: false,
+                            // don't process the files or jQuery will convert
+                            // the files array into strings, and server
+                            // cannot pick it up
+                            processData: false,
+                            cache: false,
+                            data: formData,
+                            dataType: "json",
+                            error: function (data) {
+                                alert("There was an error");
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                claimDialog.dialog("close");
+                                paymentTable.ajax.reload();
+                            }
+                        });
+                        //});
+                    });
+
+                    $("#new-claim-form").validate({
+                        rules: {
+                            remark: {
+                                required: true,
+                                minlength: 5,
+                                maxlength: 32
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
     });
 </script>

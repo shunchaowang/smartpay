@@ -48,7 +48,6 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
             return null;
         }
     }
-
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
@@ -106,7 +105,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -189,7 +188,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -293,9 +292,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
                 } else {
                     predicate = builder.and(predicate, sitePredicate);
                 }
-            }
-            // if site has merchant
-            if (order.getSite().getMerchant() != null) {
+            }else if (order.getSite().getMerchant() != null) {
                 if (order.getSite().getMerchant().getId() != null) {
                     Predicate merchantIdPredicate = builder.equal(
                             root.join("site").join("merchant").<Long>get("id"),
@@ -323,7 +320,7 @@ public class OrderDaoImpl extends GenericDaoImpl<Order, Long>
         if (order.getCustomer() != null && order.getCustomer().getId() != null) {
             Predicate customerPredicate = builder.equal(
                     root.join("customer").<Long>get("id"),
-                    builder.literal(order.getSite().getId()));
+                    builder.literal(order.getCustomer().getId()));
             if (predicate == null) {
                 predicate = customerPredicate;
             } else {
