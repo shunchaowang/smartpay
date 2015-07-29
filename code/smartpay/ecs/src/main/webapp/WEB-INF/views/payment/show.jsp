@@ -59,12 +59,6 @@
                             <td>${paymentCommand.currencyName}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty paymentCommand.bankReturnCode}">
-                        <tr>
-                            <td><spring:message code="returnCode.label"/></td>
-                            <td>${paymentCommand.bankReturnCode}</td>
-                        </tr>
-                    </c:if>
                     <c:if test="${not empty paymentCommand.paymentStatusName}">
                         <tr>
                             <td><spring:message code="paymentStatusName.label"/></td>

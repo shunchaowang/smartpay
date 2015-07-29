@@ -33,18 +33,6 @@
         </ol>
     </div>
     <div class="row">
-        <div class="col-sm-2 pull-left">
-            <a href="${rootURL}refund/refund">
-                <button class="btn btn-default">
-                    <i class="glyphicon glyphicon-wrench"></i>
-                    <spring:message code="create.label" arguments="${entity}"/>
-                </button>
-            </a>
-        </div>
-    </div>
-    <br>
-
-    <div class="row">
         <div class="col-sm-12">
             <table class="table table-bordered" id="payment-table">
                 <thead>

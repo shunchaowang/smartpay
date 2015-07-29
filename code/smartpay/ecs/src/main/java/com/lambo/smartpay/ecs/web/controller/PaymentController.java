@@ -1,23 +1,26 @@
 package com.lambo.smartpay.ecs.web.controller;
 
+import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.Payment;
-import com.lambo.smartpay.core.persistence.entity.Site;
-import com.lambo.smartpay.core.service.PaymentService;
+import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.*;
+import com.lambo.smartpay.core.service.*;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
+import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.ecs.web.vo.PaymentCommand;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
+import com.lambo.smartpay.ecs.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,10 +28,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by linly on 3/27/2015.
@@ -41,7 +47,14 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
-
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private RefundService refundService;
+    @Autowired
+    private RefundStatusService refundStatusService;
+    @Autowired
+    private MessageSource messageSource;
     // here goes all model across the whole controller
     @ModelAttribute("controller")
     public String controller() {
@@ -55,7 +68,7 @@ public class PaymentController {
 
     @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
     public String index(Model model) {
-        model.addAttribute("_view", "payment/index");
+        model.addAttribute("_view", "payment/indexAll");
         return "main";
     }
     @RequestMapping(value = "/list", method = RequestMethod.GET,
@@ -179,6 +192,135 @@ public class PaymentController {
         paymentCommand.setBillCountry(payment.getBillCountry());
 
         return paymentCommand;
+    }
+
+    @RequestMapping(value = {"/addRefund"}, method = RequestMethod.GET)
+    public ModelAndView addRefund(HttpServletRequest request) {
+        String paymentId = request.getParameter("paymentId");
+        if (StringUtils.isBlank(paymentId)) {
+            throw new BadRequestException("400", "Payment id is blank.");
+        }
+        Payment payment = null;
+        try {
+            payment = paymentService.get(Long.valueOf(paymentId));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Payment cannot be found.");
+        }
+        Order order = payment.getOrder();
+        String orderId = String.valueOf(order.getId());
+        Refund refund = createRefund(order);
+        RefundStatus refundStatus = null;
+        try {
+            refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", "Cannot find refund or order status.");
+        }
+        refund.setRefundStatus(refundStatus);
+        List<Refund> refunds = refundService.findByCriteria(refund);
+        Float amount = order.getAmount();
+        for (Refund r : refunds) {
+            amount -= r.getAmount();
+        }
+
+        ModelAndView view = new ModelAndView("payment/_refundDialog");
+        view.addObject("domain", "Refund");
+        view.addObject("orderId", orderId);
+        DecimalFormat myformat = new DecimalFormat();
+        myformat.applyPattern("0.00");
+        view.addObject("orderAmount", myformat.format(amount));
+        return view;
+    }
+
+    @RequestMapping(value = {"/saveRefund"}, method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String saveRefund(HttpServletRequest request) {
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String orderId = request.getParameter("orderId");
+        Float amount = Float.parseFloat(request.getParameter("amount"));
+        String remark = request.getParameter("remark");
+
+        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(amount.toString())
+                || StringUtils.isBlank(remark.toString())) {
+            throw new BadRequestException("400", "Bad request.");
+        }
+
+        Order order = null;
+        try {
+            order = orderService.get(Long.valueOf(orderId));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "Order cannot be found.");
+        }
+
+        // retrieve order and associated customer, set refund recipient to be
+        // the same with customer for now
+        Refund refund = createRefund(order);
+        RefundStatus refundStatus = null;
+        try {
+            refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_INITIATED_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new IntervalServerException("500", "Cannot find refund or order status.");
+        }
+        refund.setRefundStatus(refundStatus);
+        List<Refund> refunds = refundService.findByCriteria(refund);
+        if(refunds != null && refunds.size() > 0) {
+            for (Refund r : refunds) {
+                System.out.println("refund==:"+r.getAmount());
+                r.setAmount(amount);
+                r.setRemark(remark);
+                try {
+                    refundService.update(r);
+                } catch (MissingRequiredFieldException e) {
+                    e.printStackTrace();
+                } catch (NotUniqueException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else{
+            refund.setAmount(amount);
+            refund.setRemark(remark);
+            try {
+                refundService.create(refund);
+                //orderService.update(order);
+            } catch (MissingRequiredFieldException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", e.getMessage());
+            } catch (NotUniqueException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", e.getMessage());
+            }
+        }
+        String domain = messageSource.getMessage("refund.label", null, locale);
+        String successfulMessage = messageSource.getMessage("saved.message",
+                new String[]{domain, amount + " " + remark}, locale);
+        response.setStatus("successful");
+        response.setMessage(successfulMessage);
+
+        return JsonUtil.toJson(response);
+    }
+
+    private Refund createRefund(Order order) {
+        Refund refund = new Refund();
+        refund.setOrder(order);
+        refund.setCurrency(order.getCurrency());
+        refund.setBillFirstName(order.getCustomer().getFirstName());
+        refund.setBillLastName(order.getCustomer().getLastName());
+        refund.setBillAddress1(order.getCustomer().getAddress1());
+        refund.setBillCity(order.getCustomer().getCity());
+        refund.setBillState(order.getCustomer().getState());
+        refund.setBillZipCode(order.getCustomer().getZipCode());
+        refund.setBillCountry(order.getCustomer().getCountry());
+        // bank account number, return code and transaction number
+        // are set to be 0000 for now
+        refund.setBankAccountNumber("0000");
+        refund.setBankReturnCode("0000");
+        refund.setBankTransactionNumber("0000");
+        return refund;
     }
 
 }

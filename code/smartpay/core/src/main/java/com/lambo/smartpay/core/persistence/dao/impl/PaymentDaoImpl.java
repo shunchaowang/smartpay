@@ -9,12 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +78,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         try {
             return super.countAllByCriteria(typedQuery);
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -168,7 +163,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
         try {
             return super.findAllByCriteria(typedQuery);
         } catch (Exception e) {
-            logger.debug(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
@@ -267,22 +262,17 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
             }
         }
 
-        // based on site
-        if (payment.getOrder() != null) {
-            // if payment has site
-            if (payment.getOrder().getSite() != null) {
-                // site id
-                if (payment.getOrder().getSite().getId() != null) {
-                    Predicate sitePredicate = builder.equal(root.join("order")
-                                    .join("site").<Long>get("id"),
-                            builder.literal(payment.getOrder().getSite().getId()));
-                    if (predicate == null) {
-                        predicate = sitePredicate;
-                    } else {
-                        predicate = builder.and(predicate, sitePredicate);
-                    }
+        if ( payment.getOrder() !=null) {
+            if(payment.getOrder().getId() !=null){
+                Predicate orderPredicate = builder.equal(
+                        root.join("order").<Long>get("id"),
+                        builder.literal(payment.getOrder().getId()));
+                if (predicate == null) {
+                    predicate = orderPredicate;
+                } else {
+                    predicate = builder.and(predicate, orderPredicate);
                 }
-
+            }else if (payment.getOrder().getSite() != null) {
                 // if has merchant id
                 if (payment.getOrder().getSite().getMerchant() != null) {
                     if (payment.getOrder().getSite().getMerchant().getId() != null) {
@@ -296,6 +286,27 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
                             predicate = builder.and(predicate, merchantPredicate);
                         }
                     }
+                }
+                // site id
+                if (payment.getOrder().getSite().getId() != null) {
+                    Predicate sitePredicate = builder.equal(root.join("order")
+                                    .join("site").<Long>get("id"),
+                            builder.literal(payment.getOrder().getSite().getId()));
+                    if (predicate == null) {
+                        predicate = sitePredicate;
+                    } else {
+                        predicate = builder.and(predicate, sitePredicate);
+                    }
+                }
+            }
+            if(payment.getOrder().getMerchantNumber() !=null){
+                Predicate merchantNumberPredicate = builder.equal(
+                        root.join("order").<Long>get("merchantNumber"),
+                        builder.literal(payment.getOrder().getMerchantNumber()));
+                if (predicate == null) {
+                    predicate = merchantNumberPredicate;
+                } else {
+                    predicate = builder.and(predicate, merchantNumberPredicate);
                 }
             }
         }
