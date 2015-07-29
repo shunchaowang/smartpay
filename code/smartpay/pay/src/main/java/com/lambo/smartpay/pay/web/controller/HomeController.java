@@ -132,7 +132,7 @@ public class HomeController {
      *
      * @param request
      * @return
-     */
+
     @RequestMapping(value = {"paytest"}, method = RequestMethod.POST)
     public String paytest(HttpServletRequest request, HttpServletResponse response, Model model){
         PayUtil payUtil = new PayUtil();
@@ -243,7 +243,7 @@ public class HomeController {
         logger.debug("ITFPay result:"+result);
         return result;
     }
-
+     */
 
     @RequestMapping(value = {"pay"}, method = RequestMethod.POST)
     public String pay(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -1635,7 +1635,6 @@ public class HomeController {
 
             // if order does not exist create new
             Site site = siteService.findByUrl(referer);
-            orderNo = site.getIdentity()+orderNo;
             Order order = orderService.findByMerchantNumber(orderNo);
 
             if (order == null) {
