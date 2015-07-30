@@ -118,6 +118,11 @@ public class Payment implements Serializable {
     @JoinColumn(name = "PYMT_CRCY_ID", nullable = false)
     private Currency currency;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
+    @JoinColumn(name = "PYMT_WDRL_ID", nullable = true)
+    private Withdrawal withdrawal;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "payment",
             orphanRemoval = true)
     private Set<Claim> claims;
@@ -304,6 +309,14 @@ public class Payment implements Serializable {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+    }
+
+    public Withdrawal getWithdrawal() {
+        return withdrawal;
+    }
+
+    public void setWithdrawal(Withdrawal withdrawal) {
+        this.withdrawal = withdrawal;
     }
 
     public Boolean getActive() {
