@@ -46,6 +46,12 @@ public abstract class ResourceProperties {
     public static final String PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE = "401";
     public static final String PAYMENT_STATUS_CLAIM_RESOLVED_CODE = "502";
 
+    // withdrawal status
+    public static final String WITHDRAWAL_STATUS_PENDING_CODE = "301";
+    public static final String WITHDRAWAL_STATUS_APPROVED_CODE = "300";
+    public static final String WITHDRAWAL_STATUS_DECLINED_CODE = "302";
+    public static final String WITHDRAWAL_STATUS_PROCESSED_CODE = "303";
+
     public enum JpaOrderDir {
         ASC("ASC"),
         DESC("DESC");
