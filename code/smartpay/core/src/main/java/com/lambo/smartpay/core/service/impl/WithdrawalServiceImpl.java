@@ -141,8 +141,8 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         if (withdrawal.getRequestedBy() == null) {
             throw new MissingRequiredFieldException("Withdrawal requested user is null.");
         }
-        if (withdrawal.getAuditedBy() == null) {
-            throw new MissingRequiredFieldException("Withdrawal audited user is null.");
+        if (withdrawal.getWithdrawalStatus() == null) {
+            throw new MissingRequiredFieldException("Withdrawal status is null.");
         }
 
         withdrawal.setActive(true);
