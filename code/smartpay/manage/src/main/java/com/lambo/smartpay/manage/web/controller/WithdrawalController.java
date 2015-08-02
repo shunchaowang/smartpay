@@ -108,51 +108,28 @@ public class WithdrawalController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String searchData(HttpServletRequest request) {
-        String withdrawalId = request.getParameter("withdrawalId");
-        Withdrawal withdrawalCriteria = new Withdrawal();
-        try {
-            withdrawalCriteria = withdrawalService.get(Long.parseLong(withdrawalId));
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        Date beginning = withdrawalCriteria.getDateStart();
-        Date ending = withdrawalCriteria.getDateEnd();
-        Calendar calendar   =   new GregorianCalendar();
-        calendar.setTime(ending);
-        calendar.add(calendar.DATE, 1);
-        ending = calendar.getTime();
-
         List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
         DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
-
-        Order orderCriteria = new Order();
-        Site siteCriteria = new Site();
-        siteCriteria.setMerchant(withdrawalCriteria.getMerchant());
-        orderCriteria.setSite(siteCriteria);
-        Payment paymentCriteria = new Payment();
-        paymentCriteria.setOrder(orderCriteria);
-        PaymentStatus paymentStatus = null;
+        Long recordsTotal = Long.parseLong("0") ;
+        Long recordsFiltered = Long.parseLong("0") ;
+        String withdrawalId = request.getParameter("withdrawalId");
+        if (withdrawalId == null || withdrawalId == "") {
+            throw new BadRequestException("400", "withdrawalId is null.");
+        }
         try {
-            paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
+            Withdrawal w = withdrawalService.get(Long.parseLong(withdrawalId));
+            Set paymentSet = w.getPayments();
+            Iterator<Object> it = paymentSet.iterator();
+            while (it.hasNext()) {
+                Payment payment = (Payment)it.next();
+                DataTablesPayment tablesPayment = new DataTablesPayment(payment);
+                dataTablesPayments.add(tablesPayment);
+            }
+            recordsTotal = Long.parseLong(Integer.valueOf(paymentSet.size()).toString());
+            recordsFiltered = recordsTotal;
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find paid order status.");
         }
-        paymentCriteria.setPaymentStatus(paymentStatus);
-
-        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, beginning, ending);
-        // count total and filtered
-        Long recordsTotal = paymentService.countByCriteria(paymentCriteria, beginning, ending);
-        Long recordsFiltered =  recordsTotal;
-
-        if (payments == null || recordsTotal == null || recordsFiltered == null) {
-            throw new RemoteAjaxException("500", "Internal Server Error.");
-        }
-        for (Payment payment : payments) {;
-            DataTablesPayment tablesPayment = new DataTablesPayment(payment);
-            dataTablesPayments.add(tablesPayment);
-        }
-
         resultSet.setData(dataTablesPayments);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());

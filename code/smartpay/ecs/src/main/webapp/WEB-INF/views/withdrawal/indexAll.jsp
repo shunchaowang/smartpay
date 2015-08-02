@@ -7,6 +7,7 @@
 <spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
 <spring:message code="archive.confirm.message" arguments="${entity}" var="archiveMsg"/>
 <spring:message code="decline.confirm.message" arguments="${entity}" var="declineMsg"/>
+<spring:message code="delete.confirm.message" arguments="${entity}" var="deleteMsg"/>
 <spring:message code="action.delete.label" var="deleteLabel"/>
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.freeze.label" var="freezeLabel"/>
@@ -15,7 +16,7 @@
 <spring:message code="action.decline.label" var="declineLabel"/>
 <spring:message code="action.archive.label" var="archiveLabel"/>
 <spring:message code="status.created.label" var="createdStatus"/>
-<spring:message code="status.created.label" var="withdrawalLabel"/>
+<spring:message code="status.withdrawal.label" var="withdrawalLabel"/>
 <spring:message code="status.frozen.label" var="frozenStatus"/>
 <spring:message code="status.approved.label" var="approvedStatus"/>
 <spring:message code="status.declined.label" var="declinedStatus"/>
@@ -124,9 +125,9 @@
                     'render': function (data, type, row) {
                         var operations = '';
                         if (row['withdrawalStatusName'] =='Withdrawal Pending' || row['withdrawalStatusName'] =='Withdrawal Declined') {
-                            operations += '<button type="button" name="cancel-button" '
+                            operations += '<button type="button" name="delete-button" '
                             + 'class="btn btn-default" value="' + row['id'] + '">'
-                            + '<spring:message code="action.cancel.label"/>'
+                            + '<spring:message code="action.delete.label"/>'
                             + '</button>';
                         };
                         if (row['dueToSecurityWithdrawn'] == 'true' || row['withdrawalStatusName'] =='Withdrawal Approed') {
@@ -141,7 +142,7 @@
             ]
         });
 
-        withdrawalTable.on('click', 'button[type=button][name=cancel-button]', function (event) {
+        withdrawalTable.on('click', 'button[type=button][name=delete-button]', function (event) {
             event.preventDefault();
             var id = this.value;
             $("#confirm-dialog").dialog({
@@ -150,11 +151,11 @@
                 width: 'auto',
                 modal: true,
                 open: function () {
-                    var content = "${cancelLabel}";
+                    var content = "${deleteMsg}";
                     $(this).html(content);
                 },
                 buttons: {
-                    "${cancelLabel}": function () {
+                    "${deleteLabel}": function () {
                         $(this).dialog("close");
                         $.ajax({
                             type: 'POST',
