@@ -359,10 +359,10 @@ public class OrderController {
             paymentCriteria.setOrder(o);
             List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search,
                     null, null, "", ResourceProperties.JpaOrderDir.valueOf(orderDir), null, null);
-            int len = payments.size();
-            if(len > 1) recordsTotal +=(len -1);
-            recordsFiltered = recordsTotal;
             if((payments!= null&&payments.size() >0)) {
+                int len = payments.size();
+                if (len > 1) recordsTotal += (len - 1);
+                recordsFiltered = recordsTotal;
                 for (Payment p : payments) {
                     DataTablesOrder tablesOrder = new DataTablesOrder(o);
                     tablesOrder.setBankName(p.getBankName());

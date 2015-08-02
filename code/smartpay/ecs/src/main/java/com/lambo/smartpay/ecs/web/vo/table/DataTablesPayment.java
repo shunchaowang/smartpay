@@ -36,6 +36,10 @@ public class DataTablesPayment {
     private Long siteId;
     private String siteName;
 
+    private Float refundFee;
+    private Float refundAmt;
+    private Float claimAmt;
+
     public DataTablesPayment(Payment payment) {
         //
         //Locale locale = LocaleContextHolder.getLocale();
@@ -236,5 +240,29 @@ public class DataTablesPayment {
 
     public void setSuccessTime(String successTime) {
         this.successTime = successTime;
+    }
+
+    public Float getRefundAmt() {
+        return refundAmt;
+    }
+
+    public void setRefundAmt(Float refundAmt) {
+        this.refundAmt = refundAmt;
+    }
+
+    public Float getRefundFee() {
+        return refundFee;
+    }
+
+    public void setRefundFee(Float refundFee) {
+        this.refundFee = refundFee;
+    }
+
+    public Float getClaimAmt() {
+        return claimAmt;
+    }
+
+    public void setClaimAmt(Float claimAmt) {
+        this.claimAmt = claimAmt;
     }
 }

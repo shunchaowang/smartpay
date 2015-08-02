@@ -132,7 +132,7 @@ public class HomeController {
      *
      * @param request
      * @return
-
+     */
     @RequestMapping(value = {"paytest"}, method = RequestMethod.POST)
     public String paytest(HttpServletRequest request, HttpServletResponse response, Model model){
         PayUtil payUtil = new PayUtil();
@@ -140,6 +140,8 @@ public class HomeController {
         OrderCommand orderCommand = createOrderCommand(request);
         // create order
         Order order = payUtil.initiateOrder(orderCommand);
+        Merchant merchant = merchantService.findByIdentity(orderCommand.getMerNo());
+        String merchantKey = merchant.getEncryption().getKey();
         PaymentCommand paymentCommand = createPaymentCommand(request, order);
         paymentCommand.setBankName("V");
         paymentCommand.setBankAccountNumber("1111111111111111");
@@ -176,24 +178,27 @@ public class HomeController {
         //Parameter10  返回交易时间  CHAR(20)  YYYYMMDDHHMMSS
         // initial return parameter
         String[] strReturn = stringFromBase.split("&");
-//        String[] returnTradeNo = strReturn[1].split("=");
-        String[] returnPayNo = strReturn[2].split("=");
-        String[] returnCode = strReturn[3].split("=");
-        String[] returnBankInfo = strReturn[4].split("=");
-//        String[] returnAmount = strReturn[8].split("=");
-
-        // SUCCEED CHECK
-        String payTranNo = returnPayNo[1]; // this will be bank transaction number
-        logger.info("Pay gateway transaction number " + payTranNo);
-        payment.setBankTransactionNumber(payTranNo);
-        String bankCode = returnCode[1];
-        payment.setBankReturnCode(bankCode);
-//        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
+        payment.setBankTransactionNumber("0");
         payment.setFee(Float.parseFloat("0.00"));
+        payment.setAmount(Float.parseFloat("0.00"));
+        Currency currency = null;
+        try {
+            currency = currencyService.findByName(ResourceProperties.CURRENCY_RMB_NAME);
+            payment.setCurrency(currency);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        for(int i=0; i< strReturn.length; i++){
+            String[] tmpReturn = strReturn[i].split("=");
+            if("Parameter3".equals(tmpReturn[0]))payment.setBankTransactionNumber(tmpReturn[1]);
+            if("Parameter4".equals(tmpReturn[0]))payment.setBankReturnCode(tmpReturn[1]);
+            if("Parameter9".equals(tmpReturn[0]))payment.setAmount(Float.parseFloat(tmpReturn[1]));
+        }
         String succeed = "0";
         String paymentStatusCode = "501";
-        if (returnCode[1].equals("00")) {
+        if (payment.getBankReturnCode().equals("00")) {
             succeed = "1"; // 交易成功
+            Float retAmt = payment.getAmount();
             paymentStatusCode = "500";
             payment.setSuccessTime(Calendar.getInstance().getTime());
             OrderStatus paidOrderStatus = null;
@@ -205,10 +210,10 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
-            Merchant merchant = merchantService.findByIdentity(orderCommand.getMerNo());
             if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
                 payment.setFee(merchant.getCommissionFee().getValue());
-            else payment.setFee(payment.getAmount() * merchant.getCommissionFee().getValue() /10*10);
+            else payment.setFee(retAmt * merchant.getCommissionFee().getValue() /10*10);
+            payment.setAmount(retAmt - payment.getFee());
         }
         payment.setUpdatedTime(Calendar.getInstance().getTime());
 
@@ -231,19 +236,18 @@ public class HomeController {
             throw new BadRequestException("400", e.getMessage());
         }
 
-        // return string md5 encoded return string OrderID + Amount +  CurrCode
-        String calculatedMd5Info = MDUtil.getMD5Str(orderCommand.getMerNo()
+        String calculatedMd5Info = MDUtil.getMD5Str(merchantKey+orderCommand.getMerNo()
                 + orderCommand.getOrderNo().substring(8) + orderCommand.getAmount()
                 + orderCommand.getCurrency() + succeed);
 
         String result = "succeed=" + succeed + "&amount=" + orderCommand.getAmount()
                 + "&orderNo=" + orderCommand.getOrderNo().substring(8)
-                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
+                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + payment.getBankReturnCode()
                 + "&md5info=" + calculatedMd5Info;
         logger.debug("ITFPay result:"+result);
         return result;
     }
-     */
+
 
     @RequestMapping(value = {"pay"}, method = RequestMethod.POST)
     public String pay(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -794,24 +798,27 @@ public class HomeController {
         //Parameter10  返回交易时间  CHAR(20)  YYYYMMDDHHMMSS
         // initial return parameter
         String[] strReturn = stringFromBase.split("&");
-//        String[] returnTradeNo = strReturn[1].split("=");
-        String[] returnPayNo = strReturn[2].split("=");
-        String[] returnCode = strReturn[3].split("=");
-        String[] returnBankInfo = strReturn[4].split("=");
-//        String[] returnAmount = strReturn[8].split("=");
-
-        // SUCCEED CHECK
-        String payTranNo = returnPayNo[1]; // this will be bank transaction number
-        logger.info("Pay gateway transaction number " + payTranNo);
-        payment.setBankTransactionNumber(payTranNo);
-        String bankCode = returnCode[1];
-        payment.setBankReturnCode(bankCode);
-//        payment.setAmount(Float.parseFloat(returnAmount[1]));//支付返回金额
+        payment.setBankTransactionNumber("0");
         payment.setFee(Float.parseFloat("0.00"));
+        payment.setAmount(Float.parseFloat("0.00"));
+        Currency currency = null;
+        try {
+            currency = currencyService.findByName(ResourceProperties.CURRENCY_RMB_NAME);
+            payment.setCurrency(currency);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        for(int i=0; i< strReturn.length; i++){
+            String[] tmpReturn = strReturn[i].split("=");
+            if("Parameter3".equals(tmpReturn[0]))payment.setBankTransactionNumber(tmpReturn[1]);
+            if("Parameter4".equals(tmpReturn[0]))payment.setBankReturnCode(tmpReturn[1]);
+            if("Parameter9".equals(tmpReturn[0]))payment.setAmount(Float.parseFloat(tmpReturn[1]));
+        }
         String succeed = "0";
         String paymentStatusCode = "501";
-        if (returnCode[1].equals("00")) {
+        if (payment.getBankReturnCode().equals("00")) {
             succeed = "1"; // 交易成功
+            Float retAmt = payment.getAmount();
             paymentStatusCode = "500";
             payment.setSuccessTime(Calendar.getInstance().getTime());
             OrderStatus paidOrderStatus = null;
@@ -825,7 +832,8 @@ public class HomeController {
             payment.getOrder().setOrderStatus(paidOrderStatus);
             if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
                 payment.setFee(merchant.getCommissionFee().getValue());
-            else payment.setFee(payment.getAmount() * merchant.getCommissionFee().getValue() /10*10);
+            else payment.setFee(retAmt * merchant.getCommissionFee().getValue() /10*10);
+            payment.setAmount(retAmt - payment.getFee());
         }
         payment.setUpdatedTime(Calendar.getInstance().getTime());
 
@@ -854,7 +862,7 @@ public class HomeController {
 
         String result = "succeed=" + succeed + "&amount=" + orderCommand.getAmount()
                 + "&orderNo=" + orderCommand.getOrderNo().substring(8)
-                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + bankCode
+                + "&currency=" + orderCommand.getCurrency() + "&errcode=" + payment.getBankReturnCode()
                 + "&md5info=" + calculatedMd5Info;
         logger.debug("ITFPay result:"+result);
         return result;
