@@ -23,10 +23,6 @@
                     <strong>${merchantCommand.orderCount}</strong>
                     <spring:message code="transaction.label"/>
                 </div>
-                <div class="col-sm-4">
-                    <strong>${merchantCommand.orderAmount}</strong>
-                    <spring:message code="amount.label"/>
-                </div>
     </div>
     <!-- count by site -->
     <div class="row">
