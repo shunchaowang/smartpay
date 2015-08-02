@@ -119,7 +119,7 @@ public class Payment implements Serializable {
     private Currency currency;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            optional = false)
+            optional = true)
     @JoinColumn(name = "PYMT_WDRL_ID", nullable = true)
     private Withdrawal withdrawal;
 
