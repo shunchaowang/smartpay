@@ -138,64 +138,46 @@ public class WithdrawalController {
             throw new BadRequestException("400", "User is null.");
         }
         Merchant merchant = securityUser.getMerchant();
-        Withdrawal withdrawalCriteria = new Withdrawal();
-        withdrawalCriteria.setMerchant(merchant);
         Date beginning = merchant.getCreatedTime();
         Calendar calendar   =   new GregorianCalendar();
         calendar.setTime(new Date());
         calendar.add(calendar.DATE, -9);
         Date ending = calendar.getTime();
         String withdrawalId = request.getParameter("withdrawalId");
-        if(withdrawalId !=null && withdrawalId !=""){
-            try {
-                withdrawalCriteria = withdrawalService.get(Long.parseLong(withdrawalId));
-                beginning = withdrawalCriteria.getDateStart();
-                ending = withdrawalCriteria.getDateEnd();
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-            }
-        }else {
-            WithdrawalStatus withdrawalStatus = null;
-            try {
-                withdrawalStatus = withdrawalStatusService.findByCode(ResourceProperties.WITHDRAWAL_STATUS_APPROVED_CODE);
-                withdrawalCriteria.setWithdrawalStatus(withdrawalStatus);
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-                throw new IntervalServerException("500", "Cannot find status.");
-            }
-            List<Withdrawal> withdrawals = withdrawalService.findByCriteria(withdrawalCriteria, 0, 1, "", null);
-            if (withdrawals.size() > 0) {
-                Withdrawal w = (Withdrawal) (withdrawals.get(0));
-                ending = withdrawalCriteria.getDateEnd();
-            }
-        }
-        calendar.setTime(ending);
-        calendar.add(calendar.DATE, 1);
-        ending = calendar.getTime();
 
         List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
         DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
-        if(beginning.compareTo(ending)>0){
-            resultSet.setData(dataTablesPayments);
-            resultSet.setRecordsTotal(0);
-            resultSet.setRecordsFiltered(0);
-            return JsonUtil.toJson(resultSet);
-        }
+
+
         Order orderCriteria = new Order();
         Site siteCriteria = new Site();
         siteCriteria.setMerchant(merchant);
         orderCriteria.setSite(siteCriteria);
         Payment paymentCriteria = new Payment();
         paymentCriteria.setOrder(orderCriteria);
-        PaymentStatus paymentStatus = null;
-        try {
-            paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find paid order status.");
+        if(withdrawalId !=null && withdrawalId !="" ){
+            try {
+                Withdrawal w = withdrawalService.get(Long.parseLong(withdrawalId));
+                beginning = w.getDateStart();
+                ending = w.getDateEnd();
+                calendar.setTime(ending);
+                calendar.add(calendar.DATE, 1);
+                ending = calendar.getTime();
+                paymentCriteria.setWithdrawal(w);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+        }else {
+            paymentCriteria.setWithdrawal(null);
+            PaymentStatus paymentStatus = null;
+            try {
+                paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+                throw new IntervalServerException("500", "Cannot find paid order status.");
+            }
+            paymentCriteria.setPaymentStatus(paymentStatus);
         }
-        paymentCriteria.setPaymentStatus(paymentStatus);
-
         List<Payment> payments = paymentService.findByCriteria(paymentCriteria, beginning, ending);
         // count total and filtered
         Long recordsTotal = paymentService.countByCriteria(paymentCriteria, beginning, ending);
@@ -205,7 +187,7 @@ public class WithdrawalController {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
         if(withdrawalId !=null && withdrawalId !="" ){
-            for (Payment payment : payments) {;
+            for (Payment payment : payments) {
                 DataTablesPayment tablesPayment = new DataTablesPayment(payment);
                 dataTablesPayments.add(tablesPayment);
             }
@@ -214,20 +196,18 @@ public class WithdrawalController {
             Float totalFee = Float.parseFloat("0.00");
             NumberFormat nf= NumberFormat.getNumberInstance() ;
             nf.setMaximumFractionDigits(3);
+            beginning = new Date();
+            ending = merchant.getCreatedTime();
             for (Payment payment : payments) {
+                if(beginning.compareTo(payment.getCreatedTime()) > 0)
+                    beginning = payment.getCreatedTime();
+                if (payment.getCreatedTime().compareTo(ending) > 0)
+                    ending = payment.getCreatedTime();
                 totalAmount += payment.getAmount();
                 totalFee += payment.getFee();
-                Float claimAmt = Float.parseFloat("0.00");
                 Float refundAmt = Float.parseFloat("0.00");
                 Float refundFee = Float.parseFloat("0.00");
-                if (payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_CLAIM_PENDING_CODE)
-                        || payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE)) {
-                    throw new RemoteAjaxException("500", "Internal Server Error.");
-                } else if (payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE)) {
-                    claimAmt = payment.getAmount();
-                    totalAmount -= claimAmt;
-                    totalFee -= payment.getFee();
-                } else if (payment.getOrder().getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)) {
+                if (payment.getOrder().getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)) {
                     Set st = payment.getOrder().getRefunds();
                     for (Iterator it = st.iterator(); it.hasNext(); ) {
                         refundAmt += ((Refund) it.next()).getAmount();
@@ -245,8 +225,6 @@ public class WithdrawalController {
                 }
                 ;
                 DataTablesPayment tablesPayment = new DataTablesPayment(payment);
-
-                tablesPayment.setClaimAmt(Float.parseFloat(nf.format(claimAmt)));
                 tablesPayment.setRefundAmt(Float.parseFloat(nf.format(refundAmt)));
                 tablesPayment.setRefundFee(Float.parseFloat(nf.format(refundFee)));
                 dataTablesPayments.add(tablesPayment);
@@ -259,9 +237,6 @@ public class WithdrawalController {
             withdrawal.setSecurityDeposit(Double.parseDouble(nf.format(0.1 * totalAmount)));
             withdrawal.setSecurityRate(Float.parseFloat("0.10"));
             withdrawal.setDateStart(beginning);
-            calendar.setTime(ending);
-            calendar.add(calendar.DATE, -1);
-            ending = calendar.getTime();
             withdrawal.setDateEnd(ending);
             withdrawal.setSecurityWithdrawn(false);
         }
@@ -311,23 +286,18 @@ public class WithdrawalController {
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
         String remark = request.getParameter("remark");
-        withdrawal.setRemark(remark);
+        Withdrawal ws = withdrawal;
+        ws.setRemark(remark);
         WithdrawalStatus withdrawalStatus = null;
         try {
             withdrawalStatus = withdrawalStatusService.findByCode(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE);
-            Withdrawal withdrawalCriteria = new Withdrawal();
-            withdrawalCriteria.setMerchant(withdrawal.getMerchant());
-            withdrawalCriteria.setWithdrawalStatus(withdrawalStatus);
-            List<Withdrawal> withdrawals = withdrawalService.findByCriteria(withdrawalCriteria);
-            for (Withdrawal w : withdrawals){
-                withdrawalService.delete(w.getId());
-            }
+            ws.setWithdrawalStatus(withdrawalStatus);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new IntervalServerException("500", "Cannot find status.");
         }
         try {
-            withdrawalService.create(withdrawal);
+            withdrawalService.create(ws);
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
             throw new BadRequestException("400", e.getMessage());

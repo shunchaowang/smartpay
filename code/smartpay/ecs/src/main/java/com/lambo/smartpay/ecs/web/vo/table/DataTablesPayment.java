@@ -38,7 +38,6 @@ public class DataTablesPayment {
 
     private Float refundFee;
     private Float refundAmt;
-    private Float claimAmt;
 
     public DataTablesPayment(Payment payment) {
         //
@@ -256,13 +255,5 @@ public class DataTablesPayment {
 
     public void setRefundFee(Float refundFee) {
         this.refundFee = refundFee;
-    }
-
-    public Float getClaimAmt() {
-        return claimAmt;
-    }
-
-    public void setClaimAmt(Float claimAmt) {
-        this.claimAmt = claimAmt;
     }
 }
