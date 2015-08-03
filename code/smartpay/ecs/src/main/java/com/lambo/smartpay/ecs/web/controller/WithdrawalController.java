@@ -285,9 +285,10 @@ public class WithdrawalController {
         return "main";
     }
 
-    @RequestMapping(value = {"/saveWithdrawal"}, method = RequestMethod.POST,
-            produces = "application/json;charset=UTF-8")
-    @ResponseBody
+    // should not have ResponseBody if you want to redirect
+    @RequestMapping(value = {"/saveWithdrawal"}, method = RequestMethod.POST/*,
+            produces = "application/json;charset=UTF-8"*/)
+    //@ResponseBody
     public String saveWithdrawal(HttpServletRequest request,RedirectAttributes attributes) {
         SecurityUser securityUser = UserResource.getCurrentUser();
         if (securityUser == null) {

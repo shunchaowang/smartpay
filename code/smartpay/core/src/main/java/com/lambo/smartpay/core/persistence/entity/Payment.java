@@ -98,27 +98,27 @@ public class Payment implements Serializable {
     @Column(name = "PYMT_BILL_COUNTRY", length = 128, nullable = false)
     private String billCountry;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @ManyToOne(fetch = FetchType.EAGER, /*cascade = {CascadeType.PERSIST, CascadeType.MERGE},*/
             optional = false)
     @JoinColumn(name = "PYMT_PYST_ID", nullable = false)
     private PaymentStatus paymentStatus;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @ManyToOne(fetch = FetchType.EAGER, /*cascade = {CascadeType.PERSIST, CascadeType.MERGE},*/
             optional = false)
     @JoinColumn(name = "PYMT_PYTP_ID", nullable = false)
     private PaymentType paymentType;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @ManyToOne(fetch = FetchType.EAGER, /*cascade = {CascadeType.PERSIST, CascadeType.MERGE},*/
             optional = false)
     @JoinColumn(name = "PYMT_ORDR_ID", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @ManyToOne(fetch = FetchType.EAGER, /*cascade = {CascadeType.PERSIST, CascadeType.MERGE},*/
             optional = false)
     @JoinColumn(name = "PYMT_CRCY_ID", nullable = false)
     private Currency currency;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @ManyToOne(fetch = FetchType.EAGER, /*cascade = {CascadeType.PERSIST, CascadeType.MERGE},*/
             optional = true)
     @JoinColumn(name = "PYMT_WDRL_ID", nullable = true)
     private Withdrawal withdrawal;
