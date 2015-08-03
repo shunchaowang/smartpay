@@ -174,8 +174,8 @@ public class WithdrawalController {
             Payment paymentCriteria = new Payment();
             paymentCriteria.setOrder(orderCriteria);
             paymentCriteria.setWithdrawal(null);
+            paymentCriteria.setActive(true);
             Set<PaymentStatus> paymentStatusSet = new HashSet();
-
             try {
                 PaymentStatus paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
                 paymentStatusSet.add(paymentStatus);
