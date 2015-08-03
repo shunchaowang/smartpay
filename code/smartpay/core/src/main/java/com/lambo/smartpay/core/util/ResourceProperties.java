@@ -45,6 +45,7 @@ public abstract class ResourceProperties {
     public static final String PAYMENT_STATUS_CLAIM_PENDING_CODE = "400";
     public static final String PAYMENT_STATUS_CLAIM_IN_PROCESS_CODE = "401";
     public static final String PAYMENT_STATUS_CLAIM_RESOLVED_CODE = "502";
+    public static final String PAYMENT_STATUS_CLAIM_SUCCESSED_CODE = "200";
 
     // withdrawal status
     public static final String WITHDRAWAL_STATUS_PENDING_CODE = "301";

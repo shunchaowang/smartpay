@@ -143,10 +143,10 @@ public class WithdrawalController {
         if(withdrawalId !=null && withdrawalId !="" ){
             try {
                 Withdrawal w = withdrawalService.get(Long.parseLong(withdrawalId));
-                Set paymentSet = w.getPayments();
-                Iterator<Object> it = paymentSet.iterator();
+                Set<Payment> paymentSet = w.getPayments();
+                Iterator<Payment> it = paymentSet.iterator();
                 while (it.hasNext()) {
-                    Payment payment = (Payment)it.next();
+                    Payment payment = it.next();
                     DataTablesPayment tablesPayment = new DataTablesPayment(payment);
                     dataTablesPayments.add(tablesPayment);
                 }
@@ -174,16 +174,19 @@ public class WithdrawalController {
             Payment paymentCriteria = new Payment();
             paymentCriteria.setOrder(orderCriteria);
             paymentCriteria.setWithdrawal(null);
-            PaymentStatus paymentStatus = null;
+            Set<PaymentStatus> paymentStatusSet = new HashSet();
+
             try {
-                paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
+                PaymentStatus paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE);
+                paymentStatusSet.add(paymentStatus);
+                paymentStatus = paymentStatusService.findByCode(ResourceProperties.PAYMENT_STATUS_CLAIM_SUCCESSED_CODE);
+                paymentStatusSet.add(paymentStatus);
             } catch (NoSuchEntityException e) {
                 e.printStackTrace();
-                throw new IntervalServerException("500", "Cannot find paid order status.");
+                throw new IntervalServerException("500", "Cannot find status.");
             }
-            paymentCriteria.setPaymentStatus(paymentStatus);
 
-            paymentList = paymentService.findByCriteria(paymentCriteria, beginning, ending);
+            paymentList = paymentService.findByWithdrawalCriteria(paymentCriteria, paymentStatusSet, beginning, ending);
             // count total and filtered
             recordsTotal = Long.parseLong(Integer.valueOf(paymentList.size()).toString());
             recordsFiltered = recordsTotal;
@@ -309,7 +312,10 @@ public class WithdrawalController {
         ws.setActive(true);
         ws.setUpdatedTime(new Date());
         try {
-            withdrawalService.create(ws);
+            ws = withdrawalService.create(ws);
+            for(Payment p:paymentList) {
+                paymentService.withdrawPayment(p, ws);
+            }
             String fieldLabel = messageSource.getMessage("withdrawal.label", null, locale);
             attributes.addFlashAttribute("message",
                     messageSource.getMessage("created.message",
@@ -341,7 +347,15 @@ public class WithdrawalController {
         Locale locale = LocaleContextHolder.getLocale();
         String label = messageSource.getMessage("withdrawal.label", null, locale);
         try {
+            Withdrawal w = withdrawalService.get(id);
+            Set<Payment> paymentSet = w.getPayments();
+            Iterator<Payment> it = paymentSet.iterator();
+            while (it.hasNext()) {
+                Payment payment = it.next();
+                paymentService.unwithdrawPayment(payment);
+            }
             withdrawalService.delete(id);
+
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             String message = messageSource
