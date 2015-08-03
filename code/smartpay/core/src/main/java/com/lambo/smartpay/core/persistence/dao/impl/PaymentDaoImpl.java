@@ -316,19 +316,6 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
             }
         }
 
-        Predicate withdrawalPredicate = null;
-        if (payment.getWithdrawal() != null && payment.getWithdrawal().getId() != null) {
-            withdrawalPredicate = builder.equal(root.join("withdrawal")
-                    .<Long>get("id"), builder.literal(payment.getWithdrawal().getId()));
-        } else {
-            withdrawalPredicate = builder.isNull(root.get("withdrawal"));
-        }
-        if (predicate == null) {
-            predicate = withdrawalPredicate;
-        } else {
-            predicate = builder.and(predicate, withdrawalPredicate);
-        }
-
         logger.debug("Formulated predicate is " + predicate);
         return predicate;
     }
