@@ -284,7 +284,17 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
             return null;
         }
         payment.setWithdrawal(withdrawal);
-        return paymentDao.update(payment);
+
+        Payment result = null;
+        try {
+            result = update(payment);
+        } catch (MissingRequiredFieldException e) {
+            logger.debug("Missing fields when updating payment.");
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.debug("Payment is not unique.");
+        }
+        return result;
     }
 
     @Transactional
@@ -294,7 +304,16 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
             return null;
         }
         payment.setWithdrawal(null);
-        return paymentDao.update(payment);
+        Payment result = null;
+        try {
+            result = update(payment);
+        } catch (MissingRequiredFieldException e) {
+            logger.debug("Missing fields when updating payment.");
+            e.printStackTrace();
+        } catch (NotUniqueException e) {
+            logger.debug("Payment is not unique.");
+        }
+        return result;
     }
 
     /**
