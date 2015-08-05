@@ -11,7 +11,6 @@
 <spring:message code="action.cancel.label" var="cancelLabel"/>
 <spring:message code="action.freeze.label" var="freezeLabel"/>
 <spring:message code="action.unfreeze.label" var="unfreezeLabel"/>
-<spring:message code="action.refund.label" var="refundLabel"/>
 <spring:message code="action.decline.label" var="declineLabel"/>
 <spring:message code="action.archive.label" var="archiveLabel"/>
 <spring:message code="status.created.label" var="createdStatus"/>
@@ -33,11 +32,26 @@
         </ol>
     </div>
     <div class="row">
+        <div class="col-sm-2 pull-left">
+            <c:if test="${withdrawalId==null}">
+                <a href="${rootURL}withdrawal/create">
+                    <button class="btn btn-default" id="new-withdrawal-button" disabled = "true">
+                        <i class="glyphicon glyphicon-wrench"></i>
+                        <spring:message code="create.label" arguments="${entity}"/>
+                    </button>
+                </a>
+            </c:if>
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
         <div class="col-sm-12">
             <table class="table table-bordered" id="payment-table">
                 <thead>
                 <tr>
-                    <input id="withdrawalId" name="withdrawalId" value="${withdrawalId}" type="hidden"/>
+                    <input id="withdrawalId" name="withdrawalId" value="${withdrawalId}"
+                           type="hidden"/>
                     <th><spring:message code="id.label"/></th>
                     <th><spring:message code="orderNumber.label"/></th>
                     <th><spring:message code="bankTransactionNumber.label"/></th>
@@ -83,6 +97,12 @@
                 ]
             },
 
+            'initComplete': function (settings, json) {
+                if (json.data.length > 0) {
+                    $("#new-withdrawal-button").prop("disabled", false);
+                }
+            },
+
             'ajax': {
                 'url': "${rootURL}${controller}/searchData",
                 'type': "GET",
@@ -115,8 +135,8 @@
                     'data': 'createdTime'
                 },
                 {
-                    'name': 'paymentStatusName',  'targets': 6, 'searchable': false,
-                    'orderable': false,  'data': 'paymentStatusName'
+                    'name': 'paymentStatusName', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'paymentStatusName'
                 },
                 {
                     'name': 'paymentTypeName', 'targets': 7, 'searchable': false,

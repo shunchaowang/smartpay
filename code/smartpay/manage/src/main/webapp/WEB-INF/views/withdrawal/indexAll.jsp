@@ -49,11 +49,9 @@
                     <th><spring:message code="securityRate.label"/></th>
                     <th><spring:message code="securityDeposit.label"/></th>
                     <th><spring:message code="securityWithdrawn.label"/></th>
-                    <th><spring:message code="wdrlRequester.label"/></th>
-                    <th><spring:message code="wdrlAuditer.label"/></th>
+                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="remark.label"/></th>
-                    <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
                 <tbody></tbody>
@@ -81,11 +79,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
                     }
                 ]
             },
@@ -111,39 +109,13 @@
                 {'name': 'amount', 'targets': 4, 'data': 'amount'},
                 {'name': 'securityRate', 'targets': 5, 'data': 'securityRate'},
                 {'name': 'securityDeposit', 'targets': 6, 'data': 'securityDeposit'},
-                {'name': 'dueToSecurityWithdrawn', 'targets': 7, 'data': 'dueToSecurityWithdrawn'},
-                {'name': 'requester', 'targets': 8, 'data': 'requester'},
-                {'name': 'auditer', 'targets': 9, 'searchable': false, 'data': 'auditer'},
+                {'name': 'securityWithdrawn', 'targets': 7, 'visible': false, 'data': 'securityWithdrawn' },
+                {'name': 'withdrawalStatusCode', 'targets': 8, 'visible': false, 'data': 'withdrawalStatusCode' },
                 {
-                    'name': 'withdrawalStatusName', 'targets': 10, 'searchable': false,
+                    'name': 'withdrawalStatusName', 'targets': 9, 'searchable': false,
                     'orderable': false, 'data': 'withdrawalStatusName'
                 },
-                {'name': 'remark', 'targets': 11, 'searchable': false, 'data': 'remark'},
-                {
-                    'name': 'operation', 'targets': 12, 'orderable': false, 'searchable': false,
-                    'render': function (data, type, row) {
-                        var operations = '';
-                        if (row['withdrawalStatusName'] =='Withdrawal Pending' ) {
-                            operations += '<button type="button" name="approve-button" '
-                            + 'class="btn btn-default" value="' + row['id'] + '">'
-                            + '<spring:message code="action.approve.label"/>'
-                            + '</button>';
-                        };
-                        if (row['withdrawalStatusName'] =='Withdrawal Pending' ) {
-                            operations += '<button type="button" name="decline-button" '
-                            + 'class="btn btn-default" value="' + row['id'] + '">'
-                            + '<spring:message code="action.decline.label"/>'
-                            + '</button>';
-                        };
-                        if (row['dueToSecurityWithdrawn'] == 'true' || row['withdrawalStatusName'] =='Withdrawal Approed') {
-                            operations += '<button type="button" name="save-button" '
-                                    + 'class="btn btn-default" value="' + row['id'] + '">'
-                                    + '<spring:message code="securityWithdrawn.label"/>'
-                                    + '</button>';
-                        }
-                        return operations;
-                    }
-                }
+                {'name': 'remark', 'targets': 10, 'searchable': false, 'data': 'remark'}
             ]
         });
 
@@ -233,5 +205,47 @@
             });
         });
 
+        withdrawalTable.on('click', 'button[type=button][name=securityWithdrawn-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = '${approveLabel}';
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${approveLabel}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}withdrawal" + '/securityWithdrawn',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                withdrawalTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${approveLabel}": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
     });
 </script>
