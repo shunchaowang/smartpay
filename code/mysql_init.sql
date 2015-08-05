@@ -1472,6 +1472,8 @@ INSERT INTO `smartpay2`.`WITHDRAWAL_STATUSES` (`WDST_ID`, `WDST_NAME`, `WDST_DES
 INSERT INTO `smartpay2`.`WITHDRAWAL_STATUSES` (`WDST_ID`, `WDST_NAME`, `WDST_DESCRIPTION`, `WDST_ACTIVE`, `WDST_CODE`) VALUES (NULL, 'Withdrawal Approved', 'Withdrawal Approed', 1, '300');
 INSERT INTO `smartpay2`.`WITHDRAWAL_STATUSES` (`WDST_ID`, `WDST_NAME`, `WDST_DESCRIPTION`, `WDST_ACTIVE`, `WDST_CODE`) VALUES (NULL, 'Withdrawal Declined', 'Withdrawal Declined', 1, '302');
 INSERT INTO `smartpay2`.`WITHDRAWAL_STATUSES` (`WDST_ID`, `WDST_NAME`, `WDST_DESCRIPTION`, `WDST_ACTIVE`, `WDST_CODE`) VALUES (NULL, 'Withdrawal Processed', 'Withdrawal Processed', 1, '303');
+INSERT INTO `smartpay2`.`WITHDRAWAL_STATUSES` (`WDST_ID`, `WDST_NAME`, `WDST_DESCRIPTION`, `WDST_ACTIVE`, `WDST_CODE`) VALUES (NULL, 'Deposit Withdrawal Requested', 'Deposit Withdrawal Requested', 1, '401');
+INSERT INTO `smartpay2`.`WITHDRAWAL_STATUSES` (`WDST_ID`, `WDST_NAME`, `WDST_DESCRIPTION`, `WDST_ACTIVE`, `WDST_CODE`) VALUES (NULL, 'Deposit Withdrawal Approved', 'Deposit Withdrawal Approved', 1, '402');
 
 COMMIT;
 
