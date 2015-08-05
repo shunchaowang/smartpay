@@ -300,34 +300,26 @@ public class WithdrawalController {
         String remark = request.getParameter("remark");
         Withdrawal ws = createithdrawal(withdrawalCommand);
         ws.setRequestedBy(securityUser.getId());
-        WithdrawalStatus withdrawalStatus = null;
-        try {
-            withdrawalStatus = withdrawalStatusService.findByCode(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE);
-            ws.setWithdrawalStatus(withdrawalStatus);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-            throw new IntervalServerException("500", "Cannot find status.");
-        }
         ws.setMerchant(withdrawalCommand.getMerchant());
         ws.setSecurityWithdrawn(false);
         ws.setActive(true);
         ws.setUpdatedTime(new Date());
         try {
-            ws = withdrawalService.create(ws);
-            for(Payment p:paymentList) {
-                paymentService.withdrawPayment(p, ws);
-            }
-            String fieldLabel = messageSource.getMessage("withdrawal.label", null, locale);
-            attributes.addFlashAttribute("message",
-                    messageSource.getMessage("created.message",
-                            new String[]{fieldLabel, String.valueOf(ws.getAmount()) }, locale));
+            ws = withdrawalService.requestWithdrawal(ws);
         } catch (MissingRequiredFieldException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", e.getMessage());
+            throw new BadRequestException("400", "missingRequiredFieldException");
         } catch (NotUniqueException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", e.getMessage());
+            throw new BadRequestException("400", "notUniqueException");
         }
+        for(Payment p:paymentList) {
+            paymentService.withdrawPayment(p, ws);
+        }
+        String fieldLabel = messageSource.getMessage("withdrawal.label", null, locale);
+        attributes.addFlashAttribute("message",
+                messageSource.getMessage("created.message",
+                        new String[]{fieldLabel, String.valueOf(ws.getAmount()) }, locale));
         String domain = messageSource.getMessage("withdrawal.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, ws.getAmount() + " " + remark}, locale);
@@ -349,6 +341,9 @@ public class WithdrawalController {
         String label = messageSource.getMessage("withdrawal.label", null, locale);
         try {
             Withdrawal w = withdrawalService.get(id);
+//            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_DECLINED_CODE) ) {
+//                throw new BadRequestException("400", "can not cancel.");
+//            }
             Set<Payment> paymentSet = w.getPayments();
             Iterator<Payment> it = paymentSet.iterator();
             while (it.hasNext()) {
@@ -383,7 +378,7 @@ public class WithdrawalController {
         String label = messageSource.getMessage("securityWithdrawn.label", null, locale);
         try {
             Withdrawal w = withdrawalService.get(id);
-            withdrawalService.update(w);
+            withdrawalService.requestDepositWithdrawal(w);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             String message = messageSource

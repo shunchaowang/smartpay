@@ -50,8 +50,7 @@
                     <th><spring:message code="securityRate.label"/></th>
                     <th><spring:message code="securityDeposit.label"/></th>
                     <th><spring:message code="securityWithdrawn.label"/></th>
-                    <th><spring:message code="wdrlRequester.label"/></th>
-                    <th><spring:message code="wdrlAuditer.label"/></th>
+                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="remark.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
@@ -82,11 +81,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
                     }
                 ]
             },
@@ -112,25 +111,24 @@
                 {'name': 'amount', 'targets': 4, 'data': 'amount'},
                 {'name': 'securityRate', 'targets': 5, 'data': 'securityRate'},
                 {'name': 'securityDeposit', 'targets': 6, 'data': 'securityDeposit'},
-                {'name': 'dueToSecurityWithdrawn', 'targets': 7, 'data': 'dueToSecurityWithdrawn'},
-                {'name': 'requester', 'targets': 8, 'data': 'requester'},
-                {'name': 'auditer', 'targets': 9, 'searchable': false, 'data': 'auditer'},
+                {'name': 'securityWithdrawn', 'targets': 7, 'visible': false, 'data': 'securityWithdrawn' },
+                {'name': 'withdrawalStatusCode', 'targets': 8, 'visible': false, 'data': 'withdrawalStatusCode' },
                 {
-                    'name': 'withdrawalStatusName', 'targets': 10, 'searchable': false,
+                    'name': 'withdrawalStatusName', 'targets': 9, 'searchable': false,
                     'orderable': false, 'data': 'withdrawalStatusName'
                 },
-                {'name': 'remark', 'targets': 11, 'searchable': false, 'data': 'remark'},
+                {'name': 'remark', 'targets': 10, 'searchable': false, 'data': 'remark'},
                 {
-                    'name': 'operation', 'targets': 12, 'orderable': false, 'searchable': false,
+                    'name': 'operation', 'targets': 11, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
                         var operations = '';
-                        if (row['withdrawalStatusName'] =='Withdrawal Pending' || row['withdrawalStatusName'] =='Withdrawal Declined') {
+                        if (row['withdrawalStatusCode'] !='300' ) {
                             operations += '<button type="button" name="delete-button" '
                             + 'class="btn btn-default" value="' + row['id'] + '">'
                             + '<spring:message code="action.delete.label"/>'
                             + '</button>';
                         };
-                        if (row['dueToSecurityWithdrawn'] == 'true' || row['withdrawalStatusName'] =='Withdrawal Approed') {
+                        if (row['securityWithdrawn'] == 'true' || row['withdrawalStatusCode'] =='300') {
                             operations += '<button type="button" name="save-button" '
                                     + 'class="btn btn-default" value="' + row['id'] + '">'
                                     + '<spring:message code="securityWithdrawn.label"/>'

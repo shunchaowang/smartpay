@@ -59,41 +59,6 @@
             </div>
         </div>
     </div>
-    <!-- amount by site -->
-    <div class="row">
-        <div class="col-sm-12">
-            <div>
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="orderCountSummary.label"/>
-                ${merchantCommand.orderAmount}
-                </h5>
-            </div>
-            <div>
-                <table class="table table-bordered" id="amount-table">
-                    <thead>
-                    <tr>
-                        <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="id.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="identity.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="name.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="amount.label"/>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
     <!-- amount by currency -->
     <div class="row">
         <div class="col-sm-12">
@@ -148,32 +113,6 @@
                 {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
                 {'name': 'name', 'targets': 2, 'data': 'siteName'},
                 {'name': 'count', 'targets': 3, 'data': 'orderCount'}
-            ]
-        });
-
-        $('#amount-table').DataTable({
-            'language': {
-                'url': "${dataTablesLanguage}"
-            },
-            'processing': false,
-            'serverSide': false,
-            'info': false,
-            'paging': false,
-            'searching': false,
-            'ordering': false,
-
-
-            'ajax': {
-                'url': "${rootURL}listOrderAmount",
-                'type': "GET",
-                'dataType': 'json'
-            },
-
-            'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
-                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
-                {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'amount', 'targets': 3, 'data': 'orderAmount'}
             ]
         });
 

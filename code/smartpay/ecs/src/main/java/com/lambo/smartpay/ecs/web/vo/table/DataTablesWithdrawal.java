@@ -31,6 +31,7 @@ public class DataTablesWithdrawal {
     private Double securityDeposit;
     private Boolean securityWithdrawn;
     private String merchantName;
+    private String withdrawalStatusCode;
     private String withdrawalStatusName;
     private String dateRange;
     private String dueToSecurityWithdrawn = "false";
@@ -52,18 +53,26 @@ public class DataTablesWithdrawal {
         securityRate = withdrawal.getSecurityRate();
         securityDeposit = withdrawal.getSecurityDeposit();
         merchantName = withdrawal.getMerchant().getName();
-        if(withdrawal.getWithdrawalStatus() !=null)
-            withdrawalStatusName = withdrawal.getWithdrawalStatus().getName();
-        if(withdrawal.getWithdrawalStatus() !=null
-                && withdrawal.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_APPROVED_CODE)
+        securityWithdrawn = withdrawal.getSecurityWithdrawn();
+        withdrawalStatusCode = withdrawal.getWithdrawalStatus().getCode();
+        withdrawalStatusName = withdrawal.getWithdrawalStatus().getName();
+        if( withdrawal.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_APPROVED_CODE)
                 && !securityWithdrawn){
             Calendar calendar   =   new GregorianCalendar();
             calendar.setTime(new Date());
             calendar.add(calendar.DATE, -180);
             Date date = calendar.getTime();
-            if(withdrawal.getUpdatedTime().compareTo(date) >= 0) dueToSecurityWithdrawn ="true";
+            if(withdrawal.getUpdatedTime().compareTo(date) >= 0) securityWithdrawn =true;
         }
         dateRange = dateStart + " - " + dateEnd;
+    }
+
+    public String getWithdrawalStatusCode() {
+        return withdrawalStatusCode;
+    }
+
+    public void setWithdrawalStatusCode(String withdrawalStatusCode) {
+        this.withdrawalStatusCode = withdrawalStatusCode;
     }
 
     public Long getId() {

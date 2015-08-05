@@ -34,7 +34,7 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
 
     @Override
     @Transactional
-    public Withdrawal requestWithdrawal(Withdrawal withdrawal) {
+    public Withdrawal requestWithdrawal(Withdrawal withdrawal) throws MissingRequiredFieldException, NotUniqueException {
 
         if (withdrawal == null) {
             return null;
@@ -42,7 +42,20 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         WithdrawalStatus withdrawalStatus = withdrawalStatusDao.findByCode(ResourceProperties
                 .WITHDRAWAL_STATUS_PENDING_CODE);
         withdrawal.setWithdrawalStatus(withdrawalStatus);
-        return withdrawalDao.update(withdrawal);
+        return this.create(withdrawal);
+    }
+
+    @Override
+    @Transactional
+    public Withdrawal requestDepositWithdrawal(Withdrawal withdrawal) throws MissingRequiredFieldException, NotUniqueException {
+
+        if (withdrawal == null) {
+            return null;
+        }
+        WithdrawalStatus withdrawalStatus = withdrawalStatusDao.findByCode(ResourceProperties
+                .WITHDRAWAL_STATUS_DEPOSIT_APPROVED_CODE);
+        withdrawal.setWithdrawalStatus(withdrawalStatus);
+        return this.create(withdrawal);
     }
 
     @Override
@@ -57,6 +70,17 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         return withdrawalDao.update(withdrawal);
     }
 
+    @Override
+    @Transactional
+    public Withdrawal approvedepositWithdrawal(Withdrawal withdrawal) throws MissingRequiredFieldException, NotUniqueException {
+        if (withdrawal == null) {
+            return null;
+        }
+        WithdrawalStatus withdrawalStatus = withdrawalStatusDao.findByCode(ResourceProperties
+                .WITHDRAWAL_STATUS_DEPOSIT_APPROVED_CODE);
+        withdrawal.setWithdrawalStatus(withdrawalStatus);
+        return this.update(withdrawal);
+    }
     @Override
     @Transactional
     public Withdrawal declineWithdrawal(Withdrawal withdrawal) {

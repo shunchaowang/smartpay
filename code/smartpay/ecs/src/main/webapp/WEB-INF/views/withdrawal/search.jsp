@@ -36,7 +36,7 @@
         <div class="col-sm-2 pull-left">
             <c:if test="${withdrawalId==null}">
                 <a href="${rootURL}withdrawal/create">
-                    <button class="btn btn-default" id="new-withdrawal-button">
+                    <button class="btn btn-default" id="new-withdrawal-button" disabled = "true">
                         <i class="glyphicon glyphicon-wrench"></i>
                         <spring:message code="create.label" arguments="${entity}"/>
                     </button>
@@ -99,8 +99,8 @@
             },
 
             'initComplete': function (settings, json) {
-                if (json.data.length == 0) {
-                    $("#new-withdrawal-button").prop("disabled", true);
+                if (json.data.length > 0) {
+                    $("#new-withdrawal-button").prop("disabled", false);
                 }
             },
 
