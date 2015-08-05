@@ -15,9 +15,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by swang on 3/25/2015.
@@ -34,7 +44,8 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
 
     @Override
     @Transactional
-    public Withdrawal requestWithdrawal(Withdrawal withdrawal) throws MissingRequiredFieldException, NotUniqueException {
+    public Withdrawal requestWithdrawal(Withdrawal withdrawal)
+            throws MissingRequiredFieldException, NotUniqueException {
 
         if (withdrawal == null) {
             return null;
@@ -47,7 +58,8 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
 
     @Override
     @Transactional
-    public Withdrawal requestDepositWithdrawal(Withdrawal withdrawal) throws MissingRequiredFieldException, NotUniqueException {
+    public Withdrawal requestDepositWithdrawal(Withdrawal withdrawal)
+            throws MissingRequiredFieldException, NotUniqueException {
 
         if (withdrawal == null) {
             return null;
@@ -72,7 +84,8 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
 
     @Override
     @Transactional
-    public Withdrawal approvedepositWithdrawal(Withdrawal withdrawal) throws MissingRequiredFieldException, NotUniqueException {
+    public Withdrawal approvedepositWithdrawal(Withdrawal withdrawal)
+            throws MissingRequiredFieldException, NotUniqueException {
         if (withdrawal == null) {
             return null;
         }
@@ -81,6 +94,7 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         withdrawal.setWithdrawalStatus(withdrawalStatus);
         return this.update(withdrawal);
     }
+
     @Override
     @Transactional
     public Withdrawal declineWithdrawal(Withdrawal withdrawal) {
@@ -142,6 +156,80 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
                                            Date createdTimeStart, Date createdTimeEnd) {
         return withdrawalDao.findByCriteria(withdrawal, search, start, length,
                 order, orderDir, createdTimeStart, createdTimeEnd);
+    }
+
+    /**
+     * @param withdrawal         contains criteria of active, merchant
+     * @param withdrawalStatuses collection of withdrawal status
+     * @param rangeStart         start date
+     * @param rangeEnd           end date
+     * @return number of result
+     */
+    @Override
+    public Long countByAdvanceCriteria(Withdrawal withdrawal,
+                                       Set<WithdrawalStatus> withdrawalStatuses, Date rangeStart,
+                                       Date rangeEnd) {
+
+        CriteriaBuilder builder = withdrawalDao.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Withdrawal> root = query.from(Withdrawal.class);
+
+        Predicate predicate = equalPredicate(builder, root, withdrawal, withdrawalStatuses);
+        if (rangeStart != null && rangeEnd != null) {
+            Predicate rangePredicate = rangePredicate(builder, root, rangeStart, rangeEnd);
+            if (predicate == null) {
+                predicate = rangePredicate;
+            } else {
+                predicate = builder.and(predicate, rangePredicate);
+            }
+        }
+        if (predicate != null) {
+            query.where(predicate);
+        }
+
+        TypedQuery<Long> typedQuery = withdrawalDao.createCountQuery(query);
+
+        return withdrawalDao.countAllByCriteria(typedQuery);
+    }
+
+    /**
+     * @param withdrawal         contains criteria of active, merchant
+     * @param withdrawalStatuses collection of withdrawal status
+     * @param rangeStart         start date
+     * @param rangeEnd           end date
+     * @return list of result
+     */
+    @Override
+    public List<Withdrawal> findByAdvanceCriteria(Withdrawal withdrawal,
+                                                  Set<WithdrawalStatus> withdrawalStatuses,
+                                                  Date rangeStart, Date rangeEnd) {
+
+        CriteriaBuilder builder = withdrawalDao.getCriteriaBuilder();
+        CriteriaQuery<Withdrawal> query = builder.createQuery(Withdrawal.class);
+        Root<Withdrawal> root = query.from(Withdrawal.class);
+
+        Predicate predicate = equalPredicate(builder, root, withdrawal, withdrawalStatuses);
+        if (rangeStart != null && rangeEnd != null) {
+            Predicate rangePredicate = rangePredicate(builder, root,
+                    rangeStart, rangeEnd);
+            if (predicate == null) {
+                predicate = rangePredicate;
+            } else {
+                predicate = builder.and(predicate, rangePredicate);
+            }
+        }
+
+        if (predicate != null) {
+            query.where(predicate);
+        }
+
+        Path<Date> createdTimePath = root.get("createdTime");
+        Order order = builder.desc(createdTimePath);
+        query.orderBy(order);
+
+        TypedQuery<Withdrawal> typedQuery = withdrawalDao.createQuery(query);
+
+        return withdrawalDao.findAllByCriteria(typedQuery);
     }
 
     @Transactional
@@ -233,5 +321,52 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
     @Override
     public Long countAll() {
         return withdrawalDao.countAll();
+    }
+
+    private Predicate equalPredicate(CriteriaBuilder builder, Root<Withdrawal> root,
+                                     Withdrawal withdrawal,
+                                     Set<WithdrawalStatus> withdrawalStatuses) {
+        Predicate predicate = null;
+
+        // check if active is set
+        if (withdrawal.getActive() != null) {
+            predicate = builder.equal(root.<Boolean>get("active"),
+                    builder.literal(withdrawal.getActive()));
+        }
+
+        // check merchant
+        if (withdrawal.getMerchant() != null && withdrawal.getMerchant().getId() != null) {
+            Predicate merchantPredicate = builder.equal(root.join("merchant").<Long>get("id"),
+                    builder.literal(withdrawal.getMerchant().getId()));
+            if (predicate == null) {
+                predicate = merchantPredicate;
+            } else {
+                predicate = builder.and(predicate, merchantPredicate);
+            }
+        }
+
+        // check Payment Status
+        if (withdrawalStatuses != null) {
+            List<Long> withdrawStatusIds = new ArrayList<>();
+            for (WithdrawalStatus withdrawalStatus : withdrawalStatuses) {
+                withdrawStatusIds.add(withdrawalStatus.getId());
+            }
+            Expression<Long> withdrawalStatusIdExp = root.join("withdrawalStatus").<Long>get("id");
+            Predicate paymentStatusPredicate = withdrawalStatusIdExp.in(withdrawStatusIds);
+            if (predicate == null) {
+                predicate = paymentStatusPredicate;
+            } else {
+                predicate = builder.and(predicate, paymentStatusPredicate);
+            }
+        }
+
+        logger.debug("Formulated predicate is " + predicate);
+        return predicate;
+    }
+
+    private Predicate rangePredicate(CriteriaBuilder builder, Root<Withdrawal> root,
+                                     Date rangeStart, Date rangeEnd) {
+        return builder.between(root.<Date>get("createdTime"),
+                builder.literal(rangeStart), builder.literal(rangeEnd));
     }
 }
