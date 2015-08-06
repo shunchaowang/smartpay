@@ -52,7 +52,7 @@ public abstract class ResourceProperties {
     public static final String WITHDRAWAL_STATUS_APPROVED_CODE = "300";
     public static final String WITHDRAWAL_STATUS_DECLINED_CODE = "302";
     public static final String WITHDRAWAL_STATUS_PROCESSED_CODE = "303";
-    public static final String WITHDRAWAL_STATUS_DEPOSIT_REQUEST_CODE = "401";
+    public static final String WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE = "401";
     public static final String WITHDRAWAL_STATUS_DEPOSIT_APPROVED_CODE = "402";
 
     public enum JpaOrderDir {

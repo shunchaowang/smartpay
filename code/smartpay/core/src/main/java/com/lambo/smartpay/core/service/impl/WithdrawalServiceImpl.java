@@ -65,7 +65,7 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
             return null;
         }
         WithdrawalStatus withdrawalStatus = withdrawalStatusDao.findByCode(ResourceProperties
-                .WITHDRAWAL_STATUS_DEPOSIT_APPROVED_CODE);
+                .WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE);
         withdrawal.setWithdrawalStatus(withdrawalStatus);
         return this.create(withdrawal);
     }

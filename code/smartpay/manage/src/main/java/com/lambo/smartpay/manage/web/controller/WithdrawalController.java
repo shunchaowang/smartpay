@@ -152,24 +152,25 @@ public class WithdrawalController {
             throw new BadRequestException("400", "Bad Request.");
         }
 
-        Withdrawal WithdrawalCriteria = new Withdrawal();
-        List<Withdrawal> withdrawals = withdrawalService.findByCriteria(WithdrawalCriteria, params.getSearch(),
-                start, length, params.getOrder(), ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
-        Long recordsTotal = withdrawalService.countByCriteria(WithdrawalCriteria);
-        Long recordsFiltered = withdrawalService.countByCriteria(WithdrawalCriteria, params.getSearch());
+        Withdrawal withdrawalCriteria = new Withdrawal();
+        Set<WithdrawalStatus> withdrawalStatuses = new HashSet<>();
+        try {
+            WithdrawalStatus withdrawalStatus = withdrawalStatusService.findByCode(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE);
+            withdrawalStatuses.add(withdrawalStatus);
+            withdrawalStatus = withdrawalStatusService.findByCode(ResourceProperties.WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE);
+            withdrawalStatuses.add(withdrawalStatus);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        List<Withdrawal> withdrawals = withdrawalService.findByAdvanceCriteria(withdrawalCriteria, withdrawalStatuses, null, null);
+        Long recordsTotal = withdrawalService.countByAdvanceCriteria(withdrawalCriteria, withdrawalStatuses, null, null);
+        Long recordsFiltered = recordsTotal;
         if (withdrawals == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
-
         List<DataTablesWithdrawal> DataTablesWithdrawals = new ArrayList<>();
         for (Withdrawal w : withdrawals) {
             DataTablesWithdrawal tmp_withdrawal = new DataTablesWithdrawal(w);
-            try {
-                tmp_withdrawal.setRequester(userService.get(w.getRequestedBy()).getUsername());
-                tmp_withdrawal.setAuditer(userService.get(w.getAuditedBy()).getUsername());
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-            }
             DataTablesWithdrawals.add(tmp_withdrawal);
         }
 
@@ -194,10 +195,10 @@ public class WithdrawalController {
         String label = messageSource.getMessage("withdrawal.label", null, locale);
         try {
             Withdrawal w = withdrawalService.get(id);
-//            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE)
-//                   ||  ) {
-//                throw new BadRequestException("400", "can not cancel.");
-//            }
+            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE)
+                   || !w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE) ) {
+                throw new BadRequestException("400", "can not cancel.");
+            }
 
             withdrawalService.declineWithdrawal(w);
         } catch (NoSuchEntityException e) {
@@ -223,11 +224,10 @@ public class WithdrawalController {
         String label = messageSource.getMessage("withdrawal.label", null, locale);
         try {
             Withdrawal w = withdrawalService.get(id);
-//            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE)
-//                   ||  ) {
-//                throw new BadRequestException("400", "can not cancel.");
-//            }
-
+            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE)
+                    || !w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE) ) {
+                throw new BadRequestException("400", "can not approve.");
+            }
             withdrawalService.approveWithdrawal(w);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -243,7 +243,6 @@ public class WithdrawalController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String securityWithdrawal(@RequestParam(value = "id") Long id) {
-
         if (id == null) {
             return null;
         }
@@ -252,11 +251,9 @@ public class WithdrawalController {
         String label = messageSource.getMessage("withdrawal.label", null, locale);
         try {
             Withdrawal w = withdrawalService.get(id);
-//            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE)
-//                   ||  ) {
-//                throw new BadRequestException("400", "can not cancel.");
-//            }
-
+            if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE)) {
+                throw new BadRequestException("400", "can not cancel.");
+            }
             withdrawalService.approvedepositWithdrawal(w);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
