@@ -345,18 +345,18 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
             }
         }
 
-        // check Payment Status
+        // check Withdrawal Status
         if (withdrawalStatuses != null) {
             List<Long> withdrawStatusIds = new ArrayList<>();
             for (WithdrawalStatus withdrawalStatus : withdrawalStatuses) {
                 withdrawStatusIds.add(withdrawalStatus.getId());
             }
             Expression<Long> withdrawalStatusIdExp = root.join("withdrawalStatus").<Long>get("id");
-            Predicate paymentStatusPredicate = withdrawalStatusIdExp.in(withdrawStatusIds);
+            Predicate withdrawalStatusPredicate = withdrawalStatusIdExp.in(withdrawStatusIds);
             if (predicate == null) {
-                predicate = paymentStatusPredicate;
+                predicate = withdrawalStatusPredicate;
             } else {
-                predicate = builder.and(predicate, paymentStatusPredicate);
+                predicate = builder.and(predicate, withdrawalStatusPredicate);
             }
         }
 
