@@ -174,7 +174,21 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Withdrawal> root = query.from(Withdrawal.class);
 
-        Predicate predicate = equalPredicate(builder, root, withdrawal, withdrawalStatuses);
+        Predicate predicate = null;
+
+        if (!isBlank(withdrawal)) {
+            predicate = equalPredicate(builder, root, withdrawal);
+        }
+
+        if (!isBlank(withdrawalStatuses)) {
+            Predicate inPredicate = inPredicate(root, withdrawalStatuses);
+            if (predicate == null) {
+                predicate = inPredicate;
+            } else {
+                predicate = builder.and(predicate, inPredicate);
+            }
+        }
+
         if (rangeStart != null && rangeEnd != null) {
             Predicate rangePredicate = rangePredicate(builder, root, rangeStart, rangeEnd);
             if (predicate == null) {
@@ -208,7 +222,21 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         CriteriaQuery<Withdrawal> query = builder.createQuery(Withdrawal.class);
         Root<Withdrawal> root = query.from(Withdrawal.class);
 
-        Predicate predicate = equalPredicate(builder, root, withdrawal, withdrawalStatuses);
+        Predicate predicate = null;
+
+        if (!isBlank(withdrawal)) {
+            predicate = equalPredicate(builder, root, withdrawal);
+        }
+
+        if (!isBlank(withdrawalStatuses)) {
+            Predicate inPredicate = inPredicate(root, withdrawalStatuses);
+            if (predicate == null) {
+                predicate = inPredicate;
+            } else {
+                predicate = builder.and(predicate, inPredicate);
+            }
+        }
+
         if (rangeStart != null && rangeEnd != null) {
             Predicate rangePredicate = rangePredicate(builder, root,
                     rangeStart, rangeEnd);
@@ -323,9 +351,17 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
         return withdrawalDao.countAll();
     }
 
+    private Boolean isBlank(Withdrawal withdrawal) {
+        return withdrawal == null || withdrawal.getMerchant() == null
+                && withdrawal.getActive() == null;
+    }
+
+    private Boolean isBlank(Set<WithdrawalStatus> withdrawalStatuses) {
+        return withdrawalStatuses == null || withdrawalStatuses.isEmpty();
+    }
+
     private Predicate equalPredicate(CriteriaBuilder builder, Root<Withdrawal> root,
-                                     Withdrawal withdrawal,
-                                     Set<WithdrawalStatus> withdrawalStatuses) {
+                                     Withdrawal withdrawal) {
         Predicate predicate = null;
 
         // check if active is set
@@ -345,6 +381,14 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
             }
         }
 
+        logger.debug("Formulated predicate is " + predicate);
+        return predicate;
+    }
+
+    private Predicate inPredicate(Root<Withdrawal> root, Set<WithdrawalStatus> withdrawalStatuses) {
+
+        Predicate predicate = null;
+
         // check Withdrawal Status
         if (withdrawalStatuses != null) {
             List<Long> withdrawStatusIds = new ArrayList<>();
@@ -352,12 +396,7 @@ public class WithdrawalServiceImpl extends GenericDateQueryServiceImpl<Withdrawa
                 withdrawStatusIds.add(withdrawalStatus.getId());
             }
             Expression<Long> withdrawalStatusIdExp = root.join("withdrawalStatus").<Long>get("id");
-            Predicate withdrawalStatusPredicate = withdrawalStatusIdExp.in(withdrawStatusIds);
-            if (predicate == null) {
-                predicate = withdrawalStatusPredicate;
-            } else {
-                predicate = builder.and(predicate, withdrawalStatusPredicate);
-            }
+            predicate = withdrawalStatusIdExp.in(withdrawStatusIds);
         }
 
         logger.debug("Formulated predicate is " + predicate);

@@ -308,11 +308,26 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
     public Long countByWithdrawalCriteria(Payment payment,
                                           Set<PaymentStatus> paymentStatuses,
                                           Date rangeStart, Date rangeEnd) {
+
         CriteriaBuilder builder = paymentDao.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Payment> root = query.from(Payment.class);
 
-        Predicate predicate = withdrawalPredicate(builder, root, payment, paymentStatuses);
+        Predicate predicate = null;
+
+        if (!isBlank(payment)) {
+            predicate = equalPredicate(builder, root, payment);
+        }
+
+        if (!isBlank(paymentStatuses)) {
+            Predicate inPredicate = inPredicate(root, paymentStatuses);
+            if (predicate == null) {
+                predicate = inPredicate;
+            } else {
+                predicate = builder.and(predicate, inPredicate);
+            }
+        }
+
         if (rangeStart != null && rangeEnd != null) {
             Predicate rangePredicate = rangePredicate(builder, root,
                     rangeStart, rangeEnd);
@@ -346,7 +361,21 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
         CriteriaQuery<Payment> query = builder.createQuery(Payment.class);
         Root<Payment> root = query.from(Payment.class);
 
-        Predicate predicate = withdrawalPredicate(builder, root, payment, paymentStatuses);
+        Predicate predicate = null;
+
+        if (!isBlank(payment)) {
+            predicate = equalPredicate(builder, root, payment);
+        }
+
+        if (!isBlank(paymentStatuses)) {
+            Predicate inPredicate = inPredicate(root, paymentStatuses);
+            if (predicate == null) {
+                predicate = inPredicate;
+            } else {
+                predicate = builder.and(predicate, inPredicate);
+            }
+        }
+
         if (rangeStart != null && rangeEnd != null) {
             Predicate rangePredicate = rangePredicate(builder, root,
                     rangeStart, rangeEnd);
@@ -394,16 +423,18 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
         return paymentDao.countAll();
     }
 
-    private Predicate withdrawalPredicate(CriteriaBuilder builder, Root<Payment> root,
-                                          Payment payment,
-                                          Set<PaymentStatus> paymentStatuses) {
-        Predicate predicate = null;
+    private Boolean isBlank(Payment payment) {
+        return payment == null || payment.getActive() == null && payment.getOrder() == null
+                && payment.getWithdrawal() == null;
+    }
 
-        // check if active is set
-        if (payment.getActive() != null) {
-            predicate = builder.equal(root.<Boolean>get("active"),
-                    builder.literal(payment.getActive()));
-        }
+    private Boolean isBlank(Set<PaymentStatus> paymentStatuses) {
+        return paymentStatuses == null || paymentStatuses.isEmpty();
+    }
+
+    private Predicate inPredicate(Root<Payment> root, Set<PaymentStatus> paymentStatuses) {
+
+        Predicate predicate = null;
 
         // check Payment Status
         if (paymentStatuses != null) {
@@ -412,12 +443,21 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
                 paymentStatusIds.add(paymentStatus.getId());
             }
             Expression<Long> paymentStatusIdExp = root.join("paymentStatus").<Long>get("id");
-            Predicate paymentStatusPredicate = paymentStatusIdExp.in(paymentStatusIds);
-            if (predicate == null) {
-                predicate = paymentStatusPredicate;
-            } else {
-                predicate = builder.and(predicate, paymentStatusPredicate);
-            }
+            predicate = paymentStatusIdExp.in(paymentStatusIds);
+        }
+
+        logger.debug("Formulated predicate is " + predicate);
+        return predicate;
+    }
+
+    private Predicate equalPredicate(CriteriaBuilder builder, Root<Payment> root,
+                                     Payment payment) {
+        Predicate predicate = null;
+
+        // check if active is set
+        if (payment.getActive() != null) {
+            predicate = builder.equal(root.<Boolean>get("active"),
+                    builder.literal(payment.getActive()));
         }
 
         // check merchant
