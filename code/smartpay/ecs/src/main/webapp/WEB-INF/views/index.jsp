@@ -39,45 +39,14 @@
                         <th>
                             <spring:message code="site.label"/><spring:message code="name.label"/>
                         </th>
-                        <th>
-                            <spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="USD.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="USD.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="RMB.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="RMB.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="EUR.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="EUR.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="JPY.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="JPY.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="CAD.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="CAD.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="AUD.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="AUD.label"/><spring:message code="amount.label"/>
-                        </th>
+                        <th><spring:message code="order.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="order.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="amount.label"/></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -110,45 +79,14 @@
                         <th>
                             <spring:message code="site.label"/><spring:message code="name.label"/>
                         </th>
-                        <th>
-                            <spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="USD.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="USD.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="RMB.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="RMB.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="EUR.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="EUR.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="JPY.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="JPY.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="CAD.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="CAD.label"/><spring:message code="amount.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="AUD.label"/><spring:message code="count.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="AUD.label"/><spring:message code="amount.label"/>
-                        </th>
+                        <th><spring:message code="order.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="order.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="amount.label"/></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -174,31 +112,23 @@
             'paging': false,
             'searching': false,
             'ordering': false,
-
-
             'ajax': {
                 'url': "${rootURL}listTodayOrder",
                 'type': "GET",
                 'dataType': 'json'
             },
-
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
                 {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
                 {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'count', 'targets': 3, 'visible': false,  'data': 'orderTotalCnt'},
-                {'name': 'USDCnt', 'targets': 4, 'data': 'USDCnt'},
-                {'name': 'USDAmt', 'targets': 5, 'data': 'USDAmt'},
-                {'name': 'RMBCnt', 'targets': 6, 'data': 'RMBCnt'},
-                {'name': 'RMBAmt', 'targets': 7, 'data': 'RMBAmt'},
-                {'name': 'EURCnt', 'targets': 8, 'data': 'EURCnt'},
-                {'name': 'EURAmt', 'targets': 9, 'data': 'EURAmt'},
-                {'name': 'JPYCnt', 'targets': 10, 'data': 'JPYCnt'},
-                {'name': 'JPYAmt', 'targets': 11, 'data': 'JPYAmt'},
-                {'name': 'CADCnt', 'targets': 12, 'data': 'CADCnt'},
-                {'name': 'CADAmt', 'targets': 13, 'data': 'CADAmt'},
-                {'name': 'AUDCnt', 'targets': 14, 'data': 'AUDCnt'},
-                {'name': 'AUDAmt', 'targets': 15, 'data': 'AUDAmt'}
+                {'name': 'orderCount', 'targets': 3, 'data': 'orderCount'},
+                {'name': 'orderAmount', 'targets': 4, 'visible': false, 'data': 'orderAmount'},
+                {'name': 'paidCount', 'targets': 5, 'data': 'paidCount'},
+                {'name': 'paidAmount', 'targets': 6, 'data': 'paidAmount'},
+                {'name': 'refuseCount', 'targets': 7, 'data': 'refuseCount'},
+                {'name': 'refuseAmount', 'targets': 8, 'data': 'refuseAmount'},
+                {'name': 'refundCount', 'targets': 9, 'data': 'refundCount'},
+                {'name': 'refundAmount', 'targets': 10, 'data': 'refundAmount'}
             ]
         });
         $('#yesterday-table').DataTable({
@@ -211,8 +141,6 @@
             'paging': false,
             'searching': false,
             'ordering': false,
-
-
             'ajax': {
                 'url': "${rootURL}listYesterdayOrder",
                 'type': "GET",
@@ -223,19 +151,14 @@
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
                 {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
                 {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'count', 'targets': 3, 'visible': false,  'data': 'orderTotalCnt'},
-                {'name': 'USDCnt', 'targets': 4, 'data': 'USDCnt'},
-                {'name': 'USDAmt', 'targets': 5, 'data': 'USDAmt'},
-                {'name': 'RMBCnt', 'targets': 6, 'data': 'RMBCnt'},
-                {'name': 'RMBAmt', 'targets': 7, 'data': 'RMBAmt'},
-                {'name': 'EURCnt', 'targets': 8, 'data': 'EURCnt'},
-                {'name': 'EURAmt', 'targets': 9, 'data': 'EURAmt'},
-                {'name': 'JPYCnt', 'targets': 10, 'data': 'JPYCnt'},
-                {'name': 'JPYAmt', 'targets': 11, 'data': 'JPYAmt'},
-                {'name': 'CADCnt', 'targets': 12, 'data': 'CADCnt'},
-                {'name': 'CADAmt', 'targets': 13, 'data': 'CADAmt'},
-                {'name': 'AUDCnt', 'targets': 14, 'data': 'AUDCnt'},
-                {'name': 'AUDAmt', 'targets': 15, 'data': 'AUDAmt'}
+                {'name': 'orderCount', 'targets': 3, 'data': 'orderCount'},
+                {'name': 'orderAmount', 'targets': 4, 'visible': false, 'data': 'orderAmount'},
+                {'name': 'paidCount', 'targets': 5, 'data': 'paidCount'},
+                {'name': 'paidAmount', 'targets': 6, 'data': 'paidAmount'},
+                {'name': 'refuseCount', 'targets': 7, 'data': 'refuseCount'},
+                {'name': 'refuseAmount', 'targets': 8, 'data': 'refuseAmount'},
+                {'name': 'refundCount', 'targets': 9, 'data': 'refundCount'},
+                {'name': 'refundAmount', 'targets': 10, 'data': 'refundAmount'}
             ]
         });
     });
