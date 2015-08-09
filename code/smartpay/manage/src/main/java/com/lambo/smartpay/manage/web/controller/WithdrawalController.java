@@ -7,7 +7,6 @@ import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.service.*;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.util.JsonUtil;
-import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesWithdrawal;
@@ -40,13 +39,6 @@ public class WithdrawalController {
     private WithdrawalService withdrawalService;
     @Autowired
     private WithdrawalStatusService withdrawalStatusService;
-    @Autowired
-    private PaymentService paymentService;
-    @Autowired
-    private PaymentStatusService paymentStatusService;
-    @Autowired
-    private UserService userService;
-    private Withdrawal withdrawal;
 
     // here goes all model across the whole controller
     @ModelAttribute("controller")
@@ -164,8 +156,9 @@ public class WithdrawalController {
         }
         withdrawalCriteria.setActive(true);
         List<Withdrawal> withdrawals = withdrawalService.findByAdvanceCriteria(withdrawalCriteria, withdrawalStatuses, null, null);
-        Long recordsTotal = withdrawalService.countByAdvanceCriteria(withdrawalCriteria, withdrawalStatuses, null, null);
-
+        Long recordsTotal = Long.parseLong("0");
+        if(withdrawals !=null && withdrawals.size() > 0)
+            recordsTotal = Long.parseLong(String.valueOf(withdrawals.size()));
         Long recordsFiltered = recordsTotal;
         if (withdrawals == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
