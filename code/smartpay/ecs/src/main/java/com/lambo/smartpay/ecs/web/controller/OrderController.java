@@ -347,7 +347,7 @@ public class OrderController {
         List<Order> orders = orderService.findByCriteria(orderCriteria, search, null, null,
                 "", ResourceProperties.JpaOrderDir.valueOf(orderDir), beginning, ending);
         // count total records
-        Long recordsTotal = orderService.countByCriteria(orderCriteria);
+        Long recordsTotal = orderService.countByCriteria(orderCriteria, beginning, ending);
         // count records filtered
         Long recordsFiltered = recordsTotal;
         if (orders == null || recordsTotal == null || recordsFiltered == null) {

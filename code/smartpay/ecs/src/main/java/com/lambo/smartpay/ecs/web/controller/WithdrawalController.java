@@ -101,12 +101,6 @@ public class WithdrawalController {
         List<DataTablesWithdrawal> DataTablesWithdrawals = new ArrayList<>();
         for (Withdrawal w : withdrawals) {
             DataTablesWithdrawal tmp_withdrawal = new DataTablesWithdrawal(w);
-            try {
-                tmp_withdrawal.setRequester(userService.get(w.getRequestedBy()).getUsername());
-                tmp_withdrawal.setAuditer(userService.get(w.getAuditedBy()).getUsername());
-            } catch (NoSuchEntityException e) {
-                e.printStackTrace();
-            }
             DataTablesWithdrawals.add(tmp_withdrawal);
         }
 
@@ -229,8 +223,8 @@ public class WithdrawalController {
                     refundAmt += ((Refund) it.next()).getAmount();
                 }
                 if (payment.getOrder().getAmount() - refundAmt < 0) refundAmt = payment.getOrder().getAmount();
-                refundAmt = refundAmt * (payment.getAmount() + payment.getFee()) / payment.getOrder().getAmount();
-                if (merchant.getReturnFee().getFeeType().getCode().equals("100")) {
+                    refundAmt = refundAmt * (payment.getAmount() + payment.getFee()) / payment.getOrder().getAmount();
+                if (merchant.getReturnFee().getFeeType().getCode().equals(ResourceProperties.MERCHANT_TYPE_STATIC_CODE)) {
                     refundFee += merchant.getReturnFee().getValue();
                 } else {
                     refundFee += refundAmt * merchant.getReturnFee().getValue() / 10 * 10;

@@ -162,8 +162,10 @@ public class WithdrawalController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
+        withdrawalCriteria.setActive(true);
         List<Withdrawal> withdrawals = withdrawalService.findByAdvanceCriteria(withdrawalCriteria, withdrawalStatuses, null, null);
         Long recordsTotal = withdrawalService.countByAdvanceCriteria(withdrawalCriteria, withdrawalStatuses, null, null);
+
         Long recordsFiltered = recordsTotal;
         if (withdrawals == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");

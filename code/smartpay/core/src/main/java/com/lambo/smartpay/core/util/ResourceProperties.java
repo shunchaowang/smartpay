@@ -10,6 +10,8 @@ public abstract class ResourceProperties {
     public static final int ENCRYPTION_KEY_LENGTH = 8;
     public static final String MERCHANT_STATUS_FROZEN_CODE = "500";
     public static final String MERCHANT_STATUS_NORMAL_CODE = "200";
+    public static final String MERCHANT_TYPE_STATIC_CODE = "100";
+    public static final String MERCHANT_TYPE_PERCENTAGE_CODE = "101";
     public static final String SITE_STATUS_CREATED_CODE = "400";
     public static final String SITE_STATUS_APPROVED_CODE = "500";
     public static final String SITE_STATUS_FROZEN_CODE = "401";

@@ -15,42 +15,68 @@
 
     <!-- summary -->
     <div class="row">
-                <div class="col-sm-4">
-                    <strong>${merchantCommand.siteCount}</strong>
-                    <spring:message code="site.label"/>
-                </div>
-                <div class="col-sm-4">
-                    <strong>${merchantCommand.orderCount}</strong>
-                    <spring:message code="transaction.label"/>
-                </div>
+        <div class="col-sm-4">
+            <spring:message code="today.label"/><spring:message code="orderCountSummary.label"/>
+        </div>
+        <div class="col-sm-4">
+            <strong>${merchantCommand.siteCount}</strong>
+            <spring:message code="site.label"/>
+        </div>
     </div>
     <!-- count by site -->
     <div class="row">
         <div class="col-sm-12">
             <div>
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="orderCountSummary.label"/>
-                ${merchantCommand.orderCount}
-                </h5>
-            </div>
-            <div>
-                <table class="table table-bordered" id="count-table">
+                <table class="table table-bordered" id="today-table">
                     <thead>
                     <tr>
                         <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="id.label"/>
+                            <spring:message code="site.label"/><spring:message code="id.label"/>
                         </th>
                         <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="identity.label"/>
+                            <spring:message code="site.label"/><spring:message code="identity.label"/>
                         </th>
                         <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="name.label"/>
+                            <spring:message code="site.label"/><spring:message code="name.label"/>
                         </th>
                         <th>
                             <spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="USD.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="USD.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="RMB.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="RMB.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="EUR.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="EUR.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="JPY.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="JPY.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="CAD.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="CAD.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="AUD.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="AUD.label"/><spring:message code="amount.label"/>
                         </th>
                     </tr>
                     </thead>
@@ -59,22 +85,70 @@
             </div>
         </div>
     </div>
-    <!-- amount by currency -->
+    <br>
+    <div class="row">
+        <div class="col-sm-4">
+            <spring:message code="yesterday.label"/><spring:message code="orderCountSummary.label"/>
+        </div>
+        <div class="col-sm-4">
+            <strong>${merchantCommand.siteCount}</strong>
+            <spring:message code="site.label"/>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <div>
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="orderAmountSummary.label"/>
-                ${merchantCommand.orderAmount}
-                </h5>
-            </div>
-            <div>
-                <table class="table table-bordered" id="currency-table">
+                <table class="table table-bordered" id="yesterday-table">
                     <thead>
                     <tr>
-                        <th><spring:message code="currency.label"/></th>
-                        <th><spring:message code="count.label"/></th>
-                        <th><spring:message code="amount.label"/></th>
+                        <th>
+                            <spring:message code="site.label"/><spring:message code="id.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/><spring:message code="identity.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/><spring:message code="name.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="USD.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="USD.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="RMB.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="RMB.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="EUR.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="EUR.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="JPY.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="JPY.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="CAD.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="CAD.label"/><spring:message code="amount.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="AUD.label"/><spring:message code="count.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="AUD.label"/><spring:message code="amount.label"/>
+                        </th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -90,7 +164,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#count-table').DataTable({
+        $('#today-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -103,7 +177,7 @@
 
 
             'ajax': {
-                'url': "${rootURL}listOrderCount",
+                'url': "${rootURL}listTodayOrder",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -112,11 +186,22 @@
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
                 {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
                 {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'count', 'targets': 3, 'data': 'orderCount'}
+                {'name': 'count', 'targets': 3, 'visible': false,  'data': 'orderTotalCnt'},
+                {'name': 'USDCnt', 'targets': 4, 'data': 'USDCnt'},
+                {'name': 'USDAmt', 'targets': 5, 'data': 'USDAmt'},
+                {'name': 'RMBCnt', 'targets': 6, 'data': 'RMBCnt'},
+                {'name': 'RMBAmt', 'targets': 7, 'data': 'RMBAmt'},
+                {'name': 'EURCnt', 'targets': 8, 'data': 'EURCnt'},
+                {'name': 'EURAmt', 'targets': 9, 'data': 'EURAmt'},
+                {'name': 'JPYCnt', 'targets': 10, 'data': 'JPYCnt'},
+                {'name': 'JPYAmt', 'targets': 11, 'data': 'JPYAmt'},
+                {'name': 'CADCnt', 'targets': 12, 'data': 'CADCnt'},
+                {'name': 'CADAmt', 'targets': 13, 'data': 'CADAmt'},
+                {'name': 'AUDCnt', 'targets': 14, 'data': 'AUDCnt'},
+                {'name': 'AUDAmt', 'targets': 15, 'data': 'AUDAmt'}
             ]
         });
-
-        $('#currency-table').DataTable({
+        $('#yesterday-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -129,15 +214,28 @@
 
 
             'ajax': {
-                'url': "${rootURL}listOrderCurrency",
+                'url': "${rootURL}listYesterdayOrder",
                 'type': "GET",
                 'dataType': 'json'
             },
 
             'columnDefs': [
-                {'name': 'currency', 'targets': 0, 'data': 'currencyName'},
-                {'name': 'count', 'targets': 1, 'data': 'orderCount'},
-                {'name': 'amount', 'targets': 2, 'data': 'orderAmount'}
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
+                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
+                {'name': 'name', 'targets': 2, 'data': 'siteName'},
+                {'name': 'count', 'targets': 3, 'visible': false,  'data': 'orderTotalCnt'},
+                {'name': 'USDCnt', 'targets': 4, 'data': 'USDCnt'},
+                {'name': 'USDAmt', 'targets': 5, 'data': 'USDAmt'},
+                {'name': 'RMBCnt', 'targets': 6, 'data': 'RMBCnt'},
+                {'name': 'RMBAmt', 'targets': 7, 'data': 'RMBAmt'},
+                {'name': 'EURCnt', 'targets': 8, 'data': 'EURCnt'},
+                {'name': 'EURAmt', 'targets': 9, 'data': 'EURAmt'},
+                {'name': 'JPYCnt', 'targets': 10, 'data': 'JPYCnt'},
+                {'name': 'JPYAmt', 'targets': 11, 'data': 'JPYAmt'},
+                {'name': 'CADCnt', 'targets': 12, 'data': 'CADCnt'},
+                {'name': 'CADAmt', 'targets': 13, 'data': 'CADAmt'},
+                {'name': 'AUDCnt', 'targets': 14, 'data': 'AUDCnt'},
+                {'name': 'AUDAmt', 'targets': 15, 'data': 'AUDAmt'}
             ]
         });
     });
