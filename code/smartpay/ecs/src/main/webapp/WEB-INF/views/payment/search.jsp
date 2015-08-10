@@ -224,6 +224,14 @@
                         },
                         {
                             "sExtends": "xls",
+                            "fnCellRender": function (sValue, iColumn, nTr, iDataIndex) {
+                                if (iColumn == 2) {
+                                    if (sValue != "") {
+                                        return "=\"" + sValue + "\"";
+                                    }
+                                }
+                                return sValue;
+                            },
                             "mColumns": [1, 2, 3, 4, 5, 6, 7, 8]
                         }
                     ]
