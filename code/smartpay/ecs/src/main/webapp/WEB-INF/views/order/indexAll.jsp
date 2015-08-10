@@ -55,6 +55,9 @@
         </div>
     </div>
 </div>
+<div class="confirmDialog" id="confirm-dialog">
+</div>
+<div id="dialog-area"></div>
 <script type="text/javascript">
     $(document).ready(function () {
 
@@ -135,113 +138,6 @@
             ]
         });
 
-        $('#search-button').click(function (e) {
-            e.preventDefault();
-            orderTable.destroy();
-            orderTable = $('#order-table').DataTable({
-                'language': {
-                    'url': "${dataTablesLanguage}"
-                },
-                'processing': true,
-                'serverSide': true,
-                'paging': true,
-                "order": [[0, "desc"]],
-                'dom': 'T<""if>rt<"F"lp>',
-                "lengthMenu": [10, 100, 300, 600, 1000],
-                "tableTools": {
-                    "sSwfPath": "${tableTools}",
-                    "aButtons": [
-                        {
-                            "sExtends": "copy",
-                            "mColumns": [1, 2, 3, 4, 5, 6, 7]
-                        },
-                        {
-                            "sExtends": "xls",
-                            "fnCellRender": function (sValue, iColumn, nTr, iDataIndex) {
-                                if (iColumn == 1) {
-                                    if (sValue != "") {
-                                        return "=" + sValue.replace(/<[^>]*>/g, "\"");
-                                    }
-                                }
-                                return sValue;
-                            },
-                            "mColumns": [1, 2, 3, 4, 5, 6, 7]
-                        }
-                    ]
-                },
-
-                'ajax': {
-                    'url': "${rootURL}${controller}/list",
-                    'type': "GET",
-                    'data': {
-                        'merchantNumber': $('#merchantNumber').val(),
-                        'orderStatus': $('#orderStatus').val(),
-                        'site': $('#site').val(),
-                        'timeBeginning': $('#begin-date').val(),
-                        'timeEnding': $('#end-date').val()
-                    },
-                    'dataType': 'json'
-                },
-                // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
-                'columnDefs': [
-                    {
-                        'name': 'id',
-                        'targets': 0,
-                        'data': 'id',
-                        'visible': false,
-                        'searchable': false
-                    },
-                    {
-                        'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
-                        'render': function (data, type, row) {
-                            return '<a href=' + "${rootURL}${controller}" + '/show/'
-                                    + row['id'] + '>' + data + '</a>';
-                        }
-                    },
-                    {
-                        'name': 'amount', 'targets': 2, 'data': 'amount',
-                        'searchable': false, 'orderable': false
-                    },
-                    {
-                        'name': 'currencyName', 'targets': 3, 'data': 'currencyName',
-                        'searchable': false, 'orderable': false
-                    },
-                    {
-                        'name': 'siteName', 'targets': 4, 'data': 'siteName',
-                        'searchable': false, 'orderable': false
-                    },
-                    {
-                        'name': 'customerName', 'targets': 5, 'data': 'customerName',
-                        'searchable': false, 'orderable': false
-                    },
-                    {
-                        'name': 'createdTime',
-                        'targets': 6,
-                        'searchable': false,
-                        'data': 'createdTime'
-                    },
-                    {
-                        'name': 'orderStatusName', 'targets': 7, 'searchable': false,
-                        'orderable': false, 'data': 'orderStatusName'
-                    },
-                    {
-                        'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
-                        'render': function (data, type, row) {
-                            var operations = '';
-                            if (row['orderStatusName'] == 'Paid') {
-                                operations += '<button type="button" name="addShipment-button"'
-                                        + ' data-identity="' + row['id'] + '"'
-                                        + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                        "${shipLabel}"
-                                        + '</button>';
-                            }
-                            return operations;
-                        }
-                    }
-                ]
-            });
-        });
-
         orderTable.on('click', 'button[type=button][name=addShipment-button]', function
                 (event) {
             event.preventDefault();
@@ -263,9 +159,14 @@
                         height: 'auto',
                         width: 'auto',
                         modal: true,
+                        dialogClass: "dialogClass",
+                        open: function (event, ui) {
+                            $(".ui-dialog-titlebar-close", ui.dialog || ui).hide();
+                        },
                         close: function () {
                             shipmentDialog.dialog("destroy").remove();
                         }
+
                     }).dialog("open");
 
                     $("#cancel-button").click(function (event) {
@@ -286,7 +187,6 @@
                                 carrier: $("#carrier").val(),
                                 trackingNumber: $("#trackingNumber").val()
                             },
-                            dataType: "json",
                             error: function (data) {
                                 alert("There was an error");
                             },
@@ -308,6 +208,5 @@
             });
         });
 
-        $('.datepicker').datepicker();
     });
 </script>
