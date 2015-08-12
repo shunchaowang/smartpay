@@ -46,6 +46,7 @@
                     <th><spring:message code="paymentStatusName.label"/></th>
                     <th><spring:message code="paymentTypeName.label"/></th>
                     <th><spring:message code="paymentSiteName.label"/></th>
+                    <th><spring:message code="paymentStatusName.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -128,10 +129,14 @@
                     'orderable': false, 'data': 'siteName'
                 },
                 {
-                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                    'name': 'paymentStatusCode', 'targets': 9,  'visible': false, 'searchable': false,
+                    'orderable': false, 'data': 'paymentStatusCode'
+                },
+                {
+                    'name': 'operation', 'targets': 10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         var operations = '';
-                        if (row['paymentStatusName'] == 'Approved') {
+                        if (row['paymentStatusCode'] == '500') {
                             operations += '<button type="button" name="refund-button"'
                             + ' data-identity="' + row['id'] + '"'
                             + ' class="btn btn-default" value="' + row['id'] + '">' +

@@ -225,6 +225,11 @@
                         {
                             "sExtends": "xls",
                             "fnCellRender": function (sValue, iColumn, nTr, iDataIndex) {
+                                if (iColumn == 1) {
+                                    if (sValue != "") {
+                                        return "=" + sValue.replace(/<[^>]*>/g,"\"");
+                                    }
+                                }
                                 if (iColumn == 2) {
                                     if (sValue != "") {
                                         return "=\"" + sValue + "\"";

@@ -47,6 +47,8 @@
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="order.label"/><spring:message
                             code="status.label"/></th>
+                    <th><spring:message code="order.label"/><spring:message
+                            code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -122,10 +124,14 @@
                     'orderable': false, 'data': 'orderStatusName'
                 },
                 {
-                    'name': 'operation', 'targets': 8, 'searchable': false, 'orderable': false,
+                    'name': 'orderStatusCode', 'targets': 8, 'searchable': false,'visible': false,
+                    'orderable': false, 'data': 'orderStatusCode'
+                },
+                {
+                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         var operations = '';
-                        if (row['orderStatusName'] == 'Paid') {
+                        if (row['orderStatusCode'] == '401') {
                             operations += '<button type="button" name="addShipment-button"'
                                     + ' data-identity="' + row['id'] + '"'
                                     + ' class="btn btn-default" value="' + row['id'] + '">' +

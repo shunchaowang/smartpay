@@ -21,6 +21,7 @@ public class DataTablesPayment {
     private String bankReturnCode;
     private Long paymentStatusId;
     private String paymentStatusName;
+    private String paymentStatusCode;
     private Long paymentTypeId;
     private String paymentTypeName;
     //order
@@ -57,6 +58,7 @@ public class DataTablesPayment {
         bankReturnCode = payment.getBankReturnCode();
         paymentStatusId = payment.getPaymentStatus().getId();
         paymentStatusName = payment.getPaymentStatus().getName();
+        paymentStatusCode = payment.getPaymentStatus().getCode();
         paymentTypeId = payment.getPaymentType().getId();
         paymentTypeName = payment.getPaymentType().getName();
 
@@ -154,6 +156,14 @@ public class DataTablesPayment {
 
     public void setPaymentTypeName(String paymentTypeName) {
         this.paymentTypeName = paymentTypeName;
+    }
+
+    public String getPaymentStatusCode() {
+        return paymentStatusCode;
+    }
+
+    public void setPaymentStatusCode(String paymentStatusCode) {
+        this.paymentStatusCode = paymentStatusCode;
     }
 
     //
