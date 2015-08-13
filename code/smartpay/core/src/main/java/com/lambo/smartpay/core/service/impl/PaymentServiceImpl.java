@@ -423,6 +423,150 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
         return paymentDao.countAll();
     }
 
+    /**
+     * @param payment         contains criteria of active, merchant, withdrawal
+     * @param search          filter
+     * @param paymentStatuses collection of payment status
+     * @param rangeStart      start date
+     * @param rangeEnd        end date
+     * @return number of result
+     */
+    @Override
+    public Long countByAdvanceCriteria(Payment payment, String search,
+                                       Set<PaymentStatus> paymentStatuses, Date rangeStart,
+                                       Date rangeEnd) {
+
+        CriteriaBuilder builder = paymentDao.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Payment> root = query.from(Payment.class);
+
+        Predicate predicate = null;
+
+        if (!isBlank(payment)) {
+            predicate = equalPredicate(builder, root, payment);
+        }
+
+        if (!isBlank(paymentStatuses)) {
+            Predicate inPredicate = inPredicate(root, paymentStatuses);
+            if (predicate == null) {
+                predicate = inPredicate;
+            } else {
+                predicate = builder.and(predicate, inPredicate);
+            }
+        }
+
+        // if search is not blank like predicate needs to be generated
+        if (!StringUtils.isBlank(search)) {
+            Predicate likePredicate = likePredicate(builder, root, search);
+            if (predicate == null) {
+                predicate = likePredicate;
+            } else {
+                predicate = builder.and(predicate, likePredicate);
+            }
+        }
+
+        if (rangeStart != null && rangeEnd != null) {
+            Predicate rangePredicate = rangePredicate(builder, root,
+                    rangeStart, rangeEnd);
+            if (predicate == null) {
+                predicate = rangePredicate;
+            } else {
+                predicate = builder.and(predicate, rangePredicate);
+            }
+        }
+        if (predicate != null) {
+            query.where(predicate);
+        }
+
+        TypedQuery<Long> typedQuery = paymentDao.createCountQuery(query);
+
+        return paymentDao.countAllByCriteria(typedQuery);
+    }
+
+    /**
+     * @param payment         contains criteria of active, merchant, withdrawal
+     * @param search          filter
+     * @param start           offset
+     * @param length          total records
+     * @param order           order by
+     * @param orderDir        order direction
+     * @param paymentStatuses collection of payment status
+     * @param rangeStart      start date
+     * @param rangeEnd        end date
+     * @return list of result
+     */
+    @Override
+    public List<Payment> findByAdvanceCriteria(Payment payment, String search, Integer start,
+                                               Integer length, String order,
+                                               ResourceProperties.JpaOrderDir orderDir,
+                                               Set<PaymentStatus> paymentStatuses, Date rangeStart,
+                                               Date rangeEnd) {
+
+        CriteriaBuilder builder = paymentDao.getCriteriaBuilder();
+        CriteriaQuery<Payment> query = builder.createQuery(Payment.class);
+        Root<Payment> root = query.from(Payment.class);
+        query.select(root);
+
+        Predicate predicate = null;
+        // if customer is not null equal predicate needs to be generated
+        if (!isBlank(payment)) {
+            predicate = equalPredicate(builder, root, payment);
+        }
+
+        if (!isBlank(paymentStatuses)) {
+            Predicate inPredicate = inPredicate(root, paymentStatuses);
+            if (predicate == null) {
+                predicate = inPredicate;
+            } else {
+                predicate = builder.and(predicate, inPredicate);
+            }
+        }
+
+        // if search is not blank like predicate needs to be generated
+        if (!StringUtils.isBlank(search)) {
+            Predicate likePredicate = likePredicate(builder, root, search);
+            if (predicate == null) {
+                predicate = likePredicate;
+            } else {
+                predicate = builder.and(predicate, likePredicate);
+            }
+        }
+
+        if (rangeStart != null && rangeEnd != null) {
+            Predicate rangePredicate = rangePredicate(builder, root,
+                    rangeStart, rangeEnd);
+            if (predicate == null) {
+                predicate = rangePredicate;
+            } else {
+                predicate = builder.and(predicate, rangePredicate);
+            }
+        }
+
+        if (predicate != null) {
+            query.where(predicate);
+        }
+        if (StringUtils.isBlank(order)) {
+            order = "id";
+        }
+        if (orderDir == null) {
+            orderDir = ResourceProperties.JpaOrderDir.DESC;
+        }
+        query.orderBy(orderBy(builder, root, order, orderDir));
+
+        TypedQuery<Payment> typedQuery = paymentDao.createQuery(query);
+        // pagination
+        if (start != null) {
+            typedQuery.setFirstResult(start);
+        }
+        if (length != null) {
+            typedQuery.setMaxResults(length);
+        }
+
+        logger.debug("findByCriteria query is " + typedQuery);
+
+        return paymentDao.findAllByCriteria(typedQuery);
+    }
+
     private Boolean isBlank(Payment payment) {
         return payment == null || payment.getActive() == null && payment.getOrder() == null
                 && payment.getWithdrawal() == null;
@@ -448,6 +592,93 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
 
         logger.debug("Formulated predicate is " + predicate);
         return predicate;
+    }
+
+    /**
+     * Formulate JPA or Predicate on primitive fields with like criteria for CriteriaQuery.
+     * Supports bankName.
+     *
+     * @param builder is the JPA CriteriaBuilder.
+     * @param root    is the root of the CriteriaQuery.
+     * @param search  is the search keyword.
+     * @return JPA Predicate used by CriteriaQuery.
+     */
+    private Predicate likePredicate(CriteriaBuilder builder, Root<Payment> root, String
+            search) {
+
+        String likeSearch = "%" + search + "%";
+
+        // get all paths for the query
+        Path<String> bankTransactionNumberPath = root.get("bankTransactionNumber");
+
+        // create the predicate expression for all the path
+        Predicate bankTransactionNumberPredicate =
+                builder.like(bankTransactionNumberPath, likeSearch);
+
+
+        // create the final Predicate and return
+        logger.debug("Formulated jpa predicate is " + bankTransactionNumberPredicate.toString());
+        return bankTransactionNumberPredicate;
+    }
+
+    /**
+     * Formulate JPA Order on primitive field for CriteriaQuery.
+     * Supports id, createdTime.
+     *
+     * @param builder  is the JPA CriteriaBuilder.
+     * @param root     is the root of the CriteriaQuery.
+     * @param order    is the field name for the order.
+     * @param orderDir is the order direction.
+     * @return JPA Order for the CriteriaQuery.
+     */
+    private Order orderBy(CriteriaBuilder builder, Root<Payment> root,
+                          String order, ResourceProperties.JpaOrderDir orderDir) {
+
+        // get all supporting paths
+        Path<Long> idPath = root.get("id");
+        Path<Date> createdTimePath = root.get("createdTime");
+        Path<Date> successTimePath = root.get("successTime");
+
+        // create Order instance, default would be ORDER BY id DESC, newest to oldest
+        Order orderBy = null;
+        switch (orderDir) {
+            case ASC:
+                switch (order) {
+                    case "id":
+                        orderBy = builder.asc(idPath);
+                        break;
+                    case "createdTime":
+                        orderBy = builder.asc(createdTimePath);
+                        break;
+                    case "successTime":
+                        orderBy = builder.asc(successTimePath);
+                        break;
+                    default:
+                        orderBy = builder.asc(idPath);
+                }
+                break;
+            case DESC:
+                switch (order) {
+                    case "id":
+                        orderBy = builder.desc(idPath);
+                        break;
+                    case "createdTime":
+                        orderBy = builder.desc(createdTimePath);
+                        break;
+                    case "successTime":
+                        orderBy = builder.desc(successTimePath);
+                        break;
+                    default:
+                        orderBy = builder.desc(idPath);
+                }
+                break;
+            default:
+                orderBy = builder.desc(idPath);
+                break;
+        }
+
+        logger.debug("Formulated order by clause is " + orderBy.toString());
+        return orderBy;
     }
 
     private Predicate equalPredicate(CriteriaBuilder builder, Root<Payment> root,
