@@ -8,7 +8,6 @@
         <div class="row">
             <div class="col-sm-12">
                 <table class="table table-bordered" id="claim-table">
-                    <input id="paymentId" name="paymentId" value="${paymentId}" type="hidden"/>
                     <thead>
                         <tr>
                             <th><spring:message code="id.label"/></th>

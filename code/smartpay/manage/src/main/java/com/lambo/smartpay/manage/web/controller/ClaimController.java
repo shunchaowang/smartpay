@@ -273,7 +273,7 @@ public class ClaimController {
         }
 
         // set payment status to be claim in pending
-        payment = paymentService.processPaymentClaim(payment);
+        payment = paymentService.initiatePaymentClaim(payment);
         String domain = messageSource.getMessage("PaymentRefused.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, payment.getBankTransactionNumber()}, locale);
@@ -396,7 +396,7 @@ public class ClaimController {
         }
 
         // set payment status to be claim in pending
-        payment = paymentService.resolvePaymentClaim(payment);
+        payment = paymentService.approvePaymentClaim(payment);
         String domain = messageSource.getMessage("PaymentRefused.label", null, locale);
         String successfulMessage = messageSource.getMessage("audit.message",
                 new String[]{domain, payment.getBankTransactionNumber()}, locale);

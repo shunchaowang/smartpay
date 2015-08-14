@@ -20,6 +20,8 @@ public interface PaymentService extends GenericDateQueryService<Payment, Long> {
 
     Payment resolvePaymentClaim(Payment payment);
 
+    Payment approvePaymentClaim(Payment payment);
+
     Payment withdrawPayment(Payment payment, Withdrawal withdrawal);
 
     Payment unwithdrawPayment(Payment payment);

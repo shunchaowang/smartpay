@@ -214,6 +214,9 @@ public class PaymentController {
                 beginning = dateFormat.parse(timeBeginning);
                 ending = dateFormat.parse(timeEnding);
                 Calendar calendar   =   new GregorianCalendar();
+                calendar.setTime(beginning);
+                calendar.add(calendar.DATE, -1);
+                beginning = calendar.getTime();
                 calendar.setTime(ending);
                 calendar.add(calendar.DATE,1);
                 ending = calendar.getTime();

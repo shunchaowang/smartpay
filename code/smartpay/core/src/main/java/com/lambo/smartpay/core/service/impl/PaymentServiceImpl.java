@@ -70,8 +70,8 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
     }
 
     @Override
-    @Transactional
-    public Payment resolvePaymentClaim(Payment payment) {
+         @Transactional
+         public Payment resolvePaymentClaim(Payment payment) {
         if (payment == null) {
             return null;
         }
@@ -81,6 +81,17 @@ public class PaymentServiceImpl extends GenericDateQueryServiceImpl<Payment, Lon
         return paymentDao.update(payment);
     }
 
+    @Override
+    @Transactional
+    public Payment approvePaymentClaim(Payment payment) {
+        if (payment == null) {
+            return null;
+        }
+        PaymentStatus paymentStatus = paymentStatusDao.findByCode(ResourceProperties
+                .PAYMENT_STATUS_CLAIM_SUCCESSED_CODE);
+        payment.setPaymentStatus(paymentStatus);
+        return paymentDao.update(payment);
+    }
     /**
      * Dynamic search like grails findBy...
      * We create a dynamic criteria, like grails createCriteria() {}.
