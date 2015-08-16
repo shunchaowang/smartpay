@@ -5,10 +5,7 @@ import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.persistence.entity.Currency;
-import com.lambo.smartpay.core.service.CurrencyService;
-import com.lambo.smartpay.core.service.OrderService;
-import com.lambo.smartpay.core.service.SiteService;
-import com.lambo.smartpay.core.service.UserService;
+import com.lambo.smartpay.core.service.*;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
@@ -53,6 +50,12 @@ public class HomeController {
     private CurrencyService currencyService;
     @Autowired
     private SiteService siteService;
+    @Autowired
+    private RefundService refundService;
+    @Autowired
+    private RefundStatusService refundStatusService;
+    @Autowired
+    private ClaimService claimService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -104,13 +107,30 @@ public class HomeController {
         List<Site> sites = siteService.findByCriteria(site);
         Order orderCriteria = new Order();
         orderCriteria.setSite(site);
-        Date begining = new Date();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date begining = calendar.getTime();
         calendar.add(calendar.DATE, 1);
         Date ending = calendar.getTime();
         List<Order> orders = orderService.findByCriteria(orderCriteria, begining, ending);
-        DataTablesResultSet<DataTablesOrderCount> result = createOrderList(orders, sites);
+        Refund refundCriteria = new Refund();
+        refundCriteria.setOrder(orderCriteria);
+        RefundStatus refundStatus;
+        try {
+            refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
+            refundCriteria.setRefundStatus(refundStatus);
+        }catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        List<Refund> refunds = refundService.findByCriteria(refundCriteria, begining, ending);
+
+        Claim claimCriteria = new Claim();
+        List<Claim> claims = claimService.findByCriteria(claimCriteria, begining, ending);
+        DataTablesResultSet<DataTablesOrderCount> result = createList(orders, refunds, claims, sites);
         return JsonUtil.toJson(result);
     }
 
@@ -132,19 +152,40 @@ public class HomeController {
         List<Site> sites = siteService.findByCriteria(site);
         Order orderCriteria = new Order();
         orderCriteria.setSite(site);
-        Date ending = new Date();
+
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());
         calendar.add(calendar.DATE, -1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
         Date begining = calendar.getTime();
+        calendar.add(calendar.DATE, 1);
+        Date ending = calendar.getTime();
+
         List<Order> orders = orderService.findByCriteria(orderCriteria, begining, ending);
 
-        DataTablesResultSet<DataTablesOrderCount> result = createOrderList(orders, sites);
+        Refund refundCriteria = new Refund();
+        refundCriteria.setOrder(orderCriteria);
+        RefundStatus refundStatus;
+        try {
+            refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
+            refundCriteria.setRefundStatus(refundStatus);
+        }catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        List<Refund> refunds = refundService.findByCriteria(refundCriteria, begining, ending);
+
+        Claim claimCriteria = new Claim();
+        List<Claim> claims = claimService.findByCriteria(claimCriteria, begining, ending);
+
+        DataTablesResultSet<DataTablesOrderCount> result = createList(orders, refunds, claims, sites);
 
         return JsonUtil.toJson(result);
     }
 
-    private DataTablesResultSet<DataTablesOrderCount> createOrderList(List<Order> orders, List<Site> sites){
+    private DataTablesResultSet<DataTablesOrderCount> createList(List<Order> orders, List<Refund> refunds, List<Claim> claims, List<Site> sites){
         List<DataTablesOrderCount> counts = new ArrayList<>();
         Locale locale = LocaleContextHolder.getLocale();
         NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
@@ -165,44 +206,37 @@ public class HomeController {
             for (Order order : orders) {
                 if(order.getSite().getId().equals(s.getId())){
                     orderCount ++;
-                    if(order.getOrderStatus().getCode().equals("401")
-                            || order.getOrderStatus().getCode().equals("501")
-                            || order.getOrderStatus().getCode().equals("502")
-                            || order.getOrderStatus().getCode().equals("503")
-                            || order.getOrderStatus().getCode().equals("403")
-                            || order.getOrderStatus().getCode().equals("504")) {
+                    if(order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_PAID_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_PREPARED_SHIPMENT_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_SHIPPED_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_DELIVERED_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_RETURNED_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)) {
                         paidCount ++;
                         Iterator<Payment> paymentIterator = order.getPayments().iterator();
-                        Double paymentAmount = Double.parseDouble("0.00");
-                        boolean refundFlag = true;
                         while(paymentIterator.hasNext()){
                             Payment payment = paymentIterator.next();
                             if(!payment.getPaymentStatus().getCode().equals("501")) {
                                 paidAmount += payment.getAmount();
-                                paymentAmount += payment.getAmount() + payment.getFee();
-                            }
-                            if(payment.getPaymentStatus().getCode().equals("502")){
-                                refuseCount ++;
-                                refuseAmount += payment.getAmount();
-                                refundFlag = false;
-                            }
-                        }
-                        if(refundFlag){
-                            if(order.getOrderStatus().getCode().equals("504")){
-                                Iterator<Refund> refundIterator = order.getRefunds().iterator();
-                                Double refundAmt = Double.parseDouble("0.00");
-                                while (refundIterator.hasNext()){
-                                    Refund refund = refundIterator.next();
-                                    if(refund.getRefundStatus().getCode().equals("502")){
-                                        refundCount ++;
-                                        refundAmt += refund.getAmount();
-                                    }
-                                }
-                                refundAmt = refundAmt * paymentAmount / order.getAmount();
-                                refundAmount += refundAmt;
                             }
                         }
                     }
+                }
+            }
+            for (Refund refund : refunds) {
+                Order order = refund.getOrder();
+                if(order.getSite().getId().equals(s.getId())
+                        && refund.getRefundStatus().getCode().equals(ResourceProperties.REFUND_STATUS_APPROVED_CODE)) {
+                    refundCount++;
+                    refundAmount += refund.getAmount();
+                }
+            }
+            for (Claim claim : claims) {
+                Payment payment = claim.getPayment();
+                if(payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE)
+                        && payment.getOrder().getSite().getId().equals(s.getId())){
+                    refuseCount ++;
+                    refuseAmount +=payment.getAmount();
                 }
             }
             count.setOrderCount(orderCount);
