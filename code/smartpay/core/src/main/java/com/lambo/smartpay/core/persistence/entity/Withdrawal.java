@@ -88,6 +88,10 @@ public class Withdrawal implements Serializable {
             mappedBy = "withdrawal", orphanRemoval = false)
     private Set<Payment> payments;
 
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY,
+            mappedBy = "withdrawal", orphanRemoval = false)
+    private Set<Refund> refunds;
+
     public Long getId() {
         return id;
     }
@@ -221,8 +225,16 @@ public class Withdrawal implements Serializable {
         return payments;
     }
 
-    public void setPayments(
-            Set<Payment> payments) {
+    public void setPayments(Set<Payment> payments) {
         this.payments = payments;
     }
+
+    public Set<Refund> getRefunds() {
+        return refunds;
+    }
+
+    public void setRefunds(Set<Refund> refunds) {
+        this.refunds = refunds;
+    }
+    
 }
