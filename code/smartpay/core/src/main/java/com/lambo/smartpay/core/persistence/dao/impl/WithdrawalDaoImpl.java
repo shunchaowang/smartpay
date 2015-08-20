@@ -286,6 +286,7 @@ public class WithdrawalDaoImpl extends GenericDaoImpl<Withdrawal, Long>
         // get all supporting paths
         Path<Long> idPath = root.get("id");
         Path<Date> createdTimePath = root.get("createdTime");
+        Path<Date> updatedTimePath = root.get("updatedTime");
         Path<Date> dateStartPath = root.get("dateStart");
         Path<Date> dateEndPath = root.get("dateEnd");
 
@@ -299,6 +300,9 @@ public class WithdrawalDaoImpl extends GenericDaoImpl<Withdrawal, Long>
                         break;
                     case "createdTime":
                         orderBy = builder.asc(createdTimePath);
+                        break;
+                    case "updatedTime":
+                        orderBy = builder.asc(updatedTimePath);
                         break;
                     case "dateStart":
                         orderBy = builder.asc(dateStartPath);
@@ -317,6 +321,9 @@ public class WithdrawalDaoImpl extends GenericDaoImpl<Withdrawal, Long>
                         break;
                     case "createdTime":
                         orderBy = builder.desc(createdTimePath);
+                        break;
+                    case "updatedTime":
+                        orderBy = builder.desc(updatedTimePath);
                         break;
                     case "dateStart":
                         orderBy = builder.asc(dateStartPath);

@@ -8,64 +8,56 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
  */
 @Entity
-@Table(name = "FEES")
-public class Fee implements Serializable {
+@Table(name = "CURRENCY_EXCHANGES")
+public class CurrencyExchange implements Serializable {
 
     static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "FEE_ID")
+    @Column(name = "CREX_ID")
     private Long id;
 
-    @Column(name = "FEE_VALUE", nullable = false)
-    private Float value;
-
-    @Column(name = "FEE_REMARK", length = 255)
+    @Column(name = "CREX_REMARK", length = 255)
     private String remark;
 
-    @Column(name = "FEE_CREATED_TIME", nullable = false)
+    @Column(name = "CREX_CREATED_TIME", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdTime;
 
-    @Column(name = "FEE_UPDATED_TIME")
+    @Column(name = "CREX_UPDATED_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedTime;
 
-    @Column(name = "FEE_ACTIVE", nullable = false)
+    @Column(name = "CREX_ACTIVE", nullable = false)
     private Boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            optional = false)
-    @JoinColumn(name = "FEE_FETP_ID", nullable = false)
-    private FeeType feeType;
+    @Column(name = "CREX_AMOUNT_FROM", nullable = false)
+    private Double amountFrom;
+
+    @Column(name = "CREX_AMOUNT_TO", nullable = false)
+    private Double amountTo;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             optional = false)
-    @JoinColumn(name = "FEE_FECT_ID", nullable = false)
-    private FeeCategory feeCategory;
+    @JoinColumn(name = "CREX_CRCY_FROM", nullable = false)
+    private Currency currencyFrom;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
-            joinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "MEMP_MCHT_ID", nullable = false,
-                    updatable = false)}
-    )
-    private Set<Merchant> merchants;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
+    @JoinColumn(name = "CREX_CRCY_TO", nullable = false)
+    private Currency currencyTo;
 
     public Long getId() {
         return id;
@@ -75,28 +67,12 @@ public class Fee implements Serializable {
         this.id = id;
     }
 
-    public Float getValue() {
-        return value;
-    }
-
-    public void setValue(Float value) {
-        this.value = value;
-    }
-
     public String getRemark() {
         return remark;
     }
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public FeeType getFeeType() {
-        return feeType;
-    }
-
-    public void setFeeType(FeeType feeType) {
-        this.feeType = feeType;
     }
 
     public Boolean getActive() {
@@ -123,20 +99,35 @@ public class Fee implements Serializable {
         this.updatedTime = updatedTime;
     }
 
-    public FeeCategory getFeeCategory() {
-        return feeCategory;
+    public Double getAmountFrom() {
+        return amountFrom;
     }
 
-    public void setFeeCategory(FeeCategory feeCategory) {
-        this.feeCategory = feeCategory;
+    public void setAmountFrom(Double amountFrom) {
+        this.amountFrom = amountFrom;
     }
 
-    public Set<Merchant> getMerchants() {
-        return merchants;
+    public Double getAmountTo() {
+        return amountTo;
     }
 
-    public void setMerchants(
-            Set<Merchant> merchants) {
-        this.merchants = merchants;
+    public void setAmountTo(Double amountTo) {
+        this.amountTo = amountTo;
+    }
+
+    public Currency getCurrencyFrom() {
+        return currencyFrom;
+    }
+
+    public void setCurrencyFrom(Currency currencyFrom) {
+        this.currencyFrom = currencyFrom;
+    }
+
+    public Currency getCurrencyTo() {
+        return currencyTo;
+    }
+
+    public void setCurrencyTo(Currency currencyTo) {
+        this.currencyTo = currencyTo;
     }
 }

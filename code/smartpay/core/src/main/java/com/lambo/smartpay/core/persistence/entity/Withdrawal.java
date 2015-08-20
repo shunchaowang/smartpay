@@ -51,6 +51,18 @@ public class Withdrawal implements Serializable {
     @Column(name = "WDRL_AMOUNT", nullable = false)
     private Double amount;
 
+    @Column(name = "WDRL_AMOUNT_APPROVED", nullable = true)
+    private Double amountApproved;
+
+    @Column(name = "WDRL_REFUND_AFTER_WITHDRAWN", nullable = true)
+    private Double refundAfterWithdrawn;
+
+    @Column(name = "WDRL_CHARGEBACK_AFTER_WITHDRAWN", nullable = true)
+    private Double chargebackAfterWithdrawn;
+
+    @Column(name = "WDRL_AMOUNT_ADJUSTED", nullable = true)
+    private Double amountAdjust;
+
     @Column(name = "WDRL_DATE_START", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateStart;
@@ -156,6 +168,38 @@ public class Withdrawal implements Serializable {
         this.amount = amount;
     }
 
+    public Double getAmountApproved() {
+        return amountApproved;
+    }
+
+    public void setAmountApproved(Double amountApproved) {
+        this.amountApproved = amountApproved;
+    }
+
+    public Double getAmountAdjust() {
+        return amountAdjust;
+    }
+
+    public void setAmountAdjust(Double amountAdjust) {
+        this.amountAdjust = amountAdjust;
+    }
+
+    public Double getChargebackAfterWithdrawn() {
+        return chargebackAfterWithdrawn;
+    }
+
+    public void setChargebackAfterWithdrawn(Double chargebackAfterWithdrawn) {
+        this.chargebackAfterWithdrawn = chargebackAfterWithdrawn;
+    }
+
+    public Double getRefundAfterWithdrawn() {
+        return refundAfterWithdrawn;
+    }
+
+    public void setRefundAfterWithdrawn(Double refundAfterWithdrawn) {
+        this.refundAfterWithdrawn = refundAfterWithdrawn;
+    }
+
     public Date getDateStart() {
         return dateStart;
     }
@@ -236,5 +280,4 @@ public class Withdrawal implements Serializable {
     public void setRefunds(Set<Refund> refunds) {
         this.refunds = refunds;
     }
-    
 }
