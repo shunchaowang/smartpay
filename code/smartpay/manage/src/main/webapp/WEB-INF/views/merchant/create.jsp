@@ -216,78 +216,6 @@
                 </div>
                 <hr>
 
-                <!-- commission fee -->
-                <div class="form-group">
-                    <h4>
-                        <spring:message code="commission.fee.label"/>
-                    </h4>
-                </div>
-                <div class="row">
-                    <label class="col-sm-1 control-label" for="commissionFeeValue">
-                        <span>*</span>
-                        <spring:message code="value.label"/>
-                    </label>
-
-                    <div class="col-sm-3">
-                        <form:input size="32" path="commissionFeeValue"
-                                    id="commissionFeeValue"
-                                    cssClass="form-control"
-                                    placeholder="Value"/>
-                    </div>
-                    <label class="col-sm-1 control-label" for="commissionFeeTypeId">
-                        <span>*</span>
-                        <spring:message code="type.label"/>
-                    </label>
-
-                    <div class="col-sm-3">
-                        <form:select path="commissionFeeTypeId" id="commissionFeeTypeId"
-                                     cssClass="form-control"
-                                     required="" placeholder="Type">
-                            <c:forEach items="${feeTypes}" var="type">
-                                <form:option value="${type.id}">
-                                    ${type.name}
-                                </form:option>
-                            </c:forEach>
-                        </form:select>
-                    </div>
-                </div>
-                <hr>
-
-                <!-- return fee -->
-                <h4>
-                    <spring:message code="return.fee.label"/>
-                </h4>
-
-                <div class="row">
-                    <label class="col-sm-1 control-label" for="returnFeeValue">
-                        <span>*</span>
-                        <spring:message code="value.label"/>
-                    </label>
-
-                    <div class="col-sm-3">
-                        <form:input size="80" path="returnFeeValue" id="returnFeeValue"
-                                    cssClass="form-control"
-                                    placeholder="Value"/>
-                    </div>
-                    <label class="col-sm-1 control-label" for="returnFeeTypeId">
-                        <span>*</span>
-                        <spring:message code="type.label"/>
-                    </label>
-
-                    <div class="col-sm-3">
-                        <form:select path="returnFeeTypeId" id="returnFeeTypeId"
-                                     cssClass="form-control"
-                                     required="" placeholder="Type">
-                            <c:forEach items="${feeTypes}" var="type">
-                                <form:option value="${type.id}">
-                                    ${type.name}
-                                </form:option>
-                            </c:forEach>
-                        </form:select>
-                    </div>
-                </div>
-                <hr>
-
                 <div class='form-group'>
                     <div class="col-sm-2 col-sm-offset-2">
                         <button class='btn btn-default' id='create-button' type="submit">
@@ -319,11 +247,11 @@
                 credentialTypeId: {required: true},
                 credentialStatusId: {required: true},
                 encryptionKey: {required: true, number: true, minlength: 3, maxlength: 32},
-                encryptionTypeId: {required: true},
+                encryptionTypeId: {required: true}/*,
                 commissionFeeValue: {required: true, number: true},
                 commissionFeeTypeId: {required: true},
                 returnFeeValue: {required: true, number: true},
-                returnFeeTypeId: {required: true}
+                returnFeeTypeId: {required: true}*/
             }
         });
 

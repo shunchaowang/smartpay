@@ -98,12 +98,12 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         merchant.getCredential().setCreatedTime(date);
         merchant.getCredential().setActive(true);
 
-        // check fee
-        if (merchant.getFees() == null) {
-            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
-        }
+        //TODO commented out check fee
+//        if (merchant.getFees() == null) {
+//            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
+//        }
 
-        // check return fee
+        //TODO commented out check return fee
         if (merchant.getWithdrawalSetting() == null) {
             throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
         }
@@ -174,16 +174,16 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         // set active default to be active and created time for credential
         merchant.getCredential().setUpdatedTime(date);
 
-        // check fee
-        if (merchant.getFees() == null) {
-            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
-        }
+        //TODO commented out check fee
+//        if (merchant.getFees() == null) {
+//            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
+//        }
 
-        // check return fee
-        if (merchant.getWithdrawalSetting() == null) {
-            throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
-        }
-        merchant.getWithdrawalSetting().setUpdatedTime(date);
+        //TODO commented out check return fee
+//        if (merchant.getWithdrawalSetting() == null) {
+//            throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
+//        }
+//        merchant.getWithdrawalSetting().setUpdatedTime(date);
 
         // set createdTime
         merchant.setUpdatedTime(date);

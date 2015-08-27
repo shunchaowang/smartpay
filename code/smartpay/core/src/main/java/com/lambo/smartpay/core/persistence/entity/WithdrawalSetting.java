@@ -47,7 +47,7 @@ public class WithdrawalSetting implements Serializable {
     private Long maxDays;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "WSDE_SECURITY_FEE_ID", nullable = false)
+    @JoinColumn(name = "WDSE_SECURITY_FEE_ID", nullable = false)
     private Fee securityFee;
 
     public Long getId() {

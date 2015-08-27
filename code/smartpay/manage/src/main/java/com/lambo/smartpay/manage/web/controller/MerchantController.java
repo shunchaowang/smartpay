@@ -114,7 +114,6 @@ public class MerchantController {
                 || params.getOrder() == null || params.getOrderDir() == null) {
             throw new BadRequestException("400", "Bad Request.");
         }
-
         Merchant merchantCriteria = new Merchant();
         merchantCriteria.setActive(true);
         List<Merchant> merchants = merchantService.findByCriteria(merchantCriteria,
@@ -125,21 +124,24 @@ public class MerchantController {
         Long recordsTotal = merchantService.countAll();
         Long recordsFiltered = merchantService.countByCriteria(params.getSearch());
 
+        logger.debug("here before if null: " + merchants + recordsTotal + recordsFiltered);
         if (merchants == null || recordsTotal == null || recordsFiltered == null) {
             throw new RemoteAjaxException("500", "Internal Server Error.");
         }
+        logger.debug("here after if null: " + merchants + recordsTotal + recordsFiltered);
 
         List<DataTablesMerchant> dataTablesMerchants = new ArrayList<>();
         for (Merchant merchant : merchants) {
             DataTablesMerchant tablesMerchant = new DataTablesMerchant(merchant);
             dataTablesMerchants.add(tablesMerchant);
         }
+        logger.debug("here after tables");
 
         DataTablesResultSet<DataTablesMerchant> resultSet = new DataTablesResultSet<>();
         resultSet.setData(dataTablesMerchants);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
-
+        logger.debug("All merchants: " + JsonUtil.toJson(resultSet));
         return JsonUtil.toJson(resultSet);
     }
 
@@ -406,8 +408,10 @@ public class MerchantController {
         model.addAttribute("credentialStatuses", credentialStatuses);
         List<EncryptionType> encryptionTypes = encryptionTypeService.getAll();
         model.addAttribute("encryptionTypes", encryptionTypes);
-        List<FeeType> feeTypes = feeTypeService.getAll();
-        model.addAttribute("feeTypes", feeTypes);
+
+        //TODO commented out
+//        List<FeeType> feeTypes = feeTypeService.getAll();
+//        model.addAttribute("feeTypes", feeTypes);
         model.addAttribute("_view", "merchant/create");
         return "main";
     }
@@ -688,11 +692,13 @@ public class MerchantController {
         }
         merchant.getEncryption().setKey(request.getParameter("encryptionKey"));
         merchant.getEncryption().setEncryptionType(encryptionType);
-        merchant.getCommissionFee().setValue(
-                Float.valueOf(request.getParameter("commissionFeeValue")));
-        merchant.getCommissionFee().setFeeType(commissionFeeType);
-        merchant.getReturnFee().setValue(Float.valueOf(request.getParameter("returnFeeValue")));
-        merchant.getReturnFee().setFeeType(returnFeeType);
+
+        //TODO commented out
+//        merchant.getCommissionFee().setValue(
+//                Float.valueOf(request.getParameter("commissionFeeValue")));
+//        merchant.getCommissionFee().setFeeType(commissionFeeType);
+//        merchant.getReturnFee().setValue(Float.valueOf(request.getParameter("returnFeeValue")));
+//        merchant.getReturnFee().setFeeType(returnFeeType);
 
         return merchant;
     }
@@ -743,14 +749,16 @@ public class MerchantController {
     private Fee createCommissionFee(MerchantCommand merchantCommand) {
         Fee fee = new Fee();
         FeeType feeType = null;
-        try {
-            feeType = feeTypeService.get(merchantCommand.getCommissionFeeTypeId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        fee.setActive(true);
-        fee.setValue(merchantCommand.getCommissionFeeValue());
-        fee.setFeeType(feeType);
+
+        //TODO commented out
+//        try {
+//            feeType = feeTypeService.get(merchantCommand.getCommissionFeeTypeId());
+//        } catch (NoSuchEntityException e) {
+//            e.printStackTrace();
+//        }
+//        fee.setActive(true);
+//        fee.setValue(merchantCommand.getCommissionFeeValue());
+//        fee.setFeeType(feeType);
 
         return fee;
     }
@@ -758,14 +766,15 @@ public class MerchantController {
     private Fee createReturnFee(MerchantCommand merchantCommand) {
         Fee fee = new Fee();
         FeeType feeType = null;
-        try {
-            feeType = feeTypeService.get(merchantCommand.getReturnFeeTypeId());
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        fee.setActive(true);
-        fee.setValue(merchantCommand.getReturnFeeValue());
-        fee.setFeeType(feeType);
+        //TODO commented out
+//        try {
+//            feeType = feeTypeService.get(merchantCommand.getReturnFeeTypeId());
+//        } catch (NoSuchEntityException e) {
+//            e.printStackTrace();
+//        }
+//        fee.setActive(true);
+//        fee.setValue(merchantCommand.getReturnFeeValue());
+//        fee.setFeeType(feeType);
 
         return fee;
     }
@@ -799,8 +808,10 @@ public class MerchantController {
 
         merchant.setCredential(credential);
         merchant.setEncryption(encryption);
-        merchant.setCommissionFee(commissionFee);
-        merchant.setReturnFee(returnFee);
+
+        //TODO commented out
+//        merchant.setCommissionFee(commissionFee);
+//        merchant.setReturnFee(returnFee);
         return merchant;
     }
 }

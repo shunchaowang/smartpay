@@ -28,13 +28,14 @@ public class DataTablesMerchantSetting {
         encryptionKey = merchant.getEncryption().getKey();
         encryptionType = merchant.getEncryption().getEncryptionType().getName();
 
-        commissionFeeId = merchant.getCommissionFee().getId();
-        commissionFeeValue = merchant.getCommissionFee().getValue();
-        commissionFeeType = merchant.getCommissionFee().getFeeType().getName();
-
-        returnFeeId = merchant.getReturnFee().getId();
-        returnFeeValue = merchant.getReturnFee().getValue();
-        returnFeeType = merchant.getReturnFee().getFeeType().getName();
+        //TODO commented out
+//        commissionFeeId = merchant.getCommissionFee().getId();
+//        commissionFeeValue = merchant.getCommissionFee().getValue();
+//        commissionFeeType = merchant.getCommissionFee().getFeeType().getName();
+//
+//        returnFeeId = merchant.getReturnFee().getId();
+//        returnFeeValue = merchant.getReturnFee().getValue();
+//        returnFeeType = merchant.getReturnFee().getFeeType().getName();
     }
 
     public Long getId() {

@@ -62,7 +62,7 @@ public class Fee implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
             joinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "MEMP_MCHT_ID", nullable = false,
+            inverseJoinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false,
                     updatable = false)}
     )
     private Set<Merchant> merchants;

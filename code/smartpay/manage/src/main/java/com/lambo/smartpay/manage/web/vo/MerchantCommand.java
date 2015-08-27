@@ -43,17 +43,17 @@ public class MerchantCommand {
     private Long encryptionTypeId;
     private String encryptionTypeName;
 
-    // Commission fee
-    private Float commissionFeeValue;
-    private String commissionFeeRemark;
-    private Long commissionFeeTypeId;
-    private String commissionFeeTypeName;
-
-    // Return fee
-    private Float returnFeeValue;
-    private String returnFeeRemark;
-    private Long returnFeeTypeId;
-    private String returnFeeTypeName;
+//    // Commission fee
+//    private Float commissionFeeValue;
+//    private String commissionFeeRemark;
+//    private Long commissionFeeTypeId;
+//    private String commissionFeeTypeName;
+//
+//    // Return fee
+//    private Float returnFeeValue;
+//    private String returnFeeRemark;
+//    private Long returnFeeTypeId;
+//    private String returnFeeTypeName;
 
     public MerchantCommand() {
     }
@@ -91,17 +91,17 @@ public class MerchantCommand {
         encryptionTypeId = merchant.getEncryption().getEncryptionType().getId();
         encryptionTypeName = merchant.getEncryption().getEncryptionType().getName();
 
-        // Commission Fee
-        commissionFeeRemark = merchant.getCommissionFee().getRemark();
-        commissionFeeTypeId = merchant.getCommissionFee().getFeeType().getId();
-        commissionFeeTypeName = merchant.getCommissionFee().getFeeType().getName();
-        commissionFeeValue = merchant.getCommissionFee().getValue();
-
-        // Return Fee
-        returnFeeRemark = merchant.getReturnFee().getRemark();
-        returnFeeTypeId = merchant.getReturnFee().getFeeType().getId();
-        returnFeeTypeName = merchant.getReturnFee().getFeeType().getName();
-        returnFeeValue = merchant.getReturnFee().getValue();
+//        // Commission Fee
+//        commissionFeeRemark = merchant.getCommissionFee().getRemark();
+//        commissionFeeTypeId = merchant.getCommissionFee().getFeeType().getId();
+//        commissionFeeTypeName = merchant.getCommissionFee().getFeeType().getName();
+//        commissionFeeValue = merchant.getCommissionFee().getValue();
+//
+//        // Return Fee
+//        returnFeeRemark = merchant.getReturnFee().getRemark();
+//        returnFeeTypeId = merchant.getReturnFee().getFeeType().getId();
+//        returnFeeTypeName = merchant.getReturnFee().getFeeType().getName();
+//        returnFeeValue = merchant.getReturnFee().getValue();
 
     }
 
@@ -281,69 +281,69 @@ public class MerchantCommand {
         this.encryptionTypeName = encryptionTypeName;
     }
 
-    public Float getCommissionFeeValue() {
-        return commissionFeeValue;
-    }
-
-    public void setCommissionFeeValue(Float commissionFeeValue) {
-        this.commissionFeeValue = commissionFeeValue;
-    }
-
-    public String getCommissionFeeRemark() {
-        return commissionFeeRemark;
-    }
-
-    public void setCommissionFeeRemark(String commissionFeeRemark) {
-        this.commissionFeeRemark = commissionFeeRemark;
-    }
-
-    public Long getCommissionFeeTypeId() {
-        return commissionFeeTypeId;
-    }
-
-    public void setCommissionFeeTypeId(Long commissionFeeTypeId) {
-        this.commissionFeeTypeId = commissionFeeTypeId;
-    }
-
-    public String getCommissionFeeTypeName() {
-        return commissionFeeTypeName;
-    }
-
-    public void setCommissionFeeTypeName(String commissionFeeTypeName) {
-        this.commissionFeeTypeName = commissionFeeTypeName;
-    }
-
-    public Float getReturnFeeValue() {
-        return returnFeeValue;
-    }
-
-    public void setReturnFeeValue(Float returnFeeValue) {
-        this.returnFeeValue = returnFeeValue;
-    }
-
-    public String getReturnFeeRemark() {
-        return returnFeeRemark;
-    }
-
-    public void setReturnFeeRemark(String returnFeeRemark) {
-        this.returnFeeRemark = returnFeeRemark;
-    }
-
-    public Long getReturnFeeTypeId() {
-        return returnFeeTypeId;
-    }
-
-    public void setReturnFeeTypeId(Long returnFeeTypeId) {
-        this.returnFeeTypeId = returnFeeTypeId;
-    }
-
-    public String getReturnFeeTypeName() {
-        return returnFeeTypeName;
-    }
-
-    public void setReturnFeeTypeName(String returnFeeTypeName) {
-        this.returnFeeTypeName = returnFeeTypeName;
-    }
+//    public Float getCommissionFeeValue() {
+//        return commissionFeeValue;
+//    }
+//
+//    public void setCommissionFeeValue(Float commissionFeeValue) {
+//        this.commissionFeeValue = commissionFeeValue;
+//    }
+//
+//    public String getCommissionFeeRemark() {
+//        return commissionFeeRemark;
+//    }
+//
+//    public void setCommissionFeeRemark(String commissionFeeRemark) {
+//        this.commissionFeeRemark = commissionFeeRemark;
+//    }
+//
+//    public Long getCommissionFeeTypeId() {
+//        return commissionFeeTypeId;
+//    }
+//
+//    public void setCommissionFeeTypeId(Long commissionFeeTypeId) {
+//        this.commissionFeeTypeId = commissionFeeTypeId;
+//    }
+//
+//    public String getCommissionFeeTypeName() {
+//        return commissionFeeTypeName;
+//    }
+//
+//    public void setCommissionFeeTypeName(String commissionFeeTypeName) {
+//        this.commissionFeeTypeName = commissionFeeTypeName;
+//    }
+//
+//    public Float getReturnFeeValue() {
+//        return returnFeeValue;
+//    }
+//
+//    public void setReturnFeeValue(Float returnFeeValue) {
+//        this.returnFeeValue = returnFeeValue;
+//    }
+//
+//    public String getReturnFeeRemark() {
+//        return returnFeeRemark;
+//    }
+//
+//    public void setReturnFeeRemark(String returnFeeRemark) {
+//        this.returnFeeRemark = returnFeeRemark;
+//    }
+//
+//    public Long getReturnFeeTypeId() {
+//        return returnFeeTypeId;
+//    }
+//
+//    public void setReturnFeeTypeId(Long returnFeeTypeId) {
+//        this.returnFeeTypeId = returnFeeTypeId;
+//    }
+//
+//    public String getReturnFeeTypeName() {
+//        return returnFeeTypeName;
+//    }
+//
+//    public void setReturnFeeTypeName(String returnFeeTypeName) {
+//        this.returnFeeTypeName = returnFeeTypeName;
+//    }
 
     public Long getCredentialStatusId() {
         return credentialStatusId;
