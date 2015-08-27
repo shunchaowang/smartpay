@@ -60,6 +60,12 @@ public abstract class ResourceProperties {
     public static final String WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE = "401";
     public static final String WITHDRAWAL_STATUS_DEPOSIT_APPROVED_CODE = "402";
 
+    // fee categories
+    public static final String FEE_CATEGORY_VISA_CODE = "100";
+    public static final String FEE_CATEGORY_MASTER_CODE  = "101";
+    public static final String FEE_CATEGORY_JCB_CODE  = "102";
+    public static final String FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE  = "200";
+
     public enum JpaOrderDir {
         ASC("ASC"),
         DESC("DESC");
