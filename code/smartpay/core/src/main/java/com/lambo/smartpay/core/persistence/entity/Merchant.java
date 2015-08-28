@@ -256,8 +256,7 @@ public class Merchant implements Serializable {
         return withdrawalSetting;
     }
 
-    public void setWithdrawalSetting(
-            WithdrawalSetting withdrawalSetting) {
+    public void setWithdrawalSetting(WithdrawalSetting withdrawalSetting) {
         this.withdrawalSetting = withdrawalSetting;
     }
 

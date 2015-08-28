@@ -6,16 +6,16 @@
     <div class="row">
         <ol class="breadcrumb">
             <li>
-                    <i class="glyphicon glyphicon-home"></i>
-                    <spring:message code="home.label"/>
+                <i class="glyphicon glyphicon-home"></i>
+                <spring:message code="home.label"/>
             </li>
             <li>
                 <i class="glyphicon glyphicon-list"></i>
                 <spring:message code="index.label" arguments="${entity}"/>
             </li>
             <li class="active">
-                    <i class="glyphicon glyphicon-wrench"></i>
-                    <spring:message code="create.label" arguments="${entity}"/>
+                <i class="glyphicon glyphicon-wrench"></i>
+                <spring:message code="create.label" arguments="${entity}"/>
             </li>
         </ol>
     </div>
@@ -216,6 +216,167 @@
                 </div>
                 <hr>
 
+                <!-- fee setting -->
+                <!-- commission fee -->
+                <div class="form-group">
+                    <h4>
+                        <spring:message code="commission.fee.label"/>
+                    </h4>
+                </div>
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="commissionVisaFeeValue">
+                        <span>*</span>
+                        <spring:message code="commissionVisaFee.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:input size="32" path="commissionVisaFeeValue"
+                                    id="commissionVisaFeeValue"
+                                    cssClass="form-control"
+                                    placeholder="Value"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="commissionVisaFeeTypeId">
+                        <span>*</span>
+                        <spring:message code="type.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:select path="commissionVisaFeeTypeId" id="commissionVisaFeeTypeId"
+                                     cssClass="form-control"
+                                     required="" placeholder="Type">
+                            <c:forEach items="${feeTypes}" var="type">
+                                <form:option value="${type.id}">
+                                    ${type.name}
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="commissionMasterFeeValue">
+                        <span>*</span>
+                        <spring:message code="commissionMasterFee.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:input size="32" path="commissionMasterFeeValue"
+                                    id="commissionMasterFeeValue"
+                                    cssClass="form-control"
+                                    placeholder="Value"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="commissionMasterFeeTypeId">
+                        <span>*</span>
+                        <spring:message code="type.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:select path="commissionMasterFeeTypeId" id="commissionMasterFeeTypeId"
+                                     cssClass="form-control"
+                                     required="" placeholder="Type">
+                            <c:forEach items="${feeTypes}" var="type">
+                                <form:option value="${type.id}">
+                                    ${type.name}
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="commissionJcbFeeValue">
+                        <span>*</span>
+                        <spring:message code="commissionJcbFee.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:input size="32" path="commissionJcbFeeValue"
+                                    id="commissionJcbFeeValue"
+                                    cssClass="form-control"
+                                    placeholder="Value"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="commissionJcbFeeTypeId">
+                        <span>*</span>
+                        <spring:message code="type.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:select path="commissionJcbFeeTypeId" id="commissionJcbFeeTypeId"
+                                     cssClass="form-control"
+                                     required="" placeholder="Type">
+                            <c:forEach items="${feeTypes}" var="type">
+                                <form:option value="${type.id}">
+                                    ${type.name}
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="withdrawFeeValue">
+                        <span>*</span>
+                        <spring:message code="withdrawalSecurityFee.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:input size="32" path="withdrawFeeValue"
+                                    id="withdrawFeeValue"
+                                    cssClass="form-control"
+                                    placeholder="Value"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="withdrawFeeTypeId">
+                        <span>*</span>
+                        <spring:message code="type.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:select path="withdrawFeeTypeId" id="withdrawFeeTypeId"
+                                     cssClass="form-control"
+                                     required="" placeholder="Type">
+                            <c:forEach items="${feeTypes}" var="type">
+                                <form:option value="${type.id}">
+                                    ${type.name}
+                                </form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                </div>
+                <hr>
+
+                <!-- withdrawal setting -->
+                <div class="form-group">
+                    <h4>
+                        <spring:message code="withdrawal.label"/>
+                    </h4>
+                </div>
+                <div class="row">
+                    <label class="col-sm-1 control-label" for="withdrawalMinDays">
+                        <span>*</span>
+                        <spring:message code="withdrawalMinDays.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:input size="32" path="withdrawSettingMinDays" id="withdrawalMinDays"
+                                    cssClass="form-control"
+                                    placeholder="Days"/>
+                    </div>
+                    <label class="col-sm-1 control-label" for="withdrawalMaxDays">
+                        <span>*</span>
+                        <spring:message code="withdrawalMaxDays.label"/>
+                    </label>
+
+                    <div class="col-sm-3">
+                        <form:input size="32" path="withdrawSettingMaxDays" id="withdrawalMaxDays"
+                                    cssClass="form-control"
+                                    placeholder="Days"/>
+                    </div>
+                </div>
+                <hr>
+
                 <div class='form-group'>
                     <div class="col-sm-2 col-sm-offset-2">
                         <button class='btn btn-default' id='create-button' type="submit">
@@ -248,10 +409,10 @@
                 credentialStatusId: {required: true},
                 encryptionKey: {required: true, number: true, minlength: 3, maxlength: 32},
                 encryptionTypeId: {required: true}/*,
-                commissionFeeValue: {required: true, number: true},
-                commissionFeeTypeId: {required: true},
-                returnFeeValue: {required: true, number: true},
-                returnFeeTypeId: {required: true}*/
+                 commissionFeeValue: {required: true, number: true},
+                 commissionFeeTypeId: {required: true},
+                 returnFeeValue: {required: true, number: true},
+                 returnFeeTypeId: {required: true}*/
             }
         });
 

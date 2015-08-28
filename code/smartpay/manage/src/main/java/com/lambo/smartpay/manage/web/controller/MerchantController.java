@@ -9,12 +9,15 @@ import com.lambo.smartpay.core.persistence.entity.CredentialType;
 import com.lambo.smartpay.core.persistence.entity.Encryption;
 import com.lambo.smartpay.core.persistence.entity.EncryptionType;
 import com.lambo.smartpay.core.persistence.entity.Fee;
+import com.lambo.smartpay.core.persistence.entity.FeeCategory;
 import com.lambo.smartpay.core.persistence.entity.FeeType;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
 import com.lambo.smartpay.core.persistence.entity.MerchantStatus;
+import com.lambo.smartpay.core.persistence.entity.WithdrawalSetting;
 import com.lambo.smartpay.core.service.CredentialStatusService;
 import com.lambo.smartpay.core.service.CredentialTypeService;
 import com.lambo.smartpay.core.service.EncryptionTypeService;
+import com.lambo.smartpay.core.service.FeeCategoryService;
 import com.lambo.smartpay.core.service.FeeTypeService;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.MerchantStatusService;
@@ -46,14 +49,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by swang on 3/20/2015.
@@ -79,6 +86,8 @@ public class MerchantController {
     private FeeTypeService feeTypeService;
     @Autowired
     private MessageSource messageSource;
+    @Resource
+    private FeeCategoryService feeCategoryService;
 
     // index view
     @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
@@ -409,9 +418,8 @@ public class MerchantController {
         List<EncryptionType> encryptionTypes = encryptionTypeService.getAll();
         model.addAttribute("encryptionTypes", encryptionTypes);
 
-        //TODO commented out
-//        List<FeeType> feeTypes = feeTypeService.getAll();
-//        model.addAttribute("feeTypes", feeTypes);
+        List<FeeType> feeTypes = feeTypeService.getAll();
+        model.addAttribute("feeTypes", feeTypes);
         model.addAttribute("_view", "merchant/create");
         return "main";
     }
@@ -746,23 +754,82 @@ public class MerchantController {
         return encryption;
     }
 
-    private Fee createCommissionFee(MerchantCommand merchantCommand) {
-        Fee fee = new Fee();
+    private Set<Fee> createCommissionFees(MerchantCommand merchantCommand) {
+        Set<Fee> fees = new HashSet<>();
+
         FeeType feeType = null;
+        FeeCategory feeCategory = null;
+        Fee fee = new Fee();
 
-        //TODO commented out
-//        try {
-//            feeType = feeTypeService.get(merchantCommand.getCommissionFeeTypeId());
-//        } catch (NoSuchEntityException e) {
-//            e.printStackTrace();
-//        }
-//        fee.setActive(true);
-//        fee.setValue(merchantCommand.getCommissionFeeValue());
-//        fee.setFeeType(feeType);
+        // visa fee
+        try {
+            feeType = feeTypeService.get(merchantCommand.getCommissionVisaFeeTypeId());
+            feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_VISA_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        fee.setActive(true);
+        fee.setValue(merchantCommand.getCommissionVisaFeeValue());
+        fee.setFeeType(feeType);
+        fee.setFeeCategory(feeCategory);
+        fees.add(fee);
 
-        return fee;
+        // master fee
+        try {
+            feeType = feeTypeService.get(merchantCommand.getCommissionMasterFeeTypeId());
+            feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_VISA_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        fee.setActive(true);
+        fee.setValue(merchantCommand.getCommissionMasterFeeValue());
+        fee.setFeeType(feeType);
+        fee.setFeeCategory(feeCategory);
+        fees.add(fee);
+
+        // jcb fee
+        try {
+            feeType = feeTypeService.get(merchantCommand.getCommissionJcbFeeTypeId());
+            feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_VISA_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        fee.setValue(merchantCommand.getCommissionJcbFeeValue());
+        fee.setFeeType(feeType);
+        fee.setFeeCategory(feeCategory);
+        fees.add(fee);
+
+        return fees;
     }
 
+    private WithdrawalSetting createWithdrawalSetting(MerchantCommand merchantCommand) {
+
+        WithdrawalSetting setting = new WithdrawalSetting();
+
+        // basic info
+        setting.setMaxDays(merchantCommand.getWithdrawSettingMaxDays());
+        setting.setMinDays(merchantCommand.getWithdrawSettingMinDays());
+
+        // fee
+        Fee fee = new Fee();
+        FeeType feeType = null;
+        FeeCategory feeCategory = null;
+        try {
+            feeType = feeTypeService.get(merchantCommand.getWithdrawFeeTypeId());
+            feeCategory = feeCategoryService
+                    .findByCode(ResourceProperties.FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        fee.setValue(merchantCommand.getWithdrawFeeValue());
+        fee.setFeeType(feeType);
+        fee.setFeeCategory(feeCategory);
+        setting.setSecurityFee(fee);
+
+        return setting;
+    }
+
+    //TODO commented out, not used right now
     private Fee createReturnFee(MerchantCommand merchantCommand) {
         Fee fee = new Fee();
         FeeType feeType = null;
@@ -803,15 +870,14 @@ public class MerchantController {
         // create all persisting relationships
         Credential credential = createCredential(merchantCommand);
         Encryption encryption = createEncryption(merchantCommand);
-        Fee commissionFee = createCommissionFee(merchantCommand);
-        Fee returnFee = createReturnFee(merchantCommand);
-
         merchant.setCredential(credential);
         merchant.setEncryption(encryption);
 
-        //TODO commented out
-//        merchant.setCommissionFee(commissionFee);
-//        merchant.setReturnFee(returnFee);
+        // create fees for merchant
+        merchant.setFees(createCommissionFees(merchantCommand));
+        // create withdrawal setting
+        merchant.setWithdrawalSetting(createWithdrawalSetting(merchantCommand));
+
         return merchant;
     }
 }

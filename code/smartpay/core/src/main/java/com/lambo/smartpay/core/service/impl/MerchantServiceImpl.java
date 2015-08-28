@@ -57,7 +57,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
      * @throws MissingRequiredFieldException
      * @throws NotUniqueException
      */
-    @Transactional
+    @Transactional(Propa)
     @Override
     public Merchant create(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
@@ -98,16 +98,23 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         merchant.getCredential().setCreatedTime(date);
         merchant.getCredential().setActive(true);
 
-        //TODO commented out check fee
-//        if (merchant.getFees() == null) {
-//            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
-//        }
+        //check fees
+        if (merchant.getFees() == null) {
+            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
+        }
+
+        for (Fee fee: merchant.getFees()) {
+            fee.setActive(true);
+            fee.setCreatedTime(date);
+        }
 
         //TODO commented out check return fee
         if (merchant.getWithdrawalSetting() == null) {
             throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
         }
         merchant.getWithdrawalSetting().setCreatedTime(date);
+        merchant.getWithdrawalSetting().getSecurityFee().setActive(true);
+        merchant.getWithdrawalSetting().getSecurityFee().setCreatedTime(date);
 
         // set createdTime
         merchant.setCreatedTime(date);

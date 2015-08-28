@@ -70,7 +70,7 @@ public class MerchantCommand {
     private String withdrawSettingCreatedTime;
     private String withdrawSettingUpdatedTime;
     private Long withdrawSettingMinDays;
-    private Long getWithdrawSettingMaxDays;
+    private Long withdrawSettingMaxDays;
 
     public MerchantCommand() {
     }
@@ -147,7 +147,7 @@ public class MerchantCommand {
             }
             withdrawSettingRemark = merchant.getWithdrawalSetting().getRemark();
             withdrawSettingMinDays = merchant.getWithdrawalSetting().getMinDays();
-            getWithdrawSettingMaxDays = merchant.getWithdrawalSetting().getMaxDays();
+            withdrawSettingMaxDays = merchant.getWithdrawalSetting().getMaxDays();
             Fee fee = merchant.getWithdrawalSetting().getSecurityFee();
             withdrawFeeValue = fee.getValue();
             withdrawFeeRemark = fee.getRemark();
@@ -492,12 +492,12 @@ public class MerchantCommand {
         this.withdrawSettingMinDays = withdrawSettingMinDays;
     }
 
-    public Long getGetWithdrawSettingMaxDays() {
-        return getWithdrawSettingMaxDays;
+    public Long getWithdrawSettingMaxDays() {
+        return withdrawSettingMaxDays;
     }
 
-    public void setGetWithdrawSettingMaxDays(Long getWithdrawSettingMaxDays) {
-        this.getWithdrawSettingMaxDays = getWithdrawSettingMaxDays;
+    public void setWithdrawSettingMaxDays(Long withdrawSettingMaxDays) {
+        this.withdrawSettingMaxDays = withdrawSettingMaxDays;
     }
 
     public Long getCredentialStatusId() {
