@@ -135,73 +135,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay2`.`FEE_TYPES`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay2`.`FEE_TYPES` ;
-
-CREATE TABLE IF NOT EXISTS `smartpay2`.`FEE_TYPES` (
-  `FETP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `FETP_NAME` VARCHAR(32) NOT NULL,
-  `FETP_DESCRIPTION` TEXT NULL,
-  `FETP_ACTIVE` TINYINT NOT NULL,
-  `FETP_CODE` VARCHAR(8) NOT NULL,
-  PRIMARY KEY (`FETP_ID`),
-  UNIQUE INDEX `ID_UNIQUE` (`FETP_ID` ASC),
-  UNIQUE INDEX `FETP_NAME_UNIQUE` (`FETP_NAME` ASC),
-  UNIQUE INDEX `FETP_CODE_UNIQUE` (`FETP_CODE` ASC))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `smartpay2`.`FEE_CATEGORIES`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay2`.`FEE_CATEGORIES` ;
-
-CREATE TABLE IF NOT EXISTS `smartpay2`.`FEE_CATEGORIES` (
-  `FECT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `FECT_NAME` VARCHAR(32) NOT NULL,
-  `FECT_DESCRIPTION` TEXT NULL,
-  `FECT_ACTIVE` TINYINT NOT NULL,
-  `FECT_CODE` VARCHAR(8) NOT NULL,
-  PRIMARY KEY (`FECT_ID`),
-  UNIQUE INDEX `ID_UNIQUE` (`FECT_ID` ASC),
-  UNIQUE INDEX `FETP_NAME_UNIQUE` (`FECT_NAME` ASC),
-  UNIQUE INDEX `FETP_CODE_UNIQUE` (`FECT_CODE` ASC))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `smartpay2`.`FEES`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay2`.`FEES` ;
-
-CREATE TABLE IF NOT EXISTS `smartpay2`.`FEES` (
-  `FEE_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `FEE_VALUE` FLOAT NOT NULL,
-  `FEE_REMARK` TEXT NULL,
-  `FEE_CREATED_TIME` TIMESTAMP NOT NULL,
-  `FEE_UPDATED_TIME` TIMESTAMP NULL,
-  `FEE_ACTIVE` TINYINT NOT NULL,
-  `FEE_FETP_ID` BIGINT UNSIGNED NOT NULL,
-  `FEE_FECT_ID` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`FEE_ID`, `FEE_FETP_ID`),
-  INDEX `fk_FEE_FETP_idx` (`FEE_FETP_ID` ASC),
-  UNIQUE INDEX `FEE_ID_UNIQUE` (`FEE_ID` ASC),
-  INDEX `FK_FEE_FECT_idx` (`FEE_FECT_ID` ASC),
-  CONSTRAINT `fk_FEE_FETP`
-    FOREIGN KEY (`FEE_FETP_ID`)
-    REFERENCES `smartpay2`.`FEE_TYPES` (`FETP_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `FK_FEE_FECT`
-    FOREIGN KEY (`FEE_FECT_ID`)
-    REFERENCES `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `smartpay2`.`WITHDRAWAL_SETTINGS`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `smartpay2`.`WITHDRAWAL_SETTINGS` ;
@@ -211,17 +144,10 @@ CREATE TABLE IF NOT EXISTS `smartpay2`.`WITHDRAWAL_SETTINGS` (
   `WDSE_REMARK` TEXT NULL,
   `WDSE_CREATED_TIME` TIMESTAMP NOT NULL,
   `WDSE_UPDATED_TIME` TIMESTAMP NULL,
-  `WDSE_SECURITY_FEE_ID` BIGINT UNSIGNED NOT NULL,
   `WDSE_MIN_DAYS` BIGINT UNSIGNED NOT NULL,
   `WDSE_MAX_DAYS` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`WDSE_ID`, `WDSE_SECURITY_FEE_ID`),
-  UNIQUE INDEX `FEE_ID_UNIQUE` (`WDSE_ID` ASC),
-  INDEX `FK_WTST_FEE_idx` (`WDSE_SECURITY_FEE_ID` ASC),
-  CONSTRAINT `FK_WDSE_FEE`
-    FOREIGN KEY (`WDSE_SECURITY_FEE_ID`)
-    REFERENCES `smartpay2`.`FEES` (`FEE_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`WDSE_ID`),
+  UNIQUE INDEX `FEE_ID_UNIQUE` (`WDSE_ID` ASC))
 ENGINE = InnoDB;
 
 
@@ -400,6 +326,80 @@ CREATE TABLE IF NOT EXISTS `smartpay2`.`SITES` (
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_SITE_MCHT`
     FOREIGN KEY (`SITE_MCHT_ID`)
+    REFERENCES `smartpay2`.`MERCHANTS` (`MCHT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay2`.`FEE_TYPES`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`FEE_TYPES` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`FEE_TYPES` (
+  `FETP_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `FETP_NAME` VARCHAR(32) NOT NULL,
+  `FETP_DESCRIPTION` TEXT NULL,
+  `FETP_ACTIVE` TINYINT NOT NULL,
+  `FETP_CODE` VARCHAR(8) NOT NULL,
+  PRIMARY KEY (`FETP_ID`),
+  UNIQUE INDEX `ID_UNIQUE` (`FETP_ID` ASC),
+  UNIQUE INDEX `FETP_NAME_UNIQUE` (`FETP_NAME` ASC),
+  UNIQUE INDEX `FETP_CODE_UNIQUE` (`FETP_CODE` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay2`.`FEE_CATEGORIES`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`FEE_CATEGORIES` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`FEE_CATEGORIES` (
+  `FECT_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `FECT_NAME` VARCHAR(32) NOT NULL,
+  `FECT_DESCRIPTION` TEXT NULL,
+  `FECT_ACTIVE` TINYINT NOT NULL,
+  `FECT_CODE` VARCHAR(8) NOT NULL,
+  PRIMARY KEY (`FECT_ID`),
+  UNIQUE INDEX `ID_UNIQUE` (`FECT_ID` ASC),
+  UNIQUE INDEX `FETP_NAME_UNIQUE` (`FECT_NAME` ASC),
+  UNIQUE INDEX `FETP_CODE_UNIQUE` (`FECT_CODE` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `smartpay2`.`FEES`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `smartpay2`.`FEES` ;
+
+CREATE TABLE IF NOT EXISTS `smartpay2`.`FEES` (
+  `FEE_ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `FEE_VALUE` FLOAT NOT NULL,
+  `FEE_REMARK` TEXT NULL,
+  `FEE_CREATED_TIME` TIMESTAMP NOT NULL,
+  `FEE_UPDATED_TIME` TIMESTAMP NULL,
+  `FEE_ACTIVE` TINYINT NOT NULL,
+  `FEE_FETP_ID` BIGINT UNSIGNED NOT NULL,
+  `FEE_FECT_ID` BIGINT UNSIGNED NOT NULL,
+  `FEE_MCHT_ID` BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (`FEE_ID`, `FEE_FETP_ID`),
+  INDEX `fk_FEE_FETP_idx` (`FEE_FETP_ID` ASC),
+  UNIQUE INDEX `FEE_ID_UNIQUE` (`FEE_ID` ASC),
+  INDEX `FK_FEE_FECT_idx` (`FEE_FECT_ID` ASC),
+  INDEX `FK_FEE_MCHT_idx` (`FEE_MCHT_ID` ASC),
+  CONSTRAINT `fk_FEE_FETP`
+    FOREIGN KEY (`FEE_FETP_ID`)
+    REFERENCES `smartpay2`.`FEE_TYPES` (`FETP_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_FEE_FECT`
+    FOREIGN KEY (`FEE_FECT_ID`)
+    REFERENCES `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_FEE_MCHT`
+    FOREIGN KEY (`FEE_MCHT_ID`)
     REFERENCES `smartpay2`.`MERCHANTS` (`MCHT_ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -1208,29 +1208,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `smartpay2`.`MERCHANT_FEE_MAPPINGS`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `smartpay2`.`MERCHANT_FEE_MAPPINGS` ;
-
-CREATE TABLE IF NOT EXISTS `smartpay2`.`MERCHANT_FEE_MAPPINGS` (
-  `MFMP_MCHT_ID` BIGINT UNSIGNED NOT NULL,
-  `MFMP_FEE_ID` BIGINT UNSIGNED NOT NULL,
-  INDEX `FK_MFMP_MCHT_idx` (`MFMP_MCHT_ID` ASC),
-  INDEX `FK_MFMP_FEE_idx` (`MFMP_FEE_ID` ASC),
-  CONSTRAINT `FK_MFMP_MCHT`
-    FOREIGN KEY (`MFMP_MCHT_ID`)
-    REFERENCES `smartpay2`.`MERCHANTS` (`MCHT_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `FK_MFMP_FEE`
-    FOREIGN KEY (`MFMP_FEE_ID`)
-    REFERENCES `smartpay2`.`FEES` (`FEE_ID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `smartpay2`.`CURRENCY_EXCHANGES`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `smartpay2`.`CURRENCY_EXCHANGES` ;
@@ -1312,30 +1289,6 @@ COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `smartpay2`.`FEE_TYPES`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `smartpay2`;
-INSERT INTO `smartpay2`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Static', 'Static amount for every transaction', 1, '100');
-INSERT INTO `smartpay2`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Percentage', 'Percentage based on the transaction amount', 1, '101');
-
-COMMIT;
-
-
--- -----------------------------------------------------
--- Data for table `smartpay2`.`FEE_CATEGORIES`
--- -----------------------------------------------------
-START TRANSACTION;
-USE `smartpay2`;
-INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'VISA', 'Visa', 1, '100');
-INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'MASTER', 'Master', 1, '101');
-INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'JCB', 'Jcb', 1, '102');
-INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'Withdrawal Security', 'Withdrawal Security Fee', 1, '200');
-
-COMMIT;
-
-
--- -----------------------------------------------------
 -- Data for table `smartpay2`.`ACCOUNT_TYPES`
 -- -----------------------------------------------------
 START TRANSACTION;
@@ -1366,6 +1319,30 @@ INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTI
 INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Approved', 'Approved to operation', 1, '500');
 INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Frozen', 'Frozen', 1, '401');
 INSERT INTO `smartpay2`.`SITE_STATUSES` (`SIST_ID`, `SIST_NAME`, `SIST_DESCRIPTION`, `SIST_ACTIVE`, `SIST_CODE`) VALUES (NULL, 'Declined', 'Declined', 1, '501');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `smartpay2`.`FEE_TYPES`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Static', 'Static amount for every transaction', 1, '100');
+INSERT INTO `smartpay2`.`FEE_TYPES` (`FETP_ID`, `FETP_NAME`, `FETP_DESCRIPTION`, `FETP_ACTIVE`, `FETP_CODE`) VALUES (NULL, 'Percentage', 'Percentage based on the transaction amount', 1, '101');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `smartpay2`.`FEE_CATEGORIES`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `smartpay2`;
+INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'VISA', 'Visa', 1, '100');
+INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'MASTER', 'Master', 1, '101');
+INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'JCB', 'Jcb', 1, '102');
+INSERT INTO `smartpay2`.`FEE_CATEGORIES` (`FECT_ID`, `FECT_NAME`, `FECT_DESCRIPTION`, `FECT_ACTIVE`, `FECT_CODE`) VALUES (NULL, 'Withdrawal Security', 'Withdrawal Security Fee', 1, '200');
 
 COMMIT;
 

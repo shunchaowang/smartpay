@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -57,7 +58,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
      * @throws MissingRequiredFieldException
      * @throws NotUniqueException
      */
-    @Transactional(Propa)
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Merchant create(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
@@ -113,8 +114,6 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
             throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
         }
         merchant.getWithdrawalSetting().setCreatedTime(date);
-        merchant.getWithdrawalSetting().getSecurityFee().setActive(true);
-        merchant.getWithdrawalSetting().getSecurityFee().setCreatedTime(date);
 
         // set createdTime
         merchant.setCreatedTime(date);

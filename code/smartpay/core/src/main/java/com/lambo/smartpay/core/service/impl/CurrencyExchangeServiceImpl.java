@@ -4,16 +4,17 @@ import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
 import com.lambo.smartpay.core.persistence.dao.CurrencyExchangeDao;
-import com.lambo.smartpay.core.persistence.dao.FeeCategoryDao;
 import com.lambo.smartpay.core.persistence.entity.CurrencyExchange;
 import com.lambo.smartpay.core.service.CurrencyExchangeService;
-import com.lambo.smartpay.core.service.GenericQueryService;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,35 +29,95 @@ public class CurrencyExchangeServiceImpl extends GenericQueryServiceImpl<Currenc
     private CurrencyExchangeDao currencyExchangeDao;
 
     @Override
+    @Transactional
     public CurrencyExchange create(CurrencyExchange currencyExchange)
             throws MissingRequiredFieldException, NotUniqueException {
-        return null;
+        if (currencyExchange == null) {
+            logger.debug("Currency exchange is null.");
+            throw new MissingRequiredFieldException("Currency exchange is null.");
+        }
+        if (currencyExchange.getAmountFrom() == null) {
+            logger.debug("Currency exchange from amount is null.");
+            throw new MissingRequiredFieldException("Currency exchange from amount is null.");
+        }
+        if (currencyExchange.getAmountTo() == null) {
+            logger.debug("Currency exchange to amount is null.");
+            throw new MissingRequiredFieldException("Currency exchange to amount is null.");
+        }
+        if (currencyExchange.getCurrencyFrom() == null) {
+            logger.debug("Currency exchange currency from is null.");
+            throw new MissingRequiredFieldException("Currency exchange from currency is null.");
+        }
+        if (currencyExchange.getCurrencyTo() == null) {
+            logger.debug("Currency exchange currency to is null.");
+            throw new MissingRequiredFieldException("Currency exchange currency to is null.");
+        }
+
+        Date date = Calendar.getInstance().getTime();
+        currencyExchange.setCreatedTime(date);
+        currencyExchange.setActive(true);
+        return currencyExchangeDao.create(currencyExchange);
     }
 
     @Override
     public CurrencyExchange get(Long id) throws NoSuchEntityException {
-        return null;
+        return currencyExchangeDao.get(id);
     }
 
     @Override
+    @Transactional
     public CurrencyExchange update(CurrencyExchange currencyExchange)
             throws MissingRequiredFieldException, NotUniqueException {
-        return null;
+        if (currencyExchange == null) {
+            logger.debug("Currency exchange is null.");
+            throw new MissingRequiredFieldException("Currency exchange is null.");
+        }
+        if (currencyExchange.getAmountFrom() == null) {
+            logger.debug("Currency exchange from amount is null.");
+            throw new MissingRequiredFieldException("Currency exchange from amount is null.");
+        }
+        if (currencyExchange.getAmountTo() == null) {
+            logger.debug("Currency exchange to amount is null.");
+            throw new MissingRequiredFieldException("Currency exchange to amount is null.");
+        }
+        if (currencyExchange.getCurrencyFrom() == null) {
+            logger.debug("Currency exchange currency from is null.");
+            throw new MissingRequiredFieldException("Currency exchange from currency is null.");
+        }
+        if (currencyExchange.getCurrencyTo() == null) {
+            logger.debug("Currency exchange currency to is null.");
+            throw new MissingRequiredFieldException("Currency exchange currency to is null.");
+        }
+        if (currencyExchange.getCreatedTime() == null) {
+            logger.debug("Currency exchange create time is null.");
+            throw new MissingRequiredFieldException("Currency exchange create time is null.");
+        }
+        if (currencyExchange.getActive() == null) {
+            logger.debug("Currency exchange active is null.");
+            throw new MissingRequiredFieldException("Currency exchange active is null.");
+        }
+
+        Date date = Calendar.getInstance().getTime();
+        currencyExchange.setUpdatedTime(date);
+        return currencyExchangeDao.update(currencyExchange);
     }
 
+    @Transactional
     @Override
     public CurrencyExchange delete(Long id) throws NoSuchEntityException {
-        return null;
+        CurrencyExchange currencyExchange = currencyExchangeDao.get(id);
+        currencyExchangeDao.delete(id);
+        return currencyExchange;
     }
 
     @Override
     public List<CurrencyExchange> getAll() {
-        return null;
+        return currencyExchangeDao.getAll();
     }
 
     @Override
     public Long countAll() {
-        return null;
+        return currencyExchangeDao.countAll();
     }
 
     /**
@@ -76,7 +137,7 @@ public class CurrencyExchangeServiceImpl extends GenericQueryServiceImpl<Currenc
      */
     @Override
     public Long countByCriteria(CurrencyExchange currencyExchange, String search) {
-        return null;
+        return currencyExchangeDao.countByCriteria(currencyExchange, search);
     }
 
     /**
@@ -104,6 +165,7 @@ public class CurrencyExchangeServiceImpl extends GenericQueryServiceImpl<Currenc
     public List<CurrencyExchange> findByCriteria(CurrencyExchange currencyExchange, String search,
                                                  Integer start, Integer length, String order,
                                                  ResourceProperties.JpaOrderDir orderDir) {
-        return null;
+        return currencyExchangeDao.findByCriteria(currencyExchange, search, start, length, order,
+                orderDir);
     }
 }

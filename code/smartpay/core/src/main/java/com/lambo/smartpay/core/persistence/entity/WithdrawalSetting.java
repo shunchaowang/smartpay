@@ -46,9 +46,9 @@ public class WithdrawalSetting implements Serializable {
     @Column(name = "WDSE_MAX_DAYS", nullable = false)
     private Long maxDays;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "WDSE_SECURITY_FEE_ID", nullable = false)
-    private Fee securityFee;
+//    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
+//    @JoinColumn(name = "WDSE_SECURITY_FEE_ID", nullable = false)
+//    private Fee securityFee;
 
     public Long getId() {
         return id;
@@ -98,11 +98,11 @@ public class WithdrawalSetting implements Serializable {
         this.maxDays = maxDays;
     }
 
-    public Fee getSecurityFee() {
-        return securityFee;
-    }
-
-    public void setSecurityFee(Fee securityFee) {
-        this.securityFee = securityFee;
-    }
+//    public Fee getSecurityFee() {
+//        return securityFee;
+//    }
+//
+//    public void setSecurityFee(Fee securityFee) {
+//        this.securityFee = securityFee;
+//    }
 }

@@ -8,9 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -100,12 +98,15 @@ public class Merchant implements Serializable {
             orphanRemoval = true)
     private Set<User> users;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
-            joinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false,
-                    updatable = false)}
-    )
+    //    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+//    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
+//            joinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false, updatable =
+// false)},
+//            inverseJoinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false,
+//                    updatable = false)}
+//    )
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "merchant",
+            orphanRemoval = true)
     private Set<Fee> fees;
 
     public Long getId() {

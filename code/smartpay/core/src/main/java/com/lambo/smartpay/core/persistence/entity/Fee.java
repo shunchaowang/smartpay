@@ -8,15 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by swang on 2/17/2015.
@@ -59,13 +56,19 @@ public class Fee implements Serializable {
     @JoinColumn(name = "FEE_FECT_ID", nullable = false)
     private FeeCategory feeCategory;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
-            joinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false,
-                    updatable = false)}
-    )
-    private Set<Merchant> merchants;
+//    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
+//            joinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false, updatable =
+// false)},
+//            inverseJoinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false,
+//                    updatable = false)}
+//    )
+//    private Set<Merchant> merchants;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
+    @JoinColumn(name = "FEE_MCHT_ID", nullable = false)
+    private Merchant merchant;
 
     public Long getId() {
         return id;
@@ -131,12 +134,11 @@ public class Fee implements Serializable {
         this.feeCategory = feeCategory;
     }
 
-    public Set<Merchant> getMerchants() {
-        return merchants;
+    public Merchant getMerchant() {
+        return merchant;
     }
 
-    public void setMerchants(
-            Set<Merchant> merchants) {
-        this.merchants = merchants;
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
     }
 }

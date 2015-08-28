@@ -131,6 +131,12 @@ public class MerchantCommand {
                         commissionJcbFeeTypeId = fee.getFeeType().getId();
                         commissionJcbFeeTypeName = fee.getFeeType().getName();
                         break;
+                    case ResourceProperties.FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE:
+                        withdrawFeeValue = fee.getValue();
+                        withdrawFeeRemark = fee.getRemark();
+                        withdrawFeeTypeId = fee.getFeeType().getId();
+                        withdrawFeeTypeName = fee.getFeeType().getName();
+                        break;
                     default:
                         break;
                 }
@@ -148,11 +154,6 @@ public class MerchantCommand {
             withdrawSettingRemark = merchant.getWithdrawalSetting().getRemark();
             withdrawSettingMinDays = merchant.getWithdrawalSetting().getMinDays();
             withdrawSettingMaxDays = merchant.getWithdrawalSetting().getMaxDays();
-            Fee fee = merchant.getWithdrawalSetting().getSecurityFee();
-            withdrawFeeValue = fee.getValue();
-            withdrawFeeRemark = fee.getRemark();
-            withdrawFeeTypeId = fee.getFeeType().getId();
-            withdrawFeeTypeName = fee.getFeeType().getName();
         }
     }
 

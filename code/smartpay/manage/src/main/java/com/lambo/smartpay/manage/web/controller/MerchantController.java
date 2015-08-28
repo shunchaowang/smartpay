@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -53,9 +52,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -404,7 +403,6 @@ public class MerchantController {
     }
 
 
-
     @RequestMapping(value = "/create", method = RequestMethod.GET)
     public String create(Model model) {
         MerchantCommand command = new MerchantCommand();
@@ -724,10 +722,10 @@ public class MerchantController {
             e.printStackTrace();
         }
         credential.setContent(merchantCommand.getCredentialContent());
-        credential.setActive(true);
 
         Locale locale = LocaleContextHolder.getLocale();
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        //DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", locale);
         Date date = Calendar.getInstance(locale).getTime();
         try {
             date = dateFormat.parse(merchantCommand.getCredentialExpirationTime());
@@ -754,7 +752,7 @@ public class MerchantController {
         return encryption;
     }
 
-    private Set<Fee> createCommissionFees(MerchantCommand merchantCommand) {
+    private Set<Fee> createFees(Merchant merchant, MerchantCommand merchantCommand) {
         Set<Fee> fees = new HashSet<>();
 
         FeeType feeType = null;
@@ -768,35 +766,51 @@ public class MerchantController {
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        fee.setActive(true);
         fee.setValue(merchantCommand.getCommissionVisaFeeValue());
         fee.setFeeType(feeType);
         fee.setFeeCategory(feeCategory);
+        fee.setMerchant(merchant);
         fees.add(fee);
 
         // master fee
         try {
             feeType = feeTypeService.get(merchantCommand.getCommissionMasterFeeTypeId());
-            feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_VISA_CODE);
+            feeCategory = feeCategoryService.findByCode(ResourceProperties
+                    .FEE_CATEGORY_MASTER_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
-        fee.setActive(true);
         fee.setValue(merchantCommand.getCommissionMasterFeeValue());
         fee.setFeeType(feeType);
         fee.setFeeCategory(feeCategory);
+        fee.setMerchant(merchant);
         fees.add(fee);
 
         // jcb fee
         try {
             feeType = feeTypeService.get(merchantCommand.getCommissionJcbFeeTypeId());
-            feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_VISA_CODE);
+            feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_JCB_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
         }
         fee.setValue(merchantCommand.getCommissionJcbFeeValue());
         fee.setFeeType(feeType);
         fee.setFeeCategory(feeCategory);
+        fee.setMerchant(merchant);
+        fees.add(fee);
+
+        // withdrawal security fee
+        try {
+            feeType = feeTypeService.get(merchantCommand.getWithdrawFeeTypeId());
+            feeCategory = feeCategoryService
+                    .findByCode(ResourceProperties.FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        fee.setValue(merchantCommand.getWithdrawFeeValue());
+        fee.setFeeType(feeType);
+        fee.setFeeCategory(feeCategory);
+        fee.setMerchant(merchant);
         fees.add(fee);
 
         return fees;
@@ -809,22 +823,6 @@ public class MerchantController {
         // basic info
         setting.setMaxDays(merchantCommand.getWithdrawSettingMaxDays());
         setting.setMinDays(merchantCommand.getWithdrawSettingMinDays());
-
-        // fee
-        Fee fee = new Fee();
-        FeeType feeType = null;
-        FeeCategory feeCategory = null;
-        try {
-            feeType = feeTypeService.get(merchantCommand.getWithdrawFeeTypeId());
-            feeCategory = feeCategoryService
-                    .findByCode(ResourceProperties.FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
-        fee.setValue(merchantCommand.getWithdrawFeeValue());
-        fee.setFeeType(feeType);
-        fee.setFeeCategory(feeCategory);
-        setting.setSecurityFee(fee);
 
         return setting;
     }
@@ -874,7 +872,7 @@ public class MerchantController {
         merchant.setEncryption(encryption);
 
         // create fees for merchant
-        merchant.setFees(createCommissionFees(merchantCommand));
+        merchant.setFees(createFees(merchant, merchantCommand));
         // create withdrawal setting
         merchant.setWithdrawalSetting(createWithdrawalSetting(merchantCommand));
 
