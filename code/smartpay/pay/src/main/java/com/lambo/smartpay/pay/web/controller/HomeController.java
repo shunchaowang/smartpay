@@ -3,26 +3,9 @@ package com.lambo.smartpay.pay.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.persistence.entity.Currency;
-import com.lambo.smartpay.core.persistence.entity.Customer;
-import com.lambo.smartpay.core.persistence.entity.CustomerStatus;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.OrderStatus;
-import com.lambo.smartpay.core.persistence.entity.Payment;
-import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
-import com.lambo.smartpay.core.persistence.entity.PaymentType;
-import com.lambo.smartpay.core.persistence.entity.Site;
-import com.lambo.smartpay.core.service.CurrencyService;
-import com.lambo.smartpay.core.service.CustomerService;
-import com.lambo.smartpay.core.service.CustomerStatusService;
-import com.lambo.smartpay.core.service.MerchantService;
-import com.lambo.smartpay.core.service.OrderService;
-import com.lambo.smartpay.core.service.OrderStatusService;
-import com.lambo.smartpay.core.service.PaymentService;
-import com.lambo.smartpay.core.service.PaymentStatusService;
-import com.lambo.smartpay.core.service.PaymentTypeService;
-import com.lambo.smartpay.core.service.SiteService;
+import com.lambo.smartpay.core.service.*;
 import com.lambo.smartpay.pay.util.MDUtil;
 import com.lambo.smartpay.pay.util.PayConfiguration;
 import com.lambo.smartpay.pay.util.ResourceProperties;
@@ -90,14 +73,15 @@ public class HomeController {
     private PaymentStatusService paymentStatusService;
     @Autowired
     private PaymentService paymentService;
-
+    @Autowired
+    private CurrencyExchangeService currencyExchangeService;
     @RequestMapping(value = {"index"})
     public ModelAndView home(Model model) {
         //view.addObject("action", "index");
         OrderCommand orderCommand = new OrderCommand();
         orderCommand.setMerNo("M0000000");
         orderCommand.setSiteNo("S0000000");
-        orderCommand.setOrderNo("O1111111");
+        orderCommand.setOrderNo("O20150829010");
         orderCommand.setAmount("12.34");
         orderCommand.setReturnUrl("www.google.com");
         orderCommand.setReferer("www.google.com");
@@ -155,6 +139,7 @@ public class HomeController {
         paymentCommand.setBillCity("fgfgfdfsdf");
         paymentCommand.setBillState("dfdfd");
         paymentCommand.setCvv("456");
+        paymentCommand.setPayMethod("1");
         orderCommand.setProductType("dffdf");
         orderCommand.setShipFirstName("kjkjkkjk");
         orderCommand.setShipLastName("df9dkfjkdjf");
@@ -179,8 +164,6 @@ public class HomeController {
         // initial return parameter
         String[] strReturn = stringFromBase.split("&");
         payment.setBankTransactionNumber("0");
-        payment.setFee(Float.parseFloat("0.00"));
-        payment.setAmount(Float.parseFloat("0.00"));
         Currency currency = null;
         try {
             currency = currencyService.findByName(ResourceProperties.CURRENCY_RMB_NAME);
@@ -192,13 +175,11 @@ public class HomeController {
             String[] tmpReturn = strReturn[i].split("=");
             if("Parameter3".equals(tmpReturn[0]))payment.setBankTransactionNumber(tmpReturn[1]);
             if("Parameter4".equals(tmpReturn[0]))payment.setBankReturnCode(tmpReturn[1]);
-            if("Parameter9".equals(tmpReturn[0]))payment.setAmount(Float.parseFloat(tmpReturn[1]));
         }
         String succeed = "0";
         String paymentStatusCode = "501";
         if (payment.getBankReturnCode().equals("00")) {
             succeed = "1"; // 交易成功
-            Float retAmt = payment.getAmount();
             paymentStatusCode = "500";
             payment.setSuccessTime(Calendar.getInstance().getTime());
             OrderStatus paidOrderStatus = null;
@@ -210,10 +191,9 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
-            if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
-                payment.setFee(merchant.getCommissionFee().getValue());
-            else payment.setFee(retAmt * merchant.getCommissionFee().getValue() /10*10);
-            payment.setAmount(retAmt - payment.getFee());
+        }else{
+            payment.setFee(Float.parseFloat("0.00"));
+            payment.setAmount(Float.parseFloat("0.00"));
         }
         payment.setUpdatedTime(Calendar.getInstance().getTime());
 
@@ -226,7 +206,6 @@ public class HomeController {
         }
         payment.setPaymentStatus(paymentStatus);
 
-        // save payment object
         try {
             payment = paymentService.create(payment);
         } catch (MissingRequiredFieldException e) {
@@ -372,17 +351,6 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
-//            try {
-//                orderService.update(payment.getOrder());
-//            } catch (MissingRequiredFieldException e) {
-//                e.printStackTrace();
-//                throw new IntervalServerException("500", "Cannot change order status to be paid
-// .");
-//            } catch (NotUniqueException e) {
-//                e.printStackTrace();
-//                throw new IntervalServerException("500", "Cannot change order status to be paid
-// .");
-//            }
         }
 
         PaymentStatus paymentStatus = null;
@@ -799,26 +767,16 @@ public class HomeController {
         // initial return parameter
         String[] strReturn = stringFromBase.split("&");
         payment.setBankTransactionNumber("0");
-        payment.setFee(Float.parseFloat("0.00"));
-        payment.setAmount(Float.parseFloat("0.00"));
-        Currency currency = null;
-        try {
-            currency = currencyService.findByName(ResourceProperties.CURRENCY_RMB_NAME);
-            payment.setCurrency(currency);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
         for(int i=0; i< strReturn.length; i++){
             String[] tmpReturn = strReturn[i].split("=");
             if("Parameter3".equals(tmpReturn[0]))payment.setBankTransactionNumber(tmpReturn[1]);
             if("Parameter4".equals(tmpReturn[0]))payment.setBankReturnCode(tmpReturn[1]);
-            if("Parameter9".equals(tmpReturn[0]))payment.setAmount(Float.parseFloat(tmpReturn[1]));
         }
+
         String succeed = "0";
         String paymentStatusCode = "501";
         if (payment.getBankReturnCode().equals("00")) {
             succeed = "1"; // 交易成功
-            Float retAmt = payment.getAmount();
             paymentStatusCode = "500";
             payment.setSuccessTime(Calendar.getInstance().getTime());
             OrderStatus paidOrderStatus = null;
@@ -830,10 +788,9 @@ public class HomeController {
                 throw new IntervalServerException("500", "Cannot find paid order status.");
             }
             payment.getOrder().setOrderStatus(paidOrderStatus);
-            if(merchant.getCommissionFee().getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
-                payment.setFee(merchant.getCommissionFee().getValue());
-            else payment.setFee(retAmt * merchant.getCommissionFee().getValue() /10*10);
-            payment.setAmount(retAmt - payment.getFee());
+        }else{
+            payment.setFee(Float.parseFloat("0.00"));
+            payment.setAmount(Float.parseFloat("0.00"));
         }
         payment.setUpdatedTime(Calendar.getInstance().getTime());
 
@@ -846,7 +803,6 @@ public class HomeController {
         }
         payment.setPaymentStatus(paymentStatus);
 
-        // save payment object
         try {
             payment = paymentService.create(payment);
         } catch (MissingRequiredFieldException e) {
@@ -928,8 +884,11 @@ public class HomeController {
         if(Amount.indexOf(".")>0) Amount = Amount.substring(0,Amount.indexOf("."));
         pairs.add(new BasicNameValuePair("Amount", Amount));
         //IPAddress 持卡人的 IP 地址  必填
-        String clientIp = request.getHeader("X-FORWARDED-FOR");
-        if (clientIp == null) {
+        String clientIp = request.getParameter("clientIp");
+        if(clientIp ==null || clientIp == "") {
+            clientIp = request.getHeader("X-FORWARDED-FOR");
+        }
+        if (clientIp == null || clientIp == "") {
             clientIp = request.getRemoteAddr();
         }
         logger.debug("Client ip is " + clientIp);
@@ -1113,6 +1072,36 @@ public class HomeController {
         paymentCommand.setAmount(order.getAmount()); // set payment command order amount
         paymentCommand.setCurrencyName(order.getCurrency().getName()); // set currency name
 
+        if(!order.getCurrency().getName().equals(ResourceProperties.CURRENCY_RMB_NAME)) {
+            List<CurrencyExchange> currencyExchanges = currencyExchangeService.getAll();
+            for(CurrencyExchange currencyExchange : currencyExchanges){
+                if(currencyExchange.getActive() == true
+                        && currencyExchange.getCurrencyFrom().getName().equals(order.getCurrency().getName())
+                        && currencyExchange.getCurrencyTo().getName().equals(ResourceProperties.CURRENCY_RMB_NAME)){
+                    BigDecimal orderAmt = new BigDecimal(order.getAmount());
+                    BigDecimal fromAmt = new BigDecimal(currencyExchange.getAmountFrom());
+                    BigDecimal toAmt = new BigDecimal(currencyExchange.getAmountTo());
+                    BigDecimal amt = orderAmt.multiply(toAmt).divide(fromAmt, 3,BigDecimal.ROUND_HALF_DOWN);
+                    paymentCommand.setAmount(amt.floatValue());
+                    paymentCommand.setCurrencyName(ResourceProperties.CURRENCY_RMB_NAME);
+                }
+            }
+        }
+        Merchant merchant = order.getSite().getMerchant();
+        Iterator<Fee> feeIterator = merchant.getFees().iterator();
+        while(feeIterator.hasNext()){
+            Fee fee = feeIterator.next();
+            if(fee.getFeeCategory().getName().indexOf(paymentCommand.getBankName().toUpperCase()) >= 0) {
+                if(fee.getFeeType().getCode().equals(ResourceProperties.FEE_TYPE_STATIC_CODE))
+                        paymentCommand.setFee(fee.getValue());
+                else paymentCommand.setFee(paymentCommand.getAmount() * fee.getValue() / 10 * 10);
+                if(paymentCommand.getAmount() .compareTo(paymentCommand.getFee()) >= 0)
+                    paymentCommand.setAmount(paymentCommand.getAmount() - paymentCommand.getFee());
+                else
+                    paymentCommand.setAmount(Float.parseFloat("0"));
+            }
+        }
+
         paymentCommand.setPayMethod(formatString(request.getParameter("payMethod")));
         paymentCommand.setBillFirstName(formatString(request.getParameter("billFirstName")));
         paymentCommand.setBillLastName(formatString(request.getParameter("billLastName")));
@@ -1131,13 +1120,13 @@ public class HomeController {
         return paymentCommand;
     }
 
-
     Payment createPayment(PaymentCommand paymentCommand) {
 
         // bank return code, success time and payment status need to be set after payment
         Date date = Calendar.getInstance().getTime();
         Payment payment = new Payment();
         payment.setAmount(paymentCommand.getAmount());
+        payment.setFee(paymentCommand.getFee());
         Currency currency;
         try {
             currency = currencyService.findByName(paymentCommand.getCurrencyName());
@@ -1431,6 +1420,16 @@ public class HomeController {
                 throw new BadRequestException("400", "Shipping zip code is blank.");
             }
 
+            String bankName = formatString(request.getParameter("bankName"));
+            logger.debug("bankName is " + bankName);
+            if (StringUtils.isBlank(bankName)) {
+                throw new BadRequestException("400", "bankName is blank.");
+            }
+
+            if("VISA".indexOf(bankName.toUpperCase())<0 && "MASTER".indexOf(bankName.toUpperCase())<0
+                    && "JCB".indexOf(bankName.toUpperCase())<0)
+                throw new BadRequestException("400", "bankName is illegal.");
+
             // customer optional info
             String phone = formatString(request.getParameter("phone"));
             logger.debug("Optional shipping phone is " + phone);
@@ -1450,7 +1449,17 @@ public class HomeController {
             if (StringUtils.isBlank(referer)) {
                 throw new BadRequestException("400", "Referer is blank.");
             }
-
+             // referer is the site url in our system, used for site approval
+            String clientIp = formatString(request.getParameter("clientIp"));
+            logger.debug("clent_ip is " + clientIp);
+            if(clientIp ==null || clientIp == "") {
+                clientIp = request.getHeader("X-FORWARDED-FOR");
+                logger.debug("clent_ip is " + clientIp);
+            }
+            if (clientIp == null || clientIp == "") {
+                clientIp = request.getRemoteAddr();
+                logger.debug("clent_ip is " + clientIp);
+            }
             return true;
         }
 

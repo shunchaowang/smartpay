@@ -36,6 +36,7 @@ public class PaymentCommand {
     private String currencyName;
     private String repayment;
     private String paymentClientIp;
+    private Float fee;
 
     public Long getId() {
         return id;
@@ -283,5 +284,13 @@ public class PaymentCommand {
 
     public void setPaymentClientIp(String paymentClientIp) {
         this.paymentClientIp = paymentClientIp;
+    }
+
+    public Float getFee() {
+        return fee;
+    }
+
+    public void setFee(Float fee) {
+        this.fee = fee;
     }
 }
