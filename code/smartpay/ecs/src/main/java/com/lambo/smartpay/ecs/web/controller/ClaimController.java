@@ -3,12 +3,7 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.entity.Claim;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.Payment;
-import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
-import com.lambo.smartpay.core.persistence.entity.Site;
+import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.service.ClaimService;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.service.PaymentStatusService;
@@ -340,6 +335,11 @@ public class ClaimController {
         }
 
         payment = paymentService.resolvePaymentClaim(payment);
+        Withdrawal withdrawal = payment.getWithdrawal();
+        if(withdrawal !=null && withdrawal.getId() > 0){
+            Double chargeback = withdrawal.getChargebackAfterWithdrawn();
+            withdrawal.setChargebackAfterWithdrawn(chargeback + payment.getAmount());
+        }
         String domain = messageSource.getMessage("refuse.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, payment.getBankTransactionNumber()}, locale);

@@ -334,9 +334,7 @@ public class PaymentController {
             e.printStackTrace();
             throw new BadRequestException("400", "Payment cannot be found.");
         }
-        Order order = payment.getOrder();
-        String orderId = String.valueOf(order.getId());
-        Refund refund = createRefund(order);
+        Refund refund = createRefund(payment);
         RefundStatus refundStatus = null;
         try {
             refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
@@ -346,14 +344,14 @@ public class PaymentController {
         }
         refund.setRefundStatus(refundStatus);
         List<Refund> refunds = refundService.findByCriteria(refund);
-        Float amount = order.getAmount();
+        Float amount = payment.getAmount();
         for (Refund r : refunds) {
             amount -= r.getAmount();
         }
 
         ModelAndView view = new ModelAndView("payment/_refundDialog");
         view.addObject("domain", "Refund");
-        view.addObject("orderId", orderId);
+        view.addObject("paymentId", paymentId);
         DecimalFormat myformat = new DecimalFormat();
         myformat.applyPattern("0.00");
         view.addObject("orderAmount", myformat.format(amount));
@@ -366,26 +364,26 @@ public class PaymentController {
     public String saveRefund(HttpServletRequest request) {
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String orderId = request.getParameter("orderId");
+        String paymentId = request.getParameter("paymentId");
         Float amount = Float.parseFloat(request.getParameter("amount"));
         String remark = request.getParameter("remark");
 
-        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(amount.toString())
+        if (StringUtils.isBlank(paymentId) || StringUtils.isBlank(amount.toString())
                 || StringUtils.isBlank(remark.toString())) {
             throw new BadRequestException("400", "Bad request.");
         }
 
-        Order order = null;
+        Payment payment = null;
         try {
-            order = orderService.get(Long.valueOf(orderId));
+            payment = paymentService.get(Long.valueOf(paymentId));
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "Order cannot be found.");
+            throw new BadRequestException("400", "Payment cannot be found.");
         }
 
         // retrieve order and associated customer, set refund recipient to be
         // the same with customer for now
-        Refund refund = createRefund(order);
+        Refund refund = createRefund(payment);
         RefundStatus refundStatus = null;
         try {
             refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_INITIATED_CODE);
@@ -429,10 +427,11 @@ public class PaymentController {
         return JsonUtil.toJson(response);
     }
 
-    private Refund createRefund(Order order) {
+    private Refund createRefund(Payment payment) {
+        Order order = payment.getOrder();
         Refund refund = new Refund();
-        refund.setOrder(order);
-        refund.setCurrency(order.getCurrency());
+        refund.setOrder(payment.getOrder());
+        refund.setCurrency(payment.getCurrency());
         refund.setBillFirstName(order.getCustomer().getFirstName());
         refund.setBillLastName(order.getCustomer().getLastName());
         refund.setBillAddress1(order.getCustomer().getAddress1());

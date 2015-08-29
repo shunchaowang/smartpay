@@ -34,6 +34,10 @@ public class WithdrawalCommand {
     private String dateRange;
     private String requester;
     private String auditer;
+    private Double amountApproved;
+    private Double refundAfterWithdrawn;
+    private Double chargebaceAfterWithdrawn;
+    private Double amountAdjusted;
 
     public String getRequester() {
         return requester;
@@ -209,5 +213,37 @@ public class WithdrawalCommand {
 
     public void setTotalFee(Float totalFee) {
         this.totalFee = totalFee;
+    }
+
+    public Double getAmountApproved() {
+        return amountApproved;
+    }
+
+    public void setAmountApproved(Double amountApproved) {
+        this.amountApproved = amountApproved;
+    }
+
+    public Double getRefundAfterWithdrawn() {
+        return refundAfterWithdrawn;
+    }
+
+    public void setRefundAfterWithdrawn(Double refundAfterWithdrawn) {
+        this.refundAfterWithdrawn = refundAfterWithdrawn;
+    }
+
+    public Double getChargebaceAfterWithdrawn() {
+        return chargebaceAfterWithdrawn;
+    }
+
+    public void setChargebaceAfterWithdrawn(Double chargebaceAfterWithdrawn) {
+        this.chargebaceAfterWithdrawn = chargebaceAfterWithdrawn;
+    }
+
+    public Double getAmountAdjusted() {
+        return amountAdjusted;
+    }
+
+    public void setAmountAdjusted(Double amountAdjusted) {
+        this.amountAdjusted = amountAdjusted;
     }
 }

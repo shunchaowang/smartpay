@@ -35,6 +35,10 @@ public class DataTablesWithdrawal {
     private String withdrawalStatusName;
     private String dateRange;
     private String dueToSecurityWithdrawn = "false";
+    private Double wdrlAmountApproved;
+    private Double refundAfterWdrl;
+    private Double chargebackAfterWdrl;
+    private Double wdrlAmountAdjusted;
 
     public DataTablesWithdrawal(Withdrawal withdrawal) {
 
@@ -65,6 +69,10 @@ public class DataTablesWithdrawal {
             if(withdrawal.getUpdatedTime().compareTo(date) >= 0) securityWithdrawn =true;
         }
         dateRange = dateStart + " - " + dateEnd;
+        wdrlAmountApproved = withdrawal.getAmountApproved();
+        refundAfterWdrl = withdrawal.getRefundAfterWithdrawn();
+        chargebackAfterWdrl = withdrawal.getChargebackAfterWithdrawn();
+        wdrlAmountAdjusted = withdrawal.getAmountAdjust();
     }
 
     public String getWithdrawalStatusCode() {
@@ -211,4 +219,35 @@ public class DataTablesWithdrawal {
         this.dateRange = dateRange;
     }
 
+    public Double getWdrlAmountApproved() {
+        return wdrlAmountApproved;
+    }
+
+    public void setWdrlAmountApproved(Double wdrlAmountApproved) {
+        this.wdrlAmountApproved = wdrlAmountApproved;
+    }
+
+    public Double getRefundAfterWdrl() {
+        return refundAfterWdrl;
+    }
+
+    public void setRefundAfterWdrl(Double refundAfterWdrl) {
+        this.refundAfterWdrl = refundAfterWdrl;
+    }
+
+    public Double getChargebackAfterWdrl() {
+        return chargebackAfterWdrl;
+    }
+
+    public void setChargebackAfterWdrl(Double chargebackAfterWdrl) {
+        this.chargebackAfterWdrl = chargebackAfterWdrl;
+    }
+
+    public Double getWdrlAmountAdjusted() {
+        return wdrlAmountAdjusted;
+    }
+
+    public void setWdrlAmountAdjusted(Double wdrlAmountAdjusted) {
+        this.wdrlAmountAdjusted = wdrlAmountAdjusted;
+    }
 }

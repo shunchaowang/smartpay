@@ -46,13 +46,17 @@
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="withdrawal.label"/><spring:message code="dateRange.label"/></th>
                     <th><spring:message code="wdrlBalance.label"/></th>
-                    <th><spring:message code="wdrlAmount.label"/></th>
-                    <th><spring:message code="securityRate.label"/></th>
                     <th><spring:message code="securityDeposit.label"/></th>
+                    <th><spring:message code="wdrlAmount.label"/></th>
+
+                    <th><spring:message code="wdrlAmountApproved.label"/></th>
+                    <th><spring:message code="refundAfterWdrl.label"/></th>
+                    <th><spring:message code="chargebackAfterWdrl.label"/></th>
+                    <th><spring:message code="wdrlAmountAdjusted.label"/></th>
+
                     <th><spring:message code="securityWithdrawn.label"/></th>
                     <th><spring:message code="status.label"/></th>
                     <th><spring:message code="status.label"/></th>
-                    <th><spring:message code="remark.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -81,11 +85,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 11]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
+                        "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 11]
                     }
                 ]
             },
@@ -108,18 +112,23 @@
                     }
                 },
                 {'name': 'balance', 'targets': 3, 'data': 'balance'},
-                {'name': 'amount', 'targets': 4, 'data': 'amount'},
-                {'name': 'securityRate', 'targets': 5, 'data': 'securityRate'},
-                {'name': 'securityDeposit', 'targets': 6, 'data': 'securityDeposit'},
-                {'name': 'securityWithdrawn', 'targets': 7, 'visible': false, 'data': 'securityWithdrawn' },
-                {'name': 'withdrawalStatusCode', 'targets': 8, 'visible': false, 'data': 'withdrawalStatusCode' },
+                {'name': 'securityDeposit', 'targets': 4, 'data': 'securityDeposit'},
+                {'name': 'amount', 'targets': 5, 'data': 'amount'},
+
+                {'name': 'wdrlAmountApproved', 'targets': 6, 'data': 'wdrlAmountApproved'},
+                {'name': 'refundAfterWdrl', 'targets': 7, 'data': 'refundAfterWdrl'},
+                {'name': 'chargebackAfterWdrl', 'targets': 8, 'data': 'chargebackAfterWdrl'},
+                {'name': 'wdrlAmountAdjusted', 'targets': 9, 'data': 'wdrlAmountAdjusted'},
+
+                {'name': 'securityWithdrawn', 'targets': 10, 'visible': false, 'data': 'securityWithdrawn' },
+                {'name': 'withdrawalStatusName', 'targets': 11, 'orderable': false,
+                    'data': 'withdrawalStatusName'},
                 {
-                    'name': 'withdrawalStatusName', 'targets': 9, 'searchable': false,
-                    'orderable': false, 'data': 'withdrawalStatusName'
+                    'name': 'withdrawalStatusCode', 'targets': 12, 'visible': false, 'searchable': false,
+                     'data': 'withdrawalStatusCode'
                 },
-                {'name': 'remark', 'targets': 10, 'searchable': false, 'data': 'remark'},
                 {
-                    'name': 'operation', 'targets': 11, 'orderable': false, 'searchable': false,
+                    'name': 'operation', 'targets': 13, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
                         var operations = '';
                         if (row['withdrawalStatusCode'] !='300' ) {
