@@ -127,8 +127,8 @@ public class SiteDaoImplTest {
         returnFee.setActive(true);
         returnFee.setFeeType(staticFeeType);
 
-        merchant.setCommissionFee(fee);
-        merchant.setReturnFee(returnFee);
+//        merchant.setCommissionFee(fee);
+//        merchant.setReturnFee(returnFee);
 
         merchant = merchantDao.create(merchant);
         assertNotNull(merchant);

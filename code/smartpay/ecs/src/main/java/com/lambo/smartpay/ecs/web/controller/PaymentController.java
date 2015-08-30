@@ -31,10 +31,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by linly on 3/27/2015.
@@ -48,7 +49,11 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
     @Autowired
+    private PaymentStatusService paymentStatusService;
+    @Autowired
     private OrderService orderService;
+    @Autowired
+    private SiteService siteService;
     @Autowired
     private RefundService refundService;
     @Autowired
@@ -64,6 +69,11 @@ public class PaymentController {
     @ModelAttribute("domain")
     public String domain() {
         return "Payment";
+    }
+
+    @ModelAttribute("paymentStatuses")
+    public List<PaymentStatus> paymentStatuses() {
+        return paymentStatusService.getAll();
     }
 
     @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
@@ -125,6 +135,123 @@ public class PaymentController {
         }
 
         DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
+        resultSet.setData(dataTablesPayments);
+        resultSet.setRecordsTotal(recordsTotal.intValue());
+        resultSet.setRecordsFiltered(recordsFiltered.intValue());
+
+        return JsonUtil.toJson(resultSet);
+    }
+
+    @RequestMapping(value = {"/search"}, method = RequestMethod.GET)
+    public String search(Model model) {
+        model.addAttribute("_view", "payment/search");
+        return "main";
+    }
+    @RequestMapping(value = "/searchData", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String searchData(HttpServletRequest request) {
+
+        // parse sorting column
+        String orderIndex = request.getParameter("order[0][column]");
+        String order = request.getParameter("columns[" + orderIndex + "][name]");
+
+        // parse sorting direction
+        String orderDir = StringUtils.upperCase(request.getParameter("order[0][dir]"));
+
+        // parse search keyword
+        String search = request.getParameter("search[value]");
+
+        // parse pagination
+        Integer start = Integer.valueOf(request.getParameter("start"));
+        Integer length = Integer.valueOf(request.getParameter("length"));
+
+        if (start == null || length == null || order == null || orderDir == null) {
+            throw new BadRequestException("400", "Bad Request.");
+        }
+
+        SecurityUser securityUser = UserResource.getCurrentUser();
+        if (securityUser == null) {
+            throw new BadRequestException("400", "User is null.");
+        }
+
+        // parse my own query params
+        String orderNumber = request.getParameter("orderNumber");
+        String bankTransactionNumber = request.getParameter("bankTransactionNumber");
+        String paymentStatus = request.getParameter("paymentStatus");
+        String siteUrl = request.getParameter("siteUrl");
+        String timeBeginning = request.getParameter("timeBeginning");
+        String timeEnding = request.getParameter("timeEnding");
+
+        List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
+        DataTablesResultSet<DataTablesPayment> resultSet = new DataTablesResultSet<>();
+
+        Merchant merchant = securityUser.getMerchant();
+        Order orderCriteria = new Order();
+        Site siteCriteria = new Site();
+        if (!StringUtils.isBlank(siteUrl)) {
+            siteCriteria = siteService.findByUrl(siteUrl);
+            if(siteCriteria ==null){
+                resultSet.setData(dataTablesPayments);
+                resultSet.setRecordsFiltered(0);
+                resultSet.setRecordsTotal(0);
+                return JsonUtil.toJson(resultSet);
+            }
+            orderCriteria.setSite(siteCriteria);
+        }
+        siteCriteria.setMerchant(merchant);
+        orderCriteria.setSite(siteCriteria);
+        if (!StringUtils.isBlank(orderNumber)) {
+            orderCriteria.setMerchantNumber(orderNumber);
+        }
+        Payment paymentCriteria = new Payment();
+        paymentCriteria.setOrder(orderCriteria);
+        Date beginning = null;
+        Date ending = null;
+        if ((!StringUtils.isBlank(timeBeginning)) && (!StringUtils.isBlank(timeEnding))) {
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            try {
+                beginning = dateFormat.parse(timeBeginning);
+                ending = dateFormat.parse(timeEnding);
+                Calendar calendar   =   new GregorianCalendar();
+                calendar.setTime(beginning);
+                calendar.add(calendar.DATE, -1);
+                beginning = calendar.getTime();
+                calendar.setTime(ending);
+                calendar.add(calendar.DATE,1);
+                ending = calendar.getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+                throw new BadRequestException("400", "Bad Request.");
+            }
+        }if (!StringUtils.isBlank(bankTransactionNumber)) {
+            paymentCriteria.setBankTransactionNumber(bankTransactionNumber);
+        }
+        if (!StringUtils.isBlank(paymentStatus)) {
+            PaymentStatus status = null;
+            try {
+                status = paymentStatusService.get(Long.valueOf(paymentStatus));
+            } catch (NoSuchEntityException e) {
+                e.printStackTrace();
+            }
+            paymentCriteria.setPaymentStatus(status);
+        }
+
+        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, search, null, null, "",
+                ResourceProperties.JpaOrderDir.valueOf(orderDir), beginning, ending);
+        // count total and filtered
+        Long recordsTotal = paymentService.countByCriteria(paymentCriteria, beginning, ending);
+        Long recordsFiltered = recordsTotal;
+
+        if (payments == null || recordsTotal == null || recordsFiltered == null) {
+            throw new RemoteAjaxException("500", "Internal Server Error.");
+        }
+
+        for (Payment payment : payments) {
+            DataTablesPayment tablesPayment = new DataTablesPayment(payment);
+            dataTablesPayments.add(tablesPayment);
+        }
+
         resultSet.setData(dataTablesPayments);
         resultSet.setRecordsTotal(recordsTotal.intValue());
         resultSet.setRecordsFiltered(recordsFiltered.intValue());
@@ -207,9 +334,7 @@ public class PaymentController {
             e.printStackTrace();
             throw new BadRequestException("400", "Payment cannot be found.");
         }
-        Order order = payment.getOrder();
-        String orderId = String.valueOf(order.getId());
-        Refund refund = createRefund(order);
+        Refund refund = createRefund(payment);
         RefundStatus refundStatus = null;
         try {
             refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
@@ -219,14 +344,14 @@ public class PaymentController {
         }
         refund.setRefundStatus(refundStatus);
         List<Refund> refunds = refundService.findByCriteria(refund);
-        Float amount = order.getAmount();
+        Float amount = payment.getAmount();
         for (Refund r : refunds) {
             amount -= r.getAmount();
         }
 
         ModelAndView view = new ModelAndView("payment/_refundDialog");
         view.addObject("domain", "Refund");
-        view.addObject("orderId", orderId);
+        view.addObject("paymentId", paymentId);
         DecimalFormat myformat = new DecimalFormat();
         myformat.applyPattern("0.00");
         view.addObject("orderAmount", myformat.format(amount));
@@ -239,26 +364,26 @@ public class PaymentController {
     public String saveRefund(HttpServletRequest request) {
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        String orderId = request.getParameter("orderId");
+        String paymentId = request.getParameter("paymentId");
         Float amount = Float.parseFloat(request.getParameter("amount"));
         String remark = request.getParameter("remark");
 
-        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(amount.toString())
+        if (StringUtils.isBlank(paymentId) || StringUtils.isBlank(amount.toString())
                 || StringUtils.isBlank(remark.toString())) {
             throw new BadRequestException("400", "Bad request.");
         }
 
-        Order order = null;
+        Payment payment = null;
         try {
-            order = orderService.get(Long.valueOf(orderId));
+            payment = paymentService.get(Long.valueOf(paymentId));
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "Order cannot be found.");
+            throw new BadRequestException("400", "Payment cannot be found.");
         }
 
         // retrieve order and associated customer, set refund recipient to be
         // the same with customer for now
-        Refund refund = createRefund(order);
+        Refund refund = createRefund(payment);
         RefundStatus refundStatus = null;
         try {
             refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_INITIATED_CODE);
@@ -270,7 +395,6 @@ public class PaymentController {
         List<Refund> refunds = refundService.findByCriteria(refund);
         if(refunds != null && refunds.size() > 0) {
             for (Refund r : refunds) {
-                System.out.println("refund==:"+r.getAmount());
                 r.setAmount(amount);
                 r.setRemark(remark);
                 try {
@@ -286,7 +410,6 @@ public class PaymentController {
             refund.setRemark(remark);
             try {
                 refundService.create(refund);
-                //orderService.update(order);
             } catch (MissingRequiredFieldException e) {
                 e.printStackTrace();
                 throw new BadRequestException("400", e.getMessage());
@@ -304,10 +427,11 @@ public class PaymentController {
         return JsonUtil.toJson(response);
     }
 
-    private Refund createRefund(Order order) {
+    private Refund createRefund(Payment payment) {
+        Order order = payment.getOrder();
         Refund refund = new Refund();
-        refund.setOrder(order);
-        refund.setCurrency(order.getCurrency());
+        refund.setOrder(payment.getOrder());
+        refund.setCurrency(payment.getCurrency());
         refund.setBillFirstName(order.getCustomer().getFirstName());
         refund.setBillLastName(order.getCustomer().getLastName());
         refund.setBillAddress1(order.getCustomer().getAddress1());

@@ -3,15 +3,10 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
+import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.persistence.entity.Currency;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.Site;
-import com.lambo.smartpay.core.persistence.entity.User;
-import com.lambo.smartpay.core.service.CurrencyService;
-import com.lambo.smartpay.core.service.OrderService;
-import com.lambo.smartpay.core.service.SiteService;
-import com.lambo.smartpay.core.service.UserService;
+import com.lambo.smartpay.core.service.*;
+import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
@@ -39,9 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by swang on 3/11/2015.
@@ -57,6 +50,12 @@ public class HomeController {
     private CurrencyService currencyService;
     @Autowired
     private SiteService siteService;
+    @Autowired
+    private RefundService refundService;
+    @Autowired
+    private RefundStatusService refundStatusService;
+    @Autowired
+    private ClaimService claimService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -74,6 +73,7 @@ public class HomeController {
         if (currentUser == null) {
             return "403";
         }
+
         Merchant merchant = currentUser.getMerchant();
         HomeCommand command = new HomeCommand();
         command.setMerchantId(merchant.getId());
@@ -83,63 +83,176 @@ public class HomeController {
         siteCriteria.setMerchant(merchant);
         Long siteCount = siteService.countByCriteria(siteCriteria);
         command.setSiteCount(siteCount);
-        Order orderCriteria = new Order();
-        Site site = new Site();
-        site.setMerchant(merchant);
-        orderCriteria.setSite(site);
-
-        Long orderCount = orderService.countByCriteria(orderCriteria);
-        command.setOrderCount(orderCount);
-
-        List<Order> orders = orderService.findByCriteria(orderCriteria);
-        Double amount = 0.0;
-        for (Order order : orders) {
-            amount += order.getAmount();
-        }
-        Locale locale = LocaleContextHolder.getLocale();
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
-        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
-        decimalFormat.applyPattern("###.##");
-        command.setOrderAmount(Double.valueOf(decimalFormat.format(amount)));
         model.addAttribute("merchantCommand", command);
         model.addAttribute("_view", "index");
 
         return "main";
     }
 
-    @RequestMapping(value = "/listOrderCount", method = RequestMethod.GET,
+    @RequestMapping(value = "/listTodayOrder", method = RequestMethod.GET,
             produces = "application/json;charset=UTF-8")
     public
     @ResponseBody
-    String listOrderCount() {
+    String listTodayOrder() {
 
         SecurityUser currentUser = UserResource.getCurrentUser();
         if (currentUser == null) {
             return "403";
         }
+
         // find all site, and get count based on site
         Site site = new Site();
         site.setMerchant(currentUser.getMerchant());
 
         List<Site> sites = siteService.findByCriteria(site);
+        Order orderCriteria = new Order();
+        orderCriteria.setSite(site);
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date begining = calendar.getTime();
+        calendar.add(calendar.DATE, 1);
+        Date ending = calendar.getTime();
+        List<Order> orders = orderService.findByCriteria(orderCriteria, begining, ending);
+        Refund refundCriteria = new Refund();
+        refundCriteria.setOrder(orderCriteria);
+        RefundStatus refundStatus;
+        try {
+            refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
+            refundCriteria.setRefundStatus(refundStatus);
+        }catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        List<Refund> refunds = refundService.findByCriteria(refundCriteria, begining, ending);
+
+        Claim claimCriteria = new Claim();
+        List<Claim> claims = claimService.findByCriteria(claimCriteria, begining, ending);
+        DataTablesResultSet<DataTablesOrderCount> result = createList(orders, refunds, claims, sites);
+        return JsonUtil.toJson(result);
+    }
+
+    @RequestMapping(value = "/listYesterdayOrder", method = RequestMethod.GET,
+            produces = "application/json;charset=UTF-8")
+    public
+    @ResponseBody
+    String listYesterdayOrder() {
+
+        SecurityUser currentUser = UserResource.getCurrentUser();
+        if (currentUser == null) {
+            return "403";
+        }
+
+        // find all site, and get count based on site
+        Site site = new Site();
+        site.setMerchant(currentUser.getMerchant());
+
+        List<Site> sites = siteService.findByCriteria(site);
+        Order orderCriteria = new Order();
+        orderCriteria.setSite(site);
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        calendar.add(calendar.DATE, -1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date begining = calendar.getTime();
+        calendar.add(calendar.DATE, 1);
+        Date ending = calendar.getTime();
+
+        List<Order> orders = orderService.findByCriteria(orderCriteria, begining, ending);
+
+        Refund refundCriteria = new Refund();
+        refundCriteria.setOrder(orderCriteria);
+        RefundStatus refundStatus;
+        try {
+            refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
+            refundCriteria.setRefundStatus(refundStatus);
+        }catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
+        List<Refund> refunds = refundService.findByCriteria(refundCriteria, begining, ending);
+
+        Claim claimCriteria = new Claim();
+        List<Claim> claims = claimService.findByCriteria(claimCriteria, begining, ending);
+
+        DataTablesResultSet<DataTablesOrderCount> result = createList(orders, refunds, claims, sites);
+
+        return JsonUtil.toJson(result);
+    }
+
+    private DataTablesResultSet<DataTablesOrderCount> createList(List<Order> orders, List<Refund> refunds, List<Claim> claims, List<Site> sites){
         List<DataTablesOrderCount> counts = new ArrayList<>();
+        Locale locale = LocaleContextHolder.getLocale();
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+        DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
+        decimalFormat.applyPattern("###.###");
         for (Site s : sites) {
             DataTablesOrderCount count = new DataTablesOrderCount();
             count.setSiteId(s.getId());
             count.setSiteIdentity(s.getIdentity());
             count.setSiteName(s.getName());
-            Order orderCriteria = new Order();
-            orderCriteria.setSite(s);
-            count.setOrderCount(orderService.countByCriteria(orderCriteria));
+            Long orderCount = Long.parseLong("0");
+            Long paidCount = Long.parseLong("0");
+            Double paidAmount = Double.parseDouble("0.00");
+            Long refundCount = Long.parseLong("0");
+            Double refundAmount = Double.parseDouble("0.00");
+            Long refuseCount = Long.parseLong("0");
+            Double refuseAmount = Double.parseDouble("0.00");
+            for (Order order : orders) {
+                if(order.getSite().getId().equals(s.getId())){
+                    orderCount ++;
+                    if(order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_PAID_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_PREPARED_SHIPMENT_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_SHIPPED_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_DELIVERED_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_RETURNED_CODE)
+                            || order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)) {
+                        paidCount ++;
+                        Iterator<Payment> paymentIterator = order.getPayments().iterator();
+                        while(paymentIterator.hasNext()){
+                            Payment payment = paymentIterator.next();
+                            if(!payment.getPaymentStatus().getCode().equals("501")) {
+                                paidAmount += payment.getAmount();
+                            }
+                        }
+                    }
+                }
+            }
+            for (Refund refund : refunds) {
+                Order order = refund.getOrder();
+                if(order.getSite().getId().equals(s.getId())
+                        && refund.getRefundStatus().getCode().equals(ResourceProperties.REFUND_STATUS_APPROVED_CODE)) {
+                    refundCount++;
+                    refundAmount += refund.getAmount();
+                }
+            }
+            for (Claim claim : claims) {
+                Payment payment = claim.getPayment();
+                if(payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE)
+                        && payment.getOrder().getSite().getId().equals(s.getId())){
+                    refuseCount ++;
+                    refuseAmount +=payment.getAmount();
+                }
+            }
+            count.setOrderCount(orderCount);
+            count.setPaidCount(paidCount);
+            count.setPaidAmount(Double.valueOf(decimalFormat.format(paidAmount)));
+            count.setRefuseCount(refuseCount);
+            count.setRefuseAmount(Double.valueOf(decimalFormat.format(refuseAmount)));
+            count.setRefundCount(refundCount);
+            count.setRefundAmount(Double.valueOf(decimalFormat.format(refundAmount)));
             counts.add(count);
         }
-
-        DataTablesResultSet<DataTablesOrderCount> result = new DataTablesResultSet<>();
-        result.setData(counts);
-        result.setRecordsTotal(sites.size());
-        result.setRecordsFiltered(sites.size());
-
-        return JsonUtil.toJson(result);
+        DataTablesResultSet<DataTablesOrderCount> dataTablesOrderCountResult= new DataTablesResultSet<>();
+        dataTablesOrderCountResult.setData(counts);
+        dataTablesOrderCountResult.setRecordsTotal(counts.size());
+        dataTablesOrderCountResult.setRecordsFiltered(counts.size());
+        return dataTablesOrderCountResult;
     }
 
     @RequestMapping(value = "/listOrderAmount", method = RequestMethod.GET,

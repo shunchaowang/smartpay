@@ -226,20 +226,6 @@ public class MerchantController {
         merchantCommand.setEncryptionTypeId(merchant.getEncryption().getEncryptionType().getId());
         merchantCommand
                 .setEncryptionTypeName(merchant.getEncryption().getEncryptionType().getName());
-
-        // Commission Fee
-        merchantCommand.setCommissionFeeRemark(merchant.getCommissionFee().getRemark());
-        merchantCommand.setCommissionFeeTypeId(merchant.getCommissionFee().getFeeType().getId());
-        merchantCommand
-                .setCommissionFeeTypeName(merchant.getCommissionFee().getFeeType().getName());
-        merchantCommand.setCommissionFeeValue(merchant.getCommissionFee().getValue());
-
-        // Return Fee
-        merchantCommand.setReturnFeeRemark(merchant.getReturnFee().getRemark());
-        merchantCommand.setReturnFeeTypeId(merchant.getReturnFee().getFeeType().getId());
-        merchantCommand.setReturnFeeTypeName(merchant.getReturnFee().getFeeType().getName());
-        merchantCommand.setReturnFeeValue(merchant.getReturnFee().getValue());
-
         return merchantCommand;
     }
 }

@@ -86,7 +86,7 @@ public class FeeTypeServiceImpl implements FeeTypeService {
                     " already exists.");
         }
         if (feeTypeDao.findByCode(feeType.getCode()) != null) {
-            throw new NotUniqueException("FeeType with code " + feeType.getName() +
+            throw new NotUniqueException("FeeType with code " + feeType.getCode() +
                     " already exists.");
         }
         feeType.setActive(true);

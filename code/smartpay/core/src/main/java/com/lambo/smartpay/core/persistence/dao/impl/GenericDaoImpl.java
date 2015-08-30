@@ -313,7 +313,7 @@ public abstract class GenericDaoImpl<T, PK extends Serializable> implements Gene
     }
 
     @Override
-    public TypedQuery<PK> createCountQuery(CriteriaQuery<PK> criteriaQuery) {
+    public TypedQuery<Long> createCountQuery(CriteriaQuery<Long> criteriaQuery) {
         return entityManager.createQuery(criteriaQuery);
     }
 }

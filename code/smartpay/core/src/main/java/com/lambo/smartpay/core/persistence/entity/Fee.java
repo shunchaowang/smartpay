@@ -51,6 +51,25 @@ public class Fee implements Serializable {
     @JoinColumn(name = "FEE_FETP_ID", nullable = false)
     private FeeType feeType;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
+    @JoinColumn(name = "FEE_FECT_ID", nullable = false)
+    private FeeCategory feeCategory;
+
+//    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
+//            joinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false, updatable =
+// false)},
+//            inverseJoinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false,
+//                    updatable = false)}
+//    )
+//    private Set<Merchant> merchants;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            optional = false)
+    @JoinColumn(name = "FEE_MCHT_ID", nullable = false)
+    private Merchant merchant;
+
     public Long getId() {
         return id;
     }
@@ -105,5 +124,21 @@ public class Fee implements Serializable {
 
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
+    }
+
+    public FeeCategory getFeeCategory() {
+        return feeCategory;
+    }
+
+    public void setFeeCategory(FeeCategory feeCategory) {
+        this.feeCategory = feeCategory;
+    }
+
+    public Merchant getMerchant() {
+        return merchant;
+    }
+
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
     }
 }

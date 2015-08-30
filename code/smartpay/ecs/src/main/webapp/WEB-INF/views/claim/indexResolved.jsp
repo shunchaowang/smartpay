@@ -46,6 +46,7 @@
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="paymentStatusName.label"/></th>
                     <th><spring:message code="paymentTypeName.label"/></th>
+                    <th><spring:message code="paymentStatusName.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -122,7 +123,11 @@
                     'data': 'paymentTypeName'
                 },
                 {
-                    'name': 'operation', 'targets':9, 'searchable': false, 'orderable': false,
+                    'name': 'paymentStatusCode', 'targets': 9,'visible': false, 'searchable': false, 'orderable': false,
+                    'data': 'paymentStatusCode'
+                },
+                {
+                    'name': 'operation', 'targets':10, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         var operations = '';
                         operations += '<button type="button" name="show-claim-button"'
@@ -130,7 +135,12 @@
                         + ' class="btn btn-default" value="' + row['id'] + '">' +
                         "${showLabel}"
                         + '</button>';
-                        if (row['paymentStatusName'] == 'Claim In Process') {
+                        if(row['paymentStatusCode'] == '400'){
+                            operations += '<button type="button" name="approve-claim-button"'
+                            + ' data-identity="' + row['id'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${approvedStatus}"
+                            + '</button>';
                             operations += '<button type="button" name="add-claim-button"'
                             + ' data-identity="' + row['id'] + '"'
                             + ' class="btn btn-default" value="' + row['id'] + '">' +
@@ -143,7 +153,49 @@
             ]
         });
 
-        // add live handler for show button
+        // add live handler for freeze button
+        paymentTable.on('click', 'button[type=button][name=approve-claim-button]', function (event) {
+            event.preventDefault();
+            var id = this.value;
+            $("#confirm-dialog").dialog({
+                resizable: true,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                open: function () {
+                    var content = "${approveMsg}" + ' ' ;
+                    $(this).html(content);
+                },
+                buttons: {
+                    "${approvedStatus}": function () {
+                        $(this).dialog("close");
+                        $.ajax({
+                            type: 'POST',
+                            url: "${rootURL}claim" + '/agreeClaim',
+                            data: {id: id},
+                            dataType: 'JSON',
+                            error: function (error) {
+                                alert('There was an error');
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                paymentTable.ajax.reload();
+                            }
+                        });
+                    },
+                    "${cancelLabel}": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
         paymentTable.on('click', 'button[type=button][name=show-claim-button]', function
                 (event) {
             event.preventDefault();
@@ -177,48 +229,6 @@
                     $("#close-button").click(function (event) {
                         event.preventDefault();
                         claimDialog.dialog("close");
-                    });
-                    $("#audit-button").click(function (event) {
-                        event.preventDefault();
-                        $("#confirm-dialog").dialog({
-                            resizable: true,
-                            height: 'auto',
-                            width: 'auto',
-                            modal: true,
-                            open: function () {
-                                var content = "${approveMsg}" + ' ' ;
-                                $(this).html(content);
-                            },
-                            buttons: {
-                                "${approvedStatus}": function () {
-                                    $(this).dialog("close");
-                                    $.ajax({
-                                        type: 'POST',
-                                        url: "${rootURL}claim" + '/agreeClaim',
-                                        data: {paymentId: $("#paymentId").val()},
-                                        dataType: 'JSON',
-                                        error: function (error) {
-                                            alert('There was an error');
-                                        },
-                                        success: function (data) {
-                                            var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
-                                                    "<button type='button' class='close' data-dismiss='alert'>" +
-                                                    "<span aria-hidden='true'>&times;</span>" +
-                                                    "<span class='sr-only'>"
-                                                    + "<spring:message code='action.close.label'/> "
-                                                    + "</span></button>"
-                                                    + data.message + "</div>";
-                                            $('#notification').append(alert);
-                                            claimDialog.dialog("close");
-                                            paymentTable.ajax.reload();
-                                        }
-                                    });
-                                },
-                                "${cancelLabel}": function () {
-                                    $(this).dialog("close");
-                                }
-                            }
-                        });
                     });
                 }
             });

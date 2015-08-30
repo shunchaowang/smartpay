@@ -79,12 +79,8 @@ public class Merchant implements Serializable {
     private Credential credential;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "MCHT_FEE_COMMISSION_ID", nullable = false)
-    private Fee commissionFee;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
-    @JoinColumn(name = "MCHT_FEE_RETURN_ID", nullable = false)
-    private Fee returnFee;
+    @JoinColumn(name = "MCHT_WDSE_ID", nullable = false)
+    private WithdrawalSetting withdrawalSetting;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, optional = false)
     @JoinColumn(name = "MCHT_ENCR_ID", nullable = false)
@@ -101,6 +97,17 @@ public class Merchant implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "merchant",
             orphanRemoval = true)
     private Set<User> users;
+
+    //    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+//    @JoinTable(name = "MERCHANT_FEE_MAPPINGS",
+//            joinColumns = {@JoinColumn(name = "MFMP_MCHT_ID", nullable = false, updatable =
+// false)},
+//            inverseJoinColumns = {@JoinColumn(name = "MFMP_FEE_ID", nullable = false,
+//                    updatable = false)}
+//    )
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "merchant",
+            orphanRemoval = true)
+    private Set<Fee> fees;
 
     public Long getId() {
         return id;
@@ -198,22 +205,6 @@ public class Merchant implements Serializable {
         this.credential = credential;
     }
 
-    public Fee getCommissionFee() {
-        return commissionFee;
-    }
-
-    public void setCommissionFee(Fee commissionFee) {
-        this.commissionFee = commissionFee;
-    }
-
-    public Fee getReturnFee() {
-        return returnFee;
-    }
-
-    public void setReturnFee(Fee returnFee) {
-        this.returnFee = returnFee;
-    }
-
     public Encryption getEncryption() {
         return encryption;
     }
@@ -260,5 +251,21 @@ public class Merchant implements Serializable {
 
     public void setIdentity(String identity) {
         this.identity = identity;
+    }
+
+    public WithdrawalSetting getWithdrawalSetting() {
+        return withdrawalSetting;
+    }
+
+    public void setWithdrawalSetting(WithdrawalSetting withdrawalSetting) {
+        this.withdrawalSetting = withdrawalSetting;
+    }
+
+    public Set<Fee> getFees() {
+        return fees;
+    }
+
+    public void setFees(Set<Fee> fees) {
+        this.fees = fees;
     }
 }

@@ -8,7 +8,6 @@
         <div class="row">
             <div class="col-sm-12">
                 <table class="table table-bordered" id="claim-table">
-                    <input id="paymentId" name="paymentId" value="${paymentId}" type="hidden"/>
                     <thead>
                         <tr>
                             <th><spring:message code="id.label"/></th>
@@ -20,16 +19,12 @@
                     <body></body>
                 </table>
             </div>
+        </div>
+        <br>
+        <div class="row">
             <!-- buttons -->
             <div class='form-group'>
-                <c:if test="${paymentStatusCode.equals('401')}">
-                    <div class="col-sm-2 col-sm-offset-2">
-                        <button class='btn btn-default' id='audit-button'>
-                            <spring:message code='action.audit.label'/>
-                        </button>
-                    </div>
-                </c:if>
-                <div class="col-sm-2">
+                <div class="col-sm-6 col-sm-offset-6">
                     <button class='btn btn-default' id='close-button'>
                         <spring:message code='action.close.label'/>
                     </button>

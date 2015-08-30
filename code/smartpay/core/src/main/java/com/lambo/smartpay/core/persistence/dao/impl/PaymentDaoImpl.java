@@ -9,7 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 
@@ -262,8 +267,8 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
             }
         }
 
-        if ( payment.getOrder() !=null) {
-            if(payment.getOrder().getId() !=null){
+        if (payment.getOrder() != null) {
+            if (payment.getOrder().getId() != null) {
                 Predicate orderPredicate = builder.equal(
                         root.join("order").<Long>get("id"),
                         builder.literal(payment.getOrder().getId()));
@@ -272,7 +277,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
                 } else {
                     predicate = builder.and(predicate, orderPredicate);
                 }
-            }else if (payment.getOrder().getSite() != null) {
+            } else if (payment.getOrder().getSite() != null) {
                 // if has merchant id
                 if (payment.getOrder().getSite().getMerchant() != null) {
                     if (payment.getOrder().getSite().getMerchant().getId() != null) {
@@ -299,7 +304,7 @@ public class PaymentDaoImpl extends GenericDaoImpl<Payment, Long>
                     }
                 }
             }
-            if(payment.getOrder().getMerchantNumber() !=null){
+            if (payment.getOrder().getMerchantNumber() != null) {
                 Predicate merchantNumberPredicate = builder.equal(
                         root.join("order").<Long>get("merchantNumber"),
                         builder.literal(payment.getOrder().getMerchantNumber()));
