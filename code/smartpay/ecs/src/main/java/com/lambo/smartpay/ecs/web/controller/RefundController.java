@@ -230,29 +230,18 @@ public class RefundController {
             e.printStackTrace();
             throw new BadRequestException("400", "Order cannot be found.");
         }
-
-        // retrieve order and associated customer, set refund recipient to be
-        // the same with customer for now
         Refund refund = createRefund(order);
         refund.setAmount(amount);
         refund.setRemark(remark);
         RefundStatus refundStatus = null;
-        //OrderStatus refundedOrderStatus = null;
         try {
             refundStatus = refundStatusService.findByCode(ResourceProperties
                     .REFUND_STATUS_INITIATED_CODE);
-//            refundedOrderStatus = orderStatusService.findByCode(ResourceProperties
-//                    .ORDER_STATUS_REFUNDED_CODE);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new IntervalServerException("500", "Cannot find refund or order status.");
         }
         refund.setRefundStatus(refundStatus);
-        // we set order status to be refunded when we initiate the refund
-        // if the refund is not approved by manage, we are change the order status back
-        // to paid or sth else when manage denies the refund
-        //order.setOrderStatus(refundedOrderStatus);
-        // when persisting refund, order should be cascaded merged
         String domain = messageSource.getMessage("refund.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, amount + " " + remark}, locale);

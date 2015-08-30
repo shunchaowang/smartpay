@@ -1,6 +1,8 @@
 package com.lambo.smartpay.manage.web.vo;
 
+import com.lambo.smartpay.core.persistence.entity.Fee;
 import com.lambo.smartpay.core.persistence.entity.Merchant;
+import com.lambo.smartpay.core.util.ResourceProperties;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.DateFormat;
@@ -43,17 +45,32 @@ public class MerchantCommand {
     private Long encryptionTypeId;
     private String encryptionTypeName;
 
-    // Commission fee
-    private Float commissionFeeValue;
-    private String commissionFeeRemark;
-    private Long commissionFeeTypeId;
-    private String commissionFeeTypeName;
 
-    // Return fee
-    private Float returnFeeValue;
-    private String returnFeeRemark;
-    private Long returnFeeTypeId;
-    private String returnFeeTypeName;
+    // fee for different cards
+    private Float commissionVisaFeeValue;
+    private String commissionVisaFeeRemark;
+    private Long commissionVisaFeeTypeId;
+    private String commissionVisaFeeTypeName;
+    private Float commissionMasterFeeValue;
+    private String commissionMasterFeeRemark;
+    private Long commissionMasterFeeTypeId;
+    private String commissionMasterFeeTypeName;
+    private Float commissionJcbFeeValue;
+    private String commissionJcbFeeRemark;
+    private Long commissionJcbFeeTypeId;
+    private String commissionJcbFeeTypeName;
+
+    // withdraw settings
+    private Float withdrawFeeValue;
+    private String withdrawFeeRemark;
+    private Long withdrawFeeTypeId;
+    private String withdrawFeeTypeName;
+
+    private String withdrawSettingRemark;
+    private String withdrawSettingCreatedTime;
+    private String withdrawSettingUpdatedTime;
+    private Long withdrawSettingMinDays;
+    private Long withdrawSettingMaxDays;
 
     public MerchantCommand() {
     }
@@ -91,18 +108,53 @@ public class MerchantCommand {
         encryptionTypeId = merchant.getEncryption().getEncryptionType().getId();
         encryptionTypeName = merchant.getEncryption().getEncryptionType().getName();
 
-        // Commission Fee
-        commissionFeeRemark = merchant.getCommissionFee().getRemark();
-        commissionFeeTypeId = merchant.getCommissionFee().getFeeType().getId();
-        commissionFeeTypeName = merchant.getCommissionFee().getFeeType().getName();
-        commissionFeeValue = merchant.getCommissionFee().getValue();
 
-        // Return Fee
-        returnFeeRemark = merchant.getReturnFee().getRemark();
-        returnFeeTypeId = merchant.getReturnFee().getFeeType().getId();
-        returnFeeTypeName = merchant.getReturnFee().getFeeType().getName();
-        returnFeeValue = merchant.getReturnFee().getValue();
+        // set all fees
+        if (merchant.getFees() != null) {
+            for (Fee fee : merchant.getFees()) {
+                switch (fee.getFeeCategory().getCode()) {
+                    case ResourceProperties.FEE_CATEGORY_VISA_CODE:
+                        commissionVisaFeeValue = fee.getValue();
+                        commissionVisaFeeRemark = fee.getRemark();
+                        commissionVisaFeeTypeId = fee.getFeeType().getId();
+                        commissionVisaFeeTypeName = fee.getFeeType().getName();
+                        break;
+                    case ResourceProperties.FEE_CATEGORY_MASTER_CODE:
+                        commissionMasterFeeValue = fee.getValue();
+                        commissionMasterFeeRemark = fee.getRemark();
+                        commissionMasterFeeTypeId = fee.getFeeType().getId();
+                        commissionMasterFeeTypeName = fee.getFeeType().getName();
+                        break;
+                    case ResourceProperties.FEE_CATEGORY_JCB_CODE:
+                        commissionJcbFeeValue = fee.getValue();
+                        commissionJcbFeeRemark = fee.getRemark();
+                        commissionJcbFeeTypeId = fee.getFeeType().getId();
+                        commissionJcbFeeTypeName = fee.getFeeType().getName();
+                        break;
+                    case ResourceProperties.FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE:
+                        withdrawFeeValue = fee.getValue();
+                        withdrawFeeRemark = fee.getRemark();
+                        withdrawFeeTypeId = fee.getFeeType().getId();
+                        withdrawFeeTypeName = fee.getFeeType().getName();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
 
+        // set withdrawal settings
+        if (merchant.getWithdrawalSetting() != null) {
+            withdrawSettingCreatedTime = dateFormat.format(merchant.getWithdrawalSetting()
+                    .getCreatedTime());
+            if (merchant.getWithdrawalSetting().getUpdatedTime() != null) {
+                withdrawSettingUpdatedTime = dateFormat.format(merchant.getWithdrawalSetting()
+                        .getUpdatedTime());
+            }
+            withdrawSettingRemark = merchant.getWithdrawalSetting().getRemark();
+            withdrawSettingMinDays = merchant.getWithdrawalSetting().getMinDays();
+            withdrawSettingMaxDays = merchant.getWithdrawalSetting().getMaxDays();
+        }
     }
 
     public Long getId() {
@@ -281,68 +333,172 @@ public class MerchantCommand {
         this.encryptionTypeName = encryptionTypeName;
     }
 
-    public Float getCommissionFeeValue() {
-        return commissionFeeValue;
+    public Float getCommissionVisaFeeValue() {
+        return commissionVisaFeeValue;
     }
 
-    public void setCommissionFeeValue(Float commissionFeeValue) {
-        this.commissionFeeValue = commissionFeeValue;
+    public void setCommissionVisaFeeValue(Float commissionVisaFeeValue) {
+        this.commissionVisaFeeValue = commissionVisaFeeValue;
     }
 
-    public String getCommissionFeeRemark() {
-        return commissionFeeRemark;
+    public String getCommissionVisaFeeRemark() {
+        return commissionVisaFeeRemark;
     }
 
-    public void setCommissionFeeRemark(String commissionFeeRemark) {
-        this.commissionFeeRemark = commissionFeeRemark;
+    public void setCommissionVisaFeeRemark(String commissionVisaFeeRemark) {
+        this.commissionVisaFeeRemark = commissionVisaFeeRemark;
     }
 
-    public Long getCommissionFeeTypeId() {
-        return commissionFeeTypeId;
+    public Long getCommissionVisaFeeTypeId() {
+        return commissionVisaFeeTypeId;
     }
 
-    public void setCommissionFeeTypeId(Long commissionFeeTypeId) {
-        this.commissionFeeTypeId = commissionFeeTypeId;
+    public void setCommissionVisaFeeTypeId(Long commissionVisaFeeTypeId) {
+        this.commissionVisaFeeTypeId = commissionVisaFeeTypeId;
     }
 
-    public String getCommissionFeeTypeName() {
-        return commissionFeeTypeName;
+    public String getCommissionVisaFeeTypeName() {
+        return commissionVisaFeeTypeName;
     }
 
-    public void setCommissionFeeTypeName(String commissionFeeTypeName) {
-        this.commissionFeeTypeName = commissionFeeTypeName;
+    public void setCommissionVisaFeeTypeName(String commissionVisaFeeTypeName) {
+        this.commissionVisaFeeTypeName = commissionVisaFeeTypeName;
     }
 
-    public Float getReturnFeeValue() {
-        return returnFeeValue;
+    public Float getCommissionMasterFeeValue() {
+        return commissionMasterFeeValue;
     }
 
-    public void setReturnFeeValue(Float returnFeeValue) {
-        this.returnFeeValue = returnFeeValue;
+    public void setCommissionMasterFeeValue(Float commissionMasterFeeValue) {
+        this.commissionMasterFeeValue = commissionMasterFeeValue;
     }
 
-    public String getReturnFeeRemark() {
-        return returnFeeRemark;
+    public String getCommissionMasterFeeRemark() {
+        return commissionMasterFeeRemark;
     }
 
-    public void setReturnFeeRemark(String returnFeeRemark) {
-        this.returnFeeRemark = returnFeeRemark;
+    public void setCommissionMasterFeeRemark(String commissionMasterFeeRemark) {
+        this.commissionMasterFeeRemark = commissionMasterFeeRemark;
     }
 
-    public Long getReturnFeeTypeId() {
-        return returnFeeTypeId;
+    public Long getCommissionMasterFeeTypeId() {
+        return commissionMasterFeeTypeId;
     }
 
-    public void setReturnFeeTypeId(Long returnFeeTypeId) {
-        this.returnFeeTypeId = returnFeeTypeId;
+    public void setCommissionMasterFeeTypeId(Long commissionMasterFeeTypeId) {
+        this.commissionMasterFeeTypeId = commissionMasterFeeTypeId;
     }
 
-    public String getReturnFeeTypeName() {
-        return returnFeeTypeName;
+    public String getCommissionMasterFeeTypeName() {
+        return commissionMasterFeeTypeName;
     }
 
-    public void setReturnFeeTypeName(String returnFeeTypeName) {
-        this.returnFeeTypeName = returnFeeTypeName;
+    public void setCommissionMasterFeeTypeName(String commissionMasterFeeTypeName) {
+        this.commissionMasterFeeTypeName = commissionMasterFeeTypeName;
+    }
+
+    public Float getCommissionJcbFeeValue() {
+        return commissionJcbFeeValue;
+    }
+
+    public void setCommissionJcbFeeValue(Float commissionJcbFeeValue) {
+        this.commissionJcbFeeValue = commissionJcbFeeValue;
+    }
+
+    public String getCommissionJcbFeeRemark() {
+        return commissionJcbFeeRemark;
+    }
+
+    public void setCommissionJcbFeeRemark(String commissionJcbFeeRemark) {
+        this.commissionJcbFeeRemark = commissionJcbFeeRemark;
+    }
+
+    public Long getCommissionJcbFeeTypeId() {
+        return commissionJcbFeeTypeId;
+    }
+
+    public void setCommissionJcbFeeTypeId(Long commissionJcbFeeTypeId) {
+        this.commissionJcbFeeTypeId = commissionJcbFeeTypeId;
+    }
+
+    public String getCommissionJcbFeeTypeName() {
+        return commissionJcbFeeTypeName;
+    }
+
+    public void setCommissionJcbFeeTypeName(String commissionJcbFeeTypeName) {
+        this.commissionJcbFeeTypeName = commissionJcbFeeTypeName;
+    }
+
+    public Float getWithdrawFeeValue() {
+        return withdrawFeeValue;
+    }
+
+    public void setWithdrawFeeValue(Float withdrawFeeValue) {
+        this.withdrawFeeValue = withdrawFeeValue;
+    }
+
+    public String getWithdrawFeeRemark() {
+        return withdrawFeeRemark;
+    }
+
+    public void setWithdrawFeeRemark(String withdrawFeeRemark) {
+        this.withdrawFeeRemark = withdrawFeeRemark;
+    }
+
+    public Long getWithdrawFeeTypeId() {
+        return withdrawFeeTypeId;
+    }
+
+    public void setWithdrawFeeTypeId(Long withdrawFeeTypeId) {
+        this.withdrawFeeTypeId = withdrawFeeTypeId;
+    }
+
+    public String getWithdrawFeeTypeName() {
+        return withdrawFeeTypeName;
+    }
+
+    public void setWithdrawFeeTypeName(String withdrawFeeTypeName) {
+        this.withdrawFeeTypeName = withdrawFeeTypeName;
+    }
+
+    public String getWithdrawSettingRemark() {
+        return withdrawSettingRemark;
+    }
+
+    public void setWithdrawSettingRemark(String withdrawSettingRemark) {
+        this.withdrawSettingRemark = withdrawSettingRemark;
+    }
+
+    public String getWithdrawSettingCreatedTime() {
+        return withdrawSettingCreatedTime;
+    }
+
+    public void setWithdrawSettingCreatedTime(String withdrawSettingCreatedTime) {
+        this.withdrawSettingCreatedTime = withdrawSettingCreatedTime;
+    }
+
+    public String getWithdrawSettingUpdatedTime() {
+        return withdrawSettingUpdatedTime;
+    }
+
+    public void setWithdrawSettingUpdatedTime(String withdrawSettingUpdatedTime) {
+        this.withdrawSettingUpdatedTime = withdrawSettingUpdatedTime;
+    }
+
+    public Long getWithdrawSettingMinDays() {
+        return withdrawSettingMinDays;
+    }
+
+    public void setWithdrawSettingMinDays(Long withdrawSettingMinDays) {
+        this.withdrawSettingMinDays = withdrawSettingMinDays;
+    }
+
+    public Long getWithdrawSettingMaxDays() {
+        return withdrawSettingMaxDays;
+    }
+
+    public void setWithdrawSettingMaxDays(Long withdrawSettingMaxDays) {
+        this.withdrawSettingMaxDays = withdrawSettingMaxDays;
     }
 
     public Long getCredentialStatusId() {

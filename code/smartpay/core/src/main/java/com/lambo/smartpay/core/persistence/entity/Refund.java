@@ -105,6 +105,11 @@ public class Refund implements Serializable {
     @JoinColumn(name = "RFND_CRCY_ID", nullable = false)
     private Currency currency;
 
+    @ManyToOne(fetch = FetchType.EAGER, /*cascade = {CascadeType.PERSIST, CascadeType.MERGE},*/
+            optional = true)
+    @JoinColumn(name = "RFND_WDRL_ID", nullable = true)
+    private Withdrawal withdrawal;
+
     public Long getId() {
         return id;
     }
@@ -288,4 +293,13 @@ public class Refund implements Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public Withdrawal getWithdrawal() {
+        return withdrawal;
+    }
+
+    public void setWithdrawal(Withdrawal withdrawal) {
+        this.withdrawal = withdrawal;
+    }
+
 }

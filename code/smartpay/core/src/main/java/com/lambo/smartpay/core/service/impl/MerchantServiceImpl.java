@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -57,7 +58,7 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
      * @throws MissingRequiredFieldException
      * @throws NotUniqueException
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Merchant create(Merchant merchant) throws MissingRequiredFieldException,
             NotUniqueException {
@@ -98,33 +99,21 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         merchant.getCredential().setCreatedTime(date);
         merchant.getCredential().setActive(true);
 
-        // check commission fee
-        if (merchant.getCommissionFee() == null) {
-            throw new MissingRequiredFieldException("Merchant commission fee is null.");
+        //check fees
+        if (merchant.getFees() == null) {
+            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
         }
-        if (merchant.getCommissionFee().getValue() == null) {
-            throw new MissingRequiredFieldException("Merchant commission fee value is null.");
-        }
-        if (merchant.getCommissionFee().getFeeType() == null) {
-            throw new MissingRequiredFieldException("Merchant commission fee type is null.");
-        }
-        // set active default to be active and created time
-        merchant.getCommissionFee().setActive(true);
-        merchant.getCommissionFee().setCreatedTime(date);
 
-        // check return fee
-        if (merchant.getReturnFee() == null) {
-            throw new MissingRequiredFieldException("Merchant return fee is null.");
+        for (Fee fee: merchant.getFees()) {
+            fee.setActive(true);
+            fee.setCreatedTime(date);
         }
-        if (merchant.getReturnFee().getValue() == null) {
-            throw new MissingRequiredFieldException("Merchant return fee value is null.");
+
+        //TODO commented out check return fee
+        if (merchant.getWithdrawalSetting() == null) {
+            throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
         }
-        if (merchant.getReturnFee().getFeeType() == null) {
-            throw new MissingRequiredFieldException("Merchant return fee type is null.");
-        }
-        // set active default to be active and created time
-        merchant.getReturnFee().setActive(true);
-        merchant.getReturnFee().setCreatedTime(date);
+        merchant.getWithdrawalSetting().setCreatedTime(date);
 
         // set createdTime
         merchant.setCreatedTime(date);
@@ -191,31 +180,16 @@ public class MerchantServiceImpl extends GenericQueryServiceImpl<Merchant, Long>
         // set active default to be active and created time for credential
         merchant.getCredential().setUpdatedTime(date);
 
-        // check commission fee
-        if (merchant.getCommissionFee() == null) {
-            throw new MissingRequiredFieldException("Merchant commission fee is null.");
-        }
-        if (merchant.getCommissionFee().getValue() == null) {
-            throw new MissingRequiredFieldException("Merchant commission fee value is null.");
-        }
-        if (merchant.getCommissionFee().getFeeType() == null) {
-            throw new MissingRequiredFieldException("Merchant commission fee type is null.");
-        }
-        // set active default to be active and created time
-        merchant.getCommissionFee().setUpdatedTime(date);
+        //TODO commented out check fee
+//        if (merchant.getFees() == null) {
+//            throw new MissingRequiredFieldException("Merchant transaction fees is null.");
+//        }
 
-        // check return fee
-        if (merchant.getReturnFee() == null) {
-            throw new MissingRequiredFieldException("Merchant return fee is null.");
-        }
-        if (merchant.getReturnFee().getValue() == null) {
-            throw new MissingRequiredFieldException("Merchant return fee value is null.");
-        }
-        if (merchant.getReturnFee().getFeeType() == null) {
-            throw new MissingRequiredFieldException("Merchant return fee type is null.");
-        }
-        // set active default to be active and created time
-        merchant.getReturnFee().setUpdatedTime(date);
+        //TODO commented out check return fee
+//        if (merchant.getWithdrawalSetting() == null) {
+//            throw new MissingRequiredFieldException("Merchant withdrawal setting is null.");
+//        }
+//        merchant.getWithdrawalSetting().setUpdatedTime(date);
 
         // set createdTime
         merchant.setUpdatedTime(date);

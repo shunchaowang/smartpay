@@ -3,12 +3,7 @@ package com.lambo.smartpay.ecs.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.entity.Claim;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Order;
-import com.lambo.smartpay.core.persistence.entity.Payment;
-import com.lambo.smartpay.core.persistence.entity.PaymentStatus;
-import com.lambo.smartpay.core.persistence.entity.Site;
+import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.service.ClaimService;
 import com.lambo.smartpay.core.service.PaymentService;
 import com.lambo.smartpay.core.service.PaymentStatusService;
@@ -32,11 +27,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -140,6 +131,9 @@ public class ClaimController {
 
         List<DataTablesPayment> dataTablesPayments = new ArrayList<>();
         for (Payment payment : payments) {
+            if(payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_APPROVED_CODE)
+                || payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_DECLINED_CODE))
+                continue;
             DataTablesPayment tablesPayment = new DataTablesPayment(payment);
             dataTablesPayments.add(tablesPayment);
         }
@@ -326,19 +320,26 @@ public class ClaimController {
     @RequestMapping(value = {"/agreeClaim"}, method = RequestMethod.POST,
             produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String agreeClaim(HttpServletRequest request) {
+    public String agreeClaim(@RequestParam(value = "id") Long id) {
+        if (id == null) {
+            return null;
+        }
         JsonResponse response = new JsonResponse();
         Locale locale = LocaleContextHolder.getLocale();
-        Long paymentId = Long.valueOf(request.getParameter("paymentId"));
         Payment payment = null;
         try {
-            payment = paymentService.get(paymentId);
+            payment = paymentService.get(id);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
-            throw new BadRequestException("400", "Cannot find payment " + paymentId);
+            throw new BadRequestException("400", "Cannot find payment " + id);
         }
 
         payment = paymentService.resolvePaymentClaim(payment);
+        Withdrawal withdrawal = payment.getWithdrawal();
+        if(withdrawal !=null && withdrawal.getId() > 0){
+            Double chargeback = withdrawal.getChargebackAfterWithdrawn();
+            withdrawal.setChargebackAfterWithdrawn(chargeback + payment.getAmount());
+        }
         String domain = messageSource.getMessage("refuse.label", null, locale);
         String successfulMessage = messageSource.getMessage("saved.message",
                 new String[]{domain, payment.getBankTransactionNumber()}, locale);

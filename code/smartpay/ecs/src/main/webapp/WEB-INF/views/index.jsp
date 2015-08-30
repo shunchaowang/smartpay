@@ -15,47 +15,38 @@
 
     <!-- summary -->
     <div class="row">
-                <div class="col-sm-4">
-                    <strong>${merchantCommand.siteCount}</strong>
-                    <spring:message code="site.label"/>
-                </div>
-                <div class="col-sm-4">
-                    <strong>${merchantCommand.orderCount}</strong>
-                    <spring:message code="transaction.label"/>
-                </div>
-                <div class="col-sm-4">
-                    <strong>${merchantCommand.orderAmount}</strong>
-                    <spring:message code="amount.label"/>
-                </div>
+        <div class="col-sm-4">
+            <spring:message code="today.label"/><spring:message code="orderCountSummary.label"/>
+        </div>
+        <div class="col-sm-4">
+            <strong>${merchantCommand.siteCount}</strong>
+            <spring:message code="site.label"/>
+        </div>
     </div>
     <!-- count by site -->
     <div class="row">
         <div class="col-sm-12">
             <div>
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="orderCountSummary.label"/>
-                ${merchantCommand.orderCount}
-                </h5>
-            </div>
-            <div>
-                <table class="table table-bordered" id="count-table">
+                <table class="table table-bordered" id="today-table">
                     <thead>
                     <tr>
                         <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="id.label"/>
+                            <spring:message code="site.label"/><spring:message code="id.label"/>
                         </th>
                         <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="identity.label"/>
+                            <spring:message code="site.label"/><spring:message code="identity.label"/>
                         </th>
                         <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="name.label"/>
+                            <spring:message code="site.label"/><spring:message code="name.label"/>
                         </th>
-                        <th>
-                            <spring:message code="count.label"/>
-                        </th>
+                        <th><spring:message code="order.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="order.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="amount.label"/></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -63,57 +54,39 @@
             </div>
         </div>
     </div>
-    <!-- amount by site -->
+    <br>
     <div class="row">
-        <div class="col-sm-12">
-            <div>
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="orderCountSummary.label"/>
-                ${merchantCommand.orderAmount}
-                </h5>
-            </div>
-            <div>
-                <table class="table table-bordered" id="amount-table">
-                    <thead>
-                    <tr>
-                        <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="id.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="identity.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="site.label"/>
-                            <spring:message code="name.label"/>
-                        </th>
-                        <th>
-                            <spring:message code="amount.label"/>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+        <div class="col-sm-4">
+            <spring:message code="yesterday.label"/><spring:message code="orderCountSummary.label"/>
+        </div>
+        <div class="col-sm-4">
+            <strong>${merchantCommand.siteCount}</strong>
+            <spring:message code="site.label"/>
         </div>
     </div>
-    <!-- amount by currency -->
     <div class="row">
         <div class="col-sm-12">
             <div>
-                <span class="icon"><i class="icon icon-th"></i> </span>
-                <h5><spring:message code="orderAmountSummary.label"/>
-                ${merchantCommand.orderAmount}
-                </h5>
-            </div>
-            <div>
-                <table class="table table-bordered" id="currency-table">
+                <table class="table table-bordered" id="yesterday-table">
                     <thead>
                     <tr>
-                        <th><spring:message code="currency.label"/></th>
-                        <th><spring:message code="count.label"/></th>
-                        <th><spring:message code="amount.label"/></th>
+                        <th>
+                            <spring:message code="site.label"/><spring:message code="id.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/><spring:message code="identity.label"/>
+                        </th>
+                        <th>
+                            <spring:message code="site.label"/><spring:message code="name.label"/>
+                        </th>
+                        <th><spring:message code="order.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="order.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="payment.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refuse.label"/><spring:message code="amount.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="count.label"/></th>
+                        <th><spring:message code="refund.label"/><spring:message code="amount.label"/></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -129,7 +102,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#count-table').DataTable({
+        $('#today-table').DataTable({
             'language': {
                 'url': "${dataTablesLanguage}"
             },
@@ -139,10 +112,37 @@
             'paging': false,
             'searching': false,
             'ordering': false,
-
-
             'ajax': {
-                'url': "${rootURL}listOrderCount",
+                'url': "${rootURL}listTodayOrder",
+                'type': "GET",
+                'dataType': 'json'
+            },
+            'columnDefs': [
+                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
+                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
+                {'name': 'name', 'targets': 2, 'data': 'siteName'},
+                {'name': 'orderCount', 'targets': 3, 'data': 'orderCount'},
+                {'name': 'orderAmount', 'targets': 4, 'visible': false, 'data': 'orderAmount'},
+                {'name': 'paidCount', 'targets': 5, 'data': 'paidCount'},
+                {'name': 'paidAmount', 'targets': 6, 'data': 'paidAmount'},
+                {'name': 'refuseCount', 'targets': 7, 'data': 'refuseCount'},
+                {'name': 'refuseAmount', 'targets': 8, 'data': 'refuseAmount'},
+                {'name': 'refundCount', 'targets': 9, 'data': 'refundCount'},
+                {'name': 'refundAmount', 'targets': 10, 'data': 'refundAmount'}
+            ]
+        });
+        $('#yesterday-table').DataTable({
+            'language': {
+                'url': "${dataTablesLanguage}"
+            },
+            'processing': false,
+            'serverSide': false,
+            'info': false,
+            'paging': false,
+            'searching': false,
+            'ordering': false,
+            'ajax': {
+                'url': "${rootURL}listYesterdayOrder",
                 'type': "GET",
                 'dataType': 'json'
             },
@@ -151,58 +151,14 @@
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
                 {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
                 {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'count', 'targets': 3, 'data': 'orderCount'}
-            ]
-        });
-
-        $('#amount-table').DataTable({
-            'language': {
-                'url': "${dataTablesLanguage}"
-            },
-            'processing': false,
-            'serverSide': false,
-            'info': false,
-            'paging': false,
-            'searching': false,
-            'ordering': false,
-
-
-            'ajax': {
-                'url': "${rootURL}listOrderAmount",
-                'type': "GET",
-                'dataType': 'json'
-            },
-
-            'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
-                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
-                {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'amount', 'targets': 3, 'data': 'orderAmount'}
-            ]
-        });
-
-        $('#currency-table').DataTable({
-            'language': {
-                'url': "${dataTablesLanguage}"
-            },
-            'processing': false,
-            'serverSide': false,
-            'info': false,
-            'paging': false,
-            'searching': false,
-            'ordering': false,
-
-
-            'ajax': {
-                'url': "${rootURL}listOrderCurrency",
-                'type': "GET",
-                'dataType': 'json'
-            },
-
-            'columnDefs': [
-                {'name': 'currency', 'targets': 0, 'data': 'currencyName'},
-                {'name': 'count', 'targets': 1, 'data': 'orderCount'},
-                {'name': 'amount', 'targets': 2, 'data': 'orderAmount'}
+                {'name': 'orderCount', 'targets': 3, 'data': 'orderCount'},
+                {'name': 'orderAmount', 'targets': 4, 'visible': false, 'data': 'orderAmount'},
+                {'name': 'paidCount', 'targets': 5, 'data': 'paidCount'},
+                {'name': 'paidAmount', 'targets': 6, 'data': 'paidAmount'},
+                {'name': 'refuseCount', 'targets': 7, 'data': 'refuseCount'},
+                {'name': 'refuseAmount', 'targets': 8, 'data': 'refuseAmount'},
+                {'name': 'refundCount', 'targets': 9, 'data': 'refundCount'},
+                {'name': 'refundAmount', 'targets': 10, 'data': 'refundAmount'}
             ]
         });
     });

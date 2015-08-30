@@ -49,28 +49,32 @@
                     </div>
                     <br>
 
+                    <!-- fees -->
+                    <!-- visa -->
                     <div class="row">
-                        <label class="col-sm-2 control-label" for="commissionFeeValue">
+                        <label class="col-sm-2 control-label" for="commissionVisaFeeValue">
                             <span>*</span>
+                            <spring:message code="commissionVisaFee.label"/>
                             <spring:message code="commission.fee.label"/>
                         </label>
 
                         <div class="col-sm-3">
-                            <input size="32" name="commissionFeeValue" id="commissionFeeValue"
+                            <input size="32" name="commissionVisaFeeValue"
+                                   id="commissionVisaFeeValue"
                                    class="form-control"
-                                   required="" value="${merchantCommand.commissionFeeValue}"/>
+                                   required="" value="${merchantCommand.commissionVisaFeeValue}"/>
                         </div>
-                        <label class="col-sm-2 control-label" for="commissionFeeTypeId">
+                        <label class="col-sm-2 control-label" for="commissionVisaFeeTypeId">
                             <span>*</span>
                             <spring:message code="type.label"/>
                         </label>
 
                         <div class="col-sm-3">
-                            <select name="commissionFeeTypeId" id="commissionFeeTypeId"
+                            <select name="commissionVisaFeeTypeId" id="commissionVisaFeeTypeId"
                                     class="form-control" required="">
                                 <c:forEach items="${feeTypes}" var="type">
                                     <c:choose>
-                                        <c:when test="${type.id == merchantCommand.commissionFeeTypeId}">
+                                        <c:when test="${type.id == merchantCommand.commissionVisaFeeTypeId}">
                                             <option value="${type.id}" selected>
                                                     ${type.name}
                                             </option>
@@ -87,28 +91,31 @@
                     </div>
                     <br>
 
+                    <!-- master -->
                     <div class="row">
-                        <label class="col-sm-2 control-label" for="returnFeeValue">
+                        <label class="col-sm-2 control-label" for="commissionMasterFeeValue">
                             <span>*</span>
-                            <spring:message code="return.fee.label"/>
+                            <spring:message code="commissionMasterFee.label"/>
+                            <spring:message code="commission.fee.label"/>
                         </label>
 
                         <div class="col-sm-3">
-                            <input size="32" name="returnFeeValue" id="returnFeeValue"
+                            <input size="32" name="commissionMasterFeeValue"
+                                   id="commissionMasterFeeValue"
                                    class="form-control"
-                                   required="" value="${merchantCommand.returnFeeValue}"/>
+                                   required="" value="${merchantCommand.commissionMasterFeeValue}"/>
                         </div>
-                        <label class="col-sm-2 control-label" for="returnFeeTypeId">
+                        <label class="col-sm-2 control-label" for="commissionMasterFeeTypeId">
                             <span>*</span>
                             <spring:message code="type.label"/>
                         </label>
 
                         <div class="col-sm-3">
-                            <select name="returnFeeTypeId" id="returnFeeTypeId"
+                            <select name="commissionVisaFeeTypeId" id="commissionMasterFeeTypeId"
                                     class="form-control" required="">
                                 <c:forEach items="${feeTypes}" var="type">
                                     <c:choose>
-                                        <c:when test="${type.id == merchantCommand.returnFeeTypeId}">
+                                        <c:when test="${type.id == merchantCommand.commissionMasterFeeTypeId}">
                                             <option value="${type.id}" selected>
                                                     ${type.name}
                                             </option>
@@ -121,6 +128,115 @@
                                     </c:choose>
                                 </c:forEach>
                             </select>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- jcb -->
+                    <div class="row">
+                        <label class="col-sm-2 control-label" for="commissionJcbFeeValue">
+                            <span>*</span>
+                            <spring:message code="commissionJcbFee.label"/>
+                            <spring:message code="commission.fee.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <input size="32" name="commissionJcbFeeValue" id="commissionJcbFeeValue"
+                                   class="form-control"
+                                   required="" value="${merchantCommand.commissionJcbFeeValue}"/>
+                        </div>
+                        <label class="col-sm-2 control-label" for="commissionJcbFeeTypeId">
+                            <span>*</span>
+                            <spring:message code="type.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <select name="commissionJcbFeeTypeId" id="commissionJcbFeeTypeId"
+                                    class="form-control" required="">
+                                <c:forEach items="${feeTypes}" var="type">
+                                    <c:choose>
+                                        <c:when test="${type.id == merchantCommand.commissionJcbFeeTypeId}">
+                                            <option value="${type.id}" selected>
+                                                    ${type.name}
+                                            </option>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <option value="${type.id}">
+                                                    ${type.name}
+                                            </option>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <!-- withdrawal security fee -->
+                    <div class="row">
+                        <label class="col-sm-2 control-label" for="withdrawFeeValue">
+                            <span>*</span>
+                            <spring:message code="withdrawal.label"/>
+                            <spring:message code="withdrawalSecurityFee.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <input size="32" name="withdrawFeeValue" id="withdrawFeeValue"
+                                   class="form-control"
+                                   required="" value="${merchantCommand.withdrawFeeValue}"/>
+                        </div>
+                        <label class="col-sm-2 control-label" for="withdrawFeeTypeId">
+                            <span>*</span>
+                            <spring:message code="type.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <select name="withdrawFeeTypeId" id="withdrawFeeTypeId"
+                                    class="form-control" required="">
+                                <c:forEach items="${feeTypes}" var="type">
+                                    <c:choose>
+                                        <c:when test="${type.id == merchantCommand.withdrawFeeTypeId}">
+                                            <option value="${type.id}" selected>
+                                                    ${type.name}
+                                            </option>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <option value="${type.id}">
+                                                    ${type.name}
+                                            </option>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+
+                    <!-- withdrawal settings -->
+                    <div class="row">
+                        <label class="col-sm-2 control-label" for="withdrawSettingMinDays">
+                            <span>*</span>
+                            <spring:message code="withdrawal.label"/>
+                            <spring:message code="withdrawalMinDays.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <input size="32" name="withdrawSettingMinDays"
+                                        id="withdrawSettingMinDays"
+                                        class="form-control"
+                                        required=""
+                                        value="${merchantCommand.withdrawSettingMinDays}"/>
+                        </div>
+                        <label class="col-sm-2 control-label" for="withdrawSettingMaxDays">
+                            <span>*</span>
+                            <spring:message code="withdrawal.label"/>
+                            <spring:message code="withdrawalMaxDays.label"/>
+                        </label>
+
+                        <div class="col-sm-3">
+                            <input size="32" name="withdrawSettingMaxDays"
+                                        id="withdrawSettingMaxDays"
+                                        class="form-control"
+                                        required=""
+                                        value="${merchantCommand.withdrawSettingMaxDays}"/>
                         </div>
                     </div>
                     <br>
@@ -160,21 +276,47 @@
                 encryptionKeyTypeId: {
                     required: true
                 },
-                commissionFeeValue: {
+                commissionVisaFeeValue: {
                     required: true,
                     minlength: 1,
                     maxlength: 8
                 },
-                commissionFeeTypeId: {
+                commissionVisaFeeTypeId: {
                     required: true
                 },
-                returnFeeValue: {
+                commissionMasterFeeValue: {
                     required: true,
                     minlength: 1,
                     maxlength: 8
                 },
-                returnFeeTypeId: {
+                commissionMasterFeeTypeId: {
                     required: true
+                },
+                commissionJcbFeeValue: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 8
+                },
+                commissionJcbFeeTypeId: {
+                    required: true
+                },
+                withdrawFeeValue: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 8
+                },
+                withdrawFeeTypeId: {
+                    required: true
+                },
+                withdrawSettingMinDays: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 8
+                },
+                withdrawSettingMaxDays: {
+                    required: true,
+                    minlength: 1,
+                    maxlength: 8
                 }
             }
         });

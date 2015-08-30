@@ -145,43 +145,90 @@
             <div class="col-sm-8">
                 <table class="table table-bordered">
                     <tr>
-                        <td colspan="2"><spring:message
-                                code="commission.fee.label"/></td>
+                        <td colspan="3"><spring:message code="commission.fee.label"/></td>
                     </tr>
-                    <c:if test="${not empty merchantCommand.commissionFeeTypeName}">
-                        <tr>
-                            <td><spring:message code="type.label"/></td>
-                            <td>${merchantCommand.commissionFeeTypeName}</td>
-                        </tr>
-                    </c:if>
-                    <c:if test="${not empty merchantCommand.commissionFeeValue}">
-                        <tr>
-                            <td><spring:message code="value.label"/></td>
-                            <td>${merchantCommand.commissionFeeValue}</td>
-                        </tr>
-                    </c:if>
+                    <tr>
+                        <td><spring:message code="category.label"/></td>
+                        <td><spring:message code="type.label"/></td>
+                        <td><spring:message code="value.label"/></td>
+                    </tr>
+                    <!-- visa -->
+                    <tr>
+                        <td><spring:message code="commissionVisaFee.label"/></td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.commissionVisaFeeTypeName}">
+                                ${merchantCommand.commissionVisaFeeTypeName}
+                            </c:if>
+                        </td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.commissionVisaFeeValue}">
+                                ${merchantCommand.commissionVisaFeeValue}
+                            </c:if>
+                        </td>
+                    </tr>
+                    <!-- master -->
+                    <tr>
+                        <td><spring:message code="commissionMasterFee.label"/></td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.commissionMasterFeeTypeName}">
+                                ${merchantCommand.commissionMasterFeeTypeName}
+                            </c:if>
+                        </td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.commissionMasterFeeValue}">
+                                ${merchantCommand.commissionMasterFeeValue}
+                            </c:if>
+                        </td>
+                    </tr>
+                    <!-- jcb -->
+                    <tr>
+                        <td><spring:message code="commissionJcbFee.label"/></td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.commissionJcbFeeTypeName}">
+                                ${merchantCommand.commissionJcbFeeTypeName}
+                            </c:if>
+                        </td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.commissionJcbFeeValue}">
+                                ${merchantCommand.commissionJcbFeeValue}
+                            </c:if>
+                        </td>
+                    </tr>
+                    <!-- withdrawal security -->
+                    <tr>
+                        <td><spring:message code="withdrawalSecurityFee.label"/></td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.withdrawFeeTypeName}">
+                                ${merchantCommand.withdrawFeeTypeName}
+                            </c:if>
+                        </td>
+                        <td>
+                            <c:if test="${not empty merchantCommand.withdrawFeeValue}">
+                                ${merchantCommand.withdrawFeeValue}
+                            </c:if>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>
 
-        <!-- Return Fee -->
+        <!-- Withdrawal Setting -->
         <div class="row">
             <div class="col-sm-8">
                 <table class="table table-bordered">
                     <tr>
-                        <td colspan="2"><spring:message
-                                code="return.fee.label"/></td>
+                        <td colspan="2"><spring:message code="withdrawal.label"/></td>
                     </tr>
-                    <c:if test="${not empty merchantCommand.returnFeeTypeName}">
+                    <c:if test="${not empty merchantCommand.withdrawSettingMinDays}">
                         <tr>
-                            <td><spring:message code="type.label"/></td>
-                            <td>${merchantCommand.returnFeeTypeName}</td>
+                            <td><spring:message code="withdrawalMinDays.label"/></td>
+                            <td>${merchantCommand.withdrawSettingMinDays}</td>
                         </tr>
                     </c:if>
-                    <c:if test="${not empty merchantCommand.returnFeeValue}">
+                    <c:if test="${not empty merchantCommand.withdrawSettingMaxDays}">
                         <tr>
-                            <td><spring:message code="value.label"/></td>
-                            <td>${merchantCommand.returnFeeValue}</td>
+                            <td><spring:message code="withdrawalMaxDays.label"/></td>
+                            <td>${merchantCommand.withdrawSettingMaxDays}</td>
                         </tr>
                     </c:if>
                 </table>

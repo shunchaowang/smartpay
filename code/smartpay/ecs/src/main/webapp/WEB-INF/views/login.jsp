@@ -40,15 +40,26 @@
             <form id="login" class="form-horizontal" action="${rootURL}login" method="post">
                 <div class="form-group">
 
+                    <label class="col-sm-3 control-label">
+                        <spring:message code="merchant.label"/>
+                    </label>
+
+                    <div class="col-sm-6">
+                        <input type="text" name="merchant" class="form-control"
+                               placeholder="Merchant Number">
+                    </div>
+                </div>
+                <br>
+
+                <div class="form-group">
 
                     <label class="col-sm-3 control-label">
-                        <spring:message
-                                code="login.username.label"/>
+                        <spring:message code="login.username.label"/>
                     </label>
 
                     <div class="col-sm-6">
                         <input type="text" name="username" class="form-control"
-                               placeholder="Merchant Number/Username">
+                               placeholder="Username">
                     </div>
                 </div>
                 <br>
@@ -105,38 +116,34 @@
 
 <script type="application/javascript">
     $(document).ready(function () {
-        /*
-         $('#form-section').on('submit', function (e) {
-         e.preventDefault();
-         var merchant = $('input[name="merchant"]');
-         var username = $('input[name="username"]');
-         var password = $('input[name="password"]');
-         if(merchant.val().length == 0 || username.val().length == 0 ||
-         password.val().length == 0) {
-         return;
-         }
-         var name = username.val();
-         username.val(merchant.val() + "/" + name);
-         $("#form-section").submit();
 
-         var formData = {
-         'username' : merchant.val() + '/' + username.val(),
-         'password' : password.val()
-         };
-         $.ajax({
-         type: "POST",
-         url: $('#form-section').action,
-         data: formData,
-         error: function (data) {
-         alert("There was an error");
-         },
-         success: function (data) {
+        $('#login').validate({
+            rules: {
+                merchant: {required: true, minlength: 3, maxlength: 32},
+                username: {required: true, minlength: 1, maxlength: 32},
+                password: {required: true, minlength: 1, maxlength: 32},
+            },
+            messages: {
+                merchant: "Enter your merchant",
+                username: "Enter your username",
+                password: "Enter your password"
+            }
+        });
 
-         }
-         });
+        $('button[type="submit"]').on('click', function (e) {
+            e.preventDefault();
+            var merchant = $('input[name="merchant"]');
+            var username = $('input[name="username"]');
+            var password = $('input[name="password"]');
+            if (merchant.val().length == 0 || username.val().length == 0 ||
+                    password.val().length == 0) {
+                return;
+            }
+            var name = username.val();
+            username.val(merchant.val() + "/" + name);
+            $("#login").submit();
+        });
 
-         });
-         */
     });
 </script>
 

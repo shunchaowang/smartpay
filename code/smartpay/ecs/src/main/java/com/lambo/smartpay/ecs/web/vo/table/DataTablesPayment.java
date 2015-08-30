@@ -21,6 +21,7 @@ public class DataTablesPayment {
     private String bankReturnCode;
     private Long paymentStatusId;
     private String paymentStatusName;
+    private String paymentStatusCode;
     private Long paymentTypeId;
     private String paymentTypeName;
     //order
@@ -35,6 +36,9 @@ public class DataTablesPayment {
     private String merchantNumber;
     private Long siteId;
     private String siteName;
+
+    private Float refundFee;
+    private Float refundAmt;
 
     public DataTablesPayment(Payment payment) {
         //
@@ -54,6 +58,7 @@ public class DataTablesPayment {
         bankReturnCode = payment.getBankReturnCode();
         paymentStatusId = payment.getPaymentStatus().getId();
         paymentStatusName = payment.getPaymentStatus().getName();
+        paymentStatusCode = payment.getPaymentStatus().getCode();
         paymentTypeId = payment.getPaymentType().getId();
         paymentTypeName = payment.getPaymentType().getName();
 
@@ -153,6 +158,14 @@ public class DataTablesPayment {
         this.paymentTypeName = paymentTypeName;
     }
 
+    public String getPaymentStatusCode() {
+        return paymentStatusCode;
+    }
+
+    public void setPaymentStatusCode(String paymentStatusCode) {
+        this.paymentStatusCode = paymentStatusCode;
+    }
+
     //
     public Long getOrderId() {
         return orderId;
@@ -236,5 +249,21 @@ public class DataTablesPayment {
 
     public void setSuccessTime(String successTime) {
         this.successTime = successTime;
+    }
+
+    public Float getRefundAmt() {
+        return refundAmt;
+    }
+
+    public void setRefundAmt(Float refundAmt) {
+        this.refundAmt = refundAmt;
+    }
+
+    public Float getRefundFee() {
+        return refundFee;
+    }
+
+    public void setRefundFee(Float refundFee) {
+        this.refundFee = refundFee;
     }
 }
