@@ -1,14 +1,15 @@
 package com.lambo.smartpay.ecs.web.controller;
 
+import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.persistence.entity.*;
-import com.lambo.smartpay.core.service.CurrencyService;
-import com.lambo.smartpay.core.service.OrderService;
-import com.lambo.smartpay.core.service.SiteService;
-import com.lambo.smartpay.core.service.UserService;
+import com.lambo.smartpay.core.service.*;
+import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.ecs.config.SecurityUser;
 import com.lambo.smartpay.ecs.util.JsonUtil;
 import com.lambo.smartpay.ecs.web.exception.BadRequestException;
+import com.lambo.smartpay.ecs.web.exception.IntervalServerException;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesOrderCount;
+import com.lambo.smartpay.ecs.web.vo.table.DataTablesPaymentStatistic;
 import com.lambo.smartpay.ecs.web.vo.table.DataTablesResultSet;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,6 +42,15 @@ public class PaymentStatisticsController {
     private SiteService siteService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RefundService refundService;
+    @Autowired
+    private RefundStatusService refundStatusService;
+    @Autowired
+    private PaymentService paymentService;
+    @Autowired
+    private PaymentStatusService paymentStatusService;
+
     @ModelAttribute("controller")
     public String controller() {
         return "report";
@@ -110,85 +120,95 @@ public class PaymentStatisticsController {
         List<Site> sites = siteService.findByCriteria(site);
         Order orderCriteria = new Order();
         orderCriteria.setSite(site);
-        List<Order> orders = orderService.findByCriteria(orderCriteria, beginning, ending);
-        DataTablesResultSet<DataTablesOrderCount> result = createOrderList(orders, sites);
+        Payment paymentCriteria = new Payment();
+        paymentCriteria.setOrder(orderCriteria);
+
+        List<Payment> payments = paymentService.findByCriteria(paymentCriteria, "", null, null, order,
+                ResourceProperties.JpaOrderDir.valueOf(orderDir), beginning, ending);
+//        Refund refundCriteria = new Refund();
+//        refundCriteria.setOrder(orderCriteria);
+//        try {
+//            RefundStatus refundStatus = refundStatusService.findByCode(ResourceProperties.REFUND_STATUS_APPROVED_CODE);
+//            refundCriteria.setRefundStatus(refundStatus);
+//        } catch (NoSuchEntityException e) {
+//            e.printStackTrace();
+//        }
+//        List<Refund> refunds = refundService.findByCriteria(refundCriteria, beginning, ending);
+        DataTablesResultSet<DataTablesPaymentStatistic> result = createStatisticList(payments);
         return JsonUtil.toJson(result);
     }
 
-    private DataTablesResultSet<DataTablesOrderCount> createOrderList(List<Order> orders, List<Site> sites){
-        List<DataTablesOrderCount> counts = new ArrayList<>();
+    private DataTablesResultSet<DataTablesPaymentStatistic> createStatisticList(List<Payment> payments){
+        List<DataTablesPaymentStatistic> PaymentStatistics = new ArrayList<>();
         Locale locale = LocaleContextHolder.getLocale();
         NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
         DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
         decimalFormat.applyPattern("###.###");
-        for (Site s : sites) {
-            DataTablesOrderCount count = new DataTablesOrderCount();
-            count.setSiteId(s.getId());
-            count.setSiteIdentity(s.getIdentity());
-            count.setSiteName(s.getName());
-            Long orderCount = Long.parseLong("0");
-            Long paidCount = Long.parseLong("0");
-            Double paidAmount = Double.parseDouble("0.00");
-            Long refundCount = Long.parseLong("0");
-            Double refundAmount = Double.parseDouble("0.00");
-            Long refuseCount = Long.parseLong("0");
-            Double refuseAmount = Double.parseDouble("0.00");
-            for (Order order : orders) {
-                if(order.getSite().getId().equals(s.getId())){
-                    orderCount ++;
-                    if(order.getOrderStatus().getCode().equals("401")
-                            || order.getOrderStatus().getCode().equals("501")
-                            || order.getOrderStatus().getCode().equals("502")
-                            || order.getOrderStatus().getCode().equals("503")
-                            || order.getOrderStatus().getCode().equals("403")
-                            || order.getOrderStatus().getCode().equals("504")) {
-                        paidCount ++;
-                        Iterator<Payment> paymentIterator = order.getPayments().iterator();
-                        Double paymentAmount = Double.parseDouble("0.00");
-                        boolean refundFlag = true;
-                        while(paymentIterator.hasNext()){
-                            Payment payment = paymentIterator.next();
-                            if(!payment.getPaymentStatus().getCode().equals("501")) {
-                                paidAmount += payment.getAmount();
-                                paymentAmount += payment.getAmount() + payment.getFee();
-                            }
-                            if(payment.getPaymentStatus().getCode().equals("502")){
-                                refuseCount ++;
-                                refuseAmount += payment.getAmount();
-                                refundFlag = false;
-                            }
-                        }
-                        if(refundFlag){
-                            if(order.getOrderStatus().getCode().equals("504")){
-                                Iterator<Refund> refundIterator = order.getRefunds().iterator();
-                                Double refundAmt = Double.parseDouble("0.00");
-                                while (refundIterator.hasNext()){
-                                    Refund refund = refundIterator.next();
-                                    if(refund.getRefundStatus().getCode().equals("502")){
-                                        refundCount ++;
-                                        refundAmt += refund.getAmount();
-                                    }
-                                }
-                                refundAmt = refundAmt * paymentAmount / order.getAmount();
-                                refundAmount += refundAmt;
-                            }
+        DataTablesPaymentStatistic ps = new DataTablesPaymentStatistic();
+        Long paidCount = Long.parseLong("0");
+        Double paidAmount = Double.parseDouble("0.00");
+        Long refundCount = Long.parseLong("0");
+        Double refundAmount = Double.parseDouble("0.00");
+        Long refuseCount = Long.parseLong("0");
+        Double refuseAmount = Double.parseDouble("0.00");
+        for(Payment payment : payments){
+            System.out.println("payment.getCreatedTime===" + payment.getCreatedTime());
+            if(!payment.getCreatedTime().toString().substring(0, 7).equals(ps.getStatisticsDate())){
+                if(ps.getStatisticsDate() !=null && ps.getStatisticsDate() !=""){
+                    ps.setPaidCount(paidCount);
+                    ps.setPaidAmount(Double.valueOf(decimalFormat.format(paidAmount)));
+                    ps.setRefundCount(refundCount);
+                    ps.setRefundAmount(Double.valueOf(decimalFormat.format(refundAmount)));
+                    ps.setRefuseCount(refuseCount);
+                    ps.setRefuseAmount(Double.valueOf(decimalFormat.format(refuseAmount)));
+                    PaymentStatistics.add(ps);
+                    System.out.println("ps.getStatisticsDate=1==" + ps.getStatisticsDate());
+                }
+                paidCount = Long.parseLong("0");
+                paidAmount = Double.parseDouble("0.00");
+                refundCount = Long.parseLong("0");
+                refundAmount = Double.parseDouble("0.00");
+                refuseCount = Long.parseLong("0");
+                refuseAmount = Double.parseDouble("0.00");
+                ps = new DataTablesPaymentStatistic();
+                ps.setStatisticsDate(payment.getCreatedTime().toString().substring(0, 7));
+            }
+            String paymentStatusCode = payment.getPaymentStatus().getCode();
+            if(!paymentStatusCode.equals(ResourceProperties.PAYMENT_STATUS_DECLINED_CODE)
+                    &&!paymentStatusCode.equals(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE)){//PAID
+                paidCount ++;
+                paidAmount +=payment.getAmount();
+                Order order = payment.getOrder();
+                if(order.getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)){
+                    Iterator<Refund> refundIterator = order.getRefunds().iterator();
+                    while (refundIterator.hasNext()){
+                        Refund refund = refundIterator.next();
+                        if(refund.getRefundStatus().getCode().equals(ResourceProperties.REFUND_STATUS_APPROVED_CODE)){
+                            refundCount ++;
+                            refundAmount += refund.getAmount();
                         }
                     }
                 }
             }
-            count.setOrderCount(orderCount);
-            count.setPaidCount(paidCount);
-            count.setPaidAmount(Double.valueOf(decimalFormat.format(paidAmount)));
-            count.setRefuseCount(refuseCount);
-            count.setRefuseAmount(Double.valueOf(decimalFormat.format(refuseAmount)));
-            count.setRefundCount(refundCount);
-            count.setRefundAmount(Double.valueOf(decimalFormat.format(refundAmount)));
-            counts.add(count);
+            if(paymentStatusCode.equals(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE)){
+                refuseCount ++;
+                refuseAmount +=payment.getAmount();
+            }
         }
-        DataTablesResultSet<DataTablesOrderCount> dataTablesOrderCountResult= new DataTablesResultSet<>();
-        dataTablesOrderCountResult.setData(counts);
-        dataTablesOrderCountResult.setRecordsTotal(counts.size());
-        dataTablesOrderCountResult.setRecordsFiltered(counts.size());
-        return dataTablesOrderCountResult;
+        if(ps.getStatisticsDate() !=null && ps.getStatisticsDate() !=""){
+            ps.setPaidCount(paidCount);
+            ps.setPaidAmount(Double.valueOf(decimalFormat.format(paidAmount)));
+            ps.setRefundCount(refundCount);
+            ps.setRefundAmount(Double.valueOf(decimalFormat.format(refundAmount)));
+            ps.setRefuseCount(refuseCount);
+            ps.setRefuseAmount(Double.valueOf(decimalFormat.format(refuseAmount)));
+            PaymentStatistics.add(ps);
+            System.out.println("ps.getStatisticsDate=2==" + ps.getStatisticsDate());
+        }
+        DataTablesResultSet<DataTablesPaymentStatistic> dataTablesPaymentStatisticResult= new DataTablesResultSet<>();
+        dataTablesPaymentStatisticResult.setData(PaymentStatistics);
+        dataTablesPaymentStatisticResult.setRecordsTotal(PaymentStatistics.size());
+        dataTablesPaymentStatisticResult.setRecordsFiltered(PaymentStatistics.size());
+        return dataTablesPaymentStatisticResult;
     }
 }

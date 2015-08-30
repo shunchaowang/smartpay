@@ -89,17 +89,7 @@
             <table class="table table-bordered" id="payment-table">
                 <thead>
                 <tr>
-                    <th>
-                        <spring:message code="site.label"/><spring:message code="id.label"/>
-                    </th>
-                    <th>
-                        <spring:message code="site.label"/><spring:message code="identity.label"/>
-                    </th>
-                    <th>
-                        <spring:message code="site.label"/><spring:message code="name.label"/>
-                    </th>
-                    <th><spring:message code="order.label"/><spring:message code="count.label"/></th>
-                    <th><spring:message code="order.label"/><spring:message code="amount.label"/></th>
+                    <th><spring:message code="month.label"/></th>
                     <th><spring:message code="payment.label"/><spring:message code="count.label"/></th>
                     <th><spring:message code="payment.label"/><spring:message code="amount.label"/></th>
                     <th><spring:message code="refuse.label"/><spring:message code="count.label"/></th>
@@ -130,17 +120,13 @@
             'ordering': false,
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
-                {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
-                {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
-                {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                {'name': 'orderCount', 'targets': 3, 'data': 'orderCount'},
-                {'name': 'orderAmount', 'targets': 4, 'visible': false, 'data': 'orderAmount'},
-                {'name': 'paidCount', 'targets': 5, 'data': 'paidCount'},
-                {'name': 'paidAmount', 'targets': 6, 'data': 'paidAmount'},
-                {'name': 'refuseCount', 'targets': 7, 'data': 'refuseCount'},
-                {'name': 'refuseAmount', 'targets': 8, 'data': 'refuseAmount'},
-                {'name': 'refundCount', 'targets': 9, 'data': 'refundCount'},
-                {'name': 'refundAmount', 'targets': 10, 'data': 'refundAmount'}
+                {'name': 'statisticsDate', 'targets': 0, 'data': 'statisticsDate'},
+                {'name': 'paidCount', 'targets': 1, 'data': 'paidCount'},
+                {'name': 'paidAmount', 'targets': 2, 'data': 'paidAmount'},
+                {'name': 'refuseCount', 'targets': 3, 'data': 'refuseCount'},
+                {'name': 'refuseAmount', 'targets': 4, 'data': 'refuseAmount'},
+                {'name': 'refundCount', 'targets': 5, 'data': 'refundCount'},
+                {'name': 'refundAmount', 'targets': 6, 'data': 'refundAmount'}
             ]
         });
         $('#search-button').click(function (e) {
@@ -160,11 +146,11 @@
                     "aButtons": [
                         {
                             "sExtends": "copy",
-                            "mColumns": [1, 2, 3, 5, 6, 7, 8, 9, 10]
+                            "mColumns": [0, 1, 2, 3, 5, 6]
                         },
                         {
                             "sExtends": "xls",
-                            "mColumns": [1, 2, 3, 5, 6, 7, 8, 9, 10]
+                            "mColumns": [0, 1, 2, 3, 5, 6]
                         }
                     ]
                 },
@@ -180,17 +166,13 @@
                 },
                 // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
                 'columnDefs': [
-                    {'name': 'id', 'targets': 0, 'visible': false, 'data': 'siteId'},
-                    {'name': 'identity', 'targets': 1, 'data': 'siteIdentity'},
-                    {'name': 'name', 'targets': 2, 'data': 'siteName'},
-                    {'name': 'orderCount', 'targets': 3, 'data': 'orderCount'},
-                    {'name': 'orderAmount', 'targets': 4, 'visible': false, 'data': 'orderAmount'},
-                    {'name': 'paidCount', 'targets': 5, 'data': 'paidCount'},
-                    {'name': 'paidAmount', 'targets': 6, 'data': 'paidAmount'},
-                    {'name': 'refuseCount', 'targets': 7, 'data': 'refuseCount'},
-                    {'name': 'refuseAmount', 'targets': 8, 'data': 'refuseAmount'},
-                    {'name': 'refundCount', 'targets': 9, 'data': 'refundCount'},
-                    {'name': 'refundAmount', 'targets': 10, 'data': 'refundAmount'}
+                    {'name': 'statisticsDate', 'targets': 0, 'data': 'statisticsDate'},
+                    {'name': 'paidCount', 'targets': 1, 'data': 'paidCount'},
+                    {'name': 'paidAmount', 'targets': 2, 'data': 'paidAmount'},
+                    {'name': 'refuseCount', 'targets': 3, 'data': 'refuseCount'},
+                    {'name': 'refuseAmount', 'targets': 4, 'data': 'refuseAmount'},
+                    {'name': 'refundCount', 'targets': 5, 'data': 'refundCount'},
+                    {'name': 'refundAmount', 'targets': 6, 'data': 'refundAmount'}
                 ]
             });
         });

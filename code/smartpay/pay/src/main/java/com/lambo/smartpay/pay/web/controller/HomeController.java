@@ -81,7 +81,7 @@ public class HomeController {
         OrderCommand orderCommand = new OrderCommand();
         orderCommand.setMerNo("M0000000");
         orderCommand.setSiteNo("S0000000");
-        orderCommand.setOrderNo("O20150829010");
+        orderCommand.setOrderNo("O20150829011");
         orderCommand.setAmount("12.34");
         orderCommand.setReturnUrl("www.google.com");
         orderCommand.setReferer("www.google.com");
@@ -164,13 +164,6 @@ public class HomeController {
         // initial return parameter
         String[] strReturn = stringFromBase.split("&");
         payment.setBankTransactionNumber("0");
-        Currency currency = null;
-        try {
-            currency = currencyService.findByName(ResourceProperties.CURRENCY_RMB_NAME);
-            payment.setCurrency(currency);
-        } catch (NoSuchEntityException e) {
-            e.printStackTrace();
-        }
         for(int i=0; i< strReturn.length; i++){
             String[] tmpReturn = strReturn[i].split("=");
             if("Parameter3".equals(tmpReturn[0]))payment.setBankTransactionNumber(tmpReturn[1]);
