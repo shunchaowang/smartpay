@@ -45,13 +45,18 @@
                     <th><spring:message code="createdTime.label"/></th>
                     <th><spring:message code="withdrawal.label"/><spring:message code="dateRange.label"/></th>
                     <th><spring:message code="wdrlBalance.label"/></th>
-                    <th><spring:message code="wdrlAmount.label"/></th>
-                    <th><spring:message code="securityRate.label"/></th>
                     <th><spring:message code="securityDeposit.label"/></th>
+                    <th><spring:message code="wdrlAmount.label"/></th>
+
+                    <th><spring:message code="wdrlAmountApproved.label"/></th>
+                    <th><spring:message code="refundAfterWdrl.label"/></th>
+                    <th><spring:message code="chargebackAfterWdrl.label"/></th>
+                    <th><spring:message code="wdrlAmountAdjusted.label"/></th>
+
                     <th><spring:message code="securityWithdrawn.label"/></th>
                     <th><spring:message code="status.label"/></th>
-                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="remark.label"/></th>
+                    <th><spring:message code="status.label"/></th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
                 </thead>
@@ -80,11 +85,11 @@
                 "aButtons": [
                     {
                         "sExtends": "copy",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
+                        "mColumns": [2, 3, 4, 5, 7, 8, 9, 10, 11, 12]
                     },
                     {
                         "sExtends": "xls",
-                        "mColumns": [1, 2, 3, 4, 5, 6, 9, 10]
+                        "mColumns": [2, 3, 4, 5, 7, 8,  9, 10, 11, 12]
                     }
                 ]
             },
@@ -98,7 +103,7 @@
             // MUST HAVE DATA ON COLUMNDEFS IF SERVER RESPONSE IS JSON ARRAY!!!
             'columnDefs': [
                 {'name': 'id', 'targets': 0, 'visible': false, 'data': 'id'},
-                {'name': 'createdTime', 'targets': 1, 'data': 'createdTime'},
+                {'name': 'createdTime', 'targets': 1, 'visible': false, 'data': 'createdTime'},
                 {
                     'name': 'dateRange', 'targets': 2, 'data': 'dateRange',
                     'render': function (data, type, row) {
@@ -107,21 +112,30 @@
                     }
                 },
                 {'name': 'balance', 'targets': 3, 'data': 'balance'},
-                {'name': 'amount', 'targets': 4, 'data': 'amount'},
-                {'name': 'securityRate', 'targets': 5, 'data': 'securityRate'},
-                {'name': 'securityDeposit', 'targets': 6, 'data': 'securityDeposit'},
-                {'name': 'securityWithdrawn', 'targets': 7, 'visible': false, 'data': 'securityWithdrawn' },
-                {'name': 'withdrawalStatusCode', 'targets': 8, 'visible': false, 'data': 'withdrawalStatusCode' },
+                {'name': 'securityDeposit', 'targets': 4, 'data': 'securityDeposit'},
+                {'name': 'amount', 'targets': 5, 'data': 'amount'},
+
+                {'name': 'wdrlAmountApproved', 'targets': 6, 'visible': false, 'data': 'wdrlAmountApproved'},
+                {'name': 'refundAfterWdrl', 'targets': 7, 'data': 'refundAfterWdrl'},
+                {'name': 'chargebackAfterWdrl', 'targets': 8, 'data': 'chargebackAfterWdrl'},
+                {'name': 'wdrlAmountAdjusted', 'targets': 9, 'data': 'wdrlAmountAdjusted'},
+
+                {'name': 'securityWithdrawn', 'targets': 10, 'visible': false, 'data': 'securityWithdrawn' },
                 {
-                    'name': 'withdrawalStatusName', 'targets': 9, 'searchable': false,
+                    'name': 'withdrawalStatusName', 'targets': 11, 'searchable': false,
                     'orderable': false, 'data': 'withdrawalStatusName'
                 },
-                {'name': 'remark', 'targets': 10, 'searchable': false, 'data': 'remark'},
+                {'name': 'remark', 'targets': 12, 'searchable': false, 'data': 'remark'},
+                {'name': 'withdrawalStatusCode', 'targets': 13, 'visible': false, 'data': 'withdrawalStatusCode' },
                 {
-                    'name': 'operation', 'targets': 11, 'orderable': false, 'searchable': false,
+                    'name': 'operation', 'targets': 14, 'orderable': false, 'searchable': false,
                     'render': function (data, type, row) {
                         var operations = '';
                         if (row['withdrawalStatusCode'] =='301' ) {
+                            operations = '<button type="button" name="edit-button" '
+                            + 'class="btn btn-default" value="' + row['id'] + '">'
+                            + '<spring:message code="action.edit.label"/>'
+                            + '</button>';
                             operations += ' <button type="button" name="approve-button" '
                             + 'class="btn btn-default" value="' + row['id'] + '">'
                             + '<spring:message code="action.approve.label"/>'
@@ -268,6 +282,71 @@
                     "${cancelLabel}": function () {
                         $(this).dialog("close");
                     }
+                }
+            });
+        });
+
+        withdrawalTable.on('click', 'button[type=button][name=edit-button]', function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'get',
+                url: "${rootURL}withdrawal/edit",
+                data: {
+                    withdrawalId: this.value
+                },
+                error: function () {
+                    alert('There was an error.');
+                },
+                success: function (data) {
+                    $('#dialog-area').append(data);
+
+                    // define dialog
+                    var editDialog = $("#edit-dialog").dialog({
+                        autoOpen: false,
+                        height: 'auto',
+                        width: 'auto',
+                        modal: true,
+                        close: function () {
+                            editDialog.dialog("destroy").remove();
+                        }
+                    }).dialog("open");
+
+                    $("#cancel-button").click(function (event) {
+                        event.preventDefault();
+                        editDialog.dialog("close");
+                    });
+
+                    $("#save-button").click(function (event) {
+                        event.preventDefault();
+                        if (!$("#edit-form").valid()) {
+                            return;
+                        }
+                        $.ajax({
+                            type: "POST",
+                            url: "${rootURL}withdrawal/edit",
+                            data: {
+                                withdrawalId: $("#withdrawalId").val(),
+                                adjustAmt: $("#adjustAmt").val(),
+                                remark: $("#remark").val()
+                            },
+                            dataType: "json",
+                            error: function (data) {
+                                alert("There was an error");
+                            },
+                            success: function (data) {
+                                var alert = "<div class='alert alert-warning alert-dismissible' role='alert'>" +
+                                        "<button type='button' class='close' data-dismiss='alert'>" +
+                                        "<span aria-hidden='true'>&times;</span>" +
+                                        "<span class='sr-only'>"
+                                        + "<spring:message code='action.close.label'/> "
+                                        + "</span></button>"
+                                        + data.message + "</div>";
+                                $('#notification').append(alert);
+                                editDialog.dialog("close");
+                                withdrawalTable.ajax.reload();
+                            }
+                        });
+                    });
                 }
             });
         });

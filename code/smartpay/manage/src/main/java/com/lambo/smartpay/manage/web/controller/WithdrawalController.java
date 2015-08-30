@@ -7,6 +7,8 @@ import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.service.*;
 import com.lambo.smartpay.core.util.ResourceProperties;
 import com.lambo.smartpay.manage.util.JsonUtil;
+import com.lambo.smartpay.manage.web.exception.IntervalServerException;
+import com.lambo.smartpay.manage.web.vo.WithdrawalCommand;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesPayment;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesWithdrawal;
@@ -14,6 +16,7 @@ import com.lambo.smartpay.manage.util.DataTablesParams;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +25,11 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 /**
@@ -71,6 +77,13 @@ public class WithdrawalController {
         }
 
         Withdrawal WithdrawalCriteria = new Withdrawal();
+        WithdrawalStatus withdrawalStatus = null;
+        try {
+            withdrawalStatus = withdrawalStatusService.findByCode(ResourceProperties.WITHDRAWAL_STATUS_APPROVED_CODE);
+            WithdrawalCriteria.setWithdrawalStatus(withdrawalStatus);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+        }
         List<Withdrawal> withdrawals = withdrawalService.findByCriteria(WithdrawalCriteria, params.getSearch(),
                 start, length, params.getOrder(), ResourceProperties.JpaOrderDir.valueOf(params.getOrderDir()));
         Long recordsTotal = withdrawalService.countByCriteria(WithdrawalCriteria);
@@ -220,9 +233,13 @@ public class WithdrawalController {
         try {
             Withdrawal w = withdrawalService.get(id);
             if (!w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_PENDING_CODE)
-                    || !w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE) ) {
+                    && !w.getWithdrawalStatus().getCode().equals(ResourceProperties.WITHDRAWAL_STATUS_DEPOSIT_PENDING_CODE) ) {
                 throw new BadRequestException("400", "can not approve.");
             }
+            if(w.getAmountAdjust() !=null && w.getAmountAdjust() > 0)
+                w.setAmountApproved(w.getAmount() - w.getAmountAdjust());
+            else
+                w.setAmountApproved(w.getAmount());
             withdrawalService.approveWithdrawal(w);
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
@@ -262,5 +279,74 @@ public class WithdrawalController {
                 .getMessage("approve.message", new String[]{label, id.toString()}, locale);
         response.setMessage(message);
         return JsonUtil.toJson(response);
+    }
+
+
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public ModelAndView edit(HttpServletRequest request) {
+
+        String withdrawalId = request.getParameter("withdrawalId");
+        if (StringUtils.isBlank(withdrawalId)) {
+            throw new BadRequestException("400", "withdrawalId id is blank.");
+        }
+        Long id = Long.valueOf(withdrawalId);
+        Withdrawal withdrawal = null;
+        try {
+            withdrawal = withdrawalService.get(id);
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", "withdrawalId " + id + " not found.");
+        }
+
+        WithdrawalCommand withdrawalCommand = new WithdrawalCommand(withdrawal);
+        ModelAndView view = new ModelAndView("withdrawal/_editDialog");
+        view.addObject("withdrawalCommand", withdrawalCommand);
+        view.addObject("amount", withdrawalCommand.getAmount());
+        return view;
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST,
+            produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String update(HttpServletRequest request) {
+
+        JsonResponse response = new JsonResponse();
+        Locale locale = LocaleContextHolder.getLocale();
+        String label = messageSource.getMessage("withdrawal.label", null, locale);
+        Withdrawal withdrawal = editWithdrawal(request);
+        try {
+            withdrawal = withdrawalService.update(withdrawal);
+        } catch (NotUniqueException e) {
+            e.printStackTrace();
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
+        } catch (MissingRequiredFieldException e) {
+            e.printStackTrace();
+            String notSavedMessage = messageSource.getMessage("not.saved.message",
+                    new String[]{label}, locale);
+            response.setMessage(notSavedMessage);
+            throw new BadRequestException("400", e.getMessage());
+        }
+
+        String message = messageSource.getMessage("saved.message",
+                new String[]{label}, locale);
+        response.setMessage(message);
+        return JsonUtil.toJson(response);
+    }
+
+    private Withdrawal editWithdrawal(HttpServletRequest request) {
+
+        Withdrawal withdrawal = null;
+        try {
+            withdrawal = withdrawalService.get(Long.valueOf(request.getParameter("withdrawalId")));
+        } catch (NoSuchEntityException e) {
+            e.printStackTrace();
+            throw new BadRequestException("400", e.getMessage());
+        }
+        withdrawal.setAmountAdjust(Double.parseDouble(request.getParameter("adjustAmt")));
+        withdrawal.setRemark(request.getParameter("remark"));
+        return withdrawal;
     }
 }

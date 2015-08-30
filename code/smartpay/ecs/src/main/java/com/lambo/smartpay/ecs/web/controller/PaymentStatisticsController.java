@@ -152,7 +152,6 @@ public class PaymentStatisticsController {
         Long refuseCount = Long.parseLong("0");
         Double refuseAmount = Double.parseDouble("0.00");
         for(Payment payment : payments){
-            System.out.println("payment.getCreatedTime===" + payment.getCreatedTime());
             if(!payment.getCreatedTime().toString().substring(0, 7).equals(ps.getStatisticsDate())){
                 if(ps.getStatisticsDate() !=null && ps.getStatisticsDate() !=""){
                     ps.setPaidCount(paidCount);
@@ -162,7 +161,6 @@ public class PaymentStatisticsController {
                     ps.setRefuseCount(refuseCount);
                     ps.setRefuseAmount(Double.valueOf(decimalFormat.format(refuseAmount)));
                     PaymentStatistics.add(ps);
-                    System.out.println("ps.getStatisticsDate=1==" + ps.getStatisticsDate());
                 }
                 paidCount = Long.parseLong("0");
                 paidAmount = Double.parseDouble("0.00");
@@ -203,7 +201,6 @@ public class PaymentStatisticsController {
             ps.setRefuseCount(refuseCount);
             ps.setRefuseAmount(Double.valueOf(decimalFormat.format(refuseAmount)));
             PaymentStatistics.add(ps);
-            System.out.println("ps.getStatisticsDate=2==" + ps.getStatisticsDate());
         }
         DataTablesResultSet<DataTablesPaymentStatistic> dataTablesPaymentStatisticResult= new DataTablesResultSet<>();
         dataTablesPaymentStatisticResult.setData(PaymentStatistics);
