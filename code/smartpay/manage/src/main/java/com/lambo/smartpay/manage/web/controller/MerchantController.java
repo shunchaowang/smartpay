@@ -683,15 +683,22 @@ public class MerchantController {
             throw new BadRequestException("400", e.getMessage());
         }
         EncryptionType encryptionType = null;
-        FeeType commissionFeeType = null;
-        FeeType returnFeeType = null;
+        FeeType commissionVisaFeeType = null;
+        FeeType commissionMasterFeeType = null;
+        FeeType commissionJcbFeeType = null;
+        FeeType withdrawFeeType = null;
         try {
             encryptionType = encryptionTypeService
                     .get(Long.valueOf(request.getParameter("encryptionType")));
-            commissionFeeType = feeTypeService
-                    .get(Long.valueOf(request.getParameter("commissionFeeType")));
-            returnFeeType = feeTypeService
-                    .get(Long.valueOf(request.getParameter("returnFeeType")));
+            commissionVisaFeeType = feeTypeService
+                    .get(Long.valueOf(request.getParameter("commissionVisaFeeType")));
+            commissionMasterFeeType = feeTypeService
+                    .get(Long.valueOf(request.getParameter("commissionMasterFeeType")));
+            commissionJcbFeeType = feeTypeService
+                    .get(Long.valueOf(request.getParameter("commissionJcbFeeType")));
+            withdrawFeeType = feeTypeService
+                    .get(Long.valueOf(request.getParameter("withdrawFeeType")));
+
         } catch (NoSuchEntityException e) {
             e.printStackTrace();
             throw new BadRequestException("400", e.getMessage());
@@ -699,12 +706,35 @@ public class MerchantController {
         merchant.getEncryption().setKey(request.getParameter("encryptionKey"));
         merchant.getEncryption().setEncryptionType(encryptionType);
 
-        //TODO commented out
-//        merchant.getCommissionFee().setValue(
-//                Float.valueOf(request.getParameter("commissionFeeValue")));
-//        merchant.getCommissionFee().setFeeType(commissionFeeType);
-//        merchant.getReturnFee().setValue(Float.valueOf(request.getParameter("returnFeeValue")));
-//        merchant.getReturnFee().setFeeType(returnFeeType);
+        // set fees
+        for (Fee fee : merchant.getFees()) {
+            switch (fee.getFeeCategory().getCode()) {
+                case ResourceProperties.FEE_CATEGORY_VISA_CODE:
+                    fee.setFeeType(commissionVisaFeeType);
+                    fee.setValue(Float.valueOf(request.getParameter("commissionVisaFeeValue")));
+                    break;
+                case ResourceProperties.FEE_CATEGORY_MASTER_CODE:
+                    fee.setFeeType(commissionMasterFeeType);
+                    fee.setValue(Float.valueOf(request.getParameter("commissionMasterFeeValue")));
+                    break;
+                case ResourceProperties.FEE_CATEGORY_JCB_CODE:
+                    fee.setFeeType(commissionJcbFeeType);
+                    fee.setValue(Float.valueOf(request.getParameter("commissionJcbFeeValue")));
+                    break;
+                case ResourceProperties.FEE_CATEGORY_WITHDRAWAL_SECURITY_CODE:
+                    fee.setFeeType(withdrawFeeType);
+                    fee.setValue(Float.valueOf(request.getParameter("withdrawFeeValue")));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // set withdrawal setting
+        merchant.getWithdrawalSetting()
+                .setMinDays(Long.valueOf(request.getParameter("withdrawSettingMinDays")));
+        merchant.getWithdrawalSetting()
+                .setMaxDays(Long.valueOf(request.getParameter("withdrawSettingMaxDays")));
 
         return merchant;
     }
@@ -757,9 +787,9 @@ public class MerchantController {
 
         FeeType feeType = null;
         FeeCategory feeCategory = null;
-        Fee fee = new Fee();
 
         // visa fee
+        Fee fee = new Fee();
         try {
             feeType = feeTypeService.get(merchantCommand.getCommissionVisaFeeTypeId());
             feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_VISA_CODE);
@@ -773,6 +803,7 @@ public class MerchantController {
         fees.add(fee);
 
         // master fee
+        fee = new Fee();
         try {
             feeType = feeTypeService.get(merchantCommand.getCommissionMasterFeeTypeId());
             feeCategory = feeCategoryService.findByCode(ResourceProperties
@@ -787,6 +818,7 @@ public class MerchantController {
         fees.add(fee);
 
         // jcb fee
+        fee = new Fee();
         try {
             feeType = feeTypeService.get(merchantCommand.getCommissionJcbFeeTypeId());
             feeCategory = feeCategoryService.findByCode(ResourceProperties.FEE_CATEGORY_JCB_CODE);
@@ -800,6 +832,7 @@ public class MerchantController {
         fees.add(fee);
 
         // withdrawal security fee
+        fee = new Fee();
         try {
             feeType = feeTypeService.get(merchantCommand.getWithdrawFeeTypeId());
             feeCategory = feeCategoryService
