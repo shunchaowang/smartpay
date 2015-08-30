@@ -229,10 +229,7 @@ public class WithdrawalController {
             totalAmount += payment.getAmount();
             totalFee += payment.getFee();
             Float refundAmt = Float.parseFloat("0.00");
-            if (payment.getPaymentStatus().getCode().equals(ResourceProperties.PAYMENT_STATUS_CLAIM_RESOLVED_CODE)) {
-                totalAmount -= payment.getAmount();
-                totalFee -= payment.getFee();
-            }else if (payment.getOrder().getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)) {
+            if (payment.getOrder().getOrderStatus().getCode().equals(ResourceProperties.ORDER_STATUS_REFUNDED_CODE)) {
                 Set st = payment.getOrder().getRefunds();
                 for (Iterator it = st.iterator(); it.hasNext(); ) {
                     refundAmt += ((Refund) it.next()).getAmount();
