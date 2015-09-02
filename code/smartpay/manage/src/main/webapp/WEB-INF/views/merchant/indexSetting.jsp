@@ -33,15 +33,49 @@
                         <spring:message code="key.label"/>
                         <spring:message code="type.label"/>
                     </th>
-                    <th><spring:message code="commission.fee.label"/></th>
                     <th>
+                        <spring:message code="commissionVisaFee.label"/>
+                        <spring:message code="commission.fee.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="commissionVisaFee.label"/>
                         <spring:message code="commission.fee.label"/>
                         <spring:message code="type.label"/>
                     </th>
-                    <th><spring:message code="return.fee.label"/></th>
                     <th>
-                        <spring:message code="return.fee.label"/>
+                        <spring:message code="commissionMasterFee.label"/>
+                        <spring:message code="commission.fee.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="commissionMasterFee.label"/>
+                        <spring:message code="commission.fee.label"/>
                         <spring:message code="type.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="commissionJcbFee.label"/>
+                        <spring:message code="commission.fee.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="commissionJcbFee.label"/>
+                        <spring:message code="commission.fee.label"/>
+                        <spring:message code="type.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="withdrawal.label"/>
+                        <spring:message code="withdrawalSecurityFee.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="withdrawal.label"/>
+                        <spring:message code="withdrawalSecurityFee.label"/>
+                        <spring:message code="type.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="withdrawal.label"/>
+                        <spring:message code="withdrawalMinDays.label"/>
+                    </th>
+                    <th>
+                        <spring:message code="withdrawal.label"/>
+                        <spring:message code="withdrawalMaxDays.label"/>
                     </th>
                     <th><spring:message code="action.operation.label"/></th>
                 </tr>
@@ -67,6 +101,7 @@
             "order": [[1, "desc"]],
             //"jQueryUI": true,
             /*'dom': 'T<""if>rt<"F"lp>',*/
+            /*
             "tableTools": {
                 "sSwfPath": "${tableTools}",
                 "aButtons": [
@@ -80,6 +115,7 @@
                     }
                 ]
             },
+            */
             'ajax': {
                 'url': "${rootURL}merchant/list/setting",
                 'type': "GET",
@@ -106,30 +142,63 @@
                     'data': 'encryptionType'
                 },
                 {
-                    'name': 'commissionFeeValue',
+                    'name': 'commissionVisaFeeValue',
                     'targets': 5,
                     'searchable': false,
                     'orderable': false,
-                    'data': 'commissionFeeValue'
+                    'data': 'commissionVisaFeeValue'
                 },
                 {
-                    'name': 'commissionFeeType', 'targets': 6, 'searchable': false,
-                    'orderable': false, 'data': 'commissionFeeType'
+                    'name': 'commissionVisaFeeTypeName', 'targets': 6, 'searchable': false,
+                    'orderable': false, 'data': 'commissionVisaFeeTypeName'
                 },
                 {
-                    'name': 'returnFeeValue',
+                    'name': 'commissionMasterFeeValue',
                     'targets': 7,
                     'searchable': false,
                     'orderable': false,
-                    'data': 'returnFeeValue'
+                    'data': 'commissionMasterFeeValue'
                 },
                 {
-                    'name': 'returnFeeType', 'targets': 8, 'searchable': false,
-                    'orderable': false, 'data': 'returnFeeType'
+                    'name': 'commissionMasterFeeTypeName', 'targets': 8, 'searchable': false,
+                    'orderable': false, 'data': 'commissionMasterFeeTypeName'
+                },
+                {
+                    'name': 'commissionJcbFeeValue',
+                    'targets': 9,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'commissionJcbFeeValue'
+                },
+                {
+                    'name': 'commissionJcbFeeTypeName', 'targets': 10, 'searchable': false,
+                    'orderable': false, 'data': 'commissionJcbFeeTypeName'
+                },
+                {
+                    'name': 'withdrawalSecurityFeeValue',
+                    'targets': 11,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'withdrawalSecurityFeeValue'
+                },
+                {
+                    'name': 'withdrawalSecurityFeeTypeName', 'targets': 12, 'searchable': false,
+                    'orderable': false, 'data': 'withdrawalSecurityFeeTypeName'
+                },
+                {
+                    'name': 'withdrawalSettingMinDays',
+                    'targets': 13,
+                    'searchable': false,
+                    'orderable': false,
+                    'data': 'withdrawalSettingMinDays'
+                },
+                {
+                    'name': 'withdrawalSettingMaxDays', 'targets': 14, 'searchable': false,
+                    'orderable': false, 'data': 'withdrawalSettingMaxDays'
                 },
 
                 {
-                    'name': 'operation', 'targets': 9, 'searchable': false, 'orderable': false,
+                    'name': 'operation', 'targets': 15, 'searchable': false, 'orderable': false,
                     'render': function (data, type, row) {
                         return '<button type="button" name="edit-button" '
                                 + 'class="btn btn-default" value="' + row['id'] + '">'
@@ -184,10 +253,17 @@
                                 id: $("#merchantId").val(),
                                 encryptionKey: $("#encryptionKey").val(),
                                 encryptionType: $("#encryptionTypeId").val(),
-                                commissionFeeValue: $("#commissionFeeValue").val(),
-                                commissionFeeType: $("#commissionFeeTypeId").val(),
-                                returnFeeValue: $("#returnFeeValue").val(),
-                                returnFeeType: $("#returnFeeTypeId").val()
+                                commissionVisaFeeValue: $("#commissionVisaFeeValue").val(),
+                                commissionVisaFeeType: $("#commissionVisaFeeTypeId").val(),
+                                commissionMasterFeeValue: $("#commissionMasterFeeValue").val(),
+                                commissionMasterFeeType: $("#commissionMasterFeeTypeId").val(),
+                                commissionJcbFeeValue: $("#commissionJcbFeeValue").val(),
+                                commissionJcbFeeType: $("#commissionJcbFeeTypeId").val(),
+                                withdrawFeeValue: $("#withdrawFeeValue").val(),
+                                withdrawFeeType: $("#withdrawFeeTypeId").val(),
+
+                                withdrawSettingMinDays: $("#withdrawSettingMinDays").val(),
+                                withdrawSettingMaxDays: $("#withdrawSettingMaxDays").val(),
                             },
                             dataType: "json",
                             error: function (data) {
