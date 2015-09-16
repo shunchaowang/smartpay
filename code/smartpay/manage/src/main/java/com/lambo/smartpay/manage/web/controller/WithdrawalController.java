@@ -93,10 +93,11 @@ public class WithdrawalController {
         }
 
         List<DataTablesWithdrawal> DataTablesWithdrawals = new ArrayList<>();
+        try{
         for (Withdrawal w : withdrawals) {
             DataTablesWithdrawal tmp_withdrawal = new DataTablesWithdrawal(w);
             DataTablesWithdrawals.add(tmp_withdrawal);
-        }
+        }}catch(Exception e){ throw e;}
 
         DataTablesResultSet<DataTablesWithdrawal> resultSet = new DataTablesResultSet<>();
         resultSet.setData(DataTablesWithdrawals);

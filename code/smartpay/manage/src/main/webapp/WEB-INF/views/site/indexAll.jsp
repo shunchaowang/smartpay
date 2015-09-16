@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <%@include file="../taglib.jsp" %>
 <spring:message code="site.label" var="entity"/>
-
-
 <spring:message code="freeze.confirm.message" arguments="${entity}" var="freezeMsg"/>
 <spring:message code="approve.confirm.message" arguments="${entity}" var="approveMsg"/>
 <spring:message code="unfreeze.confirm.message" arguments="${entity}" var="unfreezeMsg"/>
@@ -19,7 +17,8 @@
 <spring:message code="status.frozen.label" var="frozenStatus"/>
 <spring:message code="status.approved.label" var="approvedStatus"/>
 <spring:message code="status.declined.label" var="declinedStatus"/>
-
+${errMsg1}
+<a href></a>
 <div class="container-fluid">
     <div class="row">
         <ol class="breadcrumb">
@@ -33,17 +32,25 @@
             </li>
         </ol>
     </div>
-    <div class="row">
-        <div class="col-sm-2 pull-left">
+
+    <div class="row" >
+        <div class="col-xs-6 "  >
             <a href="${rootURL}site/create">
                 <button class="btn btn-default">
                     <i class="glyphicon glyphicon-wrench"></i>
                     <spring:message code="create.label" arguments="${entity}"/>
                 </button>
+
             </a>
+            <button class="btn btn-default" name="import-button"  id="import-button">
+                <i class="glyphicon glyphicon-import"></i>
+                <spring:message code="action.import.label" />
+            </button>
         </div>
     </div>
     <br>
+    <br>
+    <br/>
 
     <div class="row">
         <div class="col-sm-12">
@@ -68,6 +75,36 @@
 <div class="confirmDialog" id="confirm-dialog">
 </div>
 <div id="dialog-area"></div>
+<div id="basic-info-dialog" title='<spring:message code="action.import.label" />'
+     style="display: none;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <form class="form-horizontal" id="basic-info-form" enctype="multipart/form-data"
+                      method="post" action="${rootURL}site/uploadOrderSendGoods">
+                    <div class="row">
+                        <label class="col-xs-12 control-label" >
+                            <span>*</span><input type="file" id="file" name="file"/>
+                        </label>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button class='btn btn-default' id='save-button' type="submit">
+                                <spring:message code='action.save.label'/>
+                            </button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button class='btn btn-default'  id='importdown-button' type="button">
+                                <spring:message code='action.download.template.label'/>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -142,41 +179,41 @@
                                 + '</button>';
                         if (row['siteStatus'] == 'Created') { // if the merchant is active
                             operations += '<button type="button" name="approve-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    "${approveLabel}"
-                                    + '</button>';
+                            + ' data-identity="' + row['identity'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${approveLabel}"
+                            + '</button>';
                             operations += '<button type="button" name="decline-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    "${declineLabel}"
-                                    + '</button>';
+                            + ' data-identity="' + row['identity'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${declineLabel}"
+                            + '</button>';
                         } else if (row['siteStatus'] == 'Frozen') {
                             // if the merchant is deactivated
                             operations += '<button type="button" name="unfreeze-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    "${unfreezeLabel}"
-                                    + '</button>';
+                            + ' data-identity="' + row['identity'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${unfreezeLabel}"
+                            + '</button>';
                         } else if (row['siteStatus'] == 'Approved') {
                             // if the merchant is deactivated
                             operations += '<button type="button" name="freeze-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    "${freezeLabel}"
-                                    + '</button>';
+                            + ' data-identity="' + row['identity'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${freezeLabel}"
+                            + '</button>';
                         } else if (row['siteStatus'] == 'Declined') {
                             operations += '<button type="button" name="approve-button"'
-                                    + ' data-identity="' + row['identity'] + '"'
-                                    + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                    "${approveLabel}"
-                                    + '</button>';
+                            + ' data-identity="' + row['identity'] + '"'
+                            + ' class="btn btn-default" value="' + row['id'] + '">' +
+                            "${approveLabel}"
+                            + '</button>';
                         }
                         operations += '<button type="button" name="archive-button"'
-                                + ' data-identity="' + row['identity'] + '"'
-                                + ' class="btn btn-default" value="' + row['id'] + '">' +
-                                "${archiveLabel}"
-                                + '</button>';
+                        + ' data-identity="' + row['identity'] + '"'
+                        + ' class="btn btn-default" value="' + row['id'] + '">' +
+                        "${archiveLabel}"
+                        + '</button>';
                         return operations;
                     }
                 }
@@ -457,6 +494,22 @@
                     siteTable.ajax.reload();
                 }
             });
+        });
+
+        $("#import-button").click(function (event) {
+            event.preventDefault();
+            $("#basic-info-dialog").dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                close: function () {
+                    basicInfoDialog.dialog("destroy").remove();
+                }
+            }).dialog("open");
+        });
+        $("#importdown-button").click(function (event) {
+            location.href="${rootURL}site/downtemplate";
         });
     });
 </script>

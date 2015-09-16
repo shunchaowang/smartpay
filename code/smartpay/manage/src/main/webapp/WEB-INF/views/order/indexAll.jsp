@@ -58,6 +58,37 @@
 </div>
 
 
+<div id="basic-info-dialog" title='<spring:message code="action.import.label" />'
+     style="display: none;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <form class="form-horizontal" id="basic-info-form" enctype="multipart/form-data"
+                      method="post" action="${rootURL}site/uploadOrderSendGoods">
+                    <div class="row">
+                        <label class="col-xs-12 control-label" >
+                            <span>*</span><input type="file" id="file" name="file"/>
+                        </label>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button class='btn btn-default' id='save-button' type="submit">
+                                <spring:message code='action.save.label'/>
+                            </button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button class='btn btn-default'  id='importdown-button' type="button">
+                                <spring:message code='action.download.template.label'/>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var orderTable = $('#order-table').DataTable({
@@ -95,6 +126,35 @@
                 {
                     'name': 'merchantNumber', 'targets': 1, 'data': 'merchantNumber',
                     'render': function (data, type, row) {
+
+                        //AJAX data
+                        <%--var url = "${"#basic-info-dialog"}";--%>
+                        <%--$.ajax({--%>
+                            <%--url:url,--%>
+                            <%--type:'post',--%>
+                            <%--dataType:json,--%>
+                            <%--data:data,--%>
+                            <%--error:function(json){--%>
+                                <%--alert("对不起,系统比较繁忙,请稍候再试!");--%>
+                            <%--},--%>
+                            <%--success: function(json){--%>
+
+                                    <%--alert(data);--%>
+
+
+                            <%--}--%>
+                        <%--});--%>
+                        //对应的元素
+
+//                        $("#basic-info-dialog").dialog({
+//                            autoOpen: false,
+//                            height: 'auto',
+//                            width: 'auto',
+//                            modal: true,
+//                            close: function () {
+//                                basicInfoDialog.dialog("destroy").remove();
+//                            }
+//                        }).dialog("open");
                         return '<a href=' + "${rootURL}" + 'order/show/'
                                 + row['id'] + '>' + data + '</a>';
                     }

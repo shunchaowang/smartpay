@@ -3,15 +3,12 @@ package com.lambo.smartpay.manage.web.controller;
 import com.lambo.smartpay.core.exception.MissingRequiredFieldException;
 import com.lambo.smartpay.core.exception.NoSuchEntityException;
 import com.lambo.smartpay.core.exception.NotUniqueException;
-import com.lambo.smartpay.core.persistence.entity.Merchant;
-import com.lambo.smartpay.core.persistence.entity.Site;
-import com.lambo.smartpay.core.persistence.entity.SiteStatus;
+import com.lambo.smartpay.core.persistence.entity.*;
 import com.lambo.smartpay.core.service.MerchantService;
 import com.lambo.smartpay.core.service.SiteService;
 import com.lambo.smartpay.core.service.SiteStatusService;
 import com.lambo.smartpay.core.util.ResourceProperties;
-import com.lambo.smartpay.manage.util.DataTablesParams;
-import com.lambo.smartpay.manage.util.JsonUtil;
+import com.lambo.smartpay.manage.util.*;
 import com.lambo.smartpay.manage.web.exception.BadRequestException;
 import com.lambo.smartpay.manage.web.exception.IntervalServerException;
 import com.lambo.smartpay.manage.web.exception.RemoteAjaxException;
@@ -20,6 +17,7 @@ import com.lambo.smartpay.manage.web.vo.table.DataTablesResultSet;
 import com.lambo.smartpay.manage.web.vo.table.DataTablesSite;
 import com.lambo.smartpay.manage.web.vo.table.JsonResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +31,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -60,8 +64,9 @@ public class SiteController {
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping(value = {"/index/all"}, method = RequestMethod.GET)
-    public String index(Model model) {
+    @RequestMapping(value = {"/index/all"}, produces = "application/json;charset=UTF-8" )
+    public String index(Model model ,HttpServletRequest request) {
+       String ms= request.getParameter("message");
         model.addAttribute("_view", "site/indexAll");
         return "main";
     }
@@ -70,9 +75,7 @@ public class SiteController {
             produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String list(HttpServletRequest request) {
-
         DataTablesParams params = new DataTablesParams(request);
-
         if (params.getOffset() == null || params.getMax() == null
                 || params.getOrder() == null || params.getOrderDir() == null) {
             throw new BadRequestException("400", "Bad Request.");
@@ -463,5 +466,190 @@ public class SiteController {
         }
         site.setSiteStatus(siteStatus);
         return site;
+    }
+    /**
+     * 模板下载
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/downtemplate", method = RequestMethod.GET)
+    public void download(HttpServletRequest request,HttpServletResponse response
+            ,HttpSession session){
+        logger.info("下载模板downtemplate");
+        response.setContentType("text/html;charset=UTF-8");
+        BufferedInputStream in = null;
+        BufferedOutputStream out = null;
+        try {
+            request.setCharacterEncoding("UTF-8");
+            /*URL xmlpath = this.getClass().getClassLoader().getResource("");
+            File f = new File(xmlpath + "/xls/ORDER_SENDGOODS_TEMPLATE.xls");*/
+            String realpath = session.getServletContext().getRealPath("/WEB-INF");
+            File f = new File(this.getClass().getResource("/").getPath() + "/xls/Mall_bulk_loading.xls");
+            response.setContentType("application/x-excel");
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename="
+                    +new String("商城批量加载.xls".getBytes(), "iso-8859-1"));
+            response.setHeader("Content-Length",String.valueOf(f.length()));
+            byte[] data = new byte[1024];
+            in = new BufferedInputStream(new FileInputStream(f));
+            out = new BufferedOutputStream(response.getOutputStream());
+            int len = 0;
+            while (-1 != (len=in.read(data, 0, data.length))) {
+                out.write(data, 0, len);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            }catch(Exception e2){
+                e2.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 上传商城批量上传的模板
+     * @param file
+     * @return
+     */
+    @RequestMapping(value = "/uploadOrderSendGoods", method = RequestMethod.POST)
+    public String   handleFormUpload(@RequestParam("file") MultipartFile file,RedirectAttributes attr,HttpServletRequest request) {
+        String errMsg = "";
+        String returnString = "";
+        if (!file.isEmpty()) {
+            try{
+                this.SaveFileFromInputStream(file.getInputStream(),
+                        this.getClass().getResource("/").getPath(), "java.xls");
+                File f = new File(this.getClass().getResource("/").getPath()+"/xls/java.xls");
+                List<List<Object>> list = new ArrayList<List<Object>>();
+                int startrows = 2;// 从标题开始算行号
+                String msg = ExcelFileUtil.readExcel(f,
+                        ImportFileTemplete.ORDER_SENDGOODS_FORMAT1, list, 0);
+                if (null != msg) {
+                   /* response.setContentType("text/html;charset=UTF-8");
+                    try {
+                        response.getWriter().print("<script>alert('商户信息文件表结构非法!');location.href='importInitzj_vendor'</script>");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+                    return "main";
+                }
+                else{
+
+                    if (null != list && list.size() > 0) {
+                        //startrows = startrows + 2;
+                        int succcount = 0;// 成功条数
+                        int errorcount = 0;// 失败条数
+
+                        // 商户编号验证
+                        for (int i = 0; i < list.size(); i++) {
+                            Site site = new Site();
+                            if (list.get(i).get(0) != null) {
+                                Merchant merchant = null;
+                                merchant = merchantService.findByIdentity(list.get(i).get(0).toString().trim());
+                                if(merchant==null || merchant.getId()==null){
+                                    errMsg+="商户编号不存在，在第"+(startrows+i)+"条";
+                                }
+                                else {
+                                    site.setMerchant(merchant);
+                                }
+                            }else{
+                                errorcount++;
+                                errMsg+="请输入商户编号,在第"+(startrows+i)+"条";
+                            }
+                            if (list.get(i).get(1) != null) {
+                                site.setName(list.get(i).get(1).toString().trim());// 商城名称
+                            }
+                            if (list.get(i).get(2) != null) {
+
+
+                                site.setUrl(list.get(i).get(2).toString().trim());// 商城地址
+                                site.setReturnUrl(list.get(i).get(2).toString().trim()); //商城返回地址
+                            }
+                            site.setActive(false);
+                            SiteStatus status=siteStatusService.get(1l);
+                            site.setSiteStatus(status);
+
+                            Long count = siteService.countAll();
+                            String identity = "S" + String.format("%07d", count);
+                            while (siteService.findByIdentity(identity) != null) {
+                                count++;
+                                identity = "S" + String.format("%07d", count);
+                            }
+                            site.setIdentity(identity);
+
+                            try{
+                                siteService.create(site);
+                                succcount++;
+
+
+
+
+
+                            }catch(Exception e){
+                                e.printStackTrace();
+                                errorcount++;
+                                errMsg+="失败在第"+(i+startrows)+"条<br/>";
+                            }
+                        }
+                        if(errorcount==0){
+                            returnString +="成功插入"+succcount+"条";
+
+                        }
+                        else{
+
+                            returnString += "成功插入"+succcount+"条<br/>"+
+                            "失败"+errorcount+"条<br/>"
+                                    +errMsg;
+                        }
+
+                    }
+
+                }
+            }catch(Exception ex){
+
+                ex.printStackTrace();
+            }
+        }
+
+
+
+//        errMsg="共有成功1条"+"失败2条"+"失败在第2条";
+        request.setAttribute("message", returnString);
+
+        return "forward:/site/index/all";
+//        request.setAttribute("errMsg1",errMsg);
+////        attr.addAttribute("errMsg",errMsg);
+//       attr.addFlashAttribute("errMsg2",errMsg);
+//        return "forward:/site/index/all";
+
+     //  return "redirect:/site/index/all";
+     //   return "forward:/site/index/all";
+      //  return "redirect:/site/index/all";
+      //  return  "redirect:/site/index/all";
+    }
+    //将MultipartFile 转换为File
+    public static void SaveFileFromInputStream(InputStream stream,String path,String savefile) throws IOException
+    {
+        FileOutputStream fs=new FileOutputStream( path + "/xls/"+ savefile);
+        //  System.out.println("------------"+path + "/"+ savefile);
+        byte[] buffer =new byte[1024*1024];
+        int bytesum = 0;
+        int byteread = 0;
+        while ((byteread=stream.read(buffer))!=-1)
+        {
+            bytesum+=byteread;
+            fs.write(buffer,0,byteread);
+            fs.flush();
+        }
+        fs.close();
+        stream.close();
     }
 }

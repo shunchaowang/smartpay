@@ -69,6 +69,7 @@
                     <div class="col-sm-offset-4 col-sm-4">
                         <button type="submit" class="btn btn-default">
                             <spring:message code="login.label"/>
+
                         </button>
                     </div>
                 </div>
